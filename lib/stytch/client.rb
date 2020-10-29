@@ -1,11 +1,23 @@
 module Stytch
   class Client
-    def initialize(client_id:, secret:, &block)
-      @api_host   = "http://localhost:8080/"
+    ENVIRONMENTS = %i[live test].freeze
+
+    def initialize(env:, client_id:, secret:, &block)
+      @api_host   = api_host(env)
       @client_id  = client_id
       @secret     = secret
 
       create_connection(&block)
+    end
+
+    def api_host(env)
+      if env == :live
+        "https://api.stytch.com"
+      elsif env == :test
+        "https://test.stytch.com"
+      else
+        raise ArgumentError, "Invalid value for env (#{@env}): should be live or test"
+      end
     end
 
     def create_connection
@@ -26,7 +38,7 @@ module Stytch
 
     def user_create(email:, first_name:, middle_name:, last_name:)
       post_with_auth(
-          "v1/users",
+          "/v1/users",
           {
               email: email,
               name: {
