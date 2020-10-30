@@ -1,5 +1,9 @@
+require_relative 'endpoints/user'
+
 module Stytch
   class Client
+    include Stytch::Endpoints::User
+
     ENVIRONMENTS = %i[live test].freeze
 
     def initialize(env:, client_id:, secret:, &block)
@@ -34,20 +38,6 @@ module Stytch
       builder.use Stytch::Middleware
       builder.response :json, content_type: /\bjson$/
       builder.adapter Faraday.default_adapter
-    end
-
-    def user_create(email:, first_name:, middle_name:, last_name:)
-      post_with_auth(
-          "/v1/users",
-          {
-              email: email,
-              name: {
-                  first_name: first_name,
-                  middle_name: middle_name,
-                  last_name: last_name,
-              },
-          }
-      )
     end
 
     def post_with_auth(path, payload)
