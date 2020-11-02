@@ -1,8 +1,12 @@
 require_relative 'endpoints/user'
+require_relative 'endpoints/email'
+require_relative 'endpoints/magic'
 
 module Stytch
   class Client
     include Stytch::Endpoints::User
+    include Stytch::Endpoints::Email
+    include Stytch::Endpoints::Magic
 
     ENVIRONMENTS = %i[live test].freeze
 
@@ -13,6 +17,8 @@ module Stytch
 
       create_connection(&block)
     end
+
+    private
 
     def api_host(env)
       if env == :live
@@ -40,10 +46,29 @@ module Stytch
       builder.adapter Faraday.default_adapter
     end
 
-    def post_with_auth(path, payload)
+    def get(path)
+      @connection.get(
+          path
+      ).body
+    end
+
+    def post(path, payload)
       @connection.post(
           path,
           payload
+      ).body
+    end
+
+    def put(path, payload)
+      @connection.put(
+          path,
+          payload
+      ).body
+    end
+
+    def delete(path)
+      @connection.delete(
+          path
       ).body
     end
   end
