@@ -1,31 +1,55 @@
 module Stytch
   module Endpoints
     module User
-      CREATE_USER_PATH = "/v1/users".freeze
+      PATH = "/v1/users".freeze
+
+      def get_user(user_id:)
+        get("#{PATH}/#{user_id}")
+      end
 
       def create_user(
           email:,
-          first_name: "",
-          middle_name: "",
-          last_name: "",
-          ip_address: "",
-          user_agent: ""
+          name: {},
+          attributes: {}
       )
-        post_with_auth(
-          CREATE_USER_PATH,
-          {
-            email: email,
-            name: {
-              first_name: first_name,
-              middle_name: middle_name,
-              last_name: last_name,
-            },
-            attributes: {
-              ip_address: ip_address,
-              user_agent: user_agent,
-            },
-          }
-        )
+        request = {
+          email: email,
+          name: name,
+          attributes: attributes,
+        }
+
+        post(PATH, request)
+      end
+
+      def update_user(
+        user_id:,
+        name: nil,
+        emails: [],
+        attributes: {}
+      )
+        request = {
+            name: name,
+            emails: format_emails(emails),
+            attributes: attributes,
+        }
+
+        put("#{PATH}/#{user_id}", request)
+      end
+
+      def delete_user(user_id:)
+        delete("#{PATH}/#{user_id}")
+      end
+
+      def delete_email(user_id:, email_id:)
+        delete("#{PATH}/#{user_id}/emails/#{email_id}")
+      end
+
+      private
+
+      def format_emails(emails)
+        e = []
+        emails.each { |email| e << { email: email} }
+        e
       end
     end
   end
