@@ -19,7 +19,11 @@ module Stytch
       end
 
       def verify_email(token:)
-        post("#{PATH}/#{token}/verify")
+        post("#{PATH}/#{token}/verify", {})
+      end
+
+      def delete_email(user_id:, email_id:)
+        delete("#{PATH}/#{email_id}/users/#{user_id}")
       end
     end
   end
