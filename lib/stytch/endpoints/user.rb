@@ -40,10 +40,6 @@ module Stytch
         delete("#{PATH}/#{user_id}")
       end
 
-      def delete_email(user_id:, email_id:)
-        delete("#{PATH}/#{user_id}/emails/#{email_id}")
-      end
-
       private
 
       def format_emails(emails)
