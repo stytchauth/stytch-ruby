@@ -8,7 +8,7 @@ module Stytch
           user_id:,
           magic_link_url:,
           expiration_minutes:,
-          template_id:,
+          template_id: nil,
           attributes: {}
       )
         request = {
@@ -27,7 +27,7 @@ module Stytch
           email:,
           magic_link_url:,
           expiration_minutes:,
-          template_id:,
+          template_id: nil,
           attributes: {}
       )
         request = {
