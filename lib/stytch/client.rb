@@ -10,9 +10,9 @@ module Stytch
 
     ENVIRONMENTS = %i[live test].freeze
 
-    def initialize(env:, client_id:, secret:, &block)
+    def initialize(env:, project_id:, secret:, &block)
       @api_host   = api_host(env)
-      @client_id  = client_id
+      @project_id  = project_id
       @secret     = secret
 
       create_connection(&block)
@@ -34,7 +34,7 @@ module Stytch
       @connection = Faraday.new(url: @api_host) do |builder|
         block_given? ? yield(builder) : build_default_connection(builder)
       end
-      @connection.basic_auth(@client_id, @secret)
+      @connection.basic_auth(@project_id, @secret)
     end
 
     def build_default_connection(builder)
