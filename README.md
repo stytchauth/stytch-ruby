@@ -25,7 +25,7 @@ Set `env` to either `:test` or `:api` depending on which environment you want to
 ```
 client = Stytch::Client.new(
     env: :test,
-    client_id: "***",
+    project_id: "***",
     secret: "***"
 )
 ```
