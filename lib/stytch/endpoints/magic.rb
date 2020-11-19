@@ -16,9 +16,10 @@ module Stytch
             user_id: user_id,
             magic_link_url: magic_link_url,
             expiration_minutes: expiration_minutes,
-            template_id: template_id,
-            attributes: attributes
         }
+
+        request[:template_id] = template_id if template_id != nil
+        request[:attributes] = attributes if attributes != {}
 
         post("#{PATH}/send", request)
       end
@@ -34,9 +35,10 @@ module Stytch
             email: email,
             magic_link_url: magic_link_url,
             expiration_minutes: expiration_minutes,
-            template_id: template_id,
-            attributes: attributes
         }
+
+        request[:template_id] = template_id if template_id != nil
+        request[:attributes] = attributes if attributes != {}
 
         post("#{PATH}/send_by_email", request)
       end
@@ -44,12 +46,12 @@ module Stytch
       def authenticate_magic(
           token:,
           attributes: {},
-          options:{}
+          options: {}
       )
-        request = {
-            attributes: attributes,
-            options: options
-        }
+        request = {}
+
+        request[:attributes] = attributes if attributes != {}
+        request[:options] = options if options != {}
 
         post("#{PATH}/#{token}/authenticate", request)
       end

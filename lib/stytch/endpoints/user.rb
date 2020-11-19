@@ -14,9 +14,10 @@ module Stytch
       )
         request = {
           email: email,
-          name: name,
-          attributes: attributes,
         }
+
+        request[:name] = name if name != {}
+        request[:attributes] = attributes if attributes != {}
 
         post(PATH, request)
       end
@@ -30,8 +31,9 @@ module Stytch
         request = {
             name: name,
             emails: format_emails(emails),
-            attributes: attributes,
         }
+
+        request[:attributes] = attributes if attributes != {}
 
         put("#{PATH}/#{user_id}", request)
       end
