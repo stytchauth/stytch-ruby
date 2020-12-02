@@ -43,6 +43,58 @@ module Stytch
         post("#{PATH}/send_by_email", request)
       end
 
+      def login_or_create_user(
+        email:,
+        login_magic_link_url:,
+        signup_magic_link_url:,
+        login_expiration_minutes: nil,
+        signup_expiration_minutes: nil,
+        login_template_id: nil,
+        signup_template_id: nil,
+        attributes: {}
+      )
+
+        request = {
+          email: email,
+          login_magic_link_url: login_magic_link_url,
+          signup_magic_link_url: signup_magic_link_url,
+        }
+
+        request[:login_template_id] = login_template_id if login_template_id != nil
+        request[:login_expiration_minutes] = login_expiration_minutes if login_expiration_minutes != nil
+        request[:signup_template_id] = signup_template_id if signup_template_id != nil
+        request[:signup_expiration_minutes] = signup_expiration_minutes if signup_expiration_minutes != nil
+        request[:attributes] = attributes if attributes != {}
+
+        post("#{PATH}/login_or_create", request)
+      end
+
+      def login_or_invite_by_email(
+        email:,
+        login_magic_link_url:,
+        invite_magic_link_url:,
+        login_expiration_minutes: nil,
+        invite_expiration_minutes: nil,
+        login_template_id: nil,
+        signup_template_id: nil,
+        attributes: {}
+      )
+
+        request = {
+          email: email,
+          login_magic_link_url: login_magic_link_url,
+          invite_magic_link_url: invite_magic_link_url,
+        }
+
+        request[:login_template_id] = login_template_id if login_template_id != nil
+        request[:login_expiration_minutes] = login_expiration_minutes if login_expiration_minutes != nil
+        request[:invite_template_id] = invite_template_id if invite_template_id != nil
+        request[:invite_expiration_minutes] = invite_expiration_minutes if invite_expiration_minutes != nil
+        request[:attributes] = attributes if attributes != {}
+
+        post("#{PATH}/login_or_invite", request)
+      end
+
       def authenticate_magic(
           token:,
           attributes: {},
