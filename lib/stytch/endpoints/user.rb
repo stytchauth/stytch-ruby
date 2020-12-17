@@ -24,15 +24,15 @@ module Stytch
 
       def update_user(
         user_id:,
-        name: nil,
+        name: {},
         emails: [],
         attributes: {}
       )
         request = {
-            name: name,
             emails: format_emails(emails),
         }
 
+        request[:name] = name if name != {}
         request[:attributes] = attributes if attributes != {}
 
         put("#{PATH}/#{user_id}", request)
