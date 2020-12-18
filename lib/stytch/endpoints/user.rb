@@ -7,6 +7,10 @@ module Stytch
         get("#{PATH}/#{user_id}")
       end
 
+      def get_invited_users()
+        get("#{PATH}/invites")
+      end
+
       def create_user(
           email:,
           name: {},

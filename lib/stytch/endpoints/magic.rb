@@ -83,6 +83,35 @@ module Stytch
         post("#{PATH}/login_or_invite", request)
       end
 
+      def invite_by_email(
+        email:,
+        magic_link_url:,
+        expiration_minutes: nil,
+        attributes: {}
+      )
+
+        request = {
+          email: email,
+          magic_link_url: magic_link_url,
+        }
+
+        request[:expiration_minutes] = expiration_minutes if expiration_minutes != nil
+        request[:attributes] = attributes if attributes != {}
+
+        post("#{PATH}/invite_by_email", request)
+      end
+
+      def revoke_invite_by_email(
+        email:,
+      )
+
+        request = {
+          email: email,
+        }
+
+        post("#{PATH}/revoke_invite", request)
+      end
+
       def authenticate_magic(
           token:,
           attributes: {},
