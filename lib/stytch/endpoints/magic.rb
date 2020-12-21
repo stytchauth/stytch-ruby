@@ -102,7 +102,7 @@ module Stytch
       end
 
       def revoke_invite_by_email(
-        email:,
+        email:
       )
 
         request = {
