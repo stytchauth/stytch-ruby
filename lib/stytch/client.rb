@@ -1,11 +1,9 @@
 require_relative 'endpoints/user'
-require_relative 'endpoints/email'
 require_relative 'endpoints/magic'
 
 module Stytch
   class Client
     include Stytch::Endpoints::User
-    include Stytch::Endpoints::Email
     include Stytch::Endpoints::Magic
 
     ENVIRONMENTS = %i[live test].freeze
