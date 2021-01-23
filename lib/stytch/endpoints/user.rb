@@ -7,8 +7,18 @@ module Stytch
         get("#{PATH}/#{user_id}")
       end
 
-      def get_invited_users()
-        get("#{PATH}/invites")
+      def get_invited_users(
+          limit: nil,
+          starting_after_id: nil
+      )
+        query_params = {
+            limit: limit,
+            starting_after_id: starting_after_id,
+        }
+
+        request = request_with_query_params("#{PATH}/invites", query_params)
+
+        get(request)
       end
 
       def create_user(
