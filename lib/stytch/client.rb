@@ -69,5 +69,17 @@ module Stytch
           path
       ).body
     end
+
+    def request_with_query_params(path, params)
+      request = path
+      params.compact.each_with_index do |p, i|
+        if i == 0
+          request += "?#{p[0].to_s}=#{p[1]}"
+        else
+          request += "&#{p[0].to_s}=#{p[1]}"
+        end
+      end
+      request
+    end
   end
 end
