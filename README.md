@@ -1,6 +1,6 @@
 # Stytch
 
-Welcome to the offical Stytch ruby gem! This gem provides easy access to Stytch's API.
+Welcome to the official Stytch ruby gem! This gem provides easy access to Stytch's API.
 
 ## Installation
 
