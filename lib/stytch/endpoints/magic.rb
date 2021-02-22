@@ -61,28 +61,6 @@ module Stytch
         post("#{PATH}/login_or_create", request)
       end
 
-      def login_or_invite_by_email(
-        email:,
-        login_magic_link_url:,
-        invite_magic_link_url:,
-        login_expiration_minutes: nil,
-        invite_expiration_minutes: nil,
-        attributes: {}
-      )
-
-        request = {
-          email: email,
-          login_magic_link_url: login_magic_link_url,
-          invite_magic_link_url: invite_magic_link_url,
-        }
-
-        request[:login_expiration_minutes] = login_expiration_minutes if login_expiration_minutes != nil
-        request[:invite_expiration_minutes] = invite_expiration_minutes if invite_expiration_minutes != nil
-        request[:attributes] = attributes if attributes != {}
-
-        post("#{PATH}/login_or_invite", request)
-      end
-
       def invite_by_email(
         email:,
         magic_link_url:,
