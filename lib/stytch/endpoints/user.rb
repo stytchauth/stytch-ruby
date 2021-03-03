@@ -7,7 +7,7 @@ module Stytch
         get("#{PATH}/#{user_id}")
       end
 
-      def get_invited_users(
+      def get_pending_users(
           limit: nil,
           starting_after_id: nil
       )
@@ -16,7 +16,7 @@ module Stytch
             starting_after_id: starting_after_id,
         }
 
-        request = request_with_query_params("#{PATH}/invites", query_params)
+        request = request_with_query_params("#{PATH}/pending", query_params)
 
         get(request)
       end
