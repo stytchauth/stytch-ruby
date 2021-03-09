@@ -53,7 +53,7 @@ module Stytch
           email: email,
           login_magic_link_url: login_magic_link_url,
           signup_magic_link_url: signup_magic_link_url,
-          create_user_as_pending: create_user_as_pending
+          create_user_as_pending: create_user_as_pending,
         }
 
         request[:login_expiration_minutes] = login_expiration_minutes if login_expiration_minutes != nil
