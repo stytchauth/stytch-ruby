@@ -45,13 +45,15 @@ module Stytch
         signup_magic_link_url:,
         login_expiration_minutes: nil,
         signup_expiration_minutes: nil,
-        attributes: {}
+        attributes: {},
+        create_user_as_pending: false
       )
 
         request = {
           email: email,
           login_magic_link_url: login_magic_link_url,
           signup_magic_link_url: signup_magic_link_url,
+          create_user_as_pending: create_user_as_pending,
         }
 
         request[:login_expiration_minutes] = login_expiration_minutes if login_expiration_minutes != nil
