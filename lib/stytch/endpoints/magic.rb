@@ -45,7 +45,8 @@ module Stytch
         signup_magic_link_url:,
         login_expiration_minutes: nil,
         signup_expiration_minutes: nil,
-        attributes: {}
+        attributes: {},
+        create_user_as_pending: nil
       )
 
         request = {
@@ -57,6 +58,7 @@ module Stytch
         request[:login_expiration_minutes] = login_expiration_minutes if login_expiration_minutes != nil
         request[:signup_expiration_minutes] = signup_expiration_minutes if signup_expiration_minutes != nil
         request[:attributes] = attributes if attributes != {}
+        request[:create_user_as_pending] = create_user_as_pending if create_user_as_pending != nil
 
         post("#{PATH}/login_or_create", request)
       end
