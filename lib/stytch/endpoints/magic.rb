@@ -67,7 +67,8 @@ module Stytch
         email:,
         magic_link_url:,
         expiration_minutes: nil,
-        attributes: {}
+        attributes: {},
+        name: {}
       )
 
         request = {
@@ -77,6 +78,7 @@ module Stytch
 
         request[:expiration_minutes] = expiration_minutes if expiration_minutes != nil
         request[:attributes] = attributes if attributes != {}
+        request[:name] = name if name != {}
 
         post("#{PATH}/invite_by_email", request)
       end
