@@ -2,12 +2,13 @@ module Stytch
   module Endpoints
     module Magic
       PATH = "/v1/magic_links".freeze
+      DEFAULT_EXP_MINUTES = 60.freeze
 
       def send_magic(
           method_id:,
           user_id:,
           magic_link_url:,
-          expiration_minutes:,
+          expiration_minutes: DEFAULT_EXP_MINUTES,
           attributes: {}
       )
         request = {
@@ -25,7 +26,7 @@ module Stytch
       def send_magic_by_email(
           email:,
           magic_link_url:,
-          expiration_minutes:,
+          expiration_minutes: DEFAULT_EXP_MINUTES,
           attributes: {}
       )
         request = {
