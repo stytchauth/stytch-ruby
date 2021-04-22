@@ -7,16 +7,16 @@ module Stytch
           method_id:,
           user_id:,
           magic_link_url:,
-          expiration_minutes:,
+          expiration_minutes: nil,
           attributes: {}
       )
         request = {
             method_id: method_id,
             user_id: user_id,
             magic_link_url: magic_link_url,
-            expiration_minutes: expiration_minutes,
         }
 
+        request[:expiration_minutes] = expiration_minutes if expiration_minutes != nil
         request[:attributes] = attributes if attributes != {}
 
         post("#{PATH}/send", request)
@@ -25,15 +25,15 @@ module Stytch
       def send_magic_by_email(
           email:,
           magic_link_url:,
-          expiration_minutes:,
+          expiration_minutes: nil,
           attributes: {}
       )
         request = {
             email: email,
             magic_link_url: magic_link_url,
-            expiration_minutes: expiration_minutes,
         }
 
+        request[:expiration_minutes] = expiration_minutes if expiration_minutes != nil
         request[:attributes] = attributes if attributes != {}
 
         post("#{PATH}/send_by_email", request)
