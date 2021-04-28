@@ -23,11 +23,13 @@ module Stytch
 
       def create_user(
           email:,
+          phone_number: nil,
           name: {},
           attributes: {}
       )
         request = {
           email: email,
+          phone_number: phone_number
         }
 
         request[:name] = name if name != {}
@@ -40,10 +42,12 @@ module Stytch
         user_id:,
         name: {},
         emails: [],
+        phone_numbers: [],
         attributes: {}
       )
         request = {
             emails: format_emails(emails),
+            phone_numbers: format_phone_numbers(phone_numbers),
         }
 
         request[:name] = name if name != {}
@@ -63,12 +67,24 @@ module Stytch
         delete("#{PATH}/#{user_id}/emails/#{email}")
       end
 
+      def delete_user_phone_number(
+          phone_number_id:
+      )
+        delete("#{PATH}/phone_numbers/#{phone_number_id}")
+      end
+
       private
 
       def format_emails(emails)
         e = []
         emails.each { |email| e << { email: email} }
         e
+      end
+
+      def format_phone_numbers(phone_numbers)
+        p = []
+        phone_numbers.each { |phone_number| p << { phone_number: phone_number} }
+        p
       end
     end
   end
