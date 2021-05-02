@@ -68,9 +68,9 @@ module Stytch
       end
 
       def delete_user_phone_number(
-          phone_number_id:
+          phone_id:
       )
-        delete("#{PATH}/phone_numbers/#{phone_number_id}")
+        delete("#{PATH}/phone_numbers/#{phone_id}")
       end
 
       private
