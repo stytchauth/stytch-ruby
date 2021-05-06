@@ -8,8 +8,8 @@ module Stytch
       end
 
       def get_pending_users(
-          limit: nil,
-          starting_after_id: nil
+        limit: nil,
+        starting_after_id: nil
       )
         query_params = {
             limit: limit,
@@ -22,10 +22,10 @@ module Stytch
       end
 
       def create_user(
-          email:,
-          phone_number: nil,
-          name: {},
-          attributes: {}
+        email:,
+        phone_number: nil,
+        name: {},
+        attributes: {}
       )
         request = {
           email: email,
@@ -46,8 +46,8 @@ module Stytch
         attributes: {}
       )
         request = {
-            emails: format_emails(emails),
-            phone_numbers: format_phone_numbers(phone_numbers),
+          emails: format_emails(emails),
+          phone_numbers: format_phone_numbers(phone_numbers),
         }
 
         request[:name] = name if name != {}
@@ -61,14 +61,13 @@ module Stytch
       end
 
       def delete_user_email(
-        user_id:,
-        email:
+        email_id:
       )
-        delete("#{PATH}/#{user_id}/emails/#{email}")
+        delete("#{PATH}/emails/#{email_id}")
       end
 
       def delete_user_phone_number(
-          phone_id:
+        phone_id:
       )
         delete("#{PATH}/phone_numbers/#{phone_id}")
       end

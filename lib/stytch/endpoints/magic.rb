@@ -4,16 +4,16 @@ module Stytch
       PATH = "/v1/magic_links".freeze
 
       def send_magic(
-          method_id:,
-          user_id:,
-          magic_link_url:,
-          expiration_minutes: nil,
-          attributes: {}
+        method_id:,
+        user_id:,
+        magic_link_url:,
+        expiration_minutes: nil,
+        attributes: {}
       )
         request = {
-            method_id: method_id,
-            user_id: user_id,
-            magic_link_url: magic_link_url,
+          method_id: method_id,
+          user_id: user_id,
+          magic_link_url: magic_link_url,
         }
 
         request[:expiration_minutes] = expiration_minutes if expiration_minutes != nil
@@ -23,14 +23,14 @@ module Stytch
       end
 
       def send_magic_by_email(
-          email:,
-          magic_link_url:,
-          expiration_minutes: nil,
-          attributes: {}
+        email:,
+        magic_link_url:,
+        expiration_minutes: nil,
+        attributes: {}
       )
         request = {
-            email: email,
-            magic_link_url: magic_link_url,
+          email: email,
+          magic_link_url: magic_link_url,
         }
 
         request[:expiration_minutes] = expiration_minutes if expiration_minutes != nil
@@ -95,9 +95,9 @@ module Stytch
       end
 
       def authenticate_magic(
-          token:,
-          attributes: {},
-          options: {}
+        token:,
+        attributes: {},
+        options: {}
       )
         request = {}
 

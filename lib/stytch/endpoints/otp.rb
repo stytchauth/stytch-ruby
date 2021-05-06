@@ -4,13 +4,13 @@ module Stytch
       PATH = "/v1/otp".freeze
 
       def send_otp_by_sms(
-          phone_number:,
-          expiration_minutes: nil,
-          attributes: {}
+        phone_number:,
+        expiration_minutes: nil,
+        attributes: {}
       )
         request = {
-            phone_number: phone_number,
-            expiration_minutes: expiration_minutes,
+          phone_number: phone_number,
+          expiration_minutes: expiration_minutes,
         }
 
         request[:attributes] = attributes if attributes != {}
@@ -19,15 +19,15 @@ module Stytch
       end
 
       def login_or_create_user_by_sms(
-          phone_number:,
-          expiration_minutes: nil,
-          attributes: {},
-          create_user_as_pending: false
+        phone_number:,
+        expiration_minutes: nil,
+        attributes: {},
+        create_user_as_pending: false
       )
         request = {
-            phone_number: phone_number,
-            expiration_minutes: expiration_minutes,
-            create_user_as_pending: create_user_as_pending
+          phone_number: phone_number,
+          expiration_minutes: expiration_minutes,
+          create_user_as_pending: create_user_as_pending
         }
 
         request[:attributes] = attributes if attributes != {}
@@ -36,14 +36,14 @@ module Stytch
       end
 
       def authenticate_otp(
-          method_id:,
-          code:,
-          attributes: {},
-          options: {}
+        method_id:,
+        code:,
+        attributes: {},
+        options: {}
       )
         request = {
-            method_id: method_id,
-            code: code,
+          method_id: method_id,
+          code: code,
         }
 
         request[:attributes] = attributes if attributes != {}
