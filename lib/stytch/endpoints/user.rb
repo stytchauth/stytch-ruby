@@ -22,7 +22,7 @@ module Stytch
       end
 
       def create_user(
-        email:,
+        email: nil,
         phone_number: nil,
         name: {},
         attributes: {}
