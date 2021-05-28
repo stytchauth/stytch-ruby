@@ -25,11 +25,13 @@ module Stytch
         email: nil,
         phone_number: nil,
         name: {},
+        create_user_as_pending: false,
         attributes: {}
       )
         request = {
           email: email,
-          phone_number: phone_number
+          phone_number: phone_number,
+          create_user_as_pending: create_user_as_pending
         }
 
         request[:name] = name if name != {}
