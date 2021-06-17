@@ -1,9 +1,9 @@
 module Stytch
   module Endpoints
     module OTP
-      PATH = "/v1/otp".freeze
+      PATH = "/v1/otps".freeze
 
-      def send_otp_by_sms(
+      def otps_sms_send(
         phone_number:,
         expiration_minutes: nil,
         attributes: {}
@@ -15,10 +15,10 @@ module Stytch
 
         request[:attributes] = attributes if attributes != {}
 
-        post("#{PATH}/send_by_sms", request)
+        post("#{PATH}/sms/send", request)
       end
 
-      def login_or_create_user_by_sms(
+      def otps_sms_login_or_create(
         phone_number:,
         expiration_minutes: nil,
         attributes: {},
@@ -32,10 +32,10 @@ module Stytch
 
         request[:attributes] = attributes if attributes != {}
 
-        post("#{PATH}/login_or_create", request)
+        post("#{PATH}/sms/login_or_create", request)
       end
 
-      def authenticate_otp(
+      def otps_authenticate(
         method_id:,
         code:,
         attributes: {},
