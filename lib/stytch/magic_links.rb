@@ -4,14 +4,14 @@ module Stytch
   class MagicLinks
     include Stytch::RequestHelper
 
+    attr_reader :email
+
     PATH = "/v1/magic_links".freeze
 
     def initialize(connection)
       @connection = connection
-    end
 
-    def email
-      Stytch::MagicLinks::Email.new(@connection)
+      @email = Stytch::MagicLinks::Email.new(@connection)
     end
 
     def authenticate(
@@ -30,7 +30,7 @@ module Stytch
     end
 
     class Email < self
-      PATH = PATH + "/email".freeze
+      PATH = (PATH + "/email").freeze
 
       def initialize(connection)
         @connection = connection

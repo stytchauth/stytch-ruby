@@ -1,17 +1,17 @@
 require_relative 'request_helper'
 
 module Stytch
-  class OTPS
+  class OTPs
     include Stytch::RequestHelper
+
+    attr_reader :sms
 
     PATH = "/v1/otps".freeze
 
     def initialize(connection)
       @connection = connection
-    end
 
-    def sms
-      Stytch::OTPS::SMS.new(@connection)
+      @sms = Stytch::OTPs::SMS.new(@connection)
     end
 
     def authenticate(
@@ -32,7 +32,7 @@ module Stytch
     end
 
     class SMS < self
-      PATH = PATH + "/sms".freeze
+      PATH = (PATH + "/sms").freeze
 
       def initialize(connection)
         @connection = connection

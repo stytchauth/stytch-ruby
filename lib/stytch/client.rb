@@ -6,24 +6,18 @@ module Stytch
   class Client
     ENVIRONMENTS = %i[live test].freeze
 
+    attr_reader :users, :magic_links, :otps
+
     def initialize(env:, project_id:, secret:, &block)
       @api_host   = api_host(env)
       @project_id = project_id
       @secret     = secret
 
       create_connection(&block)
-    end
 
-    def users
-      Stytch::Users.new(@connection)
-    end
-
-    def magic_links
-      Stytch::MagicLinks.new(@connection)
-    end
-
-    def otps
-      Stytch::OTPS.new(@connection)
+      @users = Stytch::Users.new(@connection)
+      @magic_links = Stytch::MagicLinks.new(@connection)
+      @otps = Stytch::OTPs.new(@connection)
     end
 
     private
