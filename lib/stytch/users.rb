@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require_relative 'request_helper'
 
 module Stytch
   class Users
     include Stytch::RequestHelper
 
-    PATH = "/v1/users".freeze
+    PATH = '/v1/users'
 
     def initialize(connection)
       @connection = connection
@@ -20,7 +22,7 @@ module Stytch
     )
       query_params = {
         limit: limit,
-        starting_after_id: starting_after_id,
+        starting_after_id: starting_after_id
       }
 
       request = request_with_query_params("#{PATH}/pending", query_params)
@@ -56,7 +58,7 @@ module Stytch
     )
       request = {
         emails: format_emails(emails),
-        phone_numbers: format_phone_numbers(phone_numbers),
+        phone_numbers: format_phone_numbers(phone_numbers)
       }
 
       request[:name] = name if name != {}
@@ -85,13 +87,13 @@ module Stytch
 
     def format_emails(emails)
       e = []
-      emails.each { |email| e << { email: email} }
+      emails.each { |email| e << { email: email } }
       e
     end
 
     def format_phone_numbers(phone_numbers)
       p = []
-      phone_numbers.each { |phone_number| p << { phone_number: phone_number} }
+      phone_numbers.each { |phone_number| p << { phone_number: phone_number } }
       p
     end
   end

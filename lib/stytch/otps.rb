@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'request_helper'
 
 module Stytch
@@ -6,7 +8,7 @@ module Stytch
 
     attr_reader :sms
 
-    PATH = "/v1/otps".freeze
+    PATH = '/v1/otps'
 
     def initialize(connection)
       @connection = connection
@@ -22,7 +24,7 @@ module Stytch
     )
       request = {
         method_id: method_id,
-        code: code,
+        code: code
       }
 
       request[:attributes] = attributes if attributes != {}
@@ -31,8 +33,10 @@ module Stytch
       post_request("#{PATH}/authenticate", request)
     end
 
-    class SMS < self
-      PATH = (PATH + "/sms").freeze
+    class SMS
+      include Stytch::RequestHelper
+
+      PATH = "#{Stytch::OTPs::PATH}/sms"
 
       def initialize(connection)
         @connection = connection
@@ -45,7 +49,7 @@ module Stytch
       )
         request = {
           phone_number: phone_number,
-          expiration_minutes: expiration_minutes,
+          expiration_minutes: expiration_minutes
         }
 
         request[:attributes] = attributes if attributes != {}

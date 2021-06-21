@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'users'
 require_relative 'magic_links'
 require_relative 'otps'
@@ -23,10 +25,11 @@ module Stytch
     private
 
     def api_host(env)
-      if env == :live
-        "https://api.stytch.com"
-      elsif env == :test
-        "https://test.stytch.com"
+      case env
+      when :live
+        'https://api.stytch.com'
+      when :test
+        'https://test.stytch.com'
       else
         raise ArgumentError, "Invalid value for env (#{@env}): should be live or test"
       end
