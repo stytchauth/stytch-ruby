@@ -1,21 +1,29 @@
-require_relative 'endpoints/user'
-require_relative 'endpoints/magic'
-require_relative 'endpoints/otp'
+require_relative 'users'
+require_relative 'magic_links'
+require_relative 'otps'
 
 module Stytch
   class Client
-    include Stytch::Endpoints::User
-    include Stytch::Endpoints::Magic
-    include Stytch::Endpoints::OTP
-
     ENVIRONMENTS = %i[live test].freeze
 
     def initialize(env:, project_id:, secret:, &block)
       @api_host   = api_host(env)
-      @project_id  = project_id
+      @project_id = project_id
       @secret     = secret
 
       create_connection(&block)
+    end
+
+    def users
+      Stytch::Users.new(@connection)
+    end
+
+    def magic_links
+      Stytch::MagicLinks.new(@connection)
+    end
+
+    def otps
+      Stytch::OTPS.new(@connection)
     end
 
     private
@@ -44,44 +52,6 @@ module Stytch
       builder.use Stytch::Middleware
       builder.response :json, content_type: /\bjson$/
       builder.adapter Faraday.default_adapter
-    end
-
-    def get(path)
-      @connection.get(
-          path
-      ).body
-    end
-
-    def post(path, payload)
-      @connection.post(
-          path,
-          payload
-      ).body
-    end
-
-    def put(path, payload)
-      @connection.put(
-          path,
-          payload
-      ).body
-    end
-
-    def delete(path)
-      @connection.delete(
-          path
-      ).body
-    end
-
-    def request_with_query_params(path, params)
-      request = path
-      params.compact.each_with_index do |p, i|
-        if i == 0
-          request += "?#{p[0].to_s}=#{p[1]}"
-        else
-          request += "&#{p[0].to_s}=#{p[1]}"
-        end
-      end
-      request
     end
   end
 end

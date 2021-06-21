@@ -1,9 +1,42 @@
-module Stytch
-  module Endpoints
-    module Magic
-      PATH = "/v1/magic_links".freeze
+require_relative 'request_helper'
 
-      def magic_links_email_send(
+module Stytch
+  class MagicLinks
+    include Stytch::RequestHelper
+
+    PATH = "/v1/magic_links".freeze
+
+    def initialize(connection)
+      @connection = connection
+    end
+
+    def email
+      Stytch::MagicLinks::Email.new(@connection)
+    end
+
+    def authenticate(
+      token:,
+      attributes: {},
+      options: {}
+    )
+      request = {
+        token: token,
+      }
+
+      request[:attributes] = attributes if attributes != {}
+      request[:options] = options if options != {}
+
+      post_request("#{PATH}/authenticate", request)
+    end
+
+    class Email < self
+      PATH = PATH + "/email".freeze
+
+      def initialize(connection)
+        @connection = connection
+      end
+
+      def send(
         email:,
         login_magic_link_url:,
         signup_magic_link_url:,
@@ -21,10 +54,10 @@ module Stytch
         request[:signup_expiration_minutes] = signup_expiration_minutes if signup_expiration_minutes != nil
         request[:attributes] = attributes if attributes != {}
 
-        post("#{PATH}/email/send", request)
+        post_request("#{PATH}/send", request)
       end
 
-      def magic_links_email_login_or_create(
+      def login_or_create(
         email:,
         login_magic_link_url:,
         signup_magic_link_url:,
@@ -44,10 +77,10 @@ module Stytch
         request[:signup_expiration_minutes] = signup_expiration_minutes if signup_expiration_minutes != nil
         request[:attributes] = attributes if attributes != {}
 
-        post("#{PATH}/email/login_or_create", request)
+        post_request("#{PATH}/login_or_create", request)
       end
 
-      def magic_links_email_invite(
+      def invite(
         email:,
         invite_magic_link_url:,
         invite_expiration_minutes: nil,
@@ -63,32 +96,17 @@ module Stytch
         request[:attributes] = attributes if attributes != {}
         request[:name] = name if name != {}
 
-        post("#{PATH}/email/invite", request)
+        post_request("#{PATH}/invite", request)
       end
 
-      def magic_links_email_revoke_invite(
+      def revoke_invite(
         email:
       )
         request = {
           email: email,
         }
 
-        post("#{PATH}/email/revoke_invite", request)
-      end
-
-      def magic_links_authenticate(
-        token:,
-        attributes: {},
-        options: {}
-      )
-        request = {
-            token: token,
-        }
-
-        request[:attributes] = attributes if attributes != {}
-        request[:options] = options if options != {}
-
-        post("#{PATH}/authenticate", request)
+        post_request("#{PATH}/revoke_invite", request)
       end
     end
   end
