@@ -32,7 +32,7 @@ client = Stytch::Client.new(
 
 Then make desired API call.
 ```
-client.get_user(user_id: user_id)
+client.users.get(user_id: user_id)
 ```
 
 ## License
