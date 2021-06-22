@@ -5,8 +5,8 @@ require_relative 'lib/stytch/version'
 Gem::Specification.new do |spec|
   spec.name          = 'stytch'
   spec.version       = Stytch::VERSION
-  spec.authors       = ['alex-stytch']
-  spec.email         = ['alex@stytch.com']
+  spec.authors       = ['stytch']
+  spec.email         = ['support@stytch.com']
 
   spec.summary       = 'Stytch Ruby Gem'
   spec.homepage      = 'https://stytch.com'
