@@ -1,8 +1,10 @@
-# Stytch
+# Stytch Ruby Gem
 
-Welcome to the official Stytch ruby gem! This gem provides easy access to Stytch's API.
+The Stytch Ruby gem makes it easy to use the Stytch user infrastructure API in Ruby applications.
 
-## Installation
+It pairs well with the Stytch [Web SDK](https://www.npmjs.com/package/@stytch/stytch-js) or your own custom authentication flow.
+
+## Install
 
 Add this line to your application's Gemfile:
 
@@ -20,25 +22,58 @@ Or install it yourself as:
 
 ## Usage
 
-To make a request, first create a Stytch Client.
-Set `env` to either `:test` or `:api` depending on which environment you want to use.
-```
+You can find your API credentials in the [Stytch Dashboard](https://stytch.com/dashboard/api-keys).
+
+Create an API client:
+```ruby
 client = Stytch::Client.new(
-    env: :test,
+    env: :test, # available environments are :test and :live
     project_id: "***",
     secret: "***"
 )
 ```
 
-Then make desired API call.
-```
-client.users.get(user_id: user_id)
+Send a magic link by email:
+```ruby
+client.magic_links.email.login_or_create(
+    email: "sandbox@stytch.com",
+    login_magic_link_url: "https://example.com/login",
+    signup_magic_link_url: "https://example.com/signup",
+)
 ```
 
-## License
+Authenticate the token from the magic link:
+```ruby
+client.magic_links.authenticate(
+    token: "DOYoip3rvIMMW5lgItikFK-Ak1CfMsgjuiCyI7uuU94=",
+)
+```
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+## Handling Errors
+
+When possible Stytch returns an error prepended with `Stytch Error`. 
+Additionally, the error should include a type that can be used to distinguish errors.
+
+Learn more about errors in the [docs](https://stytch.com/docs/api/errors).
+
+## Documentation
+
+See example requests and responses for all the endpoints in the [Stytch API Reference](https://stytch.com/docs/api).
+
+Follow one of the [integration guides](https://stytch.com/docs/guides) or start with one of our [example apps](https://stytch.com/docs/example-apps).
+
+## Support
+
+If you've found a bug, [open an issue](https://github.com/stytchauth/stytch-go/issues/new)!
+
+If you have questions or want help troubleshooting, join us in [Slack](https://join.slack.com/t/stytch/shared_invite/zt-nil4wo92-jApJ9Cl32cJbEd9esKkvyg) or email support@stytch.com.
+
+If you've found a security vulnerability, please follow our [responsible disclosure instructions](https://stytch.com/docs/security).
+
+## Development
+
+See [DEVELOPMENT.md](DEVELOPMENT.md)
 
 ## Code of Conduct
 
-Everyone interacting in the Stytch project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/stytchauth/stytch-ruby/blob/main/CODE_OF_CONDUCT.md).
+Everyone interacting in the Stytch project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](CODE_OF_CONDUCT.md).
