@@ -51,8 +51,7 @@ client.magic_links.authenticate(
 
 ## Handling Errors
 
-When possible Stytch returns an error prepended with `Stytch Error`. 
-Additionally, the error should include a type that can be used to distinguish errors.
+When possible the response will contain an `error_type` and an `error_message` that can be used to distinguish errors.
 
 Learn more about errors in the [docs](https://stytch.com/docs/api/errors).
 
@@ -64,7 +63,7 @@ Follow one of the [integration guides](https://stytch.com/docs/guides) or start 
 
 ## Support
 
-If you've found a bug, [open an issue](https://github.com/stytchauth/stytch-go/issues/new)!
+If you've found a bug, [open an issue](https://github.com/stytchauth/stytch-ruby/issues/new)!
 
 If you have questions or want help troubleshooting, join us in [Slack](https://join.slack.com/t/stytch/shared_invite/zt-nil4wo92-jApJ9Cl32cJbEd9esKkvyg) or email support@stytch.com.
 
