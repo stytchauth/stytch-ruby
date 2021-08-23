@@ -3,12 +3,13 @@
 require_relative 'users'
 require_relative 'magic_links'
 require_relative 'otps'
+require_relative 'sessions'
 
 module Stytch
   class Client
     ENVIRONMENTS = %i[live test].freeze
 
-    attr_reader :users, :magic_links, :otps
+    attr_reader :users, :magic_links, :otps, :sessions
 
     def initialize(env:, project_id:, secret:, &block)
       @api_host   = api_host(env)
@@ -20,6 +21,7 @@ module Stytch
       @users = Stytch::Users.new(@connection)
       @magic_links = Stytch::MagicLinks.new(@connection)
       @otps = Stytch::OTPs.new(@connection)
+      @sessions = Stytch::Sessions.new(@connection)
     end
 
     private
