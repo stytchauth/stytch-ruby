@@ -6,7 +6,7 @@ module Stytch
   class OTPs
     include Stytch::RequestHelper
 
-    attr_reader :sms, :whatsapp
+    attr_reader :sms, :whatsapp, :email
 
     PATH = '/v1/otps'
 
@@ -15,6 +15,7 @@ module Stytch
 
       @sms = Stytch::OTPs::SMS.new(@connection)
       @whatsapp = Stytch::OTPs::WhatsApp.new(@connection)
+      @email = Stytch::OTPs::Email.new(@connection)
     end
 
     def authenticate(
@@ -112,6 +113,48 @@ module Stytch
       )
         request = {
           phone_number: phone_number,
+          expiration_minutes: expiration_minutes,
+          create_user_as_pending: create_user_as_pending
+        }
+
+        request[:attributes] = attributes if attributes != {}
+
+        post_request("#{PATH}/login_or_create", request)
+      end
+    end
+
+    class Email
+      include Stytch::RequestHelper
+
+      PATH = "#{Stytch::OTPs::PATH}/email"
+
+      def initialize(connection)
+        @connection = connection
+      end
+
+      def send(
+        email:,
+        expiration_minutes: nil,
+        attributes: {}
+      )
+        request = {
+          email: email,
+          expiration_minutes: expiration_minutes
+        }
+
+        request[:attributes] = attributes if attributes != {}
+
+        post_request("#{PATH}/send", request)
+      end
+
+      def login_or_create(
+        email:,
+        expiration_minutes: nil,
+        attributes: {},
+        create_user_as_pending: false
+      )
+        request = {
+          email: email,
           expiration_minutes: expiration_minutes,
           create_user_as_pending: create_user_as_pending
         }

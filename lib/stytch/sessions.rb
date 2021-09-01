@@ -14,7 +14,7 @@ module Stytch
 
     def get(user_id:)
       query_params = {
-          user_id: user_id
+        user_id: user_id
       }
 
       request = request_with_query_params(PATH, query_params)
@@ -23,11 +23,11 @@ module Stytch
     end
 
     def authenticate(
-        session_token:,
-        session_duration_minutes: nil
+      session_token:,
+      session_duration_minutes: nil
     )
       request = {
-          session_token: session_token
+        session_token: session_token
       }
 
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
@@ -36,8 +36,8 @@ module Stytch
     end
 
     def revoke(
-        session_id: nil,
-        session_token: nil
+      session_id: nil,
+      session_token: nil
     )
       request = {}
 
