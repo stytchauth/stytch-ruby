@@ -16,6 +16,21 @@ module Stytch
       @email = Stytch::MagicLinks::Email.new(@connection)
     end
 
+    def create(
+      user_id:,
+      expiration_minutes: nil,
+      attributes: {}
+    )
+      request = {
+        user_id: user_id
+      }
+
+      request[:expiration_minutes] = expiration_minutes unless expiration_minutes.nil?
+      request[:attributes] = attributes if attributes != {}
+
+      post_request(PATH.to_s, request)
+    end
+
     def authenticate(
       token:,
       attributes: {},
