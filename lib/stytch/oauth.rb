@@ -14,12 +14,12 @@ module Stytch
 
     def authenticate(
       token:,
-      session_management_type: {},
+      session_management_type: nil,
     )
       request = {
         token: token
       }
-      request[:session_management_type] = session_management_type if session_management_type != {}
+      request[:session_management_type] = session_management_type unless session_management_type.nil?
 
       post_request("#{PATH}/authenticate", request)
     end
