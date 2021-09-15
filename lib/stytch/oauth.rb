@@ -14,7 +14,7 @@ module Stytch
 
     def authenticate(
       token:,
-      session_management_type: nil,
+      session_management_type: nil
     )
       request = {
         token: token
