@@ -83,6 +83,12 @@ module Stytch
       delete_request("#{PATH}/phone_numbers/#{phone_id}")
     end
 
+    def delete_webauthn_registration(
+      webauthn_registration_id:
+    )
+      delete_request("#{PATH}/webauthn_registrations/#{webauthn_registration_id}")
+    end
+
     private
 
     def format_emails(emails)

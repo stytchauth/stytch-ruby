@@ -5,12 +5,13 @@ require_relative 'magic_links'
 require_relative 'oauth'
 require_relative 'otps'
 require_relative 'sessions'
+require_relative 'webauthn'
 
 module Stytch
   class Client
     ENVIRONMENTS = %i[live test].freeze
 
-    attr_reader :users, :magic_links, :oauth, :otps, :sessions
+    attr_reader :users, :magic_links, :oauth, :otps, :sessions, :webauthn
 
     def initialize(env:, project_id:, secret:, &block)
       @api_host   = api_host(env)
@@ -24,6 +25,7 @@ module Stytch
       @oauth = Stytch::OAuth.new(@connection)
       @otps = Stytch::OTPs.new(@connection)
       @sessions = Stytch::Sessions.new(@connection)
+      @webauthn = Stytch::WebAuthn.new(@connection)
     end
 
     private
