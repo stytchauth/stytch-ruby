@@ -17,12 +17,12 @@ module Stytch
       expiration_minutes: nil
     )
       request = {
-        user_id: user_id,
+        user_id: user_id
       }
 
       request[:expiration_minutes] = expiration_minutes unless expiration_minutes.nil?
 
-      post_request("#{PATH}", request)
+      post_request(PATH, request)
     end
 
     def authenticate(
@@ -46,7 +46,7 @@ module Stytch
       user_id:
     )
       request = {
-        user_id: user_id,
+        user_id: user_id
       }
 
       post_request("#{PATH}/recovery_codes", request)
@@ -58,7 +58,7 @@ module Stytch
     )
       request = {
         user_id: user_id,
-        recovery_code: recovery_code,
+        recovery_code: recovery_code
       }
 
       post_request("#{PATH}/recover", request)
