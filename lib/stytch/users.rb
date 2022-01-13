@@ -89,6 +89,12 @@ module Stytch
       delete_request("#{PATH}/webauthn_registrations/#{webauthn_registration_id}")
     end
 
+    def delete_totp(
+      totp_id:
+    )
+      delete_request("#{PATH}/totps/#{totp_id}")
+    end
+
     private
 
     def format_emails(emails)
