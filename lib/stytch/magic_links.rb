@@ -28,7 +28,7 @@ module Stytch
       request[:expiration_minutes] = expiration_minutes unless expiration_minutes.nil?
       request[:attributes] = attributes if attributes != {}
 
-      post_request(PATH.to_s, request)
+      post_request(PATH, request)
     end
 
     def authenticate(
@@ -61,18 +61,18 @@ module Stytch
 
       def send(
         email:,
-        login_magic_link_url:,
-        signup_magic_link_url:,
+        login_magic_link_url: nil,
+        signup_magic_link_url: nil,
         login_expiration_minutes: nil,
         signup_expiration_minutes: nil,
         attributes: {}
       )
         request = {
-          email: email,
-          login_magic_link_url: login_magic_link_url,
-          signup_magic_link_url: signup_magic_link_url
+          email: email
         }
 
+        request[:login_magic_link_url] = login_magic_link_url unless login_magic_link_url.nil?
+        request[:signup_magic_link_url] = signup_magic_link_url unless signup_magic_link_url.nil?
         request[:login_expiration_minutes] = login_expiration_minutes unless login_expiration_minutes.nil?
         request[:signup_expiration_minutes] = signup_expiration_minutes unless signup_expiration_minutes.nil?
         request[:attributes] = attributes if attributes != {}
@@ -82,8 +82,8 @@ module Stytch
 
       def login_or_create(
         email:,
-        login_magic_link_url:,
-        signup_magic_link_url:,
+        login_magic_link_url: nil,
+        signup_magic_link_url: nil,
         login_expiration_minutes: nil,
         signup_expiration_minutes: nil,
         attributes: {},
@@ -91,11 +91,11 @@ module Stytch
       )
         request = {
           email: email,
-          login_magic_link_url: login_magic_link_url,
-          signup_magic_link_url: signup_magic_link_url,
           create_user_as_pending: create_user_as_pending
         }
 
+        request[:login_magic_link_url] = login_magic_link_url unless login_magic_link_url.nil?
+        request[:signup_magic_link_url] = signup_magic_link_url unless signup_magic_link_url.nil?
         request[:login_expiration_minutes] = login_expiration_minutes unless login_expiration_minutes.nil?
         request[:signup_expiration_minutes] = signup_expiration_minutes unless signup_expiration_minutes.nil?
         request[:attributes] = attributes if attributes != {}
@@ -105,16 +105,16 @@ module Stytch
 
       def invite(
         email:,
-        invite_magic_link_url:,
+        invite_magic_link_url: nil,
         invite_expiration_minutes: nil,
         attributes: {},
         name: {}
       )
         request = {
-          email: email,
-          invite_magic_link_url: invite_magic_link_url
+          email: email
         }
 
+        request[:invite_magic_link_url] = invite_magic_link_url unless invite_magic_link_url.nil?
         request[:invite_expiration_minutes] = invite_expiration_minutes unless invite_expiration_minutes.nil?
         request[:attributes] = attributes if attributes != {}
         request[:name] = name if name != {}
