@@ -48,16 +48,14 @@ client = Stytch::Client.new(
 Send a magic link by email:
 ```ruby
 client.magic_links.email.login_or_create(
-    email: "sandbox@stytch.com",
-    login_magic_link_url: "https://example.com/login",
-    signup_magic_link_url: "https://example.com/signup",
+    email: "sandbox@stytch.com"
 )
 ```
 
 Authenticate the token from the magic link:
 ```ruby
 client.magic_links.authenticate(
-    token: "DOYoip3rvIMMW5lgItikFK-Ak1CfMsgjuiCyI7uuU94=",
+    token: "DOYoip3rvIMMW5lgItikFK-Ak1CfMsgjuiCyI7uuU94="
 )
 ```
 
