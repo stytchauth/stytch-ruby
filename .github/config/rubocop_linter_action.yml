@@ -1,3 +1,0 @@
-rubocop_excluded_cops:
-  - "Style/FrozenStringLiteralComment"
-rubocop_fail_level: "warning"
