@@ -43,7 +43,7 @@ module Stytch
     end
 
     def recovery_codes(
-      user_id:
+      user_id:,
     )
       request = {
         user_id: user_id
