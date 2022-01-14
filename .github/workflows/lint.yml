@@ -1,6 +1,6 @@
 name: Lint
 
-on: [push]
+on: pull_request
 
 jobs:
   build:
@@ -11,3 +11,5 @@ jobs:
         uses: andrewmcodes/rubocop-linter-action@v3.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          annotations: false
