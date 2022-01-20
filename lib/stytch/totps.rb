@@ -54,12 +54,17 @@ module Stytch
 
     def recover(
       user_id:,
-      recovery_code:
+      recovery_code:,
+      session_token: nil,
+      session_duration_minutes: nil
     )
       request = {
         user_id: user_id,
         recovery_code: recovery_code
       }
+
+      request[:session_token] = session_token unless session_token.nil?
+      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
 
       post_request("#{PATH}/recover", request)
     end
