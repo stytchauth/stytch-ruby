@@ -57,7 +57,7 @@ client.magic_links.email.login_or_create(
 Authenticate the token from the magic link:
 ```ruby
 client.magic_links.authenticate(
-    token: "DOYoip3rvIMMW5lgItikFK-Ak1CfMsgjuiCyI7uuU94=",
+    token: "SeiGwdj5lKkrEVgcEY3QNJXt6srxS3IK2Nwkar6mXD4=",
 )
 ```
 
