@@ -34,6 +34,7 @@ This client library supports all of Stytch's live products:
   - [x] [Session Management](https://stytch.com/docs/api/sessions-overview)
   - [x] [WebAuthn (Beta)](https://stytch.com/docs/api/webauthn-overview)
   - [x] [Time-based one-time passcodes (TOTPs) (Beta)](https://stytch.com/docs/api/totps-overview)
+  - [x] [Crypto wallets (Beta)](https://stytch.com/docs/api/crypto-wallet-overview)
 
 ### Example usage
 Create an API client:
@@ -48,16 +49,14 @@ client = Stytch::Client.new(
 Send a magic link by email:
 ```ruby
 client.magic_links.email.login_or_create(
-    email: "sandbox@stytch.com",
-    login_magic_link_url: "https://example.com/login",
-    signup_magic_link_url: "https://example.com/signup",
+    email: "sandbox@stytch.com"
 )
 ```
 
 Authenticate the token from the magic link:
 ```ruby
 client.magic_links.authenticate(
-    token: "SeiGwdj5lKkrEVgcEY3QNJXt6srxS3IK2Nwkar6mXD4=",
+    token: "SeiGwdj5lKkrEVgcEY3QNJXt6srxS3IK2Nwkar6mXD4="
 )
 ```
 

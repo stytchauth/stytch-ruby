@@ -54,11 +54,13 @@ module Stytch
       name: {},
       emails: [],
       phone_numbers: [],
+      crypto_wallets: [],
       attributes: {}
     )
       request = {
         emails: format_emails(emails),
-        phone_numbers: format_phone_numbers(phone_numbers)
+        phone_numbers: format_phone_numbers(phone_numbers),
+        crypto_wallets: crypto_wallets
       }
 
       request[:name] = name if name != {}
@@ -93,6 +95,12 @@ module Stytch
       totp_id:
     )
       delete_request("#{PATH}/totps/#{totp_id}")
+    end
+
+    def delete_crypto_wallet(
+      crypto_wallet_id:
+    )
+      delete_request("#{PATH}/crypto_wallets/#{crypto_wallet_id}")
     end
 
     private
