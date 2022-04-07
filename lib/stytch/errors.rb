@@ -1,5 +1,3 @@
-
-
 module Stytch
     class JWTInvalidIssuerError < StandardError
         def initialize(msg="JWT issuer did not match")
