@@ -29,6 +29,7 @@ module Stytch
       user_id:,
       totp_code:,
       session_token: nil,
+      session_jwt: nil,
       session_duration_minutes: nil
     )
       request = {
@@ -37,6 +38,7 @@ module Stytch
       }
 
       request[:session_token] = session_token unless session_token.nil?
+      request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
 
       post_request("#{PATH}/authenticate", request)
@@ -56,6 +58,7 @@ module Stytch
       user_id:,
       recovery_code:,
       session_token: nil,
+      session_jwt: nil,
       session_duration_minutes: nil
     )
       request = {
@@ -64,6 +67,7 @@ module Stytch
       }
 
       request[:session_token] = session_token unless session_token.nil?
+      request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
 
       post_request("#{PATH}/recover", request)
