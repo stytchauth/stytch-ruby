@@ -36,6 +36,7 @@ module Stytch
       attributes: {},
       options: {},
       session_token: nil,
+      session_jwt: nil,
       session_duration_minutes: nil
     )
       request = {
@@ -45,6 +46,7 @@ module Stytch
       request[:attributes] = attributes if attributes != {}
       request[:options] = options if options != {}
       request[:session_token] = session_token unless session_token.nil?
+      request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
 
       post_request("#{PATH}/authenticate", request)

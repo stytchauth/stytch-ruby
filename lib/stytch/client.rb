@@ -26,7 +26,7 @@ module Stytch
       @magic_links = Stytch::MagicLinks.new(@connection)
       @oauth = Stytch::OAuth.new(@connection)
       @otps = Stytch::OTPs.new(@connection)
-      @sessions = Stytch::Sessions.new(@connection)
+      @sessions = Stytch::Sessions.new(@connection, @project_id)
       @totps = Stytch::TOTPs.new(@connection)
       @webauthn = Stytch::WebAuthn.new(@connection)
       @crypto_wallets = Stytch::CryptoWallets.new(@connection)
