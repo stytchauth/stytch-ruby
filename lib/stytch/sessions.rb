@@ -16,7 +16,7 @@ module Stytch
       @connection = connection
       @project_id = project_id
       @jwks_loader = ->(options) do
-        options[:invalidate] ? get_jwks(project_id: @project_id) : {}
+        options[:invalidate] ? jwks(project_id: @project_id) : {}
       end
     end
 
@@ -56,7 +56,7 @@ module Stytch
       post_request("#{PATH}/revoke", request)
     end
 
-    def get_jwks(project_id:)
+    def jwks(project_id:)
       request_path = "#{PATH}/jwks/" + project_id
       get_request(request_path)
     end
