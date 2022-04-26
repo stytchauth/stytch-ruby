@@ -12,6 +12,30 @@ module Stytch
       @connection = connection
     end
 
+    def search(query, limit: 100, cursor: nil)
+      request = {
+        query: query,
+        limit: limit
+      }
+      request[:cursor] = cursor if cursor
+      post_request("#{PATH}/search", request)
+    end
+
+    def search_all(query, limit: 100)
+      Enumerator.new do |enum|
+        cursor = nil
+        loop do
+          resp = search(query, limit: limit, cursor: cursor)
+          resp['results'].each do |user|
+            enum << user
+          end
+
+          cursor = resp['results_metadata']['next_cursor']
+          break if cursor.nil?
+        end
+      end
+    end
+
     def get(user_id:)
       get_request("#{PATH}/#{user_id}")
     end
