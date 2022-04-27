@@ -114,7 +114,7 @@ module Stytch
     def marshal_jwt_into_session(jwt)
       stytch_claim = "https://stytch.com/session"
       return {
-        "session_id" => jwt["jti"],
+        "session_id" => jwt[stytch_claim]["id"],
         "user_id" => jwt["sub"],
         "started_at" => jwt[stytch_claim]["started_at"],
         "last_accessed_at" => jwt[stytch_claim]["last_accessed_at"],
