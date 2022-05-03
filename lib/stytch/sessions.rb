@@ -88,6 +88,12 @@ module Stytch
           session_duration_minutes: session_duration_minutes,
         )
       end
+    rescue StandardError
+      # JWT could not be verified locally. Check with the Stytch API.
+      return authenticate(
+        session_jwt: session_jwt,
+        session_duration_minutes: session_duration_minutes,
+      )
     end
 
     # Parse a JWT and verify the signature locally (without calling /authenticate in the API)
@@ -97,7 +103,7 @@ module Stytch
     def authenticate_jwt_local(session_jwt)
       issuer = "stytch.com/" + @project_id
       begin
-        decoded_token = JWT.decode session_jwt, nil, true, 
+        decoded_token = JWT.decode session_jwt, nil, true,
         { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ["RS256"]}
         return decoded_token[0]
       rescue JWT::InvalidIssuerError
