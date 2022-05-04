@@ -119,12 +119,14 @@ module Stytch
 
     def marshal_jwt_into_session(jwt)
       stytch_claim = "https://stytch.com/session"
+      expires_at = jwt[stytch_claim]["expires_at"] || Time.at(jwt["exp"]).to_datetime.utc.strftime('%Y-%m-%dT%H:%M:%SZ')
       return {
         "session_id" => jwt[stytch_claim]["id"],
         "user_id" => jwt["sub"],
         "started_at" => jwt[stytch_claim]["started_at"],
         "last_accessed_at" => jwt[stytch_claim]["last_accessed_at"],
-        "expires_at" => Time.at(jwt["exp"]).to_datetime.iso8601,
+        # For JWTs that include it, prefer the inner expires_at claim.
+        "expires_at" => expires_at,
         "attributes" => jwt[stytch_claim]["attributes"],
         "authentication_factors" => jwt[stytch_claim]["authentication_factors"],
       }
