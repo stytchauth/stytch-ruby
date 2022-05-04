@@ -20,12 +20,13 @@ class TestSessions < Test::Unit::TestCase
     kid = "jwk-test-00000000-0000-0000-0000-000000000000"
     headers = { kid: kid }
 
-    now = Time.now.to_datetime.iso8601
+    now = Time.now
+    now_timestamp = format_timestamp(now)
     claims = {
       "https://stytch.com/session" => {
-        "started_at" => now,
-        "last_accessed_at" => now,
-        "expires_at" => now,
+        "started_at" => now_timestamp,
+        "last_accessed_at" => now_timestamp,
+        "expires_at" => (now + 3600).to_datetime.iso8601,
         "attributes" => {"user_agent" => "", "ip_address" => ""},
         "authentication_factors" => [
             {
@@ -34,16 +35,16 @@ class TestSessions < Test::Unit::TestCase
                 "email_address" => "sandbox@stytch.com",
                 "email_id" => "email-live-cca9d7d0-11b6-4167-9385-d7e0c9a77418",
             },
-            "last_authenticated_at" => now,
+            "last_authenticated_at" => now_timestamp,
             "type" => "magic_link",
           },
         ],
         "id" => "session-live-e26a0ccb-0dc0-4edb-a4bb-e70210f43555",
       },
       "sub" => "user-live-fde03dd1-fff7-4b3c-9b31-ead3fbc224de",
-      "iat" => now.to_time.to_i,
-      "nbf" => now.to_time.to_i,
-      "exp" => now.to_time.to_i + 3600,  # one hour
+      "iat" => now.to_i,
+      "nbf" => now.to_i,
+      "exp" => now.to_i + 5 * 60,  # five minutes
       "iss" => "stytch.com/" + project_id,
       "aud" => [project_id],
     }
