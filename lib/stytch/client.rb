@@ -36,10 +36,13 @@ module Stytch
 
     def api_host(env)
       case env
-      when :live
+      when :live, 'live'
         'https://api.stytch.com'
-      when :test
+      when :test, 'test'
         'https://test.stytch.com'
+      when String
+        # Assume this is an internal development URL
+        env
       else
         raise ArgumentError, "Invalid value for env (#{@env}): should be live or test"
       end
