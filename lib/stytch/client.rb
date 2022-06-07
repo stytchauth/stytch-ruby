@@ -8,12 +8,13 @@ require_relative 'sessions'
 require_relative 'totps'
 require_relative 'webauthn'
 require_relative 'crypto_wallets'
+require_relative 'passwords'
 
 module Stytch
   class Client
     ENVIRONMENTS = %i[live test].freeze
 
-    attr_reader :users, :magic_links, :oauth, :otps, :sessions, :totps, :webauthn, :crypto_wallets
+    attr_reader :users, :magic_links, :oauth, :otps, :sessions, :totps, :webauthn, :crypto_wallets, :passwords
 
     def initialize(env:, project_id:, secret:, &block)
       @api_host   = api_host(env)
@@ -30,6 +31,7 @@ module Stytch
       @totps = Stytch::TOTPs.new(@connection)
       @webauthn = Stytch::WebAuthn.new(@connection)
       @crypto_wallets = Stytch::CryptoWallets.new(@connection)
+      @passwords = Stytch::Passwords.new(@connection)
     end
 
     private
