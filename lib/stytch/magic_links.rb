@@ -37,7 +37,8 @@ module Stytch
       options: {},
       session_token: nil,
       session_jwt: nil,
-      session_duration_minutes: nil
+      session_duration_minutes: nil,
+      code_verifier: nil
     )
       request = {
         token: token
@@ -48,6 +49,7 @@ module Stytch
       request[:session_token] = session_token unless session_token.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+      request[:code_verifier] = code_verifier unless code_verifier.nil?
 
       post_request("#{PATH}/authenticate", request)
     end
@@ -67,7 +69,8 @@ module Stytch
         signup_magic_link_url: nil,
         login_expiration_minutes: nil,
         signup_expiration_minutes: nil,
-        attributes: {}
+        attributes: {},
+        code_challenge: nil
       )
         request = {
           email: email
@@ -78,6 +81,7 @@ module Stytch
         request[:login_expiration_minutes] = login_expiration_minutes unless login_expiration_minutes.nil?
         request[:signup_expiration_minutes] = signup_expiration_minutes unless signup_expiration_minutes.nil?
         request[:attributes] = attributes if attributes != {}
+        request[:code_challenge] = code_challenge unless code_challenge.nil?
 
         post_request("#{PATH}/send", request)
       end
@@ -89,7 +93,8 @@ module Stytch
         login_expiration_minutes: nil,
         signup_expiration_minutes: nil,
         attributes: {},
-        create_user_as_pending: false
+        create_user_as_pending: false,
+        code_challenge: nil
       )
         request = {
           email: email,
@@ -101,6 +106,7 @@ module Stytch
         request[:login_expiration_minutes] = login_expiration_minutes unless login_expiration_minutes.nil?
         request[:signup_expiration_minutes] = signup_expiration_minutes unless signup_expiration_minutes.nil?
         request[:attributes] = attributes if attributes != {}
+        request[:code_challenge] = code_challenge unless code_challenge.nil?
 
         post_request("#{PATH}/login_or_create", request)
       end
