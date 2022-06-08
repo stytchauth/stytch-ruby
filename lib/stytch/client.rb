@@ -40,8 +40,11 @@ module Stytch
         'https://api.stytch.com'
       when :test
         'https://test.stytch.com'
+      when /\Ahttps?:\/\//
+        # If this is a string that looks like a URL, assume it's an internal development URL.
+        env
       else
-        raise ArgumentError, "Invalid value for env (#{@env}): should be live or test"
+        raise ArgumentError, "Invalid value for env (#{env}): should be :live or :test"
       end
     end
 
