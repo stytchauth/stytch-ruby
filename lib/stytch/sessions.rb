@@ -33,13 +33,15 @@ module Stytch
     def authenticate(
       session_token: nil,
       session_jwt: nil,
-      session_duration_minutes: nil
+      session_duration_minutes: nil,
+      session_custom_claims: nil
     )
       request = {}
 
       request[:session_token] = session_token unless session_token.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
       post_request("#{PATH}/authenticate", request)
     end
@@ -68,12 +70,14 @@ module Stytch
     def authenticate_jwt(
       session_jwt,
       max_token_age_seconds: nil,
-      session_duration_minutes: nil
+      session_duration_minutes: nil,
+      session_custom_claims: nil
     )
       if max_token_age_seconds == 0
         return authenticate(
           session_jwt: session_jwt,
           session_duration_minutes: session_duration_minutes,
+          session_custom_claims: session_custom_claims,
         )
       end
 
@@ -86,6 +90,7 @@ module Stytch
         return authenticate(
           session_jwt: session_jwt,
           session_duration_minutes: session_duration_minutes,
+          session_custom_claims: session_custom_claims,
         )
       end
     rescue StandardError
@@ -93,6 +98,7 @@ module Stytch
       return authenticate(
         session_jwt: session_jwt,
         session_duration_minutes: session_duration_minutes,
+        session_custom_claims: session_custom_claims,
       )
     end
 
