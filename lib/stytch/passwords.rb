@@ -99,5 +99,24 @@ module Stytch
 
       post_request("#{PATH}/strength_check", request)
     end
+
+    def migrate(
+        email:,
+        hash:,
+        hash_type:,
+        prepend_salt: nil,
+        append_salt: nil
+    )
+      request = {
+          email: email,
+          hash: hash,
+          hash_type: hash_type
+      }
+
+      request[:prepend_salt] = prepend_salt unless prepend_salt.nil?
+      request[:append_salt] = append_salt unless append_salt.nil?
+
+      post_request("#{PATH}/migrate", request)
+    end
   end
 end
