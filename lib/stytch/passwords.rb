@@ -99,7 +99,6 @@ module Stytch
         email:,
         login_redirect_url: nil,
         reset_password_redirect_url: nil,
-        login_expiration_minutes: nil,
         reset_password_expiration_minutes: nil,
         attributes: {},
         code_challenge: nil
@@ -110,7 +109,6 @@ module Stytch
 
         request[:login_redirect_url] = login_redirect_url unless login_redirect_url.nil?
         request[:reset_password_redirect_url] = reset_password_redirect_url unless reset_password_redirect_url.nil?
-        request[:login_expiration_minutes] = login_expiration_minutes unless login_expiration_minutes.nil?
         unless reset_password_expiration_minutes.nil?
           request[:reset_password_expiration_minutes] =
             reset_password_expiration_minutes
