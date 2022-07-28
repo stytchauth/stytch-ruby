@@ -71,13 +71,8 @@ module Stytch
       email:,
       hash:,
       hash_type:,
-      prepend_salt: nil,
-      append_salt: nil,
-      argon_2_salt: nil,
-      argon_2_iteration_amount: nil,
-      argon_2_memory: nil,
-      argon_2_threads: nil,
-      argon_2_key_length: nil
+      md_5_config: {},
+      argon_2_config: {}
     )
       request = {
         email: email,
@@ -85,13 +80,8 @@ module Stytch
         hash_type: hash_type
       }
 
-      request[:prepend_salt] = prepend_salt unless prepend_salt.nil?
-      request[:append_salt] = append_salt unless append_salt.nil?
-      request[:argon_2_salt] = argon_2_salt unless argon_2_salt.nil?
-      request[:argon_2_iteration_amount] = argon_2_iteration_amount unless argon_2_iteration_amount.nil?
-      request[:argon_2_memory] = argon_2_memory unless argon_2_memory.nil?
-      request[:argon_2_threads] = argon_2_threads unless argon_2_threads.nil?
-      request[:argon_2_key_length] = argon_2_key_length unless argon_2_key_length.nil?
+      request[:md_5_config] = md_5_config unless md_5_config != {}
+      request[:argon_2_config] = argon_2_config unless argon_2_config != {}
 
       post_request("#{PATH}/migrate", request)
     end
