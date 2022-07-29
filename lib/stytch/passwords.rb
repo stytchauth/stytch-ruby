@@ -71,8 +71,8 @@ module Stytch
       email:,
       hash:,
       hash_type:,
-      prepend_salt: nil,
-      append_salt: nil
+      md_5_config: {},
+      argon_2_config: {}
     )
       request = {
         email: email,
@@ -80,8 +80,8 @@ module Stytch
         hash_type: hash_type
       }
 
-      request[:prepend_salt] = prepend_salt unless prepend_salt.nil?
-      request[:append_salt] = append_salt unless append_salt.nil?
+      request[:md_5_config] = md_5_config unless md_5_config != {}
+      request[:argon_2_config] = argon_2_config unless argon_2_config != {}
 
       post_request("#{PATH}/migrate", request)
     end
