@@ -17,7 +17,7 @@ module Stytch
       @project_id = project_id
       @cache_last_update = 0
       @jwks_loader = lambda do |options|
-        @cached_keys = nil if options[:invalidate] || @cache_last_update < Time.now.to_i - 300
+        @cached_keys = nil if options[:invalidate] && @cache_last_update < Time.now.to_i - 300
         @cached_keys ||= begin
           @cache_last_update = Time.now.to_i
           keys = []
