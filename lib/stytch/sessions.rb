@@ -15,8 +15,17 @@ module Stytch
     def initialize(connection, project_id)
       @connection = connection
       @project_id = project_id
-      @jwks_loader = ->(options) do
-        options[:invalidate] ? jwks(project_id: @project_id) : {}
+      @cache_last_update = 0
+      @jwks_loader = lambda do |options|
+        @cached_keys = nil if options[:invalidate] || @cache_last_update < Time.now.to_i - 300
+        @cached_keys ||= begin
+          @cache_last_update = Time.now.to_i
+          keys = []
+          jwks(project_id: @project_id)['keys'].each do |r|
+            keys << r
+          end
+          { keys: keys }
+        end
       end
     end
 
