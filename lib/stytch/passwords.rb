@@ -6,7 +6,7 @@ module Stytch
   class Passwords
     include Stytch::RequestHelper
 
-    attr_reader :email
+    attr_reader :email, :existing_password
 
     PATH = '/v1/passwords'
 
@@ -14,6 +14,7 @@ module Stytch
       @connection = connection
 
       @email = Stytch::Passwords::Email.new(@connection)
+      @existing_password = Stytch::Passwords::ExistingPassword.new(@connection)
     end
 
     def create(
@@ -142,6 +143,39 @@ module Stytch
         request[:attributes] = attributes if attributes != {}
         request[:options] = options if options != {}
         request[:code_verifier] = code_verifier unless code_verifier.nil?
+
+        post_request("#{PATH}/reset", request)
+      end
+    end
+
+    class ExistingPassword
+      include Stytch::RequestHelper
+
+      PATH = "#{Stytch::Passwords::PATH}/existing_password"
+
+      def initialize(connection)
+        @connection = connection
+      end
+
+      def reset(
+        email:,
+        existing_password:,
+        new_password:,
+        session_token: nil,
+        session_jwt: nil,
+        session_duration_minutes: nil,
+        session_custom_claims: nil
+      )
+        request = {
+          email: email,
+          existing_password: existing_password,
+          new_password: new_password
+        }
+
+        request[:session_token] = session_token unless session_token.nil?
+        request[:session_jwt] = session_jwt unless session_jwt.nil?
+        request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+        request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
         post_request("#{PATH}/reset", request)
       end
