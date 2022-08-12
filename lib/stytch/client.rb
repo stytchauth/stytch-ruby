@@ -51,10 +51,13 @@ module Stytch
     end
 
     def create_connection
-      @connection = Faraday.new(url: @api_host) do |builder|
+      @connection = Faraday.new(url: @api_host, headers: {
+        headers: Stytch::Middleware::NETWORK_HEADERS
+      }) do |builder|
         block_given? ? yield(builder) : build_default_connection(builder)
+        builder.request :authorization, :basic, @project_id, @secret
       end
-      @connection.basic_auth(@project_id, @secret)
+      # @connection.basic_auth(@project_id, @secret)
     end
 
     def build_default_connection(builder)

@@ -7,7 +7,8 @@ require 'uri'
 require_relative 'version'
 
 module Stytch
-  class Middleware < ::Faraday::Response::Middleware
+  # class Middleware < ::Faraday::Response::Middleware
+  class Middleware < ::Faraday::Middleware
     NETWORK_HEADERS = {
       'User-Agent' => "Stytch Ruby v#{Stytch::VERSION}",
       'Content-Type' => 'application/json'

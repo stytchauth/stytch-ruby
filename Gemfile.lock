@@ -1,0 +1,70 @@
+GIT
+  remote: https://github.com/jwt/ruby-jwt.git
+  revision: a3c52baef9ad9729d5548a16cb01bc74f819b853
+  specs:
+    jwt (2.4.1)
+
+PATH
+  remote: .
+  specs:
+    stytch (3.10.0)
+      faraday (>= 2.0, < 3.0)
+      json-jwt (>= 1.13.0)
+      jwt (>= 2.3.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    activesupport (7.0.3.1)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 1.6, < 2)
+      minitest (>= 5.1)
+      tzinfo (~> 2.0)
+    aes_key_wrap (1.1.0)
+    bindata (2.4.10)
+    concurrent-ruby (1.1.10)
+    diff-lcs (1.5.0)
+    faraday (2.4.0)
+      faraday-net_http (~> 2.0)
+      ruby2_keywords (>= 0.0.4)
+    faraday-net_http (2.1.0)
+    httpclient (2.8.3)
+    i18n (1.12.0)
+      concurrent-ruby (~> 1.0)
+    json-jwt (1.15.1)
+      activesupport (>= 4.2)
+      aes_key_wrap
+      bindata
+      httpclient
+    minitest (5.16.2)
+    power_assert (2.0.1)
+    rspec (3.11.0)
+      rspec-core (~> 3.11.0)
+      rspec-expectations (~> 3.11.0)
+      rspec-mocks (~> 3.11.0)
+    rspec-core (3.11.0)
+      rspec-support (~> 3.11.0)
+    rspec-expectations (3.11.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.11.0)
+    rspec-mocks (3.11.1)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.11.0)
+    rspec-support (3.11.0)
+    ruby2_keywords (0.0.5)
+    test-unit (3.5.3)
+      power_assert
+    tzinfo (2.0.5)
+      concurrent-ruby (~> 1.0)
+
+PLATFORMS
+  arm64-darwin-21
+
+DEPENDENCIES
+  jwt!
+  rspec
+  stytch!
+  test-unit (>= 3.5.3)
+
+BUNDLED WITH
+   2.3.7
