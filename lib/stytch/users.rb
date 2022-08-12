@@ -127,6 +127,12 @@ module Stytch
       delete_request("#{PATH}/crypto_wallets/#{crypto_wallet_id}")
     end
 
+    def delete_password(
+      password_id:
+    )
+      delete_request("#{PATH}/passwords/#{password_id}")
+    end
+
     private
 
     def format_emails(emails)

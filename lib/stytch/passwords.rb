@@ -6,7 +6,7 @@ module Stytch
   class Passwords
     include Stytch::RequestHelper
 
-    attr_reader :email, :existing_password
+    attr_reader :email, :existing_password, :session
 
     PATH = '/v1/passwords'
 
@@ -15,6 +15,7 @@ module Stytch
 
       @email = Stytch::Passwords::Email.new(@connection)
       @existing_password = Stytch::Passwords::ExistingPassword.new(@connection)
+      @session = Stytch::Passwords::Session.new(@connection)
     end
 
     def create(
@@ -73,7 +74,9 @@ module Stytch
       hash:,
       hash_type:,
       md_5_config: {},
-      argon_2_config: {}
+      argon_2_config: {},
+      sha_1_config: {},
+      scrypt_config: {}
     )
       request = {
         email: email,
@@ -83,6 +86,8 @@ module Stytch
 
       request[:md_5_config] = md_5_config unless md_5_config != {}
       request[:argon_2_config] = argon_2_config unless argon_2_config != {}
+      request[:sha_1_config] = sha_1_config unless sha_1_config != {}
+      request[:scrypt_config] = scrypt_config unless scrypt_config != {}
 
       post_request("#{PATH}/migrate", request)
     end
@@ -176,6 +181,29 @@ module Stytch
         request[:session_jwt] = session_jwt unless session_jwt.nil?
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+
+        post_request("#{PATH}/reset", request)
+      end
+    end
+
+    class Session
+      include Stytch::RequestHelper
+
+      PATH = "#{Stytch::Passwords::PATH}/session"
+
+      def initialize(connection)
+        @connection = connection
+      end
+
+      def reset(
+        password:,
+        session_token: nil,
+        session_jwt: nil
+      )
+        request = { password: password }
+
+        request[:session_token] = session_token unless session_token.nil?
+        request[:session_jwt] = session_jwt unless session_jwt.nil?
 
         post_request("#{PATH}/reset", request)
       end
