@@ -133,6 +133,12 @@ module Stytch
       delete_request("#{PATH}/passwords/#{password_id}")
     end
 
+    def delete_biometric_registration(
+      biometric_registration_id:
+    )
+      delete_request("#{PATH}/biometric_registrations/#{biometric_registration_id}")
+    end
+
     private
 
     def format_emails(emails)
