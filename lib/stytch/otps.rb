@@ -55,7 +55,10 @@ module Stytch
       def send(
         phone_number:,
         expiration_minutes: nil,
-        attributes: {}
+        attributes: {},
+        user_id: nil,
+        session_token: nil,
+        session_jwt: nil,
       )
         request = {
           phone_number: phone_number,
@@ -63,6 +66,9 @@ module Stytch
         }
 
         request[:attributes] = attributes if attributes != {}
+        request[:user_id] = user_id unless user_id.nil?
+        request[:session_token] = session_token unless session_token.nil?
+        request[:session_jwt] = session_jwt unless session_jwt.nil?
 
         post_request("#{PATH}/send", request)
       end
@@ -97,7 +103,10 @@ module Stytch
       def send(
         phone_number:,
         expiration_minutes: nil,
-        attributes: {}
+        attributes: {},
+        user_id: nil,
+        session_token: nil,
+        session_jwt: nil,
       )
         request = {
           phone_number: phone_number,
@@ -105,6 +114,9 @@ module Stytch
         }
 
         request[:attributes] = attributes if attributes != {}
+        request[:user_id] = user_id unless user_id.nil?
+        request[:session_token] = session_token unless session_token.nil?
+        request[:session_jwt] = session_jwt unless session_jwt.nil?
 
         post_request("#{PATH}/send", request)
       end
@@ -139,7 +151,10 @@ module Stytch
       def send(
         email:,
         expiration_minutes: nil,
-        attributes: {}
+        attributes: {},
+        user_id: nil,
+        session_token: nil,
+        session_jwt: nil,
       )
         request = {
           email: email,
@@ -147,6 +162,9 @@ module Stytch
         }
 
         request[:attributes] = attributes if attributes != {}
+        request[:user_id] = user_id unless user_id.nil?
+        request[:session_token] = session_token unless session_token.nil?
+        request[:session_jwt] = session_jwt unless session_jwt.nil?
 
         post_request("#{PATH}/send", request)
       end
