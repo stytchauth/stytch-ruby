@@ -72,7 +72,10 @@ module Stytch
         login_expiration_minutes: nil,
         signup_expiration_minutes: nil,
         attributes: {},
-        code_challenge: nil
+        code_challenge: nil,
+        user_id: nil,
+        session_token: nil,
+        session_jwt: nil,
       )
         request = {
           email: email
@@ -84,6 +87,9 @@ module Stytch
         request[:signup_expiration_minutes] = signup_expiration_minutes unless signup_expiration_minutes.nil?
         request[:attributes] = attributes if attributes != {}
         request[:code_challenge] = code_challenge unless code_challenge.nil?
+        request[:user_id] = user_id unless user_id.nil?
+        request[:session_token] = session_token unless session_token.nil?
+        request[:session_jwt] = session_jwt unless session_jwt.nil?
 
         post_request("#{PATH}/send", request)
       end
