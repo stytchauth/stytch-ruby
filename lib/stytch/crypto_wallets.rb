@@ -17,7 +17,7 @@ module Stytch
       crypto_wallet_type:,
       user_id: nil,
       session_token: nil,
-      session_jwt: nil,
+      session_jwt: nil
     )
       request = {
         crypto_wallet_address: crypto_wallet_address,

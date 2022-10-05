@@ -75,7 +75,7 @@ module Stytch
         code_challenge: nil,
         user_id: nil,
         session_token: nil,
-        session_jwt: nil,
+        session_jwt: nil
       )
         request = {
           email: email
