@@ -1,0 +1,39 @@
+name: Ruby
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby:
+          # Start at the minimum required Ruby version in the gemspec.
+          - '2.3'
+          - '2.4'
+          - '2.5'
+          - '2.6'
+          - '2.7'
+          - '3.0'
+          - '3.1'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+
+          # The default RubyGems version for older Rubies has a bug that prevents
+          # `required_ruby_version` from working for Bundler. This was fixed in v3.2.3.
+          #
+          # The setup-ruby action will still use the default RubyGems if that version is newer
+          # than the one we specify here.
+          rubygems: '3.2.3'
+          bundler-cache: true
+
+      - run: bundle exec rspec
