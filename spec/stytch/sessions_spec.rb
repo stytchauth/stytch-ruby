@@ -1,22 +1,10 @@
 # frozen_string_literal: true
 
-require 'faraday'
-require 'faraday_middleware'
-
-require_relative '../../lib/stytch/client'
-require_relative '../../lib/stytch/middleware'
-require_relative '../../lib/stytch/version'
-
-require 'test/unit'
-
-class TestSessions < Test::Unit::TestCase
-  def test_correctly_decode_jwt
+RSpec.describe Stytch::Sessions do
+  it 'correctly decodes a JWT' do
     project_id = "project-test-00000000-0000-0000-0000-000000000000"
-    client = Stytch::Client.new(
-      env: :test,
-      project_id: project_id,
-      secret: "" # the methods we're calling don't require project authentication
-    )
+    sessions = Stytch::Sessions.new(nil, project_id) # the methods we're calling don't require a connection
+
     kid = "jwk-test-00000000-0000-0000-0000-000000000000"
     headers = { kid: kid }
 
@@ -56,44 +44,35 @@ class TestSessions < Test::Unit::TestCase
     patch_jwks_loader = ->(_options) do
       {"keys" => [jwk.export]}
     end
-    client.sessions.instance_variable_set(:@jwks_loader, patch_jwks_loader)
+    sessions.instance_variable_set(:@jwks_loader, patch_jwks_loader)
 
-    resp = client.sessions.authenticate_jwt_local(token)
-    assert_equal(resp, claims)
+    expect(sessions.authenticate_jwt_local(token)).to eq(claims)
   end
 
-  def test_marshal_jwt_into_session_new_format
+  it 'marshals JWT into session (new format)' do
     project_id = "project-test-00000000-0000-0000-0000-000000000000"
-    client = Stytch::Client.new(
-      env: :test,
-      project_id: project_id,
-      secret: "" # the methods we're calling don't require project authentication
-    )
+    sessions = Stytch::Sessions.new(nil, project_id) # the methods we're calling don't require a connection
 
     now = Time.utc(2022, 5, 3, 18, 51, 41)
     claims = jwt_claims(project_id, now)
 
-    session = client.sessions.marshal_jwt_into_session(claims)
+    session = sessions.marshal_jwt_into_session(claims)
     # The session expires an hour after `now`.
-    assert_equal(session['expires_at'], '2022-05-03T19:51:41Z')
+    expect(session['expires_at']).to eq('2022-05-03T19:51:41Z')
   end
 
-  def test_marshal_jwt_into_session_old_format
+  it 'marshals JWT into session (old format)' do
     project_id = "project-test-00000000-0000-0000-0000-000000000000"
-    client = Stytch::Client.new(
-      env: :test,
-      project_id: project_id,
-      secret: "" # the methods we're calling don't require project authentication
-    )
+    sessions = Stytch::Sessions.new(nil, project_id) # the methods we're calling don't require a connection
 
     now = Time.utc(2022, 5, 3, 18, 51, 41)
     claims = jwt_claims(project_id, now)
     claims['https://stytch.com/session'].delete('expires_at')
 
-    session = client.sessions.marshal_jwt_into_session(claims)
+    session = sessions.marshal_jwt_into_session(claims)
 
     # The "exp" claim is five minutes after `now`.
-    assert_equal(session['expires_at'], '2022-05-03T18:56:41Z')
+    expect(session['expires_at']).to eq('2022-05-03T18:56:41Z')
   end
 
   private
