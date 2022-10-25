@@ -58,7 +58,7 @@ module Stytch
         attributes: {},
         user_id: nil,
         session_token: nil,
-        session_jwt: nil,
+        session_jwt: nil
       )
         request = {
           phone_number: phone_number,
@@ -106,7 +106,7 @@ module Stytch
         attributes: {},
         user_id: nil,
         session_token: nil,
-        session_jwt: nil,
+        session_jwt: nil
       )
         request = {
           phone_number: phone_number,
@@ -154,7 +154,7 @@ module Stytch
         attributes: {},
         user_id: nil,
         session_token: nil,
-        session_jwt: nil,
+        session_jwt: nil
       )
         request = {
           email: email,
