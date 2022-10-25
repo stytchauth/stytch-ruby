@@ -139,6 +139,12 @@ module Stytch
       delete_request("#{PATH}/biometric_registrations/#{biometric_registration_id}")
     end
 
+    def delete_oauth_user_registration(
+      oauth_user_registration_id:
+    )
+      delete_request("#{PATH}/oauth/#{oauth_user_registration_id}")
+    end
+
     private
 
     def format_emails(emails)
