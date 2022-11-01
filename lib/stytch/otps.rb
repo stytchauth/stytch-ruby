@@ -154,7 +154,8 @@ module Stytch
         attributes: {},
         user_id: nil,
         session_token: nil,
-        session_jwt: nil
+        session_jwt: nil,
+        locale: nil
       )
         request = {
           email: email,
@@ -165,6 +166,7 @@ module Stytch
         request[:user_id] = user_id unless user_id.nil?
         request[:session_token] = session_token unless session_token.nil?
         request[:session_jwt] = session_jwt unless session_jwt.nil?
+        request[:locale] = locale unless locale.nil?
 
         post_request("#{PATH}/send", request)
       end
@@ -173,7 +175,8 @@ module Stytch
         email:,
         expiration_minutes: nil,
         attributes: {},
-        create_user_as_pending: false
+        create_user_as_pending: false,
+        locale: nil
       )
         request = {
           email: email,
@@ -182,6 +185,7 @@ module Stytch
         }
 
         request[:attributes] = attributes if attributes != {}
+        request[:locale] = locale unless locale.nil?
 
         post_request("#{PATH}/login_or_create", request)
       end
