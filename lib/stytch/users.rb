@@ -59,7 +59,9 @@ module Stytch
       phone_number: nil,
       name: {},
       create_user_as_pending: false,
-      attributes: {}
+      attributes: {},
+      trusted_metadata: {},
+      untrusted_metadata: {}
     )
       request = {
         email: email,
@@ -69,6 +71,8 @@ module Stytch
 
       request[:name] = name if name != {}
       request[:attributes] = attributes if attributes != {}
+      request[:trusted_metadata] = trusted_metadata if trusted_metadata != {}
+      request[:untrusted_metadata] = untrusted_metadata if untrusted_metadata != {}
 
       post_request(PATH, request)
     end
@@ -79,7 +83,9 @@ module Stytch
       emails: [],
       phone_numbers: [],
       crypto_wallets: [],
-      attributes: {}
+      attributes: {},
+      trusted_metadata: {},
+      untrusted_metadata: {}
     )
       request = {
         emails: format_emails(emails),
@@ -89,6 +95,8 @@ module Stytch
 
       request[:name] = name if name != {}
       request[:attributes] = attributes if attributes != {}
+      request[:trusted_metadata] = trusted_metadata if trusted_metadata != {}
+      request[:untrusted_metadata] = untrusted_metadata if untrusted_metadata != {}
 
       put_request("#{PATH}/#{user_id}", request)
     end
