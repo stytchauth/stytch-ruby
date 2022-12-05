@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary       = 'Stytch Ruby Gem'
   spec.homepage      = 'https://stytch.com'
   spec.license       = 'MIT'
-  spec.required_ruby_version = Gem::Requirement.new('>= 2.3.0')
+  spec.required_ruby_version = Gem::Requirement.new('>= 2.7.0')
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/stytchauth/stytch-ruby'
@@ -27,8 +27,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'faraday', '>= 0.17.0', '< 2.0'
   spec.add_dependency 'faraday_middleware', '>= 0.14.0', '< 2.0'
-  spec.add_dependency 'json-jwt', '>=1.13.0'
+  spec.add_dependency 'json-jwt', '>= 1.13.0'
   spec.add_dependency 'jwt', '>= 2.3.0'
 
-  spec.add_development_dependency 'test-unit', '>=3.5.3'
+  spec.add_development_dependency 'rspec', '~> 3.11.0'
 end
