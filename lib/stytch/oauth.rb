@@ -31,5 +31,21 @@ module Stytch
 
       post_request("#{PATH}/authenticate", request)
     end
+
+    def attach(
+      provider:,
+      user_id: nil,
+      session_token: nil,
+      session_jwt: nil
+    )
+      request = {
+        provider: provider
+      }
+      request[:user_id] = user_id unless user_id.nil?
+      request[:session_token] = session_token unless session_token.nil?
+      request[:session_jwt] = session_jwt unless session_jwt.nil?
+
+      post_request("#{PATH}/attach", request)
+    end
   end
 end
