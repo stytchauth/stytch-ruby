@@ -32,6 +32,9 @@ module Stytch
       post_request("#{PATH}/authenticate", request)
     end
 
+    # Send a /v1/oauth/attach request.
+    #
+    # Exactly one of user_id, session_token, or session_jwt is required.
     def attach(
       provider:,
       user_id: nil,
