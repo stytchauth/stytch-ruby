@@ -108,8 +108,8 @@ module Stytch
         reset_password_expiration_minutes: nil,
         attributes: {},
         code_challenge: nil,
-        locale: nil
-        reset_password_template_id: nil,
+        locale: nil,
+        reset_password_template_id: nil
       )
         request = {
           email: email

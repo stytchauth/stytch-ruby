@@ -78,7 +78,7 @@ module Stytch
         session_jwt: nil,
         locale: nil,
         login_template_id: nil,
-        signup_template_id: nil,
+        signup_template_id: nil
       )
         request = {
           email: email
@@ -109,9 +109,9 @@ module Stytch
         attributes: {},
         create_user_as_pending: false,
         code_challenge: nil,
-        locale: nil
+        locale: nil,
         login_template_id: nil,
-        signup_template_id: nil,
+        signup_template_id: nil
       )
         request = {
           email: email,
@@ -137,8 +137,8 @@ module Stytch
         invite_expiration_minutes: nil,
         attributes: {},
         name: {},
-        locale: nil
-        invite_template_id: nil,
+        locale: nil,
+        invite_template_id: nil
       )
         request = {
           email: email
