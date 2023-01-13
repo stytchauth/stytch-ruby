@@ -76,7 +76,9 @@ module Stytch
         user_id: nil,
         session_token: nil,
         session_jwt: nil,
-        locale: nil
+        locale: nil,
+        login_template_id: nil,
+        signup_template_id: nil
       )
         request = {
           email: email
@@ -92,6 +94,8 @@ module Stytch
         request[:session_token] = session_token unless session_token.nil?
         request[:session_jwt] = session_jwt unless session_jwt.nil?
         request[:locale] = locale unless locale.nil?
+        request[:login_template_id] = login_template_id unless login_template_id.nil?
+        request[:signup_template_id] = signup_template_id unless signup_template_id.nil?
 
         post_request("#{PATH}/send", request)
       end
@@ -105,7 +109,9 @@ module Stytch
         attributes: {},
         create_user_as_pending: false,
         code_challenge: nil,
-        locale: nil
+        locale: nil,
+        login_template_id: nil,
+        signup_template_id: nil
       )
         request = {
           email: email,
@@ -119,6 +125,8 @@ module Stytch
         request[:attributes] = attributes if attributes != {}
         request[:code_challenge] = code_challenge unless code_challenge.nil?
         request[:locale] = locale unless locale.nil?
+        request[:login_template_id] = login_template_id unless login_template_id.nil?
+        request[:signup_template_id] = signup_template_id unless signup_template_id.nil?
 
         post_request("#{PATH}/login_or_create", request)
       end
@@ -129,7 +137,8 @@ module Stytch
         invite_expiration_minutes: nil,
         attributes: {},
         name: {},
-        locale: nil
+        locale: nil,
+        invite_template_id: nil
       )
         request = {
           email: email
@@ -140,6 +149,7 @@ module Stytch
         request[:attributes] = attributes if attributes != {}
         request[:name] = name if name != {}
         request[:locale] = locale unless locale.nil?
+        request[:invite_template_id] = invite_template_id unless invite_template_id.nil?
 
         post_request("#{PATH}/invite", request)
       end

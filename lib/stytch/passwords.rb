@@ -108,7 +108,8 @@ module Stytch
         reset_password_expiration_minutes: nil,
         attributes: {},
         code_challenge: nil,
-        locale: nil
+        locale: nil,
+        reset_password_template_id: nil
       )
         request = {
           email: email
@@ -123,6 +124,7 @@ module Stytch
         request[:attributes] = attributes if attributes != {}
         request[:code_challenge] = code_challenge unless code_challenge.nil?
         request[:locale] = locale unless locale.nil?
+        request[:reset_password_template_id] = reset_password_template_id unless reset_password_template_id.nil?
 
         post_request("#{PATH}/reset/start", request)
       end
