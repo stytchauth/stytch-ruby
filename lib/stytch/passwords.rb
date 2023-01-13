@@ -109,6 +109,7 @@ module Stytch
         attributes: {},
         code_challenge: nil,
         locale: nil
+        template_id: nil,
       )
         request = {
           email: email
@@ -123,6 +124,7 @@ module Stytch
         request[:attributes] = attributes if attributes != {}
         request[:code_challenge] = code_challenge unless code_challenge.nil?
         request[:locale] = locale unless locale.nil?
+        request[:template_id] = template_id unless template_id.nil?
 
         post_request("#{PATH}/reset/start", request)
       end
