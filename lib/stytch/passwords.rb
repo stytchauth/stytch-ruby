@@ -21,16 +21,22 @@ module Stytch
     def create(
       email:,
       password:,
+      name: {},
       session_duration_minutes: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      trusted_metadata: {},
+      untrusted_metadata: {}
     )
       request = {
         email: email,
         password: password
       }
 
+      request[:name] = name if name != {}
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:trusted_metadata] = trusted_metadata if trusted_metadata != {}
+      request[:untrusted_metadata] = untrusted_metadata if untrusted_metadata != {}
 
       post_request(PATH.to_s, request)
     end
@@ -73,6 +79,9 @@ module Stytch
       email:,
       hash:,
       hash_type:,
+      name: {},
+      trusted_metadata: {},
+      untrusted_metadata: {},
       md_5_config: {},
       argon_2_config: {},
       sha_1_config: {},
@@ -83,6 +92,10 @@ module Stytch
         hash: hash,
         hash_type: hash_type
       }
+
+      request[:name] = name if name != {}
+      request[:trusted_metadata] = trusted_metadata if trusted_metadata != {}
+      request[:untrusted_metadata] = untrusted_metadata if untrusted_metadata != {}
 
       request[:md_5_config] = md_5_config unless md_5_config != {}
       request[:argon_2_config] = argon_2_config unless argon_2_config != {}
