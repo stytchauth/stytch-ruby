@@ -1,29 +1,24 @@
 # frozen_string_literal: true
 
-require_relative "../request_helper"
+require_relative "request_helper"
 
-module Stytch
+module StytchB2B
   class MagicLinks
     include Stytch::RequestHelper
-    attr_reader :magic_links, :magic_links
+    attr_reader :email, :discovery
 
     def initialize(connection)
       @connection = connection
 
-      @email = Stytch::MagicLinks::Email.new(@connection)
-      @discovery = Stytch::MagicLinks::Discovery.new(@connection)
+      @email = StytchB2B::MagicLinks::Email.new(@connection)
+      @discovery = StytchB2B::MagicLinks::Discovery.new(@connection)
     end
 
     def authenticate(
-        magic_links_token: ,
-        pkce_code_verifier: nil,
-        session_token: nil,
-        session_jwt: nil,
-        session_duration_minutes: nil,
-        session_custom_claims: nil,
+      magic_links_token:, pkce_code_verifier: nil, session_token: nil, session_jwt: nil, session_duration_minutes: nil, session_custom_claims: nil
     )
       request = {
-          magic_links_token: magic_links_token,
+        magic_links_token: magic_links_token,
       }
       request[:pkce_code_verifier] = pkce_code_verifier if pkce_code_verifier != nil
       request[:session_token] = session_token if session_token != nil
@@ -34,30 +29,21 @@ module Stytch
       post_request("/v1/b2b/magic_links/authenticate", request)
     end
 
-
     class Email
       include Stytch::RequestHelper
-      attr_reader :magic_links
+      attr_reader :discovery
 
       def initialize(connection)
         @connection = connection
 
-        @discovery = Stytch::MagicLinks::Email::Discovery.new(@connection)
+        @discovery = StytchB2B::MagicLinks::Email::Discovery.new(@connection)
       end
 
       def login_or_signup(
-          organization_id: ,
-          email_address: ,
-          login_redirect_url: nil,
-          signup_redirect_url: nil,
-          pkce_code_challenge: nil,
-          login_template_id: nil,
-          signup_template_id: nil,
-          locale: nil,
+        organization_id:, email_address:, login_redirect_url: nil, signup_redirect_url: nil, pkce_code_challenge: nil, login_template_id: nil, signup_template_id: nil, locale: nil
       )
         request = {
-            organization_id: organization_id,
-            email_address: email_address,
+          organization_id: organization_id, email_address: email_address,
         }
         request[:login_redirect_url] = login_redirect_url if login_redirect_url != nil
         request[:signup_redirect_url] = signup_redirect_url if signup_redirect_url != nil
@@ -70,19 +56,10 @@ module Stytch
       end
 
       def invite(
-          organization_id: ,
-          email_address: ,
-          invite_redirect_url: nil,
-          invited_by_member_id: nil,
-          name: nil,
-          trusted_metadata: nil,
-          untrusted_metadata: nil,
-          invite_template_id: nil,
-          locale: nil,
+        organization_id:, email_address:, invite_redirect_url: nil, invited_by_member_id: nil, name: nil, trusted_metadata: nil, untrusted_metadata: nil, invite_template_id: nil, locale: nil
       )
         request = {
-            organization_id: organization_id,
-            email_address: email_address,
+          organization_id: organization_id, email_address: email_address,
         }
         request[:invite_redirect_url] = invite_redirect_url if invite_redirect_url != nil
         request[:invited_by_member_id] = invited_by_member_id if invited_by_member_id != nil
@@ -95,24 +72,18 @@ module Stytch
         post_request("/v1/b2b/magic_links/email/invite", request)
       end
 
-
       class Discovery
         include Stytch::RequestHelper
 
         def initialize(connection)
           @connection = connection
-
         end
 
         def send(
-            email_address: ,
-            discovery_redirect_url: nil,
-            pkce_code_challenge: nil,
-            login_template_id: nil,
-            locale: nil,
+          email_address:, discovery_redirect_url: nil, pkce_code_challenge: nil, login_template_id: nil, locale: nil
         )
           request = {
-              email_address: email_address,
+            email_address: email_address,
           }
           request[:discovery_redirect_url] = discovery_redirect_url if discovery_redirect_url != nil
           request[:pkce_code_challenge] = pkce_code_challenge if pkce_code_challenge != nil
@@ -121,31 +92,26 @@ module Stytch
 
           post_request("/v1/b2b/magic_links/email/discovery/send", request)
         end
-
-
       end
     end
+
     class Discovery
       include Stytch::RequestHelper
 
       def initialize(connection)
         @connection = connection
-
       end
 
       def authenticate(
-          discovery_magic_links_token: ,
-          pkce_code_verifier: nil,
+        discovery_magic_links_token:, pkce_code_verifier: nil
       )
         request = {
-            discovery_magic_links_token: discovery_magic_links_token,
+          discovery_magic_links_token: discovery_magic_links_token,
         }
         request[:pkce_code_verifier] = pkce_code_verifier if pkce_code_verifier != nil
 
         post_request("/v1/b2b/magic_links/discovery/authenticate", request)
       end
-
-
     end
   end
 end

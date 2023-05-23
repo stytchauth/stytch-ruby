@@ -1,26 +1,25 @@
 # frozen_string_literal: true
 
-require_relative "../request_helper"
+require_relative "request_helper"
 
-module Stytch
+module StytchB2B
   class Passwords
     include Stytch::RequestHelper
-    attr_reader :passwords, :passwords, :passwords
+    attr_reader :email, :sessions, :existing_password
 
     def initialize(connection)
       @connection = connection
 
-      @email = Stytch::Passwords::Email.new(@connection)
-      @sessions = Stytch::Passwords::Sessions.new(@connection)
-      @existingpassword = Stytch::Passwords::ExistingPassword.new(@connection)
+      @email = StytchB2B::Passwords::Email.new(@connection)
+      @sessions = StytchB2B::Passwords::Sessions.new(@connection)
+      @existing_password = StytchB2B::Passwords::ExistingPassword.new(@connection)
     end
 
     def strength_check(
-        password: ,
-        email_address: nil,
+      password:, email_address: nil
     )
       request = {
-          password: password,
+        password: password,
       }
       request[:email_address] = email_address if email_address != nil
 
@@ -28,24 +27,10 @@ module Stytch
     end
 
     def migrate(
-        email_address: ,
-        hash: ,
-        hash_type: ,
-        organization_id: ,
-        name: ,
-        md_5_config: nil,
-        argon_2_config: nil,
-        sha_1_config: nil,
-        scrypt_config: nil,
-        trusted_metadata: nil,
-        untrusted_metadata: nil,
+      email_address:, hash:, hash_type:, organization_id:, name:, md_5_config: nil, argon_2_config: nil, sha_1_config: nil, scrypt_config: nil, trusted_metadata: nil, untrusted_metadata: nil
     )
       request = {
-          email_address: email_address,
-          hash: hash,
-          hash_type: hash_type,
-          organization_id: organization_id,
-          name: name,
+        email_address: email_address, hash: hash, hash_type: hash_type, organization_id: organization_id, name: name,
       }
       request[:md_5_config] = md_5_config if md_5_config != nil
       request[:argon_2_config] = argon_2_config if argon_2_config != nil
@@ -58,18 +43,10 @@ module Stytch
     end
 
     def authenticate(
-        organization_id: ,
-        email_address: ,
-        password: ,
-        session_token: nil,
-        session_duration_minutes: nil,
-        session_jwt: nil,
-        session_custom_claims: nil,
+      organization_id:, email_address:, password:, session_token: nil, session_duration_minutes: nil, session_jwt: nil, session_custom_claims: nil
     )
       request = {
-          organization_id: organization_id,
-          email_address: email_address,
-          password: password,
+        organization_id: organization_id, email_address: email_address, password: password,
       }
       request[:session_token] = session_token if session_token != nil
       request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
@@ -79,30 +56,18 @@ module Stytch
       post_request("/v1/b2b/passwords/authenticate", request)
     end
 
-
     class Email
       include Stytch::RequestHelper
 
       def initialize(connection)
         @connection = connection
-
       end
 
       def reset_start(
-          organization_id: ,
-          email_address: ,
-          reset_password_redirect_url: ,
-          login_redirect_url: ,
-          reset_password_expiration_minutes: nil,
-          code_challenge: nil,
-          locale: nil,
-          reset_password_template_id: nil,
+        organization_id:, email_address:, reset_password_redirect_url:, login_redirect_url:, reset_password_expiration_minutes: nil, code_challenge: nil, locale: nil, reset_password_template_id: nil
       )
         request = {
-            organization_id: organization_id,
-            email_address: email_address,
-            reset_password_redirect_url: reset_password_redirect_url,
-            login_redirect_url: login_redirect_url,
+          organization_id: organization_id, email_address: email_address, reset_password_redirect_url: reset_password_redirect_url, login_redirect_url: login_redirect_url,
         }
         request[:reset_password_expiration_minutes] = reset_password_expiration_minutes if reset_password_expiration_minutes != nil
         request[:code_challenge] = code_challenge if code_challenge != nil
@@ -113,17 +78,10 @@ module Stytch
       end
 
       def reset(
-          password_reset_token: ,
-          password: ,
-          session_token: nil,
-          session_duration_minutes: nil,
-          session_jwt: nil,
-          code_verifier: nil,
-          session_custom_claims: nil,
+        password_reset_token:, password:, session_token: nil, session_duration_minutes: nil, session_jwt: nil, code_verifier: nil, session_custom_claims: nil
       )
         request = {
-            password_reset_token: password_reset_token,
-            password: password,
+          password_reset_token: password_reset_token, password: password,
         }
         request[:session_token] = session_token if session_token != nil
         request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
@@ -133,58 +91,40 @@ module Stytch
 
         post_request("/v1/b2b/passwords/email/reset", request)
       end
-
-
     end
+
     class Sessions
       include Stytch::RequestHelper
 
       def initialize(connection)
         @connection = connection
-
       end
 
       def reset(
-          organization_id: ,
-          password: ,
-          session_token: nil,
-          session_jwt: nil,
+        organization_id:, password:, session_token: nil, session_jwt: nil
       )
         request = {
-            organization_id: organization_id,
-            password: password,
+          organization_id: organization_id, password: password,
         }
         request[:session_token] = session_token if session_token != nil
         request[:session_jwt] = session_jwt if session_jwt != nil
 
         post_request("/v1/b2b/passwords/session/reset", request)
       end
-
-
     end
+
     class ExistingPassword
       include Stytch::RequestHelper
 
       def initialize(connection)
         @connection = connection
-
       end
 
       def reset(
-          email_address: ,
-          existing_password: ,
-          new_password: ,
-          organization_id: ,
-          session_token: nil,
-          session_duration_minutes: nil,
-          session_jwt: nil,
-          session_custom_claims: nil,
+        email_address:, existing_password:, new_password:, organization_id:, session_token: nil, session_duration_minutes: nil, session_jwt: nil, session_custom_claims: nil
       )
         request = {
-            email_address: email_address,
-            existing_password: existing_password,
-            new_password: new_password,
-            organization_id: organization_id,
+          email_address: email_address, existing_password: existing_password, new_password: new_password, organization_id: organization_id,
         }
         request[:session_token] = session_token if session_token != nil
         request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
@@ -193,8 +133,6 @@ module Stytch
 
         post_request("/v1/b2b/passwords/existing_password/reset", request)
       end
-
-
     end
   end
 end

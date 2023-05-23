@@ -1,32 +1,29 @@
 # frozen_string_literal: true
 
-require_relative "../request_helper"
+require_relative "request_helper"
 
-module Stytch
+module StytchB2B
   class Sessions
     include Stytch::RequestHelper
 
     def initialize(connection)
       @connection = connection
-
     end
 
     def get(
-        organization_id: ,
-        member_id: ,
+      organization_id:, member_id:
     )
-      request = request_with_query_params()
+      query_params = {
+        organization_id: organization_id, member_id: member_id,
+      }
+      request = request_with_query_params("/v1/b2b/sessions", query_params)
       get_request(request)
     end
 
     def authenticate(
-        session_token: nil,
-        session_duration_minutes: nil,
-        session_jwt: nil,
-        session_custom_claims: nil,
+      session_token: nil, session_duration_minutes: nil, session_jwt: nil, session_custom_claims: nil
     )
-      request = {
-      }
+      request = {}
       request[:session_token] = session_token if session_token != nil
       request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
       request[:session_jwt] = session_jwt if session_jwt != nil
@@ -36,13 +33,9 @@ module Stytch
     end
 
     def revoke(
-        member_session_id: nil,
-        session_token: nil,
-        session_jwt: nil,
-        member_id: nil,
+      member_session_id: nil, session_token: nil, session_jwt: nil, member_id: nil
     )
-      request = {
-      }
+      request = {}
       request[:member_session_id] = member_session_id if member_session_id != nil
       request[:session_token] = session_token if session_token != nil
       request[:session_jwt] = session_jwt if session_jwt != nil
@@ -52,14 +45,10 @@ module Stytch
     end
 
     def exchange(
-        organization_id: ,
-        session_token: nil,
-        session_jwt: nil,
-        session_duration_minutes: nil,
-        session_custom_claims: nil,
+      organization_id:, session_token: nil, session_jwt: nil, session_duration_minutes: nil, session_custom_claims: nil
     )
       request = {
-          organization_id: organization_id,
+        organization_id: organization_id,
       }
       request[:session_token] = session_token if session_token != nil
       request[:session_jwt] = session_jwt if session_jwt != nil
@@ -70,12 +59,13 @@ module Stytch
     end
 
     def jwks(
-        project_id: ,
+      project_id:
     )
-      request = request_with_query_params()
+      query_params = {
+        project_id: project_id,
+      }
+      request = request_with_query_params("/v1/b2b/sessions/jwks/#{project_id}", query_params)
       get_request(request)
     end
-
-
   end
 end
