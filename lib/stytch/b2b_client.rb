@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
-require_relative "debug"
-require_relative "b2b_sessions"
-require_relative "b2b_organizations"
 require_relative "b2b_magic_links"
+require_relative "b2b_organizations"
 require_relative "b2b_passwords"
+require_relative "b2b_sessions"
 require_relative "b2b_sso"
+require_relative "debug"
 
 module StytchB2B
   class Client
     ENVIRONMENTS = %i[live test].freeze
 
-    attr_reader :debug, :organizations, :sessions, :magic_links, :passwords, :sso
+    attr_reader :debug, :magic_links, :organizations, :passwords, :sso, :sessions
 
     def initialize(project_id:, secret:, env: nil, &block)
       @api_host = api_host(env, project_id)
@@ -21,11 +21,11 @@ module StytchB2B
       create_connection(&block)
 
       @debug = Stytch::Debug.new(@connection)
-      @organizations = StytchB2B::Organizations.new(@connection)
-      @sessions = StytchB2B::Sessions.new(@connection)
       @magic_links = StytchB2B::MagicLinks.new(@connection)
+      @organizations = StytchB2B::Organizations.new(@connection)
       @passwords = StytchB2B::Passwords.new(@connection)
       @sso = StytchB2B::SSO.new(@connection)
+      @sessions = StytchB2B::Sessions.new(@connection)
     end
 
     private

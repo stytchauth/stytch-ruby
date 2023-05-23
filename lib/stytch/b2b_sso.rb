@@ -27,7 +27,7 @@ module StytchB2B
     def delete_connection(
       organization_id:, connection_id:
     )
-      delete_request(request)
+      delete_request("/v1/b2b/sso/#{organization_id}/connections/#{connection_id}")
     end
 
     def authenticate(
@@ -128,7 +128,7 @@ module StytchB2B
       def delete_verification_certificate(
         organization_id:, connection_id:, certificate_id:
       )
-        delete_request(request)
+        delete_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}/verification_certificates/#{certificate_id}")
       end
     end
   end

@@ -63,7 +63,7 @@ module StytchB2B
     def delete(
       organization_id:
     )
-      delete_request(request)
+      delete_request("/v1/b2b/organizations/#{organization_id}")
     end
 
     def member_create(
@@ -125,7 +125,7 @@ module StytchB2B
       def organizations_delete(
         organization_id:, member_id:
       )
-        delete_request(request)
+        delete_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}")
       end
 
       def search(
@@ -143,7 +143,7 @@ module StytchB2B
       def organizations_delete_password(
         organization_id:, member_password_id:
       )
-        delete_request(request)
+        delete_request("/v1/b2b/organizations/#{organization_id}/members/passwords/#{member_password_id}")
       end
     end
   end
