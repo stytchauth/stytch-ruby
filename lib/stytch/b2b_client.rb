@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require_relative "b2b_magic_links"
-require_relative "b2b_organizations"
-require_relative "b2b_passwords"
-require_relative "b2b_sessions"
-require_relative "b2b_sso"
-require_relative "debug"
+require_relative 'b2b_magic_links'
+require_relative 'b2b_organizations'
+require_relative 'b2b_passwords'
+require_relative 'b2b_sessions'
+require_relative 'b2b_sso'
+require_relative 'debug'
 
 module StytchB2B
   class Client
@@ -14,9 +14,9 @@ module StytchB2B
     attr_reader :debug, :magic_links, :organizations, :passwords, :sso, :sessions
 
     def initialize(project_id:, secret:, env: nil, &block)
-      @api_host = api_host(env, project_id)
+      @api_host   = api_host(env, project_id)
       @project_id = project_id
-      @secret = secret
+      @secret     = secret
 
       create_connection(&block)
 
@@ -33,17 +33,17 @@ module StytchB2B
     def api_host(env, project_id)
       case env
       when :live
-        "https://api.stytch.com"
+        'https://api.stytch.com'
       when :test
-        "https://test.stytch.com"
-      when /\Ahttps?:\/\//
+        'https://test.stytch.com'
+      when %r{\Ahttps?://}
         # If this is a string that looks like a URL, assume it's an internal development URL.
         env
       else
-        if project_id.start_with? "project-live-"
-          "https://api.stytch.com"
+        if project_id.start_with? 'project-live-'
+          'https://api.stytch.com'
         else
-          "https://test.stytch.com"
+          'https://test.stytch.com'
         end
       end
     end

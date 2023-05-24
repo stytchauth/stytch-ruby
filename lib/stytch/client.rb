@@ -16,8 +16,8 @@ module Stytch
 
     attr_reader :users, :magic_links, :oauth, :otps, :sessions, :totps, :webauthn, :crypto_wallets, :passwords
 
-    def initialize(env:, project_id:, secret:, &block)
-      @api_host   = api_host(env)
+    def initialize(project_id:, secret:, env: nil, &block)
+      @api_host   = api_host(env, project_id)
       @project_id = project_id
       @secret     = secret
 
@@ -36,7 +36,7 @@ module Stytch
 
     private
 
-    def api_host(env)
+    def api_host(env, project_id)
       case env
       when :live
         'https://api.stytch.com'
@@ -46,7 +46,11 @@ module Stytch
         # If this is a string that looks like a URL, assume it's an internal development URL.
         env
       else
-        raise ArgumentError, "Invalid value for env (#{env}): should be :live or :test"
+        if project_id.start_with? 'project-live-'
+          'https://api.stytch.com'
+        else
+          'https://test.stytch.com'
+        end
       end
     end
 
