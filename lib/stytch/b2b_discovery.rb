@@ -49,32 +49,32 @@ module StytchB2B
         intermediate_session_token:,
         organization_name:,
         organization_slug:,
-        organization_logo_url:,
-        email_allowed_domains:,
-        allowed_auth_methods:,
         session_duration_minutes: nil,
         session_custom_claims: nil,
+        organization_logo_url: nil,
         trusted_metadata: nil,
         sso_jit_provisioning: nil,
+        email_allowed_domains: nil,
         email_jit_provisioning: nil,
         email_invites: nil,
-        auth_methods: nil
+        auth_methods: nil,
+        allowed_auth_methods: nil
       )
         request = {
           intermediate_session_token: intermediate_session_token,
           organization_name: organization_name,
-          organization_slug: organization_slug,
-          organization_logo_url: organization_logo_url,
-          email_allowed_domains: email_allowed_domains,
-          allowed_auth_methods: allowed_auth_methods
+          organization_slug: organization_slug
         }
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+        request[:organization_logo_url] = organization_logo_url unless organization_logo_url.nil?
         request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
         request[:sso_jit_provisioning] = sso_jit_provisioning unless sso_jit_provisioning.nil?
+        request[:email_allowed_domains] = email_allowed_domains unless email_allowed_domains.nil?
         request[:email_jit_provisioning] = email_jit_provisioning unless email_jit_provisioning.nil?
         request[:email_invites] = email_invites unless email_invites.nil?
         request[:auth_methods] = auth_methods unless auth_methods.nil?
+        request[:allowed_auth_methods] = allowed_auth_methods unless allowed_auth_methods.nil?
 
         post_request('/v1/b2b/discovery/organizations/create', request)
       end

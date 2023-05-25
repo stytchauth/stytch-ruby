@@ -32,11 +32,11 @@ module StytchB2B
       hash:,
       hash_type:,
       organization_id:,
-      name:,
       md_5_config: nil,
       argon_2_config: nil,
       sha_1_config: nil,
       scrypt_config: nil,
+      name: nil,
       trusted_metadata: nil,
       untrusted_metadata: nil
     )
@@ -44,13 +44,13 @@ module StytchB2B
         email_address: email_address,
         hash: hash,
         hash_type: hash_type,
-        organization_id: organization_id,
-        name: name
+        organization_id: organization_id
       }
       request[:md_5_config] = md_5_config unless md_5_config.nil?
       request[:argon_2_config] = argon_2_config unless argon_2_config.nil?
       request[:sha_1_config] = sha_1_config unless sha_1_config.nil?
       request[:scrypt_config] = scrypt_config unless scrypt_config.nil?
+      request[:name] = name unless name.nil?
       request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
       request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
 
@@ -89,24 +89,24 @@ module StytchB2B
       def reset_start(
         organization_id:,
         email_address:,
-        reset_password_redirect_url:,
-        login_redirect_url:,
+        reset_password_redirect_url: nil,
         reset_password_expiration_minutes: nil,
         code_challenge: nil,
+        login_redirect_url: nil,
         locale: nil,
         reset_password_template_id: nil
       )
         request = {
           organization_id: organization_id,
-          email_address: email_address,
-          reset_password_redirect_url: reset_password_redirect_url,
-          login_redirect_url: login_redirect_url
+          email_address: email_address
         }
+        request[:reset_password_redirect_url] = reset_password_redirect_url unless reset_password_redirect_url.nil?
         unless reset_password_expiration_minutes.nil?
           request[:reset_password_expiration_minutes] =
             reset_password_expiration_minutes
         end
         request[:code_challenge] = code_challenge unless code_challenge.nil?
+        request[:login_redirect_url] = login_redirect_url unless login_redirect_url.nil?
         request[:locale] = locale unless locale.nil?
         request[:reset_password_template_id] = reset_password_template_id unless reset_password_template_id.nil?
 

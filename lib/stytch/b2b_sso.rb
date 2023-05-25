@@ -17,9 +17,7 @@ module StytchB2B
     def get_connections(
       organization_id:
     )
-      query_params = {
-        organization_id: organization_id
-      }
+      query_params = {}
       request = request_with_query_params("/v1/b2b/sso/#{organization_id}", query_params)
       get_request(request)
     end
@@ -60,12 +58,12 @@ module StytchB2B
 
       def create_connection(
         organization_id:,
-        display_name:
+        display_name: nil
       )
         request = {
-          organization_id: organization_id,
-          display_name: display_name
+          organization_id: organization_id
         }
+        request[:display_name] = display_name unless display_name.nil?
 
         post_request("/v1/b2b/sso/oidc/#{organization_id}", request)
       end
@@ -73,27 +71,27 @@ module StytchB2B
       def update_connection(
         organization_id:,
         connection_id:,
-        display_name:,
-        client_id:,
-        client_secret:,
-        issuer:,
-        authorization_url:,
-        token_url:,
-        userinfo_url:,
-        jwks_url:
+        display_name: nil,
+        client_id: nil,
+        client_secret: nil,
+        issuer: nil,
+        authorization_url: nil,
+        token_url: nil,
+        userinfo_url: nil,
+        jwks_url: nil
       )
         request = {
           organization_id: organization_id,
-          connection_id: connection_id,
-          display_name: display_name,
-          client_id: client_id,
-          client_secret: client_secret,
-          issuer: issuer,
-          authorization_url: authorization_url,
-          token_url: token_url,
-          userinfo_url: userinfo_url,
-          jwks_url: jwks_url
+          connection_id: connection_id
         }
+        request[:display_name] = display_name unless display_name.nil?
+        request[:client_id] = client_id unless client_id.nil?
+        request[:client_secret] = client_secret unless client_secret.nil?
+        request[:issuer] = issuer unless issuer.nil?
+        request[:authorization_url] = authorization_url unless authorization_url.nil?
+        request[:token_url] = token_url unless token_url.nil?
+        request[:userinfo_url] = userinfo_url unless userinfo_url.nil?
+        request[:jwks_url] = jwks_url unless jwks_url.nil?
 
         put_request("/v1/b2b/sso/oidc/#{organization_id}/connections/#{connection_id}", request)
       end
@@ -108,12 +106,12 @@ module StytchB2B
 
       def create_connection(
         organization_id:,
-        display_name:
+        display_name: nil
       )
         request = {
-          organization_id: organization_id,
-          display_name: display_name
+          organization_id: organization_id
         }
+        request[:display_name] = display_name unless display_name.nil?
 
         post_request("/v1/b2b/sso/saml/#{organization_id}", request)
       end
@@ -138,30 +136,6 @@ module StytchB2B
         request[:idp_sso_url] = idp_sso_url unless idp_sso_url.nil?
 
         put_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}", request)
-      end
-
-      def url(
-        connection_id:,
-        metadata_url:
-      )
-        request = {
-          connection_id: connection_id,
-          metadata_url: metadata_url
-        }
-
-        put_request("/v1/b2b/sso/saml/#{connection_id}/url", request)
-      end
-
-      def doc(
-        connection_id:,
-        metadata:
-      )
-        request = {
-          connection_id: connection_id,
-          metadata: metadata
-        }
-
-        put_request("/v1/b2b/sso/saml/#{connection_id}/doc", request)
       end
 
       def delete_verification_certificate(
