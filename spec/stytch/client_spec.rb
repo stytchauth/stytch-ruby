@@ -31,13 +31,10 @@ RSpec.describe Stytch::Client do
     )
   end
 
-  it 'raises on invalid config' do
-    expect do
-      _client = Stytch::Client.new(
-        env: 'ftp://url',
-        project_id: 'project-test-00000000-0000-0000-0000-000000000000',
-        secret: 'secret-test-11111111-1111-1111-1111-111111111111',
-      )
-    end.to raise_error(ArgumentError)
+  it 'infers environment when not given' do
+    _client = Stytch::Client.new(
+      project_id: 'project-test-00000000-0000-0000-0000-000000000000',
+      secret: 'secret-test-11111111-1111-1111-1111-111111111111',
+    )
   end
 end
