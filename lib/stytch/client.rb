@@ -58,7 +58,7 @@ module Stytch
       @connection = Faraday.new(url: @api_host) do |builder|
         block_given? ? yield(builder) : build_default_connection(builder)
       end
-      @connection.basic_auth(@project_id, @secret)
+      @connection.set_basic_auth(@project_id, @secret)
     end
 
     def build_default_connection(builder)
