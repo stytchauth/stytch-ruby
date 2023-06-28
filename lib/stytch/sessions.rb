@@ -137,6 +137,11 @@ module Stytch
     def marshal_jwt_into_session(jwt)
       stytch_claim = "https://stytch.com/session"
       expires_at = jwt[stytch_claim]["expires_at"] || Time.at(jwt["exp"]).to_datetime.utc.strftime('%Y-%m-%dT%H:%M:%SZ')
+      # The custom claim set is all the claims in the payload except for the standard claims and
+      # the Stytch session claim. The cleanest way to collect those seems to be naming what we want
+      # to omit and filtering the rest to collect the custom claims.
+      reserved_claims = ['aud', 'exp', 'iat', 'iss', 'jti', 'nbf', 'sub', stytch_claim]
+      custom_claims = jwt.reject { |key, _| reserved_claims.include?(key) }
       return {
         "session_id" => jwt[stytch_claim]["id"],
         "user_id" => jwt["sub"],
@@ -146,6 +151,7 @@ module Stytch
         "expires_at" => expires_at,
         "attributes" => jwt[stytch_claim]["attributes"],
         "authentication_factors" => jwt[stytch_claim]["authentication_factors"],
+        "custom_claims" => custom_claims,
       }
     end
   end
