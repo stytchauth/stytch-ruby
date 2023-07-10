@@ -117,6 +117,7 @@ module Stytch
         email:,
         invite_magic_link_url: nil,
         invite_expiration_minutes: nil,
+        invite_template_id: nil,
         attributes: {},
         name: {}
       )
@@ -126,6 +127,7 @@ module Stytch
 
         request[:invite_magic_link_url] = invite_magic_link_url unless invite_magic_link_url.nil?
         request[:invite_expiration_minutes] = invite_expiration_minutes unless invite_expiration_minutes.nil?
+        request[:invite_template_id] = invite_template_id unless invite_template_id.nil?
         request[:attributes] = attributes if attributes != {}
         request[:name] = name if name != {}
 
