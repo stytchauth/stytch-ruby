@@ -21,22 +21,22 @@ module StytchB2B
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # member_id::
     #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # member_sessions::
     #   An array of [Session objects](https://stytch.com/docs/b2b/api/session-object).
-    #   The type of this field is list of `MemberSession`.
+    #   The type of this field is list of +MemberSession+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def get(
       organization_id:,
       member_id:
@@ -56,7 +56,7 @@ module StytchB2B
     # == Parameters:
     # session_token::
     #   A secret token for a given Stytch Session.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_duration_minutes::
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
@@ -68,40 +68,40 @@ module StytchB2B
     #
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
     #   to use the Stytch session product, you can ignore the session fields in the response.
-    #   The type of this field is nilable `Integer`.
+    #   The type of this field is nilable +Integer+.
     # session_jwt::
     #   The JSON Web Token (JWT) for a given Stytch Session.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_custom_claims::
     #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in
     #   `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To
     #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
     #   Total custom claims size cannot exceed four kilobytes.
-    #   The type of this field is nilable `object`.
+    #   The type of this field is nilable +object+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # member_session::
     #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
-    #   The type of this field is `MemberSession`.
+    #   The type of this field is +MemberSession+ (+object+).
     # session_token::
     #   A secret token for a given Stytch Session.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # session_jwt::
     #   The JSON Web Token (JWT) for a given Stytch Session.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # member::
     #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
-    #   The type of this field is `Member`.
+    #   The type of this field is +Member+ (+object+).
     # organization::
     #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-    #   The type of this field is `Organization`.
+    #   The type of this field is +Organization+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def authenticate(
       session_token: nil,
       session_duration_minutes: nil,
@@ -122,25 +122,25 @@ module StytchB2B
     # == Parameters:
     # member_session_id::
     #   Globally unique UUID that identifies a specific Session in the Stytch API. The `member_session_id` is critical to perform operations on an Session, so be sure to preserve this value.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_token::
     #   A secret token for a given Stytch Session.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_jwt::
     #   The JSON Web Token (JWT) for a given Stytch Session.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # member_id::
     #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def revoke(
       member_session_id: nil,
       session_token: nil,
@@ -163,13 +163,13 @@ module StytchB2B
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # session_token::
     #   The `session_token` belonging to the member that you wish to associate the email with.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_jwt::
     #   The `session_jwt` belonging to the member that you wish to associate the email with.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_duration_minutes::
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
@@ -181,40 +181,40 @@ module StytchB2B
     #
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
     #   to use the Stytch session product, you can ignore the session fields in the response.
-    #   The type of this field is nilable `Integer`.
+    #   The type of this field is nilable +Integer+.
     # session_custom_claims::
     #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in
     #   `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To
     #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
     #   Total custom claims size cannot exceed four kilobytes.
-    #   The type of this field is nilable `object`.
+    #   The type of this field is nilable +object+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # member_id::
     #   Globally unique UUID that identifies a specific Member.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # member_session::
     #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
-    #   The type of this field is `MemberSession`.
+    #   The type of this field is +MemberSession+ (+object+).
     # session_token::
     #   A secret token for a given Stytch Session.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # session_jwt::
     #   The JSON Web Token (JWT) for a given Stytch Session.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # member::
     #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
-    #   The type of this field is `Member`.
+    #   The type of this field is +Member+ (+object+).
     # organization::
     #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-    #   The type of this field is `Organization`.
+    #   The type of this field is +Organization+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def exchange(
       organization_id:,
       session_token: nil,
@@ -238,19 +238,19 @@ module StytchB2B
     # == Parameters:
     # project_id::
     #   The `project_id` to get the JWKS for.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     #
     # == Returns:
     # An object with the following fields:
     # keys::
     #   The JWK
-    #   The type of this field is list of `JWK`.
+    #   The type of this field is list of +JWK+ (+object+).
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def get_jwks(
       project_id:
     )

@@ -25,22 +25,22 @@ module StytchB2B
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # saml_connections::
     #   The list of [SAML Connections](https://stytch.com/docs/b2b/api/saml-connection-object) owned by this organization.
-    #   The type of this field is list of `SAMLConnection`.
+    #   The type of this field is list of +SAMLConnection+ (+object+).
     # oidc_connections::
     #   The list of [OIDC Connections](https://stytch.com/docs/b2b/api/oidc-connection-object) owned by this organization.
-    #   The type of this field is list of `OIDCConnection`.
+    #   The type of this field is list of +OIDCConnection+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def get_connections(
       organization_id:
     )
@@ -54,22 +54,22 @@ module StytchB2B
     # == Parameters:
     # organization_id::
     #   The organization ID that the SSO connection belongs to.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # connection_id::
     #   The ID of the SSO connection. Both SAML and OIDC connection IDs can be provided.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # connection_id::
     #   The `connection_id` that was deleted as part of the delete request.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def delete_connection(
       organization_id:,
       connection_id:
@@ -86,16 +86,16 @@ module StytchB2B
     # == Parameters:
     # sso_token::
     #   The token to authenticate.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # pkce_code_verifier::
     #   A base64url encoded one time secret used to validate that the request starts and ends on the same device.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_token::
     #   The `session_token` belonging to the member that you wish to associate the email with.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_jwt::
     #   The `session_jwt` belonging to the member that you wish to associate the email with.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_duration_minutes::
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
@@ -107,47 +107,47 @@ module StytchB2B
     #
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
     #   to use the Stytch session product, you can ignore the session fields in the response.
-    #   The type of this field is nilable `Integer`.
+    #   The type of this field is nilable +Integer+.
     # session_custom_claims::
     #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in
     #   `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To
     #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
     #   Total custom claims size cannot exceed four kilobytes.
-    #   The type of this field is nilable `object`.
+    #   The type of this field is nilable +object+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # member_id::
     #   Globally unique UUID that identifies a specific Member.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # member::
     #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
-    #   The type of this field is `Member`.
+    #   The type of this field is +Member+ (+object+).
     # session_token::
     #   A secret token for a given Stytch Session.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # session_jwt::
     #   The JSON Web Token (JWT) for a given Stytch Session.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # reset_session::
     #   Indicates if all Sessions linked to the Member need to be reset. You should check this field if you aren't using
     #     Stytch's Session product. If you are using Stytch's Session product, we revoke the Member’s other Sessions for you.
-    #   The type of this field is `Boolean`.
+    #   The type of this field is +Boolean+.
     # organization::
     #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-    #   The type of this field is `Organization`.
+    #   The type of this field is +Organization+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     # member_session::
     #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
-    #   The type of this field is nilable `MemberSession`.
+    #   The type of this field is nilable +MemberSession+ (+object+).
     def authenticate(
       sso_token:,
       pkce_code_verifier: nil,
@@ -180,22 +180,22 @@ module StytchB2B
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # display_name::
       #   A human-readable display name for the connection.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       # connection::
       #   The `OIDC Connection` object affected by this API call. See the [OIDC Connection Object](https://stytch.com/docs/b2b/api/oidc-connection-object) for complete response field details.
-      #   The type of this field is nilable `OIDCConnection`.
+      #   The type of this field is nilable +OIDCConnection+ (+object+).
       def create_connection(
         organization_id:,
         display_name: nil
@@ -228,49 +228,49 @@ module StytchB2B
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # connection_id::
       #   Globally unique UUID that identifies a specific SSO `connection_id` for a Member.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # display_name::
       #   A human-readable display name for the connection.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # client_id::
       #   The OAuth2.0 client ID used to authenticate login attempts. This will be provided by the IdP.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # client_secret::
       #   The secret belonging to the OAuth2.0 client used to authenticate login attempts. This will be provided by the IdP.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # issuer::
       #   A case-sensitive `https://` URL that uniquely identifies the IdP. This will be provided by the IdP.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # authorization_url::
       #   The location of the URL that starts an OAuth login at the IdP. This will be provided by the IdP.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # token_url::
       #   The location of the URL that issues OAuth2.0 access tokens and OIDC ID tokens. This will be provided by the IdP.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # userinfo_url::
       #   The location of the IDP's [UserInfo Endpoint](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo). This will be provided by the IdP.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # jwks_url::
       #   The location of the IdP's JSON Web Key Set, used to verify credentials issued by the IdP. This will be provided by the IdP.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       # connection::
       #   The `OIDC Connection` object affected by this API call. See the [OIDC Connection Object](https://stytch.com/docs/b2b/api/oidc-connection-object) for complete response field details.
-      #   The type of this field is nilable `OIDCConnection`.
+      #   The type of this field is nilable +OIDCConnection+ (+object+).
       # warning::
       #   If it is not possible to resolve the well-known metadata document from the OIDC issuer, this field will explain what went wrong if the request is successful otherwise. In other words, even if the overall request succeeds, there could be relevant warnings related to the connection update.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       def update_connection(
         organization_id:,
         connection_id:,
@@ -309,22 +309,22 @@ module StytchB2B
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # display_name::
       #   A human-readable display name for the connection.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       # connection::
       #   The `SAML Connection` object affected by this API call. See the [SAML Connection Object](https://stytch.com/docs/b2b/api/saml-connection-object) for complete response field details.
-      #   The type of this field is nilable `SAMLConnection`.
+      #   The type of this field is nilable +SAMLConnection+ (+object+).
       def create_connection(
         organization_id:,
         display_name: nil
@@ -346,37 +346,37 @@ module StytchB2B
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # connection_id::
       #   Globally unique UUID that identifies a specific SSO `connection_id` for a Member.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # idp_entity_id::
       #   A globally unique name for the IdP. This will be provided by the IdP.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # display_name::
       #   A human-readable display name for the connection.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # attribute_mapping::
       #   An object that represents the attributes used to identify a Member. This object will map the IdP-defined User attributes to Stytch-specific values. Required attributes: `email` and one of `full_name` or `first_name` and `last_name`.
-      #   The type of this field is nilable `object`.
+      #   The type of this field is nilable +object+.
       # x509_certificate::
       #   A certificate that Stytch will use to verify the sign-in assertion sent by the IdP, in [PEM](https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail) format. See our [X509 guide](https://stytch.com/docs/b2b/api/saml-certificates) for more info.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # idp_sso_url::
       #   The URL for which assertions for login requests will be sent. This will be provided by the IdP.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       # connection::
       #   The `SAML Connection` object affected by this API call. See the [SAML Connection Object](https://stytch.com/docs/b2b/api/saml-connection-object) for complete response field details.
-      #   The type of this field is nilable `SAMLConnection`.
+      #   The type of this field is nilable +SAMLConnection+ (+object+).
       def update_connection(
         organization_id:,
         connection_id:,
@@ -403,25 +403,25 @@ module StytchB2B
       # == Parameters:
       # organization_id::
       #   The organization ID that the SAML connection belongs to.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # connection_id::
       #   The ID of the SAML connection.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # certificate_id::
       #   The ID of the certificate to be deleted.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # certificate_id::
       #   The ID of the certificate that was deleted.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       def delete_verification_certificate(
         organization_id:,
         connection_id:,

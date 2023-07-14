@@ -35,10 +35,10 @@ module StytchB2B
       # == Parameters:
       # intermediate_session_token::
       #   The Intermediate Session Token. This token does not belong to a specific instance of a member, but may be exchanged for an existing Member Session or used to create a new organization.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_duration_minutes::
       #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
       #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
@@ -50,40 +50,40 @@ module StytchB2B
       #
       #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
       #   to use the Stytch session product, you can ignore the session fields in the response.
-      #   The type of this field is nilable `Integer`.
+      #   The type of this field is nilable +Integer+.
       # session_custom_claims::
       #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in
       #   `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To
       #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
       #   Total custom claims size cannot exceed four kilobytes.
-      #   The type of this field is nilable `object`.
+      #   The type of this field is nilable +object+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_token::
       #   A secret token for a given Stytch Session.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_jwt::
       #   The JSON Web Token (JWT) for a given Stytch Session.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member::
       #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
-      #   The type of this field is `Member`.
+      #   The type of this field is +Member+ (+object+).
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-      #   The type of this field is `Organization`.
+      #   The type of this field is +Organization+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       # member_session::
       #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
-      #   The type of this field is nilable `MemberSession`.
+      #   The type of this field is nilable +MemberSession+ (+object+).
       def exchange(
         intermediate_session_token:,
         organization_id:,
@@ -118,13 +118,13 @@ module StytchB2B
       # == Parameters:
       # intermediate_session_token::
       #   The Intermediate Session Token. This token does not belong to a specific instance of a member, but may be exchanged for an existing Member Session or used to create a new organization.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # organization_name::
       #   The name of the Organization. If the name is not specified, a default name will be created based on the email used to initiate the discovery flow. If the email domain is a common email provider such as gmail.com, or if the email is a .edu email, the organization name will be generated based on the name portion of the email. Otherwise, the organization name will be generated based on the email domain.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # organization_slug::
       #   The unique URL slug of the Organization. A minimum of two characters is required. The slug only accepts alphanumeric characters and the following reserved characters: `-` `.` `_` `~`. If the slug is not specified, a default slug will be created based on the email used to initiate the discovery flow. If the email domain is a common email provider such as gmail.com, or if the email is a .edu email, the organization slug will be generated based on the name portion of the email. Otherwise, the organization slug will be generated based on the email domain.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_duration_minutes::
       #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
       #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
@@ -136,19 +136,19 @@ module StytchB2B
       #
       #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
       #   to use the Stytch session product, you can ignore the session fields in the response.
-      #   The type of this field is nilable `Integer`.
+      #   The type of this field is nilable +Integer+.
       # session_custom_claims::
       #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in
       #   `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To
       #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
       #   Total custom claims size cannot exceed four kilobytes.
-      #   The type of this field is nilable `object`.
+      #   The type of this field is nilable +object+.
       # organization_logo_url::
       #   The image URL of the Organization logo.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # trusted_metadata::
       #   An arbitrary JSON object for storing application-specific data or identity-provider-specific data.
-      #   The type of this field is nilable `object`.
+      #   The type of this field is nilable +object+.
       # sso_jit_provisioning::
       #   The authentication setting that controls the JIT provisioning of Members when authenticating via SSO. The accepted values are:
       #
@@ -158,13 +158,13 @@ module StytchB2B
       #
       #   `NOT_ALLOWED` – disable JIT provisioning via SSO.
       #
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # email_allowed_domains::
       #   An array of email domains that allow invites or JIT provisioning for new Members. This list is enforced when either `email_invites` or `email_jit_provisioning` is set to `RESTRICTED`.
       #
       #
       #     Common domains such as `gmail.com` are not allowed. See the [common email domains resource](https://stytch.com/docs/b2b/api/common-email-domains) for the full list.
-      #   The type of this field is nilable list of `String`.
+      #   The type of this field is nilable list of +String+.
       # email_jit_provisioning::
       #   The authentication setting that controls how a new Member can be provisioned by authenticating via Email Magic Link. The accepted values are:
       #
@@ -172,7 +172,7 @@ module StytchB2B
       #
       #   `NOT_ALLOWED` – disable JIT provisioning via Email Magic Link.
       #
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # email_invites::
       #   The authentication setting that controls how a new Member can be invited to an organization by email. The accepted values are:
       #
@@ -182,7 +182,7 @@ module StytchB2B
       #
       #   `NOT_ALLOWED` – disable email invites.
       #
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # auth_methods::
       #   The setting that controls which authentication methods can be used by Members of an Organization. The accepted values are:
       #
@@ -190,40 +190,40 @@ module StytchB2B
       #
       #   `RESTRICTED` – only methods that comply with `allowed_auth_methods` can be used for authentication. This setting does not apply to Members with `is_breakglass` set to `true`.
       #
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # allowed_auth_methods::
       #
       #   An array of allowed authentication methods. This list is enforced when `auth_methods` is set to `RESTRICTED`.
       #   The list's accepted values are: `sso`, `magic_link`, `password`, `google_oauth`, and `microsoft_oauth`.
       #
-      #   The type of this field is nilable list of `String`.
+      #   The type of this field is nilable list of +String+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_token::
       #   A secret token for a given Stytch Session.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_jwt::
       #   The JSON Web Token (JWT) for a given Stytch Session.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member::
       #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
-      #   The type of this field is `Member`.
+      #   The type of this field is +Member+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       # member_session::
       #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
-      #   The type of this field is nilable `MemberSession`.
+      #   The type of this field is nilable +MemberSession+ (+object+).
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-      #   The type of this field is nilable `Organization`.
+      #   The type of this field is nilable +Organization+ (+object+).
       def create(
         intermediate_session_token:,
         organization_name:,
@@ -275,22 +275,22 @@ module StytchB2B
       # == Parameters:
       # intermediate_session_token::
       #   The Intermediate Session Token. This token does not belong to a specific instance of a member, but may be exchanged for an existing Member Session or used to create a new organization.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # session_token::
       #   A secret token for a given Stytch Session.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # session_jwt::
       #   The JSON Web Token (JWT) for a given Stytch Session.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # email_address::
       #   The email address.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # discovered_organizations::
       #   An array of `discovered_organization` objects tied to the `intermediate_session_token`, `session_token`, or `session_jwt`. See the [Discovered Organization Object](https://stytch.com/docs/b2b/api/discovered-organization-object) for complete details.
       #
@@ -304,10 +304,10 @@ module StytchB2B
       #       b) The Organizations' allowed domains list contains the Member's email domain.
       #
       #       c) The Organization has at least one other Member with a verified email address with the same domain as the end user (to prevent phishing attacks).
-      #   The type of this field is list of `DiscoveredOrganization`.
+      #   The type of this field is list of +DiscoveredOrganization+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       def list(
         intermediate_session_token: nil,
         session_token: nil,

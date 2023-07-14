@@ -35,45 +35,45 @@ module StytchB2B
     # == Parameters:
     # password::
     #   The password to authenticate.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # email_address::
     #   The email address of the Member.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # valid_password::
     #   Returns `true` if the password passes our password validation. We offer two validation options,
     #   [zxcvbn](https://stytch.com/docs/passwords#strength-requirements) is the default option which offers a high level of sophistication.
     #   We also offer [LUDS](https://stytch.com/docs/passwords#strength-requirements). If an email address is included in the call we also
     #   require that the password hasn't been compromised using built-in breach detection powered by [HaveIBeenPwned](https://haveibeenpwned.com/)
-    #   The type of this field is `Boolean`.
+    #   The type of this field is +Boolean+.
     # score::
     #   The score of the password determined by [zxcvbn](https://github.com/dropbox/zxcvbn). Values will be between 1 and 4, a 3 or greater is required to pass validation.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     # breached_password::
     #   Returns `true` if the password has been breached. Powered by [HaveIBeenPwned](https://haveibeenpwned.com/).
-    #   The type of this field is `Boolean`.
+    #   The type of this field is +Boolean+.
     # strength_policy::
     #   The strength policy type enforced, either `zxcvbn` or `luds`.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # breach_detection_on_create::
     #   Will return `true` if breach detection will be evaluated. By default this option is enabled.
     #   This option can be disabled by contacting [support@stytch.com](mailto:support@stytch.com?subject=Password%20strength%20configuration).
     #   If this value is false then `breached_password` will always be `false` as well.
-    #   The type of this field is `Boolean`.
+    #   The type of this field is +Boolean+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     # luds_feedback::
     #   Feedback for how to improve the password's strength using [luds](https://stytch.com/docs/passwords#strength-requirements).
-    #   The type of this field is nilable `LudsFeedback`.
+    #   The type of this field is nilable +LudsFeedback+ (+object+).
     # zxcvbn_feedback::
     #   Feedback for how to improve the password's strength using [zxcvbn](https://stytch.com/docs/passwords#strength-requirements).
-    #   The type of this field is nilable `ZxcvbnFeedback`.
+    #   The type of this field is nilable +ZxcvbnFeedback+ (+object+).
     def strength_check(
       password:,
       email_address: nil
@@ -91,63 +91,63 @@ module StytchB2B
     # == Parameters:
     # email_address::
     #   The email address of the Member.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # hash::
     #   The password hash. For a Scrypt or PBKDF2 hash, the hash needs to be a base64 encoded string.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # hash_type::
     #   The password hash used. Currently `bcrypt`, `scrypt`, `argon2i`, `argon2id`, `md_5`, `sha_1`, and `pbkdf_2` are supported.
-    #   The type of this field is `MigrateRequestHashType`.
+    #   The type of this field is +MigrateRequestHashType+ (+object+).
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # md_5_config::
     #   Optional parameters for MD-5 hash types.
-    #   The type of this field is nilable `MD5Config`.
+    #   The type of this field is nilable +MD5Config+ (+object+).
     # argon_2_config::
     #   Required parameters if the argon2 hex form, as opposed to the encoded form, is supplied.
-    #   The type of this field is nilable `Argon2Config`.
+    #   The type of this field is nilable +Argon2Config+ (+object+).
     # sha_1_config::
     #   Optional parameters for SHA-1 hash types.
-    #   The type of this field is nilable `SHA1Config`.
+    #   The type of this field is nilable +SHA1Config+ (+object+).
     # scrypt_config::
     #   Required parameters if the scrypt is not provided in a **PHC encoded form**.
-    #   The type of this field is nilable `ScryptConfig`.
+    #   The type of this field is nilable +ScryptConfig+ (+object+).
     # pbkdf_2_config::
     #   Required additional parameters for PBKDF2 hash keys. Note that we use the SHA-256 by default, please contact [support@stytch.com](mailto:support@stytch.com) if you use another hashing function.
-    #   The type of this field is nilable `PBKDF2Config`.
+    #   The type of this field is nilable +PBKDF2Config+ (+object+).
     # name::
     #   The name of the Member. Each field in the name object is optional.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # trusted_metadata::
     #   An arbitrary JSON object for storing application-specific data or identity-provider-specific data.
-    #   The type of this field is nilable `object`.
+    #   The type of this field is nilable +object+.
     # untrusted_metadata::
     #   An arbitrary JSON object of application-specific data. These fields can be edited directly by the
     #   frontend SDK, and should not be used to store critical information. See the [Metadata resource](https://stytch.com/docs/b2b/api/metadata)
     #   for complete field behavior details.
-    #   The type of this field is nilable `object`.
+    #   The type of this field is nilable +object+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # member_id::
     #   Globally unique UUID that identifies a specific Member.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # member_created::
     #   A flag indicating `true` if a new Member object was created and `false` if the Member object already existed.
-    #   The type of this field is `Boolean`.
+    #   The type of this field is +Boolean+.
     # member::
     #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
-    #   The type of this field is `Member`.
+    #   The type of this field is +Member+ (+object+).
     # organization::
     #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-    #   The type of this field is `Organization`.
+    #   The type of this field is +Organization+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def migrate(
       email_address:,
       hash:,
@@ -190,16 +190,16 @@ module StytchB2B
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # email_address::
     #   The email address of the Member.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # password::
     #   The password to authenticate.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # session_token::
     #   A secret token for a given Stytch Session.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_duration_minutes::
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
@@ -211,46 +211,46 @@ module StytchB2B
     #
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
     #   to use the Stytch session product, you can ignore the session fields in the response.
-    #   The type of this field is nilable `Integer`.
+    #   The type of this field is nilable +Integer+.
     # session_jwt::
     #   The JSON Web Token (JWT) for a given Stytch Session.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_custom_claims::
     #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in
     #   `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To
     #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
     #   Total custom claims size cannot exceed four kilobytes.
-    #   The type of this field is nilable `object`.
+    #   The type of this field is nilable +object+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # member_id::
     #   Globally unique UUID that identifies a specific Member.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # member::
     #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
-    #   The type of this field is `Member`.
+    #   The type of this field is +Member+ (+object+).
     # session_token::
     #   A secret token for a given Stytch Session.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # session_jwt::
     #   The JSON Web Token (JWT) for a given Stytch Session.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # organization::
     #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-    #   The type of this field is `Organization`.
+    #   The type of this field is +Organization+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     # member_session::
     #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
-    #   The type of this field is nilable `MemberSession`.
+    #   The type of this field is nilable +MemberSession+ (+object+).
     def authenticate(
       organization_id:,
       email_address:,
@@ -291,27 +291,27 @@ module StytchB2B
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # email_address::
       #   The email address of the Member to start the email reset process for.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # reset_password_redirect_url::
       #   The URL that the Member clicks from the reset password link. This URL should be an endpoint in the backend server that verifies the request by querying
       #   Stytch's authenticate endpoint and finishes the reset password flow. If this value is not passed, the default `reset_password_redirect_url` that you set in your Dashboard is used.
       #   If you have not set a default `reset_password_redirect_url`, an error is returned.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # reset_password_expiration_minutes::
       #   Sets a time limit after which the email link to reset the member's password will no longer be valid.
-      #   The type of this field is nilable `Integer`.
+      #   The type of this field is nilable +Integer+.
       # code_challenge::
       #   A base64url encoded SHA256 hash of a one time secret used to validate that the request starts and ends on the same device.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # login_redirect_url::
       #   The URL that the member clicks from the reset without password link. This URL should be an endpoint in the backend server
       #       that verifies the request by querying Stytch's authenticate endpoint and finishes the magic link flow. If this value is not passed, the
       #       default `login_redirect_url` that you set in your Dashboard is used. This value is only used if magic links are enabled for the member. If
       #       you have not set a default `login_redirect_url` and magic links are not enabled for the member, an error is returned.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
@@ -319,25 +319,25 @@ module StytchB2B
       #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
-      #   The type of this field is nilable `ResetStartRequestLocale`.
+      #   The type of this field is nilable +ResetStartRequestLocale+ (+object+).
       # reset_password_template_id::
       #   Use a custom template for reset password emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic Links - Reset Password.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member_email_id::
       #   Globally unique UUID that identifies a member's email
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       def reset_start(
         organization_id:,
         email_address:,
@@ -372,15 +372,15 @@ module StytchB2B
       # == Parameters:
       # password_reset_token::
       #   The password reset token to authenticate.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # password::
       #   The password to reset.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_token::
       #   Reuse an existing session instead of creating a new one. If you provide a `session_token`, Stytch will update the session.
       #       If the `session_token` and `magic_links_token` belong to different Members, the `session_token` will be ignored. This endpoint will error if
       #       both `session_token` and `session_jwt` are provided.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # session_duration_minutes::
       #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
       #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
@@ -392,54 +392,54 @@ module StytchB2B
       #
       #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
       #   to use the Stytch session product, you can ignore the session fields in the response.
-      #   The type of this field is nilable `Integer`.
+      #   The type of this field is nilable +Integer+.
       # session_jwt::
       #   Reuse an existing session instead of creating a new one. If you provide a `session_jwt`, Stytch will update the session. If the `session_jwt`
       #       and `magic_links_token` belong to different Members, the `session_jwt` will be ignored. This endpoint will error if both `session_token` and `session_jwt`
       #       are provided.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # code_verifier::
       #   A base64url encoded one time secret used to validate that the request starts and ends on the same device.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # session_custom_claims::
       #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in
       #   `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To
       #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
       #   Total custom claims size cannot exceed four kilobytes.
-      #   The type of this field is nilable `object`.
+      #   The type of this field is nilable +object+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member_email_id::
       #   Globally unique UUID that identifies a member's email
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member::
       #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
-      #   The type of this field is `Member`.
+      #   The type of this field is +Member+ (+object+).
       # session_token::
       #   A secret token for a given Stytch Session.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_jwt::
       #   The JSON Web Token (JWT) for a given Stytch Session.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-      #   The type of this field is `Organization`.
+      #   The type of this field is +Organization+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       # member_session::
       #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
-      #   The type of this field is nilable `MemberSession`.
+      #   The type of this field is nilable +MemberSession+ (+object+).
       def reset(
         password_reset_token:,
         password:,
@@ -475,37 +475,37 @@ module StytchB2B
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # password::
       #   The password to authenticate.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_token::
       #   A secret token for a given Stytch Session.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # session_jwt::
       #   The JSON Web Token (JWT) for a given Stytch Session.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member::
       #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
-      #   The type of this field is `Member`.
+      #   The type of this field is +Member+ (+object+).
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-      #   The type of this field is `Organization`.
+      #   The type of this field is +Organization+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       # member_session::
       #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
-      #   The type of this field is nilable `MemberSession`.
+      #   The type of this field is nilable +MemberSession+ (+object+).
       def reset(
         organization_id:,
         password:,
@@ -541,19 +541,19 @@ module StytchB2B
       # == Parameters:
       # email_address::
       #   The email address of the Member.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # existing_password::
       #   The member's current password that they supplied.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # new_password::
       #   The member's elected new password.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_token::
       #   A secret token for a given Stytch Session.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # session_duration_minutes::
       #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
       #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
@@ -565,43 +565,43 @@ module StytchB2B
       #
       #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
       #   to use the Stytch session product, you can ignore the session fields in the response.
-      #   The type of this field is nilable `Integer`.
+      #   The type of this field is nilable +Integer+.
       # session_jwt::
       #   The JSON Web Token (JWT) for a given Stytch Session.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # session_custom_claims::
       #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in
       #   `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To
       #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
       #   Total custom claims size cannot exceed four kilobytes.
-      #   The type of this field is nilable `object`.
+      #   The type of this field is nilable +object+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member::
       #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
-      #   The type of this field is `Member`.
+      #   The type of this field is +Member+ (+object+).
       # session_token::
       #   A secret token for a given Stytch Session.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_jwt::
       #   The JSON Web Token (JWT) for a given Stytch Session.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-      #   The type of this field is `Organization`.
+      #   The type of this field is +Organization+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       # member_session::
       #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
-      #   The type of this field is nilable `MemberSession`.
+      #   The type of this field is nilable +MemberSession+ (+object+).
       def reset(
         email_address:,
         existing_password:,

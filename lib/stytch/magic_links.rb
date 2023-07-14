@@ -24,16 +24,16 @@ module Stytch
     # == Parameters:
     # token::
     #   The token to authenticate.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # attributes::
     #   Provided attributes help with fraud detection.
-    #   The type of this field is nilable `Attributes`.
+    #   The type of this field is nilable +Attributes+ (+object+).
     # options::
     #   Specify optional security settings.
-    #   The type of this field is nilable `Options`.
+    #   The type of this field is nilable +Options+ (+object+).
     # session_token::
     #   The `session_token` associated with a User's existing Session.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_duration_minutes::
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
@@ -44,51 +44,51 @@ module Stytch
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
     #
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will not be created.
-    #   The type of this field is nilable `Integer`.
+    #   The type of this field is nilable +Integer+.
     # session_jwt::
     #   The `session_jwt` associated with a User's existing Session.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_custom_claims::
     #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
     #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
-    #   The type of this field is nilable `object`.
+    #   The type of this field is nilable +object+.
     # code_verifier::
     #   A base64url encoded one time secret used to validate that the request starts and ends on the same device.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # user_id::
     #   The unique ID of the affected User.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # method_id::
     #   The `email_id` or `phone_id` involved in the given authentication.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # session_token::
     #   A secret token for a given Stytch Session.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # session_jwt::
     #   The JSON Web Token (JWT) for a given Stytch Session.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # user::
     #   The `user` object affected by this API call. See the [Get user endpoint](https://stytch.com/docs/api/get-user) for complete response field details.
-    #   The type of this field is `User`.
+    #   The type of this field is +User+ (+object+).
     # reset_sessions::
     #   Indicates if all other of the User's Sessions need to be reset. You should check this field if you aren't using Stytch's Session product. If you are using Stytch's Session product, we revoke the User's other sessions for you.
-    #   The type of this field is `Boolean`.
+    #   The type of this field is +Boolean+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
     #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
     #
-    #   The type of this field is nilable `Session`.
+    #   The type of this field is nilable +Session+ (+object+).
     def authenticate(
       token:,
       attributes: nil,
@@ -121,28 +121,28 @@ module Stytch
     # == Parameters:
     # user_id::
     #   The unique ID of a specific User.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # expiration_minutes::
     #   Set the expiration for the Magic Link `token` in minutes. By default, it expires in 1 hour. The minimum expiration is 5 minutes and the maximum is 7 days (10080 mins).
-    #   The type of this field is nilable `Integer`.
+    #   The type of this field is nilable +Integer+.
     # attributes::
     #   Provided attributes help with fraud detection.
-    #   The type of this field is nilable `Attributes`.
+    #   The type of this field is nilable +Attributes+ (+object+).
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # user_id::
     #   The unique ID of the affected User.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # token::
     #   The Magic Link `token` that you'll include in your contact method of choice, e.g. email or SMS.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def create(
       user_id:,
       expiration_minutes: nil,
@@ -177,37 +177,37 @@ module Stytch
       # == Parameters:
       # email::
       #   The email address of the User to send the Magic Link to.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # login_template_id::
       #   Use a custom template for login emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic links - Login.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # attributes::
       #   Provided attributes help with fraud detection.
-      #   The type of this field is nilable `Attributes`.
+      #   The type of this field is nilable +Attributes+ (+object+).
       # login_magic_link_url::
       #   The URL the end user clicks from the login Email Magic Link. This should be a URL that your app receives and parses and subsequently send an API request to authenticate the Magic Link and log in the User. If this value is not passed, the default login redirect URL that you set in your Dashboard is used. If you have not set a default login redirect URL, an error is returned.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # signup_magic_link_url::
       #   The URL the end user clicks from the sign-up Email Magic Link. This should be a URL that your app receives and parses and subsequently send an API request to authenticate the Magic Link and sign-up the User. If this value is not passed, the default sign-up redirect URL that you set in your Dashboard is used. If you have not set a default sign-up redirect URL, an error is returned.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # login_expiration_minutes::
       #   Set the expiration for the login email magic link, in minutes. By default, it expires in 1 hour. The minimum expiration is 5 minutes and the maximum is 7 days (10080 mins).
-      #   The type of this field is nilable `Integer`.
+      #   The type of this field is nilable +Integer+.
       # signup_expiration_minutes::
       #   Set the expiration for the sign-up email magic link, in minutes. By default, it expires in 1 week. The minimum expiration is 5 minutes and the maximum is 7 days (10080 mins).
-      #   The type of this field is nilable `Integer`.
+      #   The type of this field is nilable +Integer+.
       # code_challenge::
       #   A base64url encoded SHA256 hash of a one time secret used to validate that the request starts and ends on the same device.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # user_id::
       #   The unique ID of a specific User.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # session_token::
       #   The `session_token` of the user to associate the email with.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # session_jwt::
       #   The `session_jwt` of the user to associate the email with.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
@@ -215,25 +215,25 @@ module Stytch
       #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
-      #   The type of this field is nilable `SendRequestLocale`.
+      #   The type of this field is nilable +SendRequestLocale+ (+object+).
       # signup_template_id::
       #   Use a custom template for sign-up emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic links - Sign-up.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # user_id::
       #   The unique ID of the affected User.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # email_id::
       #   The unique ID of a specific email address.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       def send(
         email:,
         login_template_id: nil,
@@ -276,38 +276,38 @@ module Stytch
       # == Parameters:
       # email::
       #   The email address of the end user.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # login_magic_link_url::
       #   The URL the end user clicks from the login Email Magic Link. This should be a URL that your app receives and parses and subsequently send an API request to authenticate the Magic Link and log in the User. If this value is not passed, the default login redirect URL that you set in your Dashboard is used. If you have not set a default login redirect URL, an error is returned.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # signup_magic_link_url::
       #   The URL the end user clicks from the sign-up Email Magic Link. This should be a URL that your app receives and parses and subsequently send an API request to authenticate the Magic Link and sign-up the User. If this value is not passed, the default sign-up redirect URL that you set in your Dashboard is used. If you have not set a default sign-up redirect URL, an error is returned.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # login_expiration_minutes::
       #   Set the expiration for the login email magic link, in minutes. By default, it expires in 1 hour. The minimum expiration is 5 minutes and the maximum is 7 days (10080 mins).
-      #   The type of this field is nilable `Integer`.
+      #   The type of this field is nilable +Integer+.
       # signup_expiration_minutes::
       #   Set the expiration for the sign-up email magic link, in minutes. By default, it expires in 1 week. The minimum expiration is 5 minutes and the maximum is 7 days (10080 mins).
-      #   The type of this field is nilable `Integer`.
+      #   The type of this field is nilable +Integer+.
       # login_template_id::
       #   Use a custom template for login emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic links - Login.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # signup_template_id::
       #   Use a custom template for sign-up emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic links - Sign-up.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # attributes::
       #   Provided attributes help with fraud detection.
-      #   The type of this field is nilable `Attributes`.
+      #   The type of this field is nilable +Attributes+ (+object+).
       # create_user_as_pending::
       #   Flag for whether or not to save a user as pending vs active in Stytch. Defaults to false.
       #         If true, users will be saved with status pending in Stytch's backend until authenticated.
       #         If false, users will be created as active. An example usage of
       #         a true flag would be to require users to verify their phone by entering the OTP code before creating
       #         an account for them.
-      #   The type of this field is nilable `Boolean`.
+      #   The type of this field is nilable +Boolean+.
       # code_challenge::
       #   A base64url encoded SHA256 hash of a one time secret used to validate that the request starts and ends on the same device.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
@@ -315,25 +315,25 @@ module Stytch
       #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
-      #   The type of this field is nilable `LoginOrCreateRequestLocale`.
+      #   The type of this field is nilable +LoginOrCreateRequestLocale+ (+object+).
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # user_id::
       #   The unique ID of the affected User.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # email_id::
       #   The unique ID of a specific email address.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # user_created::
       #   In `login_or_create` endpoints, this field indicates whether or not a User was just created.
-      #   The type of this field is `Boolean`.
+      #   The type of this field is +Boolean+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       def login_or_create(
         email:,
         login_magic_link_url: nil,
@@ -372,22 +372,22 @@ module Stytch
       # == Parameters:
       # email::
       #   The email address of the User to send the invite Magic Link to.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # invite_template_id::
       #   Use a custom template for invite emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic links - Invite.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # attributes::
       #   Provided attributes help with fraud detection.
-      #   The type of this field is nilable `Attributes`.
+      #   The type of this field is nilable +Attributes+ (+object+).
       # name::
       #   The name of the user. Each field in the name object is optional.
-      #   The type of this field is nilable `Name`.
+      #   The type of this field is nilable +Name+ (+object+).
       # invite_magic_link_url::
       #   The URL the end user clicks from the Email Magic Link. This should be a URL that your app receives and parses and subsequently sends an API request to authenticate the Magic Link and log in the User. If this value is not passed, the default invite redirect URL that you set in your Dashboard is used. If you have not set a default sign-up redirect URL, an error is returned.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # invite_expiration_minutes::
       #   Set the expiration for the email magic link, in minutes. By default, it expires in 1 hour. The minimum expiration is 5 minutes and the maximum is 7 days (10080 mins).
-      #   The type of this field is nilable `Integer`.
+      #   The type of this field is nilable +Integer+.
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
@@ -395,22 +395,22 @@ module Stytch
       #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
-      #   The type of this field is nilable `InviteRequestLocale`.
+      #   The type of this field is nilable +InviteRequestLocale+ (+object+).
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # user_id::
       #   The unique ID of the affected User.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # email_id::
       #   The unique ID of a specific email address.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       def invite(
         email:,
         invite_template_id: nil,
@@ -438,16 +438,16 @@ module Stytch
       # == Parameters:
       # email::
       #   The email of the user.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       def revoke_invite(
         email:
       )

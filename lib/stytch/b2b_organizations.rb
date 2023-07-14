@@ -28,16 +28,16 @@ module StytchB2B
     # == Parameters:
     # organization_name::
     #   The name of the Organization.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # organization_slug::
     #   The unique URL slug of the Organization. A minimum of two characters is required. The slug only accepts alphanumeric characters and the following reserved characters: `-` `.` `_` `~`.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # organization_logo_url::
     #   The image URL of the Organization logo.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # trusted_metadata::
     #   An arbitrary JSON object for storing application-specific data or identity-provider-specific data.
-    #   The type of this field is nilable `object`.
+    #   The type of this field is nilable +object+.
     # sso_jit_provisioning::
     #   The authentication setting that controls the JIT provisioning of Members when authenticating via SSO. The accepted values are:
     #
@@ -47,13 +47,13 @@ module StytchB2B
     #
     #   `NOT_ALLOWED` – disable JIT provisioning via SSO.
     #
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # email_allowed_domains::
     #   An array of email domains that allow invites or JIT provisioning for new Members. This list is enforced when either `email_invites` or `email_jit_provisioning` is set to `RESTRICTED`.
     #
     #
     #     Common domains such as `gmail.com` are not allowed. See the [common email domains resource](https://stytch.com/docs/b2b/api/common-email-domains) for the full list.
-    #   The type of this field is nilable list of `String`.
+    #   The type of this field is nilable list of +String+.
     # email_jit_provisioning::
     #   The authentication setting that controls how a new Member can be provisioned by authenticating via Email Magic Link. The accepted values are:
     #
@@ -61,7 +61,7 @@ module StytchB2B
     #
     #   `NOT_ALLOWED` – disable JIT provisioning via Email Magic Link.
     #
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # email_invites::
     #   The authentication setting that controls how a new Member can be invited to an organization by email. The accepted values are:
     #
@@ -71,7 +71,7 @@ module StytchB2B
     #
     #   `NOT_ALLOWED` – disable email invites.
     #
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # auth_methods::
     #   The setting that controls which authentication methods can be used by Members of an Organization. The accepted values are:
     #
@@ -79,25 +79,25 @@ module StytchB2B
     #
     #   `RESTRICTED` – only methods that comply with `allowed_auth_methods` can be used for authentication. This setting does not apply to Members with `is_breakglass` set to `true`.
     #
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # allowed_auth_methods::
     #
     #   An array of allowed authentication methods. This list is enforced when `auth_methods` is set to `RESTRICTED`.
     #   The list's accepted values are: `sso`, `magic_link`, `password`, `google_oauth`, and `microsoft_oauth`.
     #
-    #   The type of this field is nilable list of `String`.
+    #   The type of this field is nilable list of +String+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # organization::
     #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-    #   The type of this field is `Organization`.
+    #   The type of this field is +Organization+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def create(
       organization_name:,
       organization_slug: nil,
@@ -131,19 +131,19 @@ module StytchB2B
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # organization::
     #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-    #   The type of this field is `Organization`.
+    #   The type of this field is +Organization+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def get(
       organization_id:
     )
@@ -159,22 +159,22 @@ module StytchB2B
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # organization_name::
     #   The name of the Organization.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # organization_slug::
     #   The unique URL slug of the Organization. A minimum of two characters is required. The slug only accepts alphanumeric characters and the following reserved characters: `-` `.` `_` `~`.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # organization_logo_url::
     #   The image URL of the Organization logo.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # trusted_metadata::
     #   An arbitrary JSON object for storing application-specific data or identity-provider-specific data.
-    #   The type of this field is nilable `object`.
+    #   The type of this field is nilable +object+.
     # sso_default_connection_id::
     #   The default connection used for SSO when there are multiple active connections.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # sso_jit_provisioning::
     #   The authentication setting that controls the JIT provisioning of Members when authenticating via SSO. The accepted values are:
     #
@@ -184,17 +184,17 @@ module StytchB2B
     #
     #   `NOT_ALLOWED` – disable JIT provisioning via SSO.
     #
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # sso_jit_provisioning_allowed_connections::
     #   An array of `connection_id`s that reference [SAML Connection objects](https://stytch.com/docs/b2b/api/saml-connection-object).
     #   Only these connections will be allowed to JIT provision Members via SSO when `sso_jit_provisioning` is set to `RESTRICTED`.
-    #   The type of this field is nilable list of `String`.
+    #   The type of this field is nilable list of +String+.
     # email_allowed_domains::
     #   An array of email domains that allow invites or JIT provisioning for new Members. This list is enforced when either `email_invites` or `email_jit_provisioning` is set to `RESTRICTED`.
     #
     #
     #     Common domains such as `gmail.com` are not allowed. See the [common email domains resource](https://stytch.com/docs/b2b/api/common-email-domains) for the full list.
-    #   The type of this field is nilable list of `String`.
+    #   The type of this field is nilable list of +String+.
     # email_jit_provisioning::
     #   The authentication setting that controls how a new Member can be provisioned by authenticating via Email Magic Link. The accepted values are:
     #
@@ -202,7 +202,7 @@ module StytchB2B
     #
     #   `NOT_ALLOWED` – disable JIT provisioning via Email Magic Link.
     #
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # email_invites::
     #   The authentication setting that controls how a new Member can be invited to an organization by email. The accepted values are:
     #
@@ -212,7 +212,7 @@ module StytchB2B
     #
     #   `NOT_ALLOWED` – disable email invites.
     #
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # auth_methods::
     #   The setting that controls which authentication methods can be used by Members of an Organization. The accepted values are:
     #
@@ -220,25 +220,25 @@ module StytchB2B
     #
     #   `RESTRICTED` – only methods that comply with `allowed_auth_methods` can be used for authentication. This setting does not apply to Members with `is_breakglass` set to `true`.
     #
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # allowed_auth_methods::
     #
     #   An array of allowed authentication methods. This list is enforced when `auth_methods` is set to `RESTRICTED`.
     #   The list's accepted values are: `sso`, `magic_link`, `password`, `google_oauth`, and `microsoft_oauth`.
     #
-    #   The type of this field is nilable list of `String`.
+    #   The type of this field is nilable list of +String+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # organization::
     #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-    #   The type of this field is `Organization`.
+    #   The type of this field is +Organization+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def update(
       organization_id:,
       organization_name: nil,
@@ -279,19 +279,19 @@ module StytchB2B
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def delete(
       organization_id:
     )
@@ -303,28 +303,28 @@ module StytchB2B
     # == Parameters:
     # cursor::
     #   The `cursor` field allows you to paginate through your results. Each result array is limited to 1000 results. If your query returns more than 1000 results, you will need to paginate the responses using the `cursor`. If you receive a response that includes a non-null `next_cursor` in the `results_metadata` object, repeat the search call with the `next_cursor` value set to the `cursor` field to retrieve the next page of results. Continue to make search calls until the `next_cursor` in the response is null.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # limit::
     #   The number of search results to return per page. The default limit is 100. A maximum of 1000 results can be returned by a single search request. If the total size of your result set is greater than one page size, you must paginate the response. See the `cursor` field.
-    #   The type of this field is nilable `Integer`.
+    #   The type of this field is nilable +Integer+.
     # query::
     #   The optional query object contains the operator, i.e. `AND` or `OR`, and the operands that will filter your results. Only an operator is required. If you include no operands, no filtering will be applied. If you include no query object, it will return all Organizations with no filtering applied.
-    #   The type of this field is nilable `SearchQuery`.
+    #   The type of this field is nilable +SearchQuery+ (+object+).
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # organizations::
     #   An array of [Organization objects](https://stytch.com/docs/b2b/api/organization-object).
-    #   The type of this field is list of `Organization`.
+    #   The type of this field is list of +Organization+ (+object+).
     # results_metadata::
     #   The search `results_metadata` object contains metadata relevant to your specific query like `total` and `next_cursor`.
-    #   The type of this field is `ResultsMetadata`.
+    #   The type of this field is +ResultsMetadata+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def search(
       cursor: nil,
       limit: nil,
@@ -350,42 +350,42 @@ module StytchB2B
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # name::
       #   The name of the Member.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # trusted_metadata::
       #   An arbitrary JSON object for storing application-specific data or identity-provider-specific data.
-      #   The type of this field is nilable `object`.
+      #   The type of this field is nilable +object+.
       # untrusted_metadata::
       #   An arbitrary JSON object of application-specific data. These fields can be edited directly by the
       #   frontend SDK, and should not be used to store critical information. See the [Metadata resource](https://stytch.com/docs/b2b/api/metadata)
       #   for complete field behavior details.
-      #   The type of this field is nilable `object`.
+      #   The type of this field is nilable +object+.
       # is_breakglass::
       #   Identifies the Member as a break glass user - someone who has permissions to authenticate into an Organization by bypassing the Organization's settings. A break glass account is typically used for emergency purposes to gain access outside of normal authentication procedures. Refer to the [Organization object](organization-object) and its `auth_methods` and `allowed_auth_methods` fields for more details.
-      #   The type of this field is nilable `Boolean`.
+      #   The type of this field is nilable +Boolean+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member::
       #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
-      #   The type of this field is `Member`.
+      #   The type of this field is +Member+ (+object+).
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-      #   The type of this field is `Organization`.
+      #   The type of this field is +Organization+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       def update(
         organization_id:,
         member_id:,
@@ -408,22 +408,22 @@ module StytchB2B
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       def delete(
         organization_id:,
         member_id:
@@ -438,34 +438,34 @@ module StytchB2B
       # == Parameters:
       # organization_ids::
       #   An array of organization_ids. At least one value is required.
-      #   The type of this field is list of `String`.
+      #   The type of this field is list of +String+.
       # cursor::
       #   The `cursor` field allows you to paginate through your results. Each result array is limited to 1000 results. If your query returns more than 1000 results, you will need to paginate the responses using the `cursor`. If you receive a response that includes a non-null `next_cursor` in the `results_metadata` object, repeat the search call with the `next_cursor` value set to the `cursor` field to retrieve the next page of results. Continue to make search calls until the `next_cursor` in the response is null.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # limit::
       #   The number of search results to return per page. The default limit is 100. A maximum of 1000 results can be returned by a single search request. If the total size of your result set is greater than one page size, you must paginate the response. See the `cursor` field.
-      #   The type of this field is nilable `Integer`.
+      #   The type of this field is nilable +Integer+.
       # query::
       #   The optional query object contains the operator, i.e. `AND` or `OR`, and the operands that will filter your results. Only an operator is required. If you include no operands, no filtering will be applied. If you include no query object, it will return all Organizations with no filtering applied.
-      #   The type of this field is nilable `SearchQuery`.
+      #   The type of this field is nilable +SearchQuery+ (+object+).
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # members::
       #   An array of [Member objects](member-object).
-      #   The type of this field is list of `Member`.
+      #   The type of this field is list of +Member+ (+object+).
       # results_metadata::
       #   The search `results_metadata` object contains metadata relevant to your specific query like `total` and `next_cursor`.
-      #   The type of this field is `ResultsMetadata`.
+      #   The type of this field is +ResultsMetadata+ (+object+).
       # organizations::
       #   A map from `organization_id` to [Organization object](https://stytch.com/docs/b2b/api/organization-object). The map only contains the Organizations that the Members belongs to.
-      #   The type of this field is map of `String` to `Organization`.
+      #   The type of this field is map of +String+ to +Organization+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       def search(
         organization_ids:,
         cursor: nil,
@@ -487,28 +487,28 @@ module StytchB2B
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member_password_id::
       #   Globally unique UUID that identifies a Member's password.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member::
       #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
-      #   The type of this field is `Member`.
+      #   The type of this field is +Member+ (+object+).
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-      #   The type of this field is `Organization`.
+      #   The type of this field is +Organization+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       def delete_password(
         organization_id:,
         member_password_id:
@@ -521,45 +521,45 @@ module StytchB2B
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # email_address::
       #   The email address of the Member.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # name::
       #   The name of the Member.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # trusted_metadata::
       #   An arbitrary JSON object for storing application-specific data or identity-provider-specific data.
-      #   The type of this field is nilable `object`.
+      #   The type of this field is nilable +object+.
       # untrusted_metadata::
       #   An arbitrary JSON object of application-specific data. These fields can be edited directly by the
       #   frontend SDK, and should not be used to store critical information. See the [Metadata resource](https://stytch.com/docs/b2b/api/metadata)
       #   for complete field behavior details.
-      #   The type of this field is nilable `object`.
+      #   The type of this field is nilable +object+.
       # create_member_as_pending::
       #   Flag for whether or not to save a Member as `pending` or `active` in Stytch. It defaults to false. If true, new Members will be created with status `pending` in Stytch's backend. Their status will remain `pending` and they will continue to receive signup email templates for every Email Magic Link until that Member authenticates and becomes `active`. If false, new Members will be created with status `active`.
-      #   The type of this field is nilable `Boolean`.
+      #   The type of this field is nilable +Boolean+.
       # is_breakglass::
       #   Identifies the Member as a break glass user - someone who has permissions to authenticate into an Organization by bypassing the Organization's settings. A break glass account is typically used for emergency purposes to gain access outside of normal authentication procedures. Refer to the [Organization object](organization-object) and its `auth_methods` and `allowed_auth_methods` fields for more details.
-      #   The type of this field is nilable `Boolean`.
+      #   The type of this field is nilable +Boolean+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member::
       #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
-      #   The type of this field is `Member`.
+      #   The type of this field is +Member+ (+object+).
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-      #   The type of this field is `Organization`.
+      #   The type of this field is +Organization+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       def create(
         organization_id:,
         email_address:,
@@ -586,31 +586,31 @@ module StytchB2B
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # email_address::
       #   The email address of the Member.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # member::
       #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
-      #   The type of this field is `Member`.
+      #   The type of this field is +Member+ (+object+).
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-      #   The type of this field is `Organization`.
+      #   The type of this field is +Organization+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       def get(
         organization_id:,
         member_id: nil,

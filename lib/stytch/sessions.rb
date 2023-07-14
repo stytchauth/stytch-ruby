@@ -38,19 +38,19 @@ module Stytch
     # == Parameters:
     # user_id::
     #   The `user_id` to get active Sessions for.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # sessions::
     #   An array of Session objects.
-    #   The type of this field is list of `Session`.
+    #   The type of this field is list of +Session+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def get(
       user_id:
     )
@@ -66,42 +66,42 @@ module Stytch
     # == Parameters:
     # session_token::
     #   The session token to authenticate.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_duration_minutes::
     #   Set the session lifetime to be this many minutes from now; minimum of 5 and a maximum of 527040 minutes (366 days). Note that a successful authentication will continue to extend the session this many minutes.
-    #   The type of this field is nilable `Integer`.
+    #   The type of this field is nilable +Integer+.
     # session_jwt::
     #   The JWT to authenticate. You may provide a JWT that has expired according to its `exp` claim and needs to be refreshed. If the signature is valid and the underlying session is still active then Stytch will return a new JWT.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_custom_claims::
     #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
     #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
-    #   The type of this field is nilable `object`.
+    #   The type of this field is nilable +object+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # session_token::
     #   A secret token for a given Stytch Session.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # session_jwt::
     #   The JSON Web Token (JWT) for a given Stytch Session.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # user::
     #   The `user` object affected by this API call. See the [Get user endpoint](https://stytch.com/docs/api/get-user) for complete response field details.
-    #   The type of this field is `User`.
+    #   The type of this field is +User+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
     #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
     #
-    #   The type of this field is nilable `Session`.
+    #   The type of this field is nilable +Session+ (+object+).
     def authenticate(
       session_token: nil,
       session_duration_minutes: nil,
@@ -122,22 +122,22 @@ module Stytch
     # == Parameters:
     # session_id::
     #   The `session_id` to revoke.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_token::
     #   The session token to revoke.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_jwt::
     #   A JWT for the session to revoke.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def revoke(
       session_id: nil,
       session_token: nil,
@@ -156,19 +156,19 @@ module Stytch
     # == Parameters:
     # project_id::
     #   The `project_id` to get the JWKS for.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     #
     # == Returns:
     # An object with the following fields:
     # keys::
     #   The JWK
-    #   The type of this field is list of `JWK`.
+    #   The type of this field is list of +JWK+ (+object+).
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def get_jwks(
       project_id:
     )
@@ -243,23 +243,23 @@ module Stytch
     end
 
     def marshal_jwt_into_session(jwt)
-      stytch_claim = "https://stytch.com/session"
-      expires_at = jwt[stytch_claim]["expires_at"] || Time.at(jwt["exp"]).to_datetime.utc.strftime('%Y-%m-%dT%H:%M:%SZ')
+      stytch_claim = 'https://stytch.com/session'
+      expires_at = jwt[stytch_claim]['expires_at'] || Time.at(jwt['exp']).to_datetime.utc.strftime('%Y-%m-%dT%H:%M:%SZ')
       # The custom claim set is all the claims in the payload except for the standard claims and
       # the Stytch session claim. The cleanest way to collect those seems to be naming what we want
       # to omit and filtering the rest to collect the custom claims.
       reserved_claims = ['aud', 'exp', 'iat', 'iss', 'jti', 'nbf', 'sub', stytch_claim]
       custom_claims = jwt.reject { |key, _| reserved_claims.include?(key) }
-      return {
-        "session_id" => jwt[stytch_claim]["id"],
-        "user_id" => jwt["sub"],
-        "started_at" => jwt[stytch_claim]["started_at"],
-        "last_accessed_at" => jwt[stytch_claim]["last_accessed_at"],
+      {
+        'session_id' => jwt[stytch_claim]['id'],
+        'user_id' => jwt['sub'],
+        'started_at' => jwt[stytch_claim]['started_at'],
+        'last_accessed_at' => jwt[stytch_claim]['last_accessed_at'],
         # For JWTs that include it, prefer the inner expires_at claim.
-        "expires_at" => expires_at,
-        "attributes" => jwt[stytch_claim]["attributes"],
-        "authentication_factors" => jwt[stytch_claim]["authentication_factors"],
-        "custom_claims" => custom_claims,
+        'expires_at' => expires_at,
+        'attributes' => jwt[stytch_claim]['attributes'],
+        'authentication_factors' => jwt[stytch_claim]['authentication_factors'],
+        'custom_claims' => custom_claims
       }
     end
     # ENDMANUAL(authenticate_jwt)

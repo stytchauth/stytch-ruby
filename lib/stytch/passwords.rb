@@ -30,10 +30,10 @@ module Stytch
     # == Parameters:
     # email::
     #   The email address of the end user.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # password::
     #   The password of the user
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # session_duration_minutes::
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
@@ -44,51 +44,51 @@ module Stytch
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
     #
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will not be created.
-    #   The type of this field is nilable `Integer`.
+    #   The type of this field is nilable +Integer+.
     # session_custom_claims::
     #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
     #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
-    #   The type of this field is nilable `object`.
+    #   The type of this field is nilable +object+.
     # trusted_metadata::
     #   The `trusted_metadata` field contains an arbitrary JSON object of application-specific data. See the [Metadata](https://stytch.com/docs/api/metadata) reference for complete field behavior details.
-    #   The type of this field is nilable `object`.
+    #   The type of this field is nilable +object+.
     # untrusted_metadata::
     #   The `untrusted_metadata` field contains an arbitrary JSON object of application-specific data. Untrusted metadata can be edited by end users directly via the SDK, and **cannot be used to store critical information.** See the [Metadata](https://stytch.com/docs/api/metadata) reference for complete field behavior details.
-    #   The type of this field is nilable `object`.
+    #   The type of this field is nilable +object+.
     # name::
     #   The name of the user. Each field in the name object is optional.
-    #   The type of this field is nilable `Name`.
+    #   The type of this field is nilable +Name+ (+object+).
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # user_id::
     #   The unique ID of the affected User.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # email_id::
     #   The unique ID of a specific email address.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # session_token::
     #   A secret token for a given Stytch Session.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # session_jwt::
     #   The JSON Web Token (JWT) for a given Stytch Session.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # user::
     #   The `user` object affected by this API call. See the [Get user endpoint](https://stytch.com/docs/api/get-user) for complete response field details.
-    #   The type of this field is `User`.
+    #   The type of this field is +User+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
     #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
     #
-    #   The type of this field is nilable `Session`.
+    #   The type of this field is nilable +Session+ (+object+).
     def create(
       email:,
       password:,
@@ -122,13 +122,13 @@ module Stytch
     # == Parameters:
     # email::
     #   The email address of the end user.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # password::
     #   The password of the user
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # session_token::
     #   The `session_token` associated with a User's existing Session.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_duration_minutes::
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
@@ -139,42 +139,42 @@ module Stytch
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
     #
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will not be created.
-    #   The type of this field is nilable `Integer`.
+    #   The type of this field is nilable +Integer+.
     # session_jwt::
     #   The `session_jwt` associated with a User's existing Session.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     # session_custom_claims::
     #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
     #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
-    #   The type of this field is nilable `object`.
+    #   The type of this field is nilable +object+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # user_id::
     #   The unique ID of the affected User.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # session_token::
     #   A secret token for a given Stytch Session.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # session_jwt::
     #   The JSON Web Token (JWT) for a given Stytch Session.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # user::
     #   The `user` object affected by this API call. See the [Get user endpoint](https://stytch.com/docs/api/get-user) for complete response field details.
-    #   The type of this field is `User`.
+    #   The type of this field is +User+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
     #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
     #
-    #   The type of this field is nilable `Session`.
+    #   The type of this field is nilable +Session+ (+object+).
     def authenticate(
       email:,
       password:,
@@ -211,37 +211,37 @@ module Stytch
     # == Parameters:
     # password::
     #   The password of the user
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # email::
     #   The email address of the end user.
-    #   The type of this field is nilable `String`.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # valid_password::
     #   Returns `true` if the password passes our password validation. We offer two validation options, [zxcvbn](https://stytch.com/docs/passwords#strength-requirements) is the default option which offers a high level of sophistication. We also offer [LUDS](https://stytch.com/docs/passwords#strength-requirements). If an email address is included in the call we also require that the password hasn't been compromised using built-in breach detection powered by [HaveIBeenPwned](https://haveibeenpwned.com/).
-    #   The type of this field is `Boolean`.
+    #   The type of this field is +Boolean+.
     # score::
     #   The score of the password determined by [zxcvbn](https://github.com/dropbox/zxcvbn). Values will be between 1 and 4, a 3 or greater is required to pass validation.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     # breached_password::
     #   Returns `true` if the password has been breached. Powered by [HaveIBeenPwned](https://haveibeenpwned.com/).
-    #   The type of this field is `Boolean`.
+    #   The type of this field is +Boolean+.
     # strength_policy::
     #   The strength policy type enforced, either `zxcvbn` or `luds`.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # breach_detection_on_create::
     #   Will return `true` if breach detection will be evaluated. By default this option is enabled. This option can be disabled by contacting [support@stytch.com](mailto:support@stytch.com?subject=Password%20strength%20configuration). If this value is `false` then `breached_password` will always be `false` as well.
-    #   The type of this field is `Boolean`.
+    #   The type of this field is +Boolean+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     # feedback::
     #   Feedback for how to improve the password's strength [HaveIBeenPwned](https://haveibeenpwned.com/).
-    #   The type of this field is nilable `Feedback`.
+    #   The type of this field is nilable +Feedback+ (+object+).
     def strength_check(
       password:,
       email: nil
@@ -259,58 +259,58 @@ module Stytch
     # == Parameters:
     # email::
     #   The email address of the end user.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # hash::
     #   The password hash. For a Scrypt or PBKDF2 hash, the hash needs to be a base64 encoded string.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # hash_type::
     #   The password hash used. Currently `bcrypt`, `scrypt`, `argon_2i`, `argon_2id`, `md_5`, `sha_1`, and `pbkdf_2` are supported.
-    #   The type of this field is `MigrateRequestHashType`.
+    #   The type of this field is +MigrateRequestHashType+ (+object+).
     # md_5_config::
     #   Optional parameters for MD-5 hash types.
-    #   The type of this field is nilable `MD5Config`.
+    #   The type of this field is nilable +MD5Config+ (+object+).
     # argon_2_config::
     #   Required parameters if the argon2 hex form, as opposed to the encoded form, is supplied.
-    #   The type of this field is nilable `Argon2Config`.
+    #   The type of this field is nilable +Argon2Config+ (+object+).
     # sha_1_config::
     #   Optional parameters for SHA-1 hash types.
-    #   The type of this field is nilable `SHA1Config`.
+    #   The type of this field is nilable +SHA1Config+ (+object+).
     # scrypt_config::
     #   Required parameters if the scrypt is not provided in a [PHC encoded form](https://github.com/P-H-C/phc-string-format/blob/master/phc-sf-spec.md#phc-string-format).
-    #   The type of this field is nilable `ScryptConfig`.
+    #   The type of this field is nilable +ScryptConfig+ (+object+).
     # pbkdf_2_config::
     #   Required additional parameters for PBKDF2 hash keys.
-    #   The type of this field is nilable `PBKDF2Config`.
+    #   The type of this field is nilable +PBKDF2Config+ (+object+).
     # trusted_metadata::
     #   The `trusted_metadata` field contains an arbitrary JSON object of application-specific data. See the [Metadata](https://stytch.com/docs/api/metadata) reference for complete field behavior details.
-    #   The type of this field is nilable `object`.
+    #   The type of this field is nilable +object+.
     # untrusted_metadata::
     #   The `untrusted_metadata` field contains an arbitrary JSON object of application-specific data. Untrusted metadata can be edited by end users directly via the SDK, and **cannot be used to store critical information.** See the [Metadata](https://stytch.com/docs/api/metadata) reference for complete field behavior details.
-    #   The type of this field is nilable `object`.
+    #   The type of this field is nilable +object+.
     # name::
     #   The name of the user. Each field in the name object is optional.
-    #   The type of this field is nilable `Name`.
+    #   The type of this field is nilable +Name+ (+object+).
     #
     # == Returns:
     # An object with the following fields:
     # request_id::
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # user_id::
     #   The unique ID of the affected User.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # email_id::
     #   The unique ID of a specific email address.
-    #   The type of this field is `String`.
+    #   The type of this field is +String+.
     # user_created::
     #   In `login_or_create` endpoints, this field indicates whether or not a User was just created.
-    #   The type of this field is `Boolean`.
+    #   The type of this field is +Boolean+.
     # user::
     #   The `user` object affected by this API call. See the [Get user endpoint](https://stytch.com/docs/api/get-user) for complete response field details.
-    #   The type of this field is `User`.
+    #   The type of this field is +User+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is `Integer`.
+    #   The type of this field is +Integer+.
     def migrate(
       email:,
       hash:,
@@ -353,29 +353,29 @@ module Stytch
       # == Parameters:
       # email::
       #   The email of the User that requested the password reset.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # reset_password_redirect_url::
       #   The url that the user clicks from the password reset email to finish the reset password flow.
       #   This should be a url that your app receives and parses before showing your app's reset password page.
       #   After the user submits a new password to your app, it should send an API request to complete the password reset process.
       #   If this value is not passed, the default reset password redirect URL that you set in your Dashboard is used.
       #   If you have not set a default reset password redirect URL, an error is returned.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # reset_password_expiration_minutes::
       #   Set the expiration for the password reset, in minutes. By default, it expires in 30 minutes.
       #   The minimum expiration is 5 minutes and the maximum is 7 days (10080 mins).
-      #   The type of this field is nilable `Integer`.
+      #   The type of this field is nilable +Integer+.
       # code_challenge::
       #   A base64url encoded SHA256 hash of a one time secret used to validate that the request starts and ends on the same device.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # attributes::
       #   Provided attributes help with fraud detection.
-      #   The type of this field is nilable `Attributes`.
+      #   The type of this field is nilable +Attributes+ (+object+).
       # login_redirect_url::
       #   The URL Stytch redirects to after the OAuth flow is completed for a user that already exists. This URL should be a route in your application which will run `oauth.authenticate` (see below) and finish the login.
       #
       #   The URL must be configured as a Login URL in the [Redirect URL page](/dashboard/redirect-urls). If the field is not specified, the default Login URL will be used.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
@@ -383,26 +383,26 @@ module Stytch
       #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
-      #   The type of this field is nilable `ResetStartRequestLocale`.
+      #   The type of this field is nilable +ResetStartRequestLocale+ (+object+).
       # reset_password_template_id::
       #   Use a custom template for password reset emails. By default, it will use your default email template.
       #   The template must be a template using our built-in customizations or a custom HTML email for Passwords - Password reset.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # user_id::
       #   The unique ID of the affected User.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # email_id::
       #   The unique ID of a specific email address.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       def reset_start(
         email:,
         reset_password_redirect_url: nil,
@@ -437,13 +437,13 @@ module Stytch
       # == Parameters:
       # token::
       #   The token to authenticate.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # password::
       #   The password of the user
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # session_duration_minutes::
       #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
       #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
@@ -454,51 +454,51 @@ module Stytch
       #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
       #
       #   If the `session_duration_minutes` parameter is not specified, a Stytch session will not be created.
-      #   The type of this field is nilable `Integer`.
+      #   The type of this field is nilable +Integer+.
       # session_jwt::
       #   The `session_jwt` associated with a User's existing Session.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # code_verifier::
       #   A base64url encoded one time secret used to validate that the request starts and ends on the same device.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # session_custom_claims::
       #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
       #
       #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
-      #   The type of this field is nilable `object`.
+      #   The type of this field is nilable +object+.
       # attributes::
       #   Provided attributes help with fraud detection.
-      #   The type of this field is nilable `Attributes`.
+      #   The type of this field is nilable +Attributes+ (+object+).
       # options::
       #   Specify optional security settings.
-      #   The type of this field is nilable `Options`.
+      #   The type of this field is nilable +Options+ (+object+).
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # user_id::
       #   The unique ID of the affected User.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_token::
       #   A secret token for a given Stytch Session.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_jwt::
       #   The JSON Web Token (JWT) for a given Stytch Session.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # user::
       #   The `user` object affected by this API call. See the [Get user endpoint](https://stytch.com/docs/api/get-user) for complete response field details.
-      #   The type of this field is `User`.
+      #   The type of this field is +User+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       # session::
       #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
       #
       #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
       #
-      #   The type of this field is nilable `Session`.
+      #   The type of this field is nilable +Session+ (+object+).
       def reset(
         token:,
         password:,
@@ -538,16 +538,16 @@ module Stytch
       # == Parameters:
       # email::
       #   The email address of the end user.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # existing_password::
       #   The user's existing password.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # new_password::
       #   The new password for the user.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # session_duration_minutes::
       #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
       #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
@@ -558,42 +558,42 @@ module Stytch
       #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
       #
       #   If the `session_duration_minutes` parameter is not specified, a Stytch session will not be created.
-      #   The type of this field is nilable `Integer`.
+      #   The type of this field is nilable +Integer+.
       # session_jwt::
       #   The `session_jwt` associated with a User's existing Session.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # session_custom_claims::
       #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
       #
       #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
-      #   The type of this field is nilable `object`.
+      #   The type of this field is nilable +object+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # user_id::
       #   The unique ID of the affected User.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_token::
       #   A secret token for a given Stytch Session.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_jwt::
       #   The JSON Web Token (JWT) for a given Stytch Session.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # user::
       #   The `user` object affected by this API call. See the [Get user endpoint](https://stytch.com/docs/api/get-user) for complete response field details.
-      #   The type of this field is `User`.
+      #   The type of this field is +User+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       # session::
       #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
       #
       #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
       #
-      #   The type of this field is nilable `Session`.
+      #   The type of this field is nilable +Session+ (+object+).
       def reset(
         email:,
         existing_password:,
@@ -629,34 +629,34 @@ module Stytch
       # == Parameters:
       # password::
       #   The password of the user
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       # session_jwt::
       #   The `session_jwt` associated with a User's existing Session.
-      #   The type of this field is nilable `String`.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # user_id::
       #   The unique ID of the affected User.
-      #   The type of this field is `String`.
+      #   The type of this field is +String+.
       # user::
       #   The `user` object affected by this API call. See the [Get user endpoint](https://stytch.com/docs/api/get-user) for complete response field details.
-      #   The type of this field is `User`.
+      #   The type of this field is +User+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is `Integer`.
+      #   The type of this field is +Integer+.
       # session::
       #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
       #
       #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
       #
-      #   The type of this field is nilable `Session`.
+      #   The type of this field is nilable +Session+ (+object+).
       def reset(
         password:,
         session_token: nil,
