@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-require_relative 'users'
+require_relative 'crypto_wallets'
 require_relative 'magic_links'
 require_relative 'oauth'
 require_relative 'otps'
+require_relative 'passwords'
 require_relative 'sessions'
 require_relative 'totps'
+require_relative 'users'
 require_relative 'webauthn'
-require_relative 'crypto_wallets'
-require_relative 'passwords'
 
 module Stytch
   class Client
     ENVIRONMENTS = %i[live test].freeze
 
-    attr_reader :users, :magic_links, :oauth, :otps, :sessions, :totps, :webauthn, :crypto_wallets, :passwords
+    attr_reader :crypto_wallets, :magic_links, :oauth, :otps, :passwords, :sessions, :totps, :users, :webauthn
 
     def initialize(project_id:, secret:, env: nil, &block)
       @api_host   = api_host(env, project_id)
@@ -23,15 +23,15 @@ module Stytch
 
       create_connection(&block)
 
-      @users = Stytch::Users.new(@connection)
+      @crypto_wallets = Stytch::CryptoWallets.new(@connection)
       @magic_links = Stytch::MagicLinks.new(@connection)
       @oauth = Stytch::OAuth.new(@connection)
       @otps = Stytch::OTPs.new(@connection)
-      @sessions = Stytch::Sessions.new(@connection, @project_id)
-      @totps = Stytch::TOTPs.new(@connection)
-      @webauthn = Stytch::WebAuthn.new(@connection)
-      @crypto_wallets = Stytch::CryptoWallets.new(@connection)
       @passwords = Stytch::Passwords.new(@connection)
+      @sessions = Stytch::Sessions.new(@connection, project_id)
+      @totps = Stytch::TOTPs.new(@connection)
+      @users = Stytch::Users.new(@connection)
+      @webauthn = Stytch::WebAuthn.new(@connection)
     end
 
     private
@@ -42,7 +42,7 @@ module Stytch
         'https://api.stytch.com'
       when :test
         'https://test.stytch.com'
-      when /\Ahttps?:\/\//
+      when %r{\Ahttps?://}
         # If this is a string that looks like a URL, assume it's an internal development URL.
         env
       else
