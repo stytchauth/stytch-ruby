@@ -215,7 +215,7 @@ module Stytch
       #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
-      #   The type of this field is nilable +SendRequestLocale+ (+object+).
+      #   The type of this field is nilable +SendRequestLocale+ (string enum).
       # signup_template_id::
       #   Use a custom template for sign-up emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic links - Sign-up.
       #   The type of this field is nilable +String+.
@@ -315,7 +315,7 @@ module Stytch
       #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
-      #   The type of this field is nilable +LoginOrCreateRequestLocale+ (+object+).
+      #   The type of this field is nilable +LoginOrCreateRequestLocale+ (string enum).
       #
       # == Returns:
       # An object with the following fields:
@@ -395,7 +395,7 @@ module Stytch
       #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
-      #   The type of this field is nilable +InviteRequestLocale+ (+object+).
+      #   The type of this field is nilable +InviteRequestLocale+ (string enum).
       #
       # == Returns:
       # An object with the following fields:

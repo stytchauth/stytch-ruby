@@ -8,4 +8,5 @@ require_relative 'stytch/middleware'
 require_relative 'stytch/version'
 
 module Stytch end
+
 module StytchB2B end

@@ -265,7 +265,7 @@ module Stytch
     #   The type of this field is +String+.
     # hash_type::
     #   The password hash used. Currently `bcrypt`, `scrypt`, `argon_2i`, `argon_2id`, `md_5`, `sha_1`, and `pbkdf_2` are supported.
-    #   The type of this field is +MigrateRequestHashType+ (+object+).
+    #   The type of this field is +MigrateRequestHashType+ (string enum).
     # md_5_config::
     #   Optional parameters for MD-5 hash types.
     #   The type of this field is nilable +MD5Config+ (+object+).
@@ -383,7 +383,7 @@ module Stytch
       #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
-      #   The type of this field is nilable +ResetStartRequestLocale+ (+object+).
+      #   The type of this field is nilable +ResetStartRequestLocale+ (string enum).
       # reset_password_template_id::
       #   Use a custom template for password reset emails. By default, it will use your default email template.
       #   The template must be a template using our built-in customizations or a custom HTML email for Passwords - Password reset.
