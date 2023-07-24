@@ -97,7 +97,7 @@ module StytchB2B
     #   The type of this field is +String+.
     # hash_type::
     #   The password hash used. Currently `bcrypt`, `scrypt`, `argon2i`, `argon2id`, `md_5`, `sha_1`, and `pbkdf_2` are supported.
-    #   The type of this field is +MigrateRequestHashType+ (+object+).
+    #   The type of this field is +MigrateRequestHashType+ (string enum).
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
     #   The type of this field is +String+.
@@ -221,6 +221,9 @@ module StytchB2B
     #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
     #   Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
+    # locale::
+    #   (no documentation yet)
+    #   The type of this field is nilable +AuthenticateRequestLocale+ (string enum).
     #
     # == Returns:
     # An object with the following fields:
@@ -258,7 +261,8 @@ module StytchB2B
       session_token: nil,
       session_duration_minutes: nil,
       session_jwt: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      locale: nil
     )
       request = {
         organization_id: organization_id,
@@ -269,6 +273,7 @@ module StytchB2B
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:locale] = locale unless locale.nil?
 
       post_request('/v1/b2b/passwords/authenticate', request)
     end
@@ -319,7 +324,7 @@ module StytchB2B
       #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
-      #   The type of this field is nilable +ResetStartRequestLocale+ (+object+).
+      #   The type of this field is nilable +ResetStartRequestLocale+ (string enum).
       # reset_password_template_id::
       #   Use a custom template for reset password emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic Links - Reset Password.
       #   The type of this field is nilable +String+.
@@ -407,6 +412,9 @@ module StytchB2B
       #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
       #   Total custom claims size cannot exceed four kilobytes.
       #   The type of this field is nilable +object+.
+      # locale::
+      #   (no documentation yet)
+      #   The type of this field is nilable +ResetRequestLocale+ (string enum).
       #
       # == Returns:
       # An object with the following fields:
@@ -447,7 +455,8 @@ module StytchB2B
         session_duration_minutes: nil,
         session_jwt: nil,
         code_verifier: nil,
-        session_custom_claims: nil
+        session_custom_claims: nil,
+        locale: nil
       )
         request = {
           password_reset_token: password_reset_token,
@@ -458,6 +467,7 @@ module StytchB2B
         request[:session_jwt] = session_jwt unless session_jwt.nil?
         request[:code_verifier] = code_verifier unless code_verifier.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+        request[:locale] = locale unless locale.nil?
 
         post_request('/v1/b2b/passwords/email/reset', request)
       end
@@ -575,6 +585,9 @@ module StytchB2B
       #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
       #   Total custom claims size cannot exceed four kilobytes.
       #   The type of this field is nilable +object+.
+      # locale::
+      #   (no documentation yet)
+      #   The type of this field is nilable +ResetRequestLocale+ (string enum).
       #
       # == Returns:
       # An object with the following fields:
@@ -610,7 +623,8 @@ module StytchB2B
         session_token: nil,
         session_duration_minutes: nil,
         session_jwt: nil,
-        session_custom_claims: nil
+        session_custom_claims: nil,
+        locale: nil
       )
         request = {
           email_address: email_address,
@@ -622,6 +636,7 @@ module StytchB2B
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
         request[:session_jwt] = session_jwt unless session_jwt.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+        request[:locale] = locale unless locale.nil?
 
         post_request('/v1/b2b/passwords/existing_password/reset', request)
       end

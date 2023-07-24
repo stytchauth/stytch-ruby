@@ -57,6 +57,9 @@ module StytchB2B
     #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
     #   Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
+    # locale::
+    #   (no documentation yet)
+    #   The type of this field is nilable +AuthenticateRequestLocale+ (string enum).
     #
     # == Returns:
     # An object with the following fields:
@@ -100,7 +103,8 @@ module StytchB2B
       session_token: nil,
       session_jwt: nil,
       session_duration_minutes: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      locale: nil
     )
       request = {
         magic_links_token: magic_links_token
@@ -110,6 +114,7 @@ module StytchB2B
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:locale] = locale unless locale.nil?
 
       post_request('/v1/b2b/magic_links/authenticate', request)
     end
@@ -161,7 +166,7 @@ module StytchB2B
       #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
-      #   The type of this field is nilable +LoginOrSignupRequestLocale+ (+object+).
+      #   The type of this field is nilable +LoginOrSignupRequestLocale+ (string enum).
       #
       # == Returns:
       # An object with the following fields:
@@ -246,7 +251,7 @@ module StytchB2B
       #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
-      #   The type of this field is nilable +InviteRequestLocale+ (+object+).
+      #   The type of this field is nilable +InviteRequestLocale+ (string enum).
       #
       # == Returns:
       # An object with the following fields:
@@ -323,7 +328,7 @@ module StytchB2B
         #
         # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
         #
-        #   The type of this field is nilable +SendRequestLocale+ (+object+).
+        #   The type of this field is nilable +SendRequestLocale+ (string enum).
         #
         # == Returns:
         # An object with the following fields:

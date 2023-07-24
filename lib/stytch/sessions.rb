@@ -108,7 +108,8 @@ module Stytch
       session_jwt: nil,
       session_custom_claims: nil
     )
-      request = {}
+      request = {
+      }
       request[:session_token] = session_token unless session_token.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
@@ -143,7 +144,8 @@ module Stytch
       session_token: nil,
       session_jwt: nil
     )
-      request = {}
+      request = {
+      }
       request[:session_id] = session_id unless session_id.nil?
       request[:session_token] = session_token unless session_token.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
@@ -172,7 +174,8 @@ module Stytch
     def get_jwks(
       project_id:
     )
-      query_params = {}
+      query_params = {
+      }
       request = request_with_query_params("/v1/sessions/jwks/#{project_id}", query_params)
       get_request(request)
     end

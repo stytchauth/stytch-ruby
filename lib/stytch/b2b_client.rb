@@ -2,7 +2,9 @@
 
 require_relative 'b2b_discovery'
 require_relative 'b2b_magic_links'
+require_relative 'b2b_oauth'
 require_relative 'b2b_organizations'
+require_relative 'b2b_otp'
 require_relative 'b2b_passwords'
 require_relative 'b2b_sessions'
 require_relative 'b2b_sso'
@@ -11,7 +13,7 @@ module StytchB2B
   class Client
     ENVIRONMENTS = %i[live test].freeze
 
-    attr_reader :discovery, :magic_links, :organizations, :passwords, :sso, :sessions
+    attr_reader :discovery, :magic_links, :oauth, :otps, :organizations, :passwords, :sso, :sessions
 
     def initialize(project_id:, secret:, env: nil, &block)
       @api_host   = api_host(env, project_id)
@@ -22,6 +24,8 @@ module StytchB2B
 
       @discovery = StytchB2B::Discovery.new(@connection)
       @magic_links = StytchB2B::MagicLinks.new(@connection)
+      @oauth = StytchB2B::OAuth.new(@connection)
+      @otps = StytchB2B::OTPs.new(@connection)
       @organizations = StytchB2B::Organizations.new(@connection)
       @passwords = StytchB2B::Passwords.new(@connection)
       @sso = StytchB2B::SSO.new(@connection)

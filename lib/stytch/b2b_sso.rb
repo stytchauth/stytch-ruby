@@ -44,7 +44,8 @@ module StytchB2B
     def get_connections(
       organization_id:
     )
-      query_params = {}
+      query_params = {
+      }
       request = request_with_query_params("/v1/b2b/sso/#{organization_id}", query_params)
       get_request(request)
     end
@@ -114,6 +115,9 @@ module StytchB2B
     #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
     #   Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
+    # locale::
+    #   (no documentation yet)
+    #   The type of this field is nilable +AuthenticateRequestLocale+ (string enum).
     #
     # == Returns:
     # An object with the following fields:
@@ -154,7 +158,8 @@ module StytchB2B
       session_token: nil,
       session_jwt: nil,
       session_duration_minutes: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      locale: nil
     )
       request = {
         sso_token: sso_token
@@ -164,6 +169,7 @@ module StytchB2B
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:locale] = locale unless locale.nil?
 
       post_request('/v1/b2b/sso/authenticate', request)
     end
@@ -200,7 +206,8 @@ module StytchB2B
         organization_id:,
         display_name: nil
       )
-        request = {}
+        request = {
+        }
         request[:display_name] = display_name unless display_name.nil?
 
         post_request("/v1/b2b/sso/oidc/#{organization_id}", request)
@@ -283,7 +290,8 @@ module StytchB2B
         userinfo_url: nil,
         jwks_url: nil
       )
-        request = {}
+        request = {
+        }
         request[:display_name] = display_name unless display_name.nil?
         request[:client_id] = client_id unless client_id.nil?
         request[:client_secret] = client_secret unless client_secret.nil?
@@ -329,7 +337,8 @@ module StytchB2B
         organization_id:,
         display_name: nil
       )
-        request = {}
+        request = {
+        }
         request[:display_name] = display_name unless display_name.nil?
 
         post_request("/v1/b2b/sso/saml/#{organization_id}", request)
@@ -386,7 +395,8 @@ module StytchB2B
         x509_certificate: nil,
         idp_sso_url: nil
       )
-        request = {}
+        request = {
+        }
         request[:idp_entity_id] = idp_entity_id unless idp_entity_id.nil?
         request[:display_name] = display_name unless display_name.nil?
         request[:attribute_mapping] = attribute_mapping unless attribute_mapping.nil?

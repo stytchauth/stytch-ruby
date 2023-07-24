@@ -77,7 +77,8 @@ module Stytch
       trusted_metadata: nil,
       untrusted_metadata: nil
     )
-      request = {}
+      request = {
+      }
       request[:email] = email unless email.nil?
       request[:name] = name unless name.nil?
       request[:attributes] = attributes unless attributes.nil?
@@ -149,7 +150,8 @@ module Stytch
     def get(
       user_id:
     )
-      query_params = {}
+      query_params = {
+      }
       request = request_with_query_params("/v1/users/#{user_id}", query_params)
       get_request(request)
     end
@@ -186,7 +188,8 @@ module Stytch
       limit: nil,
       query: nil
     )
-      request = {}
+      request = {
+      }
       request[:cursor] = cursor unless cursor.nil?
       request[:limit] = limit unless limit.nil?
       request[:query] = query unless query.nil?
@@ -245,7 +248,8 @@ module Stytch
       trusted_metadata: nil,
       untrusted_metadata: nil
     )
-      request = {}
+      request = {
+      }
       request[:name] = name unless name.nil?
       request[:attributes] = attributes unless attributes.nil?
       request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?

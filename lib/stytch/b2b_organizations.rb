@@ -86,6 +86,9 @@ module StytchB2B
     #   The list's accepted values are: `sso`, `magic_link`, `password`, `google_oauth`, and `microsoft_oauth`.
     #
     #   The type of this field is nilable list of +String+.
+    # mfa_policy::
+    #   (no documentation yet)
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -108,7 +111,8 @@ module StytchB2B
       email_jit_provisioning: nil,
       email_invites: nil,
       auth_methods: nil,
-      allowed_auth_methods: nil
+      allowed_auth_methods: nil,
+      mfa_policy: nil
     )
       request = {
         organization_name: organization_name
@@ -122,6 +126,7 @@ module StytchB2B
       request[:email_invites] = email_invites unless email_invites.nil?
       request[:auth_methods] = auth_methods unless auth_methods.nil?
       request[:allowed_auth_methods] = allowed_auth_methods unless allowed_auth_methods.nil?
+      request[:mfa_policy] = mfa_policy unless mfa_policy.nil?
 
       post_request('/v1/b2b/organizations', request)
     end
@@ -147,7 +152,8 @@ module StytchB2B
     def get(
       organization_id:
     )
-      query_params = {}
+      query_params = {
+      }
       request = request_with_query_params("/v1/b2b/organizations/#{organization_id}", query_params)
       get_request(request)
     end
@@ -227,6 +233,9 @@ module StytchB2B
     #   The list's accepted values are: `sso`, `magic_link`, `password`, `google_oauth`, and `microsoft_oauth`.
     #
     #   The type of this field is nilable list of +String+.
+    # mfa_policy::
+    #   (no documentation yet)
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -252,9 +261,11 @@ module StytchB2B
       email_jit_provisioning: nil,
       email_invites: nil,
       auth_methods: nil,
-      allowed_auth_methods: nil
+      allowed_auth_methods: nil,
+      mfa_policy: nil
     )
-      request = {}
+      request = {
+      }
       request[:organization_name] = organization_name unless organization_name.nil?
       request[:organization_slug] = organization_slug unless organization_slug.nil?
       request[:organization_logo_url] = organization_logo_url unless organization_logo_url.nil?
@@ -270,6 +281,7 @@ module StytchB2B
       request[:email_invites] = email_invites unless email_invites.nil?
       request[:auth_methods] = auth_methods unless auth_methods.nil?
       request[:allowed_auth_methods] = allowed_auth_methods unless allowed_auth_methods.nil?
+      request[:mfa_policy] = mfa_policy unless mfa_policy.nil?
 
       put_request("/v1/b2b/organizations/#{organization_id}", request)
     end
@@ -330,7 +342,8 @@ module StytchB2B
       limit: nil,
       query: nil
     )
-      request = {}
+      request = {
+      }
       request[:cursor] = cursor unless cursor.nil?
       request[:limit] = limit unless limit.nil?
       request[:query] = query unless query.nil?
@@ -368,6 +381,12 @@ module StytchB2B
       # is_breakglass::
       #   Identifies the Member as a break glass user - someone who has permissions to authenticate into an Organization by bypassing the Organization's settings. A break glass account is typically used for emergency purposes to gain access outside of normal authentication procedures. Refer to the [Organization object](organization-object) and its `auth_methods` and `allowed_auth_methods` fields for more details.
       #   The type of this field is nilable +Boolean+.
+      # phone_number::
+      #   (no documentation yet)
+      #   The type of this field is nilable +String+.
+      # mfa_enrolled::
+      #   (no documentation yet)
+      #   The type of this field is nilable +Boolean+.
       #
       # == Returns:
       # An object with the following fields:
@@ -392,13 +411,18 @@ module StytchB2B
         name: nil,
         trusted_metadata: nil,
         untrusted_metadata: nil,
-        is_breakglass: nil
+        is_breakglass: nil,
+        phone_number: nil,
+        mfa_enrolled: nil
       )
-        request = {}
+        request = {
+        }
         request[:name] = name unless name.nil?
         request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
         request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
         request[:is_breakglass] = is_breakglass unless is_breakglass.nil?
+        request[:phone_number] = phone_number unless phone_number.nil?
+        request[:mfa_enrolled] = mfa_enrolled unless mfa_enrolled.nil?
 
         put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", request)
       end
@@ -429,6 +453,13 @@ module StytchB2B
         member_id:
       )
         delete_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}")
+      end
+
+      def delete_phone_number(
+        organization_id:,
+        member_id:
+      )
+        delete_request("/v1/b2b/organizations/#{organization_id}/members/phone_numbers/#{member_id}")
       end
 
       # Search for Members within specified Organizations. An array with at least one `organization_id` is required. Submitting an empty `query` returns all Members within the specified Organizations.
@@ -542,6 +573,12 @@ module StytchB2B
       # is_breakglass::
       #   Identifies the Member as a break glass user - someone who has permissions to authenticate into an Organization by bypassing the Organization's settings. A break glass account is typically used for emergency purposes to gain access outside of normal authentication procedures. Refer to the [Organization object](organization-object) and its `auth_methods` and `allowed_auth_methods` fields for more details.
       #   The type of this field is nilable +Boolean+.
+      # phone_number::
+      #   (no documentation yet)
+      #   The type of this field is nilable +String+.
+      # mfa_enrolled::
+      #   (no documentation yet)
+      #   The type of this field is nilable +Boolean+.
       #
       # == Returns:
       # An object with the following fields:
@@ -567,7 +604,9 @@ module StytchB2B
         trusted_metadata: nil,
         untrusted_metadata: nil,
         create_member_as_pending: nil,
-        is_breakglass: nil
+        is_breakglass: nil,
+        phone_number: nil,
+        mfa_enrolled: nil
       )
         request = {
           email_address: email_address
@@ -577,6 +616,8 @@ module StytchB2B
         request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
         request[:create_member_as_pending] = create_member_as_pending unless create_member_as_pending.nil?
         request[:is_breakglass] = is_breakglass unless is_breakglass.nil?
+        request[:phone_number] = phone_number unless phone_number.nil?
+        request[:mfa_enrolled] = mfa_enrolled unless mfa_enrolled.nil?
 
         post_request("/v1/b2b/organizations/#{organization_id}/members", request)
       end
