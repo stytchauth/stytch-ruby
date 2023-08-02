@@ -197,7 +197,7 @@ module Stytch
 
     # This API allows you to check whether or not the user’s provided password is valid, and to provide feedback to the user on how to increase the strength of their password.
     #
-    # This endpoint adapts to your Project's password strength configuration. If you're using [zxcvbn](https://stytch.com/docs/passwords#strength-requirements), the default, your passwords are considered valid if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/passwords#strength-requirements), your passwords are considered valid if they meet the requirements that you've set with Stytch. You may update your password strength configuration in the [stytch dashboard](https://stytch.com/dashboard/password-strength-config).
+    # This endpoint adapts to your Project's password strength configuration. If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), your passwords are considered valid if they meet the requirements that you've set with Stytch. You may update your password strength configuration in the [stytch dashboard](https://stytch.com/dashboard/password-strength-config).
     #
     #
     # ### Password feedback
@@ -624,7 +624,7 @@ module Stytch
         @connection = connection
       end
 
-      # Reset the user’s password using their existing session. The endpoint will error if the session does not have a password, email magic link, or email OTP authentication factor that has been issued within the last 5 minutes.
+      # Reset the user’s password using their existing session. The endpoint will error if the session does not have a password, email magic link, or email OTP authentication factor that has been issued within the last 5 minutes. This endpoint requires either a `session_jwt` or `session_token` be included in the request.
       #
       # == Parameters:
       # password::

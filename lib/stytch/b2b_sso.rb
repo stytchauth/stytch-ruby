@@ -44,8 +44,7 @@ module StytchB2B
     def get_connections(
       organization_id:
     )
-      query_params = {
-      }
+      query_params = {}
       request = request_with_query_params("/v1/b2b/sso/#{organization_id}", query_params)
       get_request(request)
     end
@@ -84,6 +83,12 @@ module StytchB2B
     # If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration.
     # To link this authentication event to an existing Stytch session, include either the `session_token` or `session_jwt` param.
     #
+    # (Coming Soon) If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
+    # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
+    # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
+    #
+    # If a valid `session_token` or `session_jwt` is passed in, the Member will not be required to complete an MFA step.
+    #
     # == Parameters:
     # sso_token::
     #   The token to authenticate.
@@ -116,7 +121,14 @@ module StytchB2B
     #   Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     # locale::
-    #   (no documentation yet)
+    #   (Coming Soon) If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+    #
+    # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+    #
+    # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
+    #
+    # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
+    #
     #   The type of this field is nilable +AuthenticateRequestLocale+ (string enum).
     #
     # == Returns:
@@ -146,12 +158,23 @@ module StytchB2B
     # organization::
     #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
     #   The type of this field is +Organization+ (+object+).
+    # intermediate_session_token::
+    #   The returned Intermediate Session Token contains an SSO factor associated with the Member.
+    #       The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA flow and log in to the Organization.
+    #       SSO factors are not transferable between Organizations, so the intermediate session token is not valid for use with discovery endpoints.
+    #   The type of this field is +String+.
+    # member_authenticated::
+    #   Indicates whether the Member is fully authenticated. If false, the Member needs to complete an MFA step to log in to the Organization.
+    #   The type of this field is +Boolean+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     # member_session::
     #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
     #   The type of this field is nilable +MemberSession+ (+object+).
+    # mfa_required::
+    #   (Coming Soon) Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
+    #   The type of this field is nilable +MfaRequired+ (+object+).
     def authenticate(
       sso_token:,
       pkce_code_verifier: nil,
@@ -206,8 +229,7 @@ module StytchB2B
         organization_id:,
         display_name: nil
       )
-        request = {
-        }
+        request = {}
         request[:display_name] = display_name unless display_name.nil?
 
         post_request("/v1/b2b/sso/oidc/#{organization_id}", request)
@@ -290,8 +312,7 @@ module StytchB2B
         userinfo_url: nil,
         jwks_url: nil
       )
-        request = {
-        }
+        request = {}
         request[:display_name] = display_name unless display_name.nil?
         request[:client_id] = client_id unless client_id.nil?
         request[:client_secret] = client_secret unless client_secret.nil?
@@ -337,8 +358,7 @@ module StytchB2B
         organization_id:,
         display_name: nil
       )
-        request = {
-        }
+        request = {}
         request[:display_name] = display_name unless display_name.nil?
 
         post_request("/v1/b2b/sso/saml/#{organization_id}", request)
@@ -395,8 +415,7 @@ module StytchB2B
         x509_certificate: nil,
         idp_sso_url: nil
       )
-        request = {
-        }
+        request = {}
         request[:idp_entity_id] = idp_entity_id unless idp_entity_id.nil?
         request[:display_name] = display_name unless display_name.nil?
         request[:attribute_mapping] = attribute_mapping unless attribute_mapping.nil?

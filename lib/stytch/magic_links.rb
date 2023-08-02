@@ -172,7 +172,7 @@ module Stytch
       # Adding a new email to an existing Stytch User requires the user to be present and validate the email via magic link. This requirement is in place to prevent account takeover attacks.
       #
       # ### Next steps
-      # The user is emailed a magic link which redirects them to the provided [redirect URL](https://stytch.com/docs/magic-links#email-magic-links_redirect-routing). Collect the `token` from the URL query parameters, and call [Authenticate magic link](https://stytch.com/docs/api/authenticate-magic-link) to complete authentication.
+      # The user is emailed a magic link which redirects them to the provided [redirect URL](https://stytch.com/docs/guides/magic-links/email-magic-links/redirect-routing). Collect the `token` from the URL query parameters, and call [Authenticate magic link](https://stytch.com/docs/api/authenticate-magic-link) to complete authentication.
       #
       # == Parameters:
       # email::

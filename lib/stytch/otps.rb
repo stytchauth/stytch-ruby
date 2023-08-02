@@ -141,7 +141,7 @@ module Stytch
       #   The phone number to use for one-time passcodes. The phone number should be in E.164 format. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX). You may use +10000000000 to test this endpoint, see [Testing](https://stytch.com/docs/home#resources_testing) for more detail.
       #   The type of this field is +String+.
       # expiration_minutes::
-      #   Set the expiration for the Magic Link `token` in minutes. By default, it expires in 1 hour. The minimum expiration is 5 minutes and the maximum is 7 days (10080 mins).
+      #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
       #   Provided attributes help with fraud detection.
@@ -211,7 +211,7 @@ module Stytch
       #   The phone number to use for one-time passcodes. The phone number should be in E.164 format. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX). You may use +10000000000 to test this endpoint, see [Testing](https://stytch.com/docs/home#resources_testing) for more detail.
       #   The type of this field is +String+.
       # expiration_minutes::
-      #   Set the expiration for the Magic Link `token` in minutes. By default, it expires in 1 hour. The minimum expiration is 5 minutes and the maximum is 7 days (10080 mins).
+      #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
       #   Provided attributes help with fraud detection.
@@ -294,7 +294,7 @@ module Stytch
       #   The phone number to use for one-time passcodes. The phone number should be in E.164 format. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX). You may use +10000000000 to test this endpoint, see [Testing](https://stytch.com/docs/home#resources_testing) for more detail.
       #   The type of this field is +String+.
       # expiration_minutes::
-      #   Set the expiration for the Magic Link `token` in minutes. By default, it expires in 1 hour. The minimum expiration is 5 minutes and the maximum is 7 days (10080 mins).
+      #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
       #   Provided attributes help with fraud detection.
@@ -364,7 +364,7 @@ module Stytch
       #   The phone number to use for one-time passcodes. The phone number should be in E.164 format. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX). You may use +10000000000 to test this endpoint, see [Testing](https://stytch.com/docs/home#resources_testing) for more detail.
       #   The type of this field is +String+.
       # expiration_minutes::
-      #   Set the expiration for the Magic Link `token` in minutes. By default, it expires in 1 hour. The minimum expiration is 5 minutes and the maximum is 7 days (10080 mins).
+      #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
       #   Provided attributes help with fraud detection.
@@ -443,7 +443,7 @@ module Stytch
       #   The email address of the user to send the one-time passcode to. You may use sandbox@stytch.com to test this endpoint, see [Testing](https://stytch.com/docs/home#resources_testing) for more detail.
       #   The type of this field is +String+.
       # expiration_minutes::
-      #   Set the expiration for the Magic Link `token` in minutes. By default, it expires in 1 hour. The minimum expiration is 5 minutes and the maximum is 7 days (10080 mins).
+      #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
       #   Provided attributes help with fraud detection.
@@ -523,7 +523,7 @@ module Stytch
       #   The email address of the user to send the one-time passcode to. You may use sandbox@stytch.com to test this endpoint, see [Testing](https://stytch.com/docs/home#resources_testing) for more detail.
       #   The type of this field is +String+.
       # expiration_minutes::
-      #   Set the expiration for the Magic Link `token` in minutes. By default, it expires in 1 hour. The minimum expiration is 5 minutes and the maximum is 7 days (10080 mins).
+      #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
       #   Provided attributes help with fraud detection.
