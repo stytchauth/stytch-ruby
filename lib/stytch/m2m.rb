@@ -325,6 +325,68 @@ module Stytch
 
           post_request("/v1/m2m/clients/#{client_id}/secrets/rotate", request)
         end
+
+        # MANUAL(token)(SERVICE_METHOD)
+        # +token+ retrieves an access token for the given M2M Client.
+        # Access tokens are JWTs signed with the project's JWKs, and are valid for one hour after issuance.
+        # M2M Access tokens contain a standard set of claims as well as any custom claims generated from templates. 
+        # 
+        # == Parameters:
+        # client_id::
+        #   The ID of the client.
+        #   The type of this field is +String+.
+        # client_secret::
+        #   The secret of the client.
+        #   The type of this field is +String+.
+        # scopes::
+        #   An array scopes requested. If omitted, all scopes assigned to the client will be returned.
+        #   The type of this field is nilable list of +String+.
+        #
+        # == Returns:
+        # An object with the following fields:
+        # access_token::
+        #   The access token granted to the client. Access tokens are JWTs signed with the project's JWKs.
+        #   The type of this field is +String+.
+        # expires_in::
+        #   The lifetime in seconds of the access token.
+        #   For example, the value 3600 denotes that the access token will expire in one hour from the time the response was generated.
+        #   The type of this field is +Integer+.
+        # token_type::
+        #   The type of the returned access token. Today, this value will always be equal to "bearer"
+        #   The type of this field is +String+.
+	TokenType string `json:"token_type"`
+        def token(
+          client_id:,
+          client_secret:,
+          scopes: nil
+        )
+        end
+        # ENDMANUAL(token)
+
+        # MANUAL(authenticate_token)(SERVICE_METHOD)
+        # +authenticate_token+ validates a M2M JWT locally.
+        #
+        # == Parameters:
+        # == Returns:
+        # An object with the following fields:
+        # scopes::
+        #   An array of scopes granted to the token holder.
+        #   The type of this field is list of +String+.
+        # client_id::
+        #   The ID of the client that was issued the token
+        #   The type of this field is +String+.
+        # custom_claims::
+        #   A map of custom claims present in the token.
+        #   The type of this field is +object+.
+        def authenticate_token(
+          access_token:,
+          required_scopes:,
+          max_token_age:
+        )
+        end
+        # ENDMANUAL(authenticate_token)
+
+
       end
     end
   end
