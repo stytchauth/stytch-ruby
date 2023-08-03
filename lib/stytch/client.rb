@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'crypto_wallets'
+require_relative 'm2m'
 require_relative 'magic_links'
 require_relative 'oauth'
 require_relative 'otps'
@@ -14,7 +15,7 @@ module Stytch
   class Client
     ENVIRONMENTS = %i[live test].freeze
 
-    attr_reader :crypto_wallets, :magic_links, :oauth, :otps, :passwords, :sessions, :totps, :users, :webauthn
+    attr_reader :crypto_wallets, :m2m, :magic_links, :oauth, :otps, :passwords, :sessions, :totps, :users, :webauthn
 
     def initialize(project_id:, secret:, env: nil, &block)
       @api_host   = api_host(env, project_id)
@@ -24,6 +25,7 @@ module Stytch
       create_connection(&block)
 
       @crypto_wallets = Stytch::CryptoWallets.new(@connection)
+      @m2m = Stytch::M2M.new(@connection)
       @magic_links = Stytch::MagicLinks.new(@connection)
       @oauth = Stytch::OAuth.new(@connection)
       @otps = Stytch::OTPs.new(@connection)
