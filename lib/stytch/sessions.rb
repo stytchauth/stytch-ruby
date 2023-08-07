@@ -177,7 +177,7 @@ module Stytch
       get_request(request)
     end
 
-    # MANUAL(authenticate_jwt)(SERVICE_METHOD)
+    # MANUAL(Sessions::authenticate_jwt)(SERVICE_METHOD)
     # ADDIMPORT: require 'jwt'
     # ADDIMPORT: require 'json/jwt'
     # ADDIMPORT: require_relative 'errors'
@@ -262,6 +262,6 @@ module Stytch
         'custom_claims' => custom_claims
       }
     end
-    # ENDMANUAL(authenticate_jwt)
+    # ENDMANUAL(Sessions::authenticate_jwt)
   end
 end

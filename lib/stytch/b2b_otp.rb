@@ -31,6 +31,8 @@ module StytchB2B
       #
       # Note that sending another OTP code before the first has expired will invalidate the first code.
       #
+      # If a Member has a phone number and is enrolled in MFA, then after a successful primary authentication event (e.g. [email magic link](https://stytch.com/docs/b2b/api/authenticate-magic-link) or [SSO](https://stytch.com/docs/b2b/api/sso-authenticate) login is complete), an SMS OTP will automatically be sent to their phone number. In that case, this endpoint should only be used for subsequent authentication events, such as prompting a Member for an OTP again after a period of inactivity.
+      #
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -38,8 +40,8 @@ module StytchB2B
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
       #   The type of this field is +String+.
-      # phone_number::
-      #   The phone number to send the OTP to. If the Member already has a phone number, this argument is not needed.
+      # mfa_phone_number::
+      #   (no documentation yet)
       #   The type of this field is nilable +String+.
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
@@ -70,14 +72,14 @@ module StytchB2B
       def send(
         organization_id:,
         member_id:,
-        phone_number: nil,
+        mfa_phone_number: nil,
         locale: nil
       )
         request = {
           organization_id: organization_id,
           member_id: member_id
         }
-        request[:phone_number] = phone_number unless phone_number.nil?
+        request[:mfa_phone_number] = mfa_phone_number unless mfa_phone_number.nil?
         request[:locale] = locale unless locale.nil?
 
         post_request('/v1/b2b/otps/sms/send', request)

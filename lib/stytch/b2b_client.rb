@@ -24,7 +24,7 @@ module StytchB2B
       create_connection(&block)
 
       @discovery = StytchB2B::Discovery.new(@connection)
-      @m2m = Stytch::M2M.new(@connection)
+      @m2m = Stytch::M2M.new(@connection, project_id)
       @magic_links = StytchB2B::MagicLinks.new(@connection)
       @oauth = StytchB2B::OAuth.new(@connection)
       @otps = StytchB2B::OTPs.new(@connection)

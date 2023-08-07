@@ -25,7 +25,7 @@ module Stytch
       create_connection(&block)
 
       @crypto_wallets = Stytch::CryptoWallets.new(@connection)
-      @m2m = Stytch::M2M.new(@connection)
+      @m2m = Stytch::M2M.new(@connection, project_id)
       @magic_links = Stytch::MagicLinks.new(@connection)
       @oauth = Stytch::OAuth.new(@connection)
       @otps = Stytch::OTPs.new(@connection)

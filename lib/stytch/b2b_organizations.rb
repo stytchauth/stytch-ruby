@@ -388,8 +388,8 @@ module StytchB2B
       # is_breakglass::
       #   Identifies the Member as a break glass user - someone who has permissions to authenticate into an Organization by bypassing the Organization's settings. A break glass account is typically used for emergency purposes to gain access outside of normal authentication procedures. Refer to the [Organization object](organization-object) and its `auth_methods` and `allowed_auth_methods` fields for more details.
       #   The type of this field is nilable +Boolean+.
-      # phone_number::
-      #   (Coming Soon) Sets the Member's phone number. Throws an error if the Member already has a phone number. To change the Member's phone number, use the [Delete member phone number endpoint](https://stytch.com/docs/b2b/api/delete-member-phone-number) to delete the Member's existing phone number first.
+      # mfa_phone_number::
+      #   (no documentation yet)
       #   The type of this field is nilable +String+.
       # mfa_enrolled::
       #   (Coming Soon) Sets whether the Member is enrolled in MFA. If true, the Member must complete an MFA step whenever they wish to log in to their Organization. If false, the Member only needs to complete an MFA step if the Organization's MFA policy is set to `REQUIRED_FOR_ALL`.
@@ -419,7 +419,7 @@ module StytchB2B
         trusted_metadata: nil,
         untrusted_metadata: nil,
         is_breakglass: nil,
-        phone_number: nil,
+        mfa_phone_number: nil,
         mfa_enrolled: nil
       )
         request = {}
@@ -427,7 +427,7 @@ module StytchB2B
         request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
         request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
         request[:is_breakglass] = is_breakglass unless is_breakglass.nil?
-        request[:phone_number] = phone_number unless phone_number.nil?
+        request[:mfa_phone_number] = mfa_phone_number unless mfa_phone_number.nil?
         request[:mfa_enrolled] = mfa_enrolled unless mfa_enrolled.nil?
 
         put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", request)
@@ -461,38 +461,11 @@ module StytchB2B
         delete_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}")
       end
 
-      # Delete a Member's phone number.
-      #
-      # == Parameters:
-      # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
-      #   The type of this field is +String+.
-      # member_id::
-      #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
-      #   The type of this field is +String+.
-      #
-      # == Returns:
-      # An object with the following fields:
-      # request_id::
-      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-      #   The type of this field is +String+.
-      # member_id::
-      #   Globally unique UUID that identifies a specific Member.
-      #   The type of this field is +String+.
-      # member::
-      #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
-      #   The type of this field is +Member+ (+object+).
-      # organization::
-      #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-      #   The type of this field is +Organization+ (+object+).
-      # status_code::
-      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-      #   The type of this field is +Integer+.
-      def delete_phone_number(
+      def delete_mfa_phone_number(
         organization_id:,
         member_id:
       )
-        delete_request("/v1/b2b/organizations/#{organization_id}/members/phone_numbers/#{member_id}")
+        delete_request("/v1/b2b/organizations/#{organization_id}/members/mfa_phone_numbers/#{member_id}")
       end
 
       # Search for Members within specified Organizations. An array with at least one `organization_id` is required. Submitting an empty `query` returns all Members within the specified Organizations.
@@ -606,8 +579,8 @@ module StytchB2B
       # is_breakglass::
       #   Identifies the Member as a break glass user - someone who has permissions to authenticate into an Organization by bypassing the Organization's settings. A break glass account is typically used for emergency purposes to gain access outside of normal authentication procedures. Refer to the [Organization object](organization-object) and its `auth_methods` and `allowed_auth_methods` fields for more details.
       #   The type of this field is nilable +Boolean+.
-      # phone_number::
-      #   (Coming Soon) Sets the Member's phone number.
+      # mfa_phone_number::
+      #   (no documentation yet)
       #   The type of this field is nilable +String+.
       # mfa_enrolled::
       #   (Coming Soon) Sets whether the Member is enrolled in MFA. If true, the Member must complete an MFA step whenever they wish to log in to their Organization. If false, the Member only needs to complete an MFA step if the Organization's MFA policy is set to `REQUIRED_FOR_ALL`.
@@ -638,7 +611,7 @@ module StytchB2B
         untrusted_metadata: nil,
         create_member_as_pending: nil,
         is_breakglass: nil,
-        phone_number: nil,
+        mfa_phone_number: nil,
         mfa_enrolled: nil
       )
         request = {
@@ -649,7 +622,7 @@ module StytchB2B
         request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
         request[:create_member_as_pending] = create_member_as_pending unless create_member_as_pending.nil?
         request[:is_breakglass] = is_breakglass unless is_breakglass.nil?
-        request[:phone_number] = phone_number unless phone_number.nil?
+        request[:mfa_phone_number] = mfa_phone_number unless mfa_phone_number.nil?
         request[:mfa_enrolled] = mfa_enrolled unless mfa_enrolled.nil?
 
         post_request("/v1/b2b/organizations/#{organization_id}/members", request)
