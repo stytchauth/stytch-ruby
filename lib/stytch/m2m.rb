@@ -110,18 +110,16 @@ module Stytch
     #   A map of custom claims present in the token.
     #   The type of this field is +object+.
     def authenticate_token(access_token:, required_scopes: nil, max_token_age: nil)
-      begin
-        decoded_jwt = authenticate_token_local(access_token)
-      rescue StandardError
-        # Could not authenticate locally
-        return nil
-      end
+      # Intentionally allow this to re-raise if authentication fails
+      decoded_jwt = authenticate_token_local(access_token)
 
       iat_time = Time.at(decoded_jwt['iat']).to_datetime
 
       # Token too old
       unless max_token_age.nil?
-        return nil if iat_time + max_token_age < Time.now
+        if iat_time + max_token_age < Time.now
+          raise JWTExpiredError
+        end
       end
 
       resp = marshal_jwt_into_response(decoded_jwt)
@@ -129,8 +127,7 @@ module Stytch
       unless required_scopes.nil?
         for scope in required_scopes
           unless resp['scopes'].include?(scope)
-            # Token missing a required scope
-            return nil
+            raise TokenMissingScopeError.new(scope)
           end
         end
       end

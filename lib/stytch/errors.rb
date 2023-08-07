@@ -22,4 +22,17 @@ module Stytch
       super
     end
   end
+
+  class JWTExpiredError < StandardError
+    def initialize(msg = 'JWT has expired')
+      super
+    end
+  end
+
+  class TokenMissingScopeError < StandardError
+    def initialize(scope)
+      msg = "Missing required scope #{scope}"
+      super(msg)
+    end
+  end
 end
