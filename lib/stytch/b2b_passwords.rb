@@ -23,14 +23,14 @@ module StytchB2B
 
     # This API allows you to check whether the user’s provided password is valid, and to provide feedback to the user on how to increase the strength of their password.
     #
-    # This endpoint adapts to your Project's password strength configuration. If you're using [zxcvbn](https://stytch.com/docs/passwords#strength-requirements), the default, your passwords are considered valid if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/passwords#strength-requirements), your passwords are considered valid if they meet the requirements that you've set with Stytch. You may update your password strength configuration in the [stytch dashboard](https://stytch.com/dashboard/password-strength-config).
+    # This endpoint adapts to your Project's password strength configuration. If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), your passwords are considered valid if they meet the requirements that you've set with Stytch. You may update your password strength configuration in the [stytch dashboard](https://stytch.com/dashboard/password-strength-config).
     #
     # ## Password feedback
     # The zxcvbn_feedback and luds_feedback objects contains relevant fields for you to relay feedback to users that failed to create a strong enough password.
     #
-    # If you're using [zxcvbn](https://stytch.com/docs/passwords#strength-requirements), the feedback object will contain warning and suggestions for any password that does not meet the [zxcvbn](https://stytch.com/docs/passwords#strength-requirements) strength requirements. You can return these strings directly to the user to help them craft a strong password.
+    # If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the feedback object will contain warning and suggestions for any password that does not meet the [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy) strength requirements. You can return these strings directly to the user to help them craft a strong password.
     #
-    # If you're using [LUDS](https://stytch.com/docs/passwords#strength-requirements), the feedback object will contain a collection of fields that the user failed or passed. You'll want to prompt the user to create a password that meets all requirements that they failed.
+    # If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), the feedback object will contain a collection of fields that the user failed or passed. You'll want to prompt the user to create a password that meets all requirements that they failed.
     #
     # == Parameters:
     # password::
@@ -187,6 +187,12 @@ module StytchB2B
     #     * We force a password reset in this instance in order to safely deduplicate the account by email address, without introducing the risk of a pre-hijack account takeover attack.
     #     * Imagine a bad actor creates many accounts using passwords and the known email addresses of their victims. If a victim comes to the site and logs in for the first time with an email-based passwordless authentication method then both the victim and the bad actor have credentials to access to the same account. To prevent this, any further email/password login attempts first require a password reset which can only be accomplished by someone with access to the underlying email address.
     #
+    # (Coming Soon) If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
+    # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
+    # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
+    #
+    # If a valid `session_token` or `session_jwt` is passed in, the Member will not be required to complete an MFA step.
+    #
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -222,7 +228,14 @@ module StytchB2B
     #   Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     # locale::
-    #   (no documentation yet)
+    #   (Coming Soon) If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+    #
+    # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+    #
+    # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
+    #
+    # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
+    #
     #   The type of this field is nilable +AuthenticateRequestLocale+ (string enum).
     #
     # == Returns:
@@ -248,12 +261,23 @@ module StytchB2B
     # organization::
     #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
     #   The type of this field is +Organization+ (+object+).
+    # intermediate_session_token::
+    #   The returned Intermediate Session Token contains a password factor associated with the Member.
+    #       The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA flow and log in to the Organization.
+    #       Password factors are not transferable between Organizations, so the intermediate session token is not valid for use with discovery endpoints.
+    #   The type of this field is +String+.
+    # member_authenticated::
+    #   Indicates whether the Member is fully authenticated. If false, the Member needs to complete an MFA step to log in to the Organization.
+    #   The type of this field is +Boolean+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     # member_session::
     #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
     #   The type of this field is nilable +MemberSession+ (+object+).
+    # mfa_required::
+    #   (Coming Soon) Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
+    #   The type of this field is nilable +MfaRequired+ (+object+).
     def authenticate(
       organization_id:,
       email_address:,
@@ -288,8 +312,8 @@ module StytchB2B
       # Initiates a password reset for the email address provided. This will trigger an email to be sent to the address, containing a magic link that will allow them to set a new password and authenticate.
       #
       # This endpoint adapts to your Project's password strength configuration.
-      # If you're using [zxcvbn](https://stytch.com/docs/passwords#strength-requirements), the default, your passwords are considered valid
-      # if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/passwords#strength-requirements), your passwords are
+      # If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid
+      # if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), your passwords are
       # considered valid if they meet the requirements that you've set with Stytch.
       # You may update your password strength configuration in the [stytch dashboard](https://stytch.com/dashboard/password-strength-config).
       #
@@ -374,6 +398,12 @@ module StytchB2B
       #
       # The provided password needs to meet our password strength requirements, which can be checked in advance with the password strength endpoint. If the token and password are accepted, the password is securely stored for future authentication and the user is authenticated.
       #
+      # (Coming Soon) If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
+      # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
+      # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
+      #
+      # If a valid `session_token` or `session_jwt` is passed in, the Member will not be required to complete an MFA step.
+      #
       # == Parameters:
       # password_reset_token::
       #   The password reset token to authenticate.
@@ -413,7 +443,14 @@ module StytchB2B
       #   Total custom claims size cannot exceed four kilobytes.
       #   The type of this field is nilable +object+.
       # locale::
-      #   (no documentation yet)
+      #   (Coming Soon) If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+      #
+      # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+      #
+      # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
+      #
+      # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
+      #
       #   The type of this field is nilable +ResetRequestLocale+ (string enum).
       #
       # == Returns:
@@ -442,12 +479,23 @@ module StytchB2B
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
       #   The type of this field is +Organization+ (+object+).
+      # intermediate_session_token::
+      #   The returned Intermediate Session Token contains a password factor associated with the Member.
+      #       The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA flow and log in to the Organization.
+      #       Password factors are not transferable between Organizations, so the intermediate session token is not valid for use with discovery endpoints.
+      #   The type of this field is +String+.
+      # member_authenticated::
+      #   Indicates whether the Member is fully authenticated. If false, the Member needs to complete an MFA step to log in to the Organization.
+      #   The type of this field is +Boolean+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       # member_session::
       #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
       #   The type of this field is nilable +MemberSession+ (+object+).
+      # mfa_required::
+      #   (Coming Soon) Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
+      #   The type of this field is nilable +MfaRequired+ (+object+).
       def reset(
         password_reset_token:,
         password:,
@@ -543,10 +591,16 @@ module StytchB2B
       # Reset the member’s password using their existing password.
       #
       # This endpoint adapts to your Project's password strength configuration.
-      # If you're using [zxcvbn](https://stytch.com/docs/passwords#strength-requirements), the default, your passwords are considered valid
-      # if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/passwords#strength-requirements), your passwords are
+      # If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid
+      # if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), your passwords are
       # considered valid if they meet the requirements that you've set with Stytch.
       # You may update your password strength configuration in the [stytch dashboard](https://stytch.com/dashboard/password-strength-config).
+      #
+      # (Coming Soon) If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
+      # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
+      # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
+      #
+      # If a valid `session_token` or `session_jwt` is passed in, the Member will not be required to complete an MFA step.
       #
       # == Parameters:
       # email_address::
@@ -586,7 +640,14 @@ module StytchB2B
       #   Total custom claims size cannot exceed four kilobytes.
       #   The type of this field is nilable +object+.
       # locale::
-      #   (no documentation yet)
+      #   (Coming Soon) If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+      #
+      # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+      #
+      # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
+      #
+      # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
+      #
       #   The type of this field is nilable +ResetRequestLocale+ (string enum).
       #
       # == Returns:
@@ -609,12 +670,23 @@ module StytchB2B
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
       #   The type of this field is +Organization+ (+object+).
+      # intermediate_session_token::
+      #   The returned Intermediate Session Token contains a password factor associated with the Member.
+      #       The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA flow and log in to the Organization.
+      #       Password factors are not transferable between Organizations, so the intermediate session token is not valid for use with discovery endpoints.
+      #   The type of this field is +String+.
+      # member_authenticated::
+      #   Indicates whether the Member is fully authenticated. If false, the Member needs to complete an MFA step to log in to the Organization.
+      #   The type of this field is +Boolean+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       # member_session::
       #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
       #   The type of this field is nilable +MemberSession+ (+object+).
+      # mfa_required::
+      #   (Coming Soon) Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
+      #   The type of this field is nilable +MfaRequired+ (+object+).
       def reset(
         email_address:,
         existing_password:,

@@ -21,7 +21,7 @@ module StytchB2B
 
     # Creates an Organization. An `organization_name` and a unique `organization_slug` are required.
     #
-    # By default, `email_invites` and `sso_jit_provisioning` will be set to `ALL_ALLOWED` if no Organization authentication settings are explicitly defined in the request.
+    # By default, `email_invites` and `sso_jit_provisioning` will be set to `ALL_ALLOWED`, and `mfa_policy` will be set to `OPTIONAL` if no Organization authentication settings are explicitly defined in the request.
     #
     # *See the [Organization authentication settings](https://stytch.com/docs/b2b/api/org-auth-settings) resource to learn more about fields like `email_jit_provisioning`, `email_invites`, `sso_jit_provisioning`, etc., and their behaviors.
     #
@@ -87,7 +87,12 @@ module StytchB2B
     #
     #   The type of this field is nilable list of +String+.
     # mfa_policy::
-    #   (no documentation yet)
+    #   (Coming Soon) The setting that controls the MFA policy for all Members in the Organization. The accepted values are:
+    #
+    #   `REQUIRED_FOR_ALL` – All Members within the Organization will be required to complete MFA every time they wish to log in.
+    #
+    #   `OPTIONAL` – The default value. The Organization does not require MFA by default for all Members. Members will be required to complete MFA only if their `mfa_enrolled` status is set to true.
+    #
     #   The type of this field is nilable +String+.
     #
     # == Returns:
@@ -152,8 +157,7 @@ module StytchB2B
     def get(
       organization_id:
     )
-      query_params = {
-      }
+      query_params = {}
       request = request_with_query_params("/v1/b2b/organizations/#{organization_id}", query_params)
       get_request(request)
     end
@@ -234,7 +238,12 @@ module StytchB2B
     #
     #   The type of this field is nilable list of +String+.
     # mfa_policy::
-    #   (no documentation yet)
+    #   (Coming Soon) The setting that controls the MFA policy for all Members in the Organization. The accepted values are:
+    #
+    #   `REQUIRED_FOR_ALL` – All Members within the Organization will be required to complete MFA every time they wish to log in.
+    #
+    #   `OPTIONAL` – The default value. The Organization does not require MFA by default for all Members. Members will be required to complete MFA only if their `mfa_enrolled` status is set to true.
+    #
     #   The type of this field is nilable +String+.
     #
     # == Returns:
@@ -264,8 +273,7 @@ module StytchB2B
       allowed_auth_methods: nil,
       mfa_policy: nil
     )
-      request = {
-      }
+      request = {}
       request[:organization_name] = organization_name unless organization_name.nil?
       request[:organization_slug] = organization_slug unless organization_slug.nil?
       request[:organization_logo_url] = organization_logo_url unless organization_logo_url.nil?
@@ -342,8 +350,7 @@ module StytchB2B
       limit: nil,
       query: nil
     )
-      request = {
-      }
+      request = {}
       request[:cursor] = cursor unless cursor.nil?
       request[:limit] = limit unless limit.nil?
       request[:query] = query unless query.nil?
@@ -381,11 +388,11 @@ module StytchB2B
       # is_breakglass::
       #   Identifies the Member as a break glass user - someone who has permissions to authenticate into an Organization by bypassing the Organization's settings. A break glass account is typically used for emergency purposes to gain access outside of normal authentication procedures. Refer to the [Organization object](organization-object) and its `auth_methods` and `allowed_auth_methods` fields for more details.
       #   The type of this field is nilable +Boolean+.
-      # phone_number::
+      # mfa_phone_number::
       #   (no documentation yet)
       #   The type of this field is nilable +String+.
       # mfa_enrolled::
-      #   (no documentation yet)
+      #   (Coming Soon) Sets whether the Member is enrolled in MFA. If true, the Member must complete an MFA step whenever they wish to log in to their Organization. If false, the Member only needs to complete an MFA step if the Organization's MFA policy is set to `REQUIRED_FOR_ALL`.
       #   The type of this field is nilable +Boolean+.
       #
       # == Returns:
@@ -412,16 +419,15 @@ module StytchB2B
         trusted_metadata: nil,
         untrusted_metadata: nil,
         is_breakglass: nil,
-        phone_number: nil,
+        mfa_phone_number: nil,
         mfa_enrolled: nil
       )
-        request = {
-        }
+        request = {}
         request[:name] = name unless name.nil?
         request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
         request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
         request[:is_breakglass] = is_breakglass unless is_breakglass.nil?
-        request[:phone_number] = phone_number unless phone_number.nil?
+        request[:mfa_phone_number] = mfa_phone_number unless mfa_phone_number.nil?
         request[:mfa_enrolled] = mfa_enrolled unless mfa_enrolled.nil?
 
         put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", request)
@@ -455,11 +461,11 @@ module StytchB2B
         delete_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}")
       end
 
-      def delete_phone_number(
+      def delete_mfa_phone_number(
         organization_id:,
         member_id:
       )
-        delete_request("/v1/b2b/organizations/#{organization_id}/members/phone_numbers/#{member_id}")
+        delete_request("/v1/b2b/organizations/#{organization_id}/members/mfa_phone_numbers/#{member_id}")
       end
 
       # Search for Members within specified Organizations. An array with at least one `organization_id` is required. Submitting an empty `query` returns all Members within the specified Organizations.
@@ -477,7 +483,7 @@ module StytchB2B
       #   The number of search results to return per page. The default limit is 100. A maximum of 1000 results can be returned by a single search request. If the total size of your result set is greater than one page size, you must paginate the response. See the `cursor` field.
       #   The type of this field is nilable +Integer+.
       # query::
-      #   The optional query object contains the operator, i.e. `AND` or `OR`, and the operands that will filter your results. Only an operator is required. If you include no operands, no filtering will be applied. If you include no query object, it will return all Organizations with no filtering applied.
+      #   The optional query object contains the operator, i.e. `AND` or `OR`, and the operands that will filter your results. Only an operator is required. If you include no operands, no filtering will be applied. If you include no query object, it will return all Members with no filtering applied.
       #   The type of this field is nilable +SearchQuery+ (+object+).
       #
       # == Returns:
@@ -573,11 +579,11 @@ module StytchB2B
       # is_breakglass::
       #   Identifies the Member as a break glass user - someone who has permissions to authenticate into an Organization by bypassing the Organization's settings. A break glass account is typically used for emergency purposes to gain access outside of normal authentication procedures. Refer to the [Organization object](organization-object) and its `auth_methods` and `allowed_auth_methods` fields for more details.
       #   The type of this field is nilable +Boolean+.
-      # phone_number::
+      # mfa_phone_number::
       #   (no documentation yet)
       #   The type of this field is nilable +String+.
       # mfa_enrolled::
-      #   (no documentation yet)
+      #   (Coming Soon) Sets whether the Member is enrolled in MFA. If true, the Member must complete an MFA step whenever they wish to log in to their Organization. If false, the Member only needs to complete an MFA step if the Organization's MFA policy is set to `REQUIRED_FOR_ALL`.
       #   The type of this field is nilable +Boolean+.
       #
       # == Returns:
@@ -605,7 +611,7 @@ module StytchB2B
         untrusted_metadata: nil,
         create_member_as_pending: nil,
         is_breakglass: nil,
-        phone_number: nil,
+        mfa_phone_number: nil,
         mfa_enrolled: nil
       )
         request = {
@@ -616,7 +622,7 @@ module StytchB2B
         request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
         request[:create_member_as_pending] = create_member_as_pending unless create_member_as_pending.nil?
         request[:is_breakglass] = is_breakglass unless is_breakglass.nil?
-        request[:phone_number] = phone_number unless phone_number.nil?
+        request[:mfa_phone_number] = mfa_phone_number unless mfa_phone_number.nil?
         request[:mfa_enrolled] = mfa_enrolled unless mfa_enrolled.nil?
 
         post_request("/v1/b2b/organizations/#{organization_id}/members", request)
