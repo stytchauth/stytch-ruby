@@ -254,6 +254,18 @@ module Stytch
       put_request("/v1/users/#{user_id}", request)
     end
 
+    def exchange_primary_factor(
+      user_id:,
+      email_address: nil,
+      phone_number: nil
+    )
+      request = {}
+      request[:email_address] = email_address unless email_address.nil?
+      request[:phone_number] = phone_number unless phone_number.nil?
+
+      put_request("/v1/users/#{user_id}/exchange_primary_factor", request)
+    end
+
     # Delete a User from Stytch.
     #
     # == Parameters:
