@@ -126,6 +126,9 @@ module Stytch
       #
       # Note that sending another OTP code before the first has expired will invalidate the first code.
       #
+      # ### Cost to send SMS OTP
+      # Before configuring SMS or WhatsApp OTPs, please review how Stytch [bills the costs of international OTPs](https://stytch.com/pricing) and understand how to protect your app against [toll fraud](https://stytch.com/docs/guides/passcodes/toll-fraud/overview).
+      #
       # ### Add a phone number to an existing user
       #
       # This endpoint also allows you to add a new phone number to an existing Stytch User. Including a `user_id`, `session_token`, or `session_jwt` in the request will add the phone number to the pre-existing Stytch User upon successful authentication.
@@ -138,7 +141,7 @@ module Stytch
       #
       # == Parameters:
       # phone_number::
-      #   The phone number to use for one-time passcodes. The phone number should be in E.164 format. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX). You may use +10000000000 to test this endpoint, see [Testing](https://stytch.com/docs/home#resources_testing) for more detail.
+      #   The phone number to use for one-time passcodes. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX). You may use +10000000000 to test this endpoint, see [Testing](https://stytch.com/docs/home#resources_testing) for more detail.
       #   The type of this field is +String+.
       # expiration_minutes::
       #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
@@ -200,15 +203,17 @@ module Stytch
         post_request('/v1/otps/sms/send', request)
       end
 
-      # Send a one-time passcode (OTP) to a User using their phone number. If the phone number is not associated with a user already, a user will be created.
+      # Send a One-Time Passcode (OTP) to a User using their phone number. If the phone number is not associated with a user already, a user will be created.
       #
+      # ### Cost to send SMS OTP
+      # Before configuring SMS or WhatsApp OTPs, please review how Stytch [bills the costs of international OTPs](https://stytch.com/pricing) and understand how to protect your app against [toll fraud](https://stytch.com/docs/guides/passcodes/toll-fraud/overview).
       # ### Next steps
       #
       # Collect the OTP which was delivered to the User. Call [Authenticate OTP](https://stytch.com/docs/api/authenticate-otp) using the OTP `code` along with the `phone_id` found in the response as the `method_id`.
       #
       # == Parameters:
       # phone_number::
-      #   The phone number to use for one-time passcodes. The phone number should be in E.164 format. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX). You may use +10000000000 to test this endpoint, see [Testing](https://stytch.com/docs/home#resources_testing) for more detail.
+      #   The phone number to use for one-time passcodes. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX). You may use +10000000000 to test this endpoint, see [Testing](https://stytch.com/docs/home#resources_testing) for more detail.
       #   The type of this field is +String+.
       # expiration_minutes::
       #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
@@ -275,9 +280,12 @@ module Stytch
         @connection = connection
       end
 
-      # Send a one-time passcode (OTP) to a User's WhatsApp. If you'd like to create a user and send them a passcode with one request, use our [log in or create](https://stytch.com/docs/api/whatsapp-login-or-create) endpoint.
+      # Send a One-Time Passcode (OTP) to a User's WhatsApp. If you'd like to create a user and send them a passcode with one request, use our [log in or create](https://stytch.com/docs/api/whatsapp-login-or-create) endpoint.
       #
       # Note that sending another OTP code before the first has expired will invalidate the first code.
+      #
+      # ### Cost to send SMS OTP
+      # Before configuring SMS or WhatsApp OTPs, please review how Stytch [bills the costs of international OTPs](https://stytch.com/pricing) and understand how to protect your app against [toll fraud](https://stytch.com/docs/guides/passcodes/toll-fraud/overview).
       #
       # ### Add a phone number to an existing user
       #
@@ -291,7 +299,7 @@ module Stytch
       #
       # == Parameters:
       # phone_number::
-      #   The phone number to use for one-time passcodes. The phone number should be in E.164 format. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX). You may use +10000000000 to test this endpoint, see [Testing](https://stytch.com/docs/home#resources_testing) for more detail.
+      #   The phone number to use for one-time passcodes. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX). You may use +10000000000 to test this endpoint, see [Testing](https://stytch.com/docs/home#resources_testing) for more detail.
       #   The type of this field is +String+.
       # expiration_minutes::
       #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
@@ -355,13 +363,16 @@ module Stytch
 
       # Send a one-time passcode (OTP) to a User's WhatsApp using their phone number. If the phone number is not associated with a User already, a User will be created.
       #
+      # ### Cost to send SMS OTP
+      # Before configuring SMS or WhatsApp OTPs, please review how Stytch [bills the costs of international OTPs](https://stytch.com/pricing) and understand how to protect your app against [toll fraud](https://stytch.com/docs/guides/passcodes/toll-fraud/overview).
+      #
       # ### Next steps
       #
       # Collect the OTP which was delivered to the User. Call [Authenticate OTP](https://stytch.com/docs/api/authenticate-otp) using the OTP `code` along with the `phone_id` found in the response as the `method_id`.
       #
       # == Parameters:
       # phone_number::
-      #   The phone number to use for one-time passcodes. The phone number should be in E.164 format. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX). You may use +10000000000 to test this endpoint, see [Testing](https://stytch.com/docs/home#resources_testing) for more detail.
+      #   The phone number to use for one-time passcodes. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX). You may use +10000000000 to test this endpoint, see [Testing](https://stytch.com/docs/home#resources_testing) for more detail.
       #   The type of this field is +String+.
       # expiration_minutes::
       #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
@@ -428,7 +439,7 @@ module Stytch
         @connection = connection
       end
 
-      # Send a one-time passcode (OTP) to a User using their email. If you'd like to create a user and send them a passcode with one request, use our [log in or create endpoint](https://stytch.com/docs/api/log-in-or-create-user-by-email-otp).
+      # Send a One-Time Passcode (OTP) to a User using their email. If you'd like to create a user and send them a passcode with one request, use our [log in or create endpoint](https://stytch.com/docs/api/log-in-or-create-user-by-email-otp).
       #
       # ### Add an email to an existing user
       # This endpoint also allows you to add a new email to an existing Stytch User. Including a `user_id`, `session_token`, or `session_jwt` in the request will add the email to the pre-existing Stytch User upon successful authentication.

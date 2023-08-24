@@ -83,7 +83,7 @@ module StytchB2B
     # If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration.
     # To link this authentication event to an existing Stytch session, include either the `session_token` or `session_jwt` param.
     #
-    # (Coming Soon) If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
+    # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
     # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
     # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
     #
@@ -121,7 +121,7 @@ module StytchB2B
     #   Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     # locale::
-    #   (Coming Soon) If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+    #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
     #
     # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
     #
@@ -143,7 +143,7 @@ module StytchB2B
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
     #   The type of this field is +String+.
     # member::
-    #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
+    #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
     #   The type of this field is +Member+ (+object+).
     # session_token::
     #   A secret token for a given Stytch Session.
@@ -173,7 +173,7 @@ module StytchB2B
     #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
     #   The type of this field is nilable +MemberSession+ (+object+).
     # mfa_required::
-    #   (Coming Soon) Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
+    #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
     #   The type of this field is nilable +MfaRequired+ (+object+).
     def authenticate(
       sso_token:,

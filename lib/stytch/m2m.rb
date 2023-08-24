@@ -33,7 +33,6 @@ module Stytch
       end
     end
 
-
     # MANUAL(M2M::get_jwks)(SERVICE_METHOD)
     # This is a helper so we can retrieve the JWKS for a project for decoding M2M access tokens
     def get_jwks(
@@ -81,7 +80,7 @@ module Stytch
       }
       request[:scope] = scopes.join(' ') unless scopes.nil?
 
-      JSON.parse(post_request("/v1/public/#{@project_id}/oauth2/token", request), {:symbolize_names => true})
+      JSON.parse(post_request("/v1/public/#{@project_id}/oauth2/token", request), { symbolize_names: true })
     end
     # ENDMANUAL(M2M::token)
 
@@ -116,19 +115,13 @@ module Stytch
       iat_time = Time.at(decoded_jwt['iat']).to_datetime
 
       # Token too old
-      unless max_token_age.nil?
-        if iat_time + max_token_age < Time.now
-          raise JWTExpiredError
-        end
-      end
+      raise JWTExpiredError if !max_token_age.nil? && (iat_time + max_token_age < Time.now)
 
       resp = marshal_jwt_into_response(decoded_jwt)
 
       unless required_scopes.nil?
         for scope in required_scopes
-          unless resp['scopes'].include?(scope)
-            raise TokenMissingScopeError.new(scope)
-          end
+          raise TokenMissingScopeError, scope unless resp['scopes'].include?(scope)
         end
       end
 
@@ -189,12 +182,12 @@ module Stytch
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
       #   The type of this field is +String+.
+      # m2m_client::
+      #   The M2M Client affected by this operation.
+      #   The type of this field is +M2MClient+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
-      # m2m_client::
-      #   The M2M Client affected by this operation.
-      #   The type of this field is nilable +M2MClient+ (+object+).
       def get(
         client_id:
       )
@@ -278,12 +271,12 @@ module Stytch
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
       #   The type of this field is +String+.
+      # m2m_client::
+      #   The M2M Client affected by this operation.
+      #   The type of this field is +M2MClient+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
-      # m2m_client::
-      #   The M2M Client affected by this operation.
-      #   The type of this field is nilable +M2MClient+ (+object+).
       def update(
         client_id:,
         client_name: nil,
@@ -358,12 +351,12 @@ module Stytch
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
       #   The type of this field is +String+.
+      # m2m_client::
+      #   The M2M Client created by this API call.
+      #   The type of this field is +M2MClientWithClientSecret+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
-      # m2m_client::
-      #   The M2M Client created by this API call.
-      #   The type of this field is nilable +M2MClientWithClientSecret+ (+object+).
       def create(
         scopes:,
         client_id: nil,
@@ -391,8 +384,8 @@ module Stytch
           @connection = connection
         end
 
-        # Initiate the rotation of an M2M client secret. After this endpoint is called, both the client's `client_secret` and `next_client_secret` will be valid. To complete the secret rotation flow, update all usages of `client_secret` to `next_client_secret` and call the[Rotate Secret Endpoint](https://stytch.com/docs/b2b/api/m2m-rotate-secret)[Rotate Secret Endpoint](https://stytch.com/docs/api/m2m-rotate-secret) to complete the flow.
-        # Secret rotation can be cancelled using the[Rotate Cancel Endpoint](https://stytch.com/docs/b2b/api/m2m-rotate-secret-cancel)[Rotate Cancel Endpoint](https://stytch.com/docs/api/m2m-rotate-secret-cancel).
+        # Initiate the rotation of an M2M client secret. After this endpoint is called, both the client's `client_secret` and `next_client_secret` will be valid. To complete the secret rotation flow, update all usages of `client_secret` to `next_client_secret` and call the [Rotate Secret Endpoint](https://stytch.com/docs/b2b/api/m2m-rotate-secret)[Rotate Secret Endpoint](https://stytch.com/docs/api/m2m-rotate-secret) to complete the flow.
+        # Secret rotation can be cancelled using the [Rotate Cancel Endpoint](https://stytch.com/docs/b2b/api/m2m-rotate-secret-cancel)[Rotate Cancel Endpoint](https://stytch.com/docs/api/m2m-rotate-secret-cancel).
         #
         # **Important:** This is the only time you will be able to view the generated `next_client_secret` in the API response. Stytch stores a hash of the `next_client_secret` and cannot recover the value if lost. Be sure to persist the `next_client_secret` in a secure location. If the `next_client_secret` is lost, you will need to trigger a secret rotation flow to receive another one.
         #
@@ -406,12 +399,12 @@ module Stytch
         # request_id::
         #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
         #   The type of this field is +String+.
+        # m2m_client::
+        #   The M2M Client affected by this operation.
+        #   The type of this field is +M2MClientWithNextClientSecret+ (+object+).
         # status_code::
         #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
         #   The type of this field is +Integer+.
-        # m2m_client::
-        #   The M2M Client affected by this operation.
-        #   The type of this field is nilable +M2MClientWithNextClientSecret+ (+object+).
         def rotate_start(
           client_id:
         )
@@ -420,7 +413,7 @@ module Stytch
           post_request("/v1/m2m/clients/#{client_id}/secrets/rotate/start", request)
         end
 
-        # Cancel the rotation of an M2M client secret started with the[Start Secret Rotation Endpoint](https://stytch.com/docs/b2b/api/m2m-rotate-secret-start)[Start Secret Rotation Endpoint](https://stytch.com/docs/api/m2m-rotate-secret-start).
+        # Cancel the rotation of an M2M client secret started with the [Start Secret Rotation Endpoint](https://stytch.com/docs/b2b/api/m2m-rotate-secret-start) [Start Secret Rotation Endpoint](https://stytch.com/docs/api/m2m-rotate-secret-start).
         # After this endpoint is called, the client's `next_client_secret` is discarded and only the original `client_secret` will be valid.
         #
         # == Parameters:
@@ -433,12 +426,12 @@ module Stytch
         # request_id::
         #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
         #   The type of this field is +String+.
+        # m2m_client::
+        #   The M2M Client affected by this operation.
+        #   The type of this field is +M2MClient+ (+object+).
         # status_code::
         #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
         #   The type of this field is +Integer+.
-        # m2m_client::
-        #   The M2M Client affected by this operation.
-        #   The type of this field is nilable +M2MClient+ (+object+).
         def rotate_cancel(
           client_id:
         )
@@ -447,7 +440,7 @@ module Stytch
           post_request("/v1/m2m/clients/#{client_id}/secrets/rotate/cancel", request)
         end
 
-        # Complete the rotation of an M2M client secret started with the[Start Secret Rotation Endpoint](https://stytch.com/docs/b2b/api/m2m-rotate-secret-start)[Start Secret Rotation Endpoint](https://stytch.com/docs/api/m2m-rotate-secret-start).
+        # Complete the rotation of an M2M client secret started with the [Start Secret Rotation Endpoint](https://stytch.com/docs/b2b/api/m2m-rotate-secret-start) [Start Secret Rotation Endpoint](https://stytch.com/docs/api/m2m-rotate-secret-start).
         # After this endpoint is called, the client's `next_client_secret` becomes its `client_secret` and the previous `client_secret` will no longer be valid.
         #
         # == Parameters:
@@ -460,12 +453,12 @@ module Stytch
         # request_id::
         #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
         #   The type of this field is +String+.
+        # m2m_client::
+        #   The M2M Client affected by this operation.
+        #   The type of this field is +M2MClient+ (+object+).
         # status_code::
         #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
         #   The type of this field is +Integer+.
-        # m2m_client::
-        #   The M2M Client affected by this operation.
-        #   The type of this field is nilable +M2MClient+ (+object+).
         def rotate(
           client_id:
         )
