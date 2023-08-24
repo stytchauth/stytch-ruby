@@ -21,7 +21,7 @@ module StytchB2B
 
     # Authenticate a Member given a `token`. This endpoint verifies that the member completed the OAuth flow by verifying that the token is valid and hasn't expired.  Provide the `session_duration_minutes` parameter to set the lifetime of the session. If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration.
     #
-    # (Coming Soon) If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
+    # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
     # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
     # The `intermediate_session_token` can also be used with the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to join a different Organization or create a new one.
     # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
@@ -60,7 +60,7 @@ module StytchB2B
     #   A base64url encoded one time secret used to validate that the request starts and ends on the same device.
     #   The type of this field is nilable +String+.
     # locale::
-    #   (Coming Soon) If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+    #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
     #
     # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
     #
@@ -91,7 +91,7 @@ module StytchB2B
     #   The JSON Web Token (JWT) for a given Stytch Session.
     #   The type of this field is +String+.
     # member::
-    #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
+    #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
     #   The type of this field is +Member+ (+object+).
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -123,7 +123,7 @@ module StytchB2B
     #   Note that these values will vary based on the OAuth provider in question, e.g. `id_token` is only returned by Microsoft.
     #   The type of this field is nilable +ProviderValues+ (+object+).
     # mfa_required::
-    #   (Coming Soon) Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
+    #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
     #   The type of this field is nilable +MfaRequired+ (+object+).
     def authenticate(
       oauth_token:,

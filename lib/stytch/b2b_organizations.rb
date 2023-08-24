@@ -87,7 +87,7 @@ module StytchB2B
     #
     #   The type of this field is nilable list of +String+.
     # mfa_policy::
-    #   (Coming Soon) The setting that controls the MFA policy for all Members in the Organization. The accepted values are:
+    #   The setting that controls the MFA policy for all Members in the Organization. The accepted values are:
     #
     #   `REQUIRED_FOR_ALL` – All Members within the Organization will be required to complete MFA every time they wish to log in.
     #
@@ -238,7 +238,7 @@ module StytchB2B
     #
     #   The type of this field is nilable list of +String+.
     # mfa_policy::
-    #   (Coming Soon) The setting that controls the MFA policy for all Members in the Organization. The accepted values are:
+    #   The setting that controls the MFA policy for all Members in the Organization. The accepted values are:
     #
     #   `REQUIRED_FOR_ALL` – All Members within the Organization will be required to complete MFA every time they wish to log in.
     #
@@ -389,10 +389,10 @@ module StytchB2B
       #   Identifies the Member as a break glass user - someone who has permissions to authenticate into an Organization by bypassing the Organization's settings. A break glass account is typically used for emergency purposes to gain access outside of normal authentication procedures. Refer to the [Organization object](organization-object) and its `auth_methods` and `allowed_auth_methods` fields for more details.
       #   The type of this field is nilable +Boolean+.
       # mfa_phone_number::
-      #   (no documentation yet)
+      #   Sets the Member's phone number. Throws an error if the Member already has a phone number. To change the Member's phone number, use the [Delete member phone number endpoint](https://stytch.com/docs/b2b/api/delete-member-mfa-phone-number) to delete the Member's existing phone number first.
       #   The type of this field is nilable +String+.
       # mfa_enrolled::
-      #   (Coming Soon) Sets whether the Member is enrolled in MFA. If true, the Member must complete an MFA step whenever they wish to log in to their Organization. If false, the Member only needs to complete an MFA step if the Organization's MFA policy is set to `REQUIRED_FOR_ALL`.
+      #   Sets whether the Member is enrolled in MFA. If true, the Member must complete an MFA step whenever they wish to log in to their Organization. If false, the Member only needs to complete an MFA step if the Organization's MFA policy is set to `REQUIRED_FOR_ALL`.
       #   The type of this field is nilable +Boolean+.
       #
       # == Returns:
@@ -404,7 +404,7 @@ module StytchB2B
       #   Globally unique UUID that identifies a specific Member.
       #   The type of this field is +String+.
       # member::
-      #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
+      #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
       #   The type of this field is +Member+ (+object+).
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
@@ -461,6 +461,75 @@ module StytchB2B
         delete_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}")
       end
 
+      # Reactivates a deleted Member's status and its associated email status (if applicable) to active, specified by `organization_id` and `member_id`.
+      #
+      # == Parameters:
+      # organization_id::
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+      #   The type of this field is +String+.
+      # member_id::
+      #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
+      #   The type of this field is +String+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # member_id::
+      #   Globally unique UUID that identifies a specific Member.
+      #   The type of this field is +String+.
+      # member::
+      #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
+      #   The type of this field is +Member+ (+object+).
+      # organization::
+      #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
+      #   The type of this field is +Organization+ (+object+).
+      # status_code::
+      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+      #   The type of this field is +Integer+.
+      def reactivate(
+        organization_id:,
+        member_id:
+      )
+        request = {}
+
+        put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/reactivate", request)
+      end
+
+      # Delete a Member's MFA phone number.
+      #
+      # To change a Member's phone number, you must first call this endpoint to delete the existing phone number.
+      #
+      # Existing Member Sessions that include a phone number authentication factor will not be revoked if the phone number is deleted, and MFA will not be enforced until the Member logs in again.
+      # If you wish to enforce MFA immediately after a phone number is deleted, you can do so by prompting the Member to enter a new phone number
+      # and calling the [OTP SMS send](https://stytch.com/docs/b2b/api/otp-sms-send) endpoint, then calling the [OTP SMS Authenticate](https://stytch.com/docs/b2b/api/authenticate-otp-sms) endpoint.
+      #
+      # == Parameters:
+      # organization_id::
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+      #   The type of this field is +String+.
+      # member_id::
+      #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
+      #   The type of this field is +String+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # member_id::
+      #   Globally unique UUID that identifies a specific Member.
+      #   The type of this field is +String+.
+      # member::
+      #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
+      #   The type of this field is +Member+ (+object+).
+      # organization::
+      #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
+      #   The type of this field is +Organization+ (+object+).
+      # status_code::
+      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+      #   The type of this field is +Integer+.
       def delete_mfa_phone_number(
         organization_id:,
         member_id:
@@ -468,7 +537,7 @@ module StytchB2B
         delete_request("/v1/b2b/organizations/#{organization_id}/members/mfa_phone_numbers/#{member_id}")
       end
 
-      # Search for Members within specified Organizations. An array with at least one `organization_id` is required. Submitting an empty `query` returns all Members within the specified Organizations.
+      # Search for Members within specified Organizations. An array with at least one `organization_id` is required. Submitting an empty `query` returns all non-deleted Members within the specified Organizations.
       #
       # *All fuzzy search filters require a minimum of three characters.
       #
@@ -538,7 +607,7 @@ module StytchB2B
       #   Globally unique UUID that identifies a specific Member.
       #   The type of this field is +String+.
       # member::
-      #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
+      #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
       #   The type of this field is +Member+ (+object+).
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
@@ -580,10 +649,10 @@ module StytchB2B
       #   Identifies the Member as a break glass user - someone who has permissions to authenticate into an Organization by bypassing the Organization's settings. A break glass account is typically used for emergency purposes to gain access outside of normal authentication procedures. Refer to the [Organization object](organization-object) and its `auth_methods` and `allowed_auth_methods` fields for more details.
       #   The type of this field is nilable +Boolean+.
       # mfa_phone_number::
-      #   (no documentation yet)
+      #   The Member's phone number. A Member may only have one phone number.
       #   The type of this field is nilable +String+.
       # mfa_enrolled::
-      #   (Coming Soon) Sets whether the Member is enrolled in MFA. If true, the Member must complete an MFA step whenever they wish to log in to their Organization. If false, the Member only needs to complete an MFA step if the Organization's MFA policy is set to `REQUIRED_FOR_ALL`.
+      #   Sets whether the Member is enrolled in MFA. If true, the Member must complete an MFA step whenever they wish to log in to their Organization. If false, the Member only needs to complete an MFA step if the Organization's MFA policy is set to `REQUIRED_FOR_ALL`.
       #   The type of this field is nilable +Boolean+.
       #
       # == Returns:
@@ -595,7 +664,7 @@ module StytchB2B
       #   Globally unique UUID that identifies a specific Member.
       #   The type of this field is +String+.
       # member::
-      #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
+      #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
       #   The type of this field is +Member+ (+object+).
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
@@ -650,7 +719,7 @@ module StytchB2B
       #   Globally unique UUID that identifies a specific Member.
       #   The type of this field is +String+.
       # member::
-      #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
+      #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
       #   The type of this field is +Member+ (+object+).
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).

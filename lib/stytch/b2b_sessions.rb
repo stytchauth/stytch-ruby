@@ -94,7 +94,7 @@ module StytchB2B
     #   The JSON Web Token (JWT) for a given Stytch Session.
     #   The type of this field is +String+.
     # member::
-    #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
+    #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
     #   The type of this field is +Member+ (+object+).
     # organization::
     #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
@@ -163,7 +163,7 @@ module StytchB2B
     # Only Email Magic Link, OAuth, and SMS OTP factors can be transferred between sessions. Other authentication factors, such as password factors, will not be transferred to the new session.
     # SMS OTP factors can be used to fulfill MFA requirements for the target Organization if both the original and target Member have the same phone number and the phone number is verified for both Members.
     #
-    # (Coming Soon) If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
+    # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
     # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
     # The `intermediate_session_token` can also be used with the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to join a different Organization or create a new one.
     # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
@@ -197,7 +197,7 @@ module StytchB2B
     #   Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     # locale::
-    #   (Coming Soon) If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+    #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
     #
     # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
     #
@@ -225,7 +225,7 @@ module StytchB2B
     #   The JSON Web Token (JWT) for a given Stytch Session.
     #   The type of this field is +String+.
     # member::
-    #   The [Member object](https://stytch.com/docs/b2b/api/member-object).
+    #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
     #   The type of this field is +Member+ (+object+).
     # organization::
     #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
@@ -243,7 +243,7 @@ module StytchB2B
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     # mfa_required::
-    #   (Coming Soon) Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
+    #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
     #   The type of this field is nilable +MfaRequired+ (+object+).
     def exchange(
       organization_id:,
