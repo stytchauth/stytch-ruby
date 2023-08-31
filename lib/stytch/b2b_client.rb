@@ -31,7 +31,7 @@ module StytchB2B
       @organizations = StytchB2B::Organizations.new(@connection)
       @passwords = StytchB2B::Passwords.new(@connection)
       @sso = StytchB2B::SSO.new(@connection)
-      @sessions = StytchB2B::Sessions.new(@connection)
+      @sessions = StytchB2B::Sessions.new(@connection, project_id)
     end
 
     private
