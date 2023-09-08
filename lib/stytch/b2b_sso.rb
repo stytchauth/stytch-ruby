@@ -185,7 +185,7 @@ module StytchB2B
       locale: nil
     )
       request = {
-        sso_token: sso_token
+        sso_token:
       }
       request[:pkce_code_verifier] = pkce_code_verifier unless pkce_code_verifier.nil?
       request[:session_token] = session_token unless session_token.nil?

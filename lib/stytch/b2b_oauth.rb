@@ -135,7 +135,7 @@ module StytchB2B
       locale: nil
     )
       request = {
-        oauth_token: oauth_token
+        oauth_token:
       }
       request[:session_token] = session_token unless session_token.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
@@ -216,7 +216,7 @@ module StytchB2B
         pkce_code_verifier: nil
       )
         request = {
-          discovery_oauth_token: discovery_oauth_token
+          discovery_oauth_token:
         }
         request[:session_token] = session_token unless session_token.nil?
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?

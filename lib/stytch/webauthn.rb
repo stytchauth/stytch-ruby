@@ -55,8 +55,8 @@ module Stytch
       authenticator_type: nil
     )
       request = {
-        user_id: user_id,
-        domain: domain
+        user_id:,
+        domain:
       }
       request[:user_agent] = user_agent unless user_agent.nil?
       request[:authenticator_type] = authenticator_type unless authenticator_type.nil?
@@ -95,8 +95,8 @@ module Stytch
       public_key_credential:
     )
       request = {
-        user_id: user_id,
-        public_key_credential: public_key_credential
+        user_id:,
+        public_key_credential:
       }
 
       post_request('/v1/webauthn/register', request)
@@ -133,8 +133,8 @@ module Stytch
       domain:
     )
       request = {
-        user_id: user_id,
-        domain: domain
+        user_id:,
+        domain:
       }
 
       post_request('/v1/webauthn/authenticate/start', request)
@@ -208,7 +208,7 @@ module Stytch
       session_custom_claims: nil
     )
       request = {
-        public_key_credential: public_key_credential
+        public_key_credential:
       }
       request[:session_token] = session_token unless session_token.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?

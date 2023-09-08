@@ -19,7 +19,7 @@ RSpec.describe Stytch::Client do
 
     project_id = ENV['STYTCH_PROJECT_ID']
     secret = ENV['STYTCH_SECRET']
-    b2c_client = Stytch::Client.new(project_id: project_id, secret: secret)
+    b2c_client = Stytch::Client.new(project_id:, secret:)
 
     crypto_auth_start = b2c_client.crypto_wallets.authenticate_start(
       crypto_wallet_type: 'ethereum',

@@ -60,8 +60,8 @@ module Stytch
       session_jwt: nil
     )
       request = {
-        crypto_wallet_type: crypto_wallet_type,
-        crypto_wallet_address: crypto_wallet_address
+        crypto_wallet_type:,
+        crypto_wallet_address:
       }
       request[:user_id] = user_id unless user_id.nil?
       request[:session_token] = session_token unless session_token.nil?
@@ -141,9 +141,9 @@ module Stytch
       session_custom_claims: nil
     )
       request = {
-        crypto_wallet_type: crypto_wallet_type,
-        crypto_wallet_address: crypto_wallet_address,
-        signature: signature
+        crypto_wallet_type:,
+        crypto_wallet_address:,
+        signature:
       }
       request[:session_token] = session_token unless session_token.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?

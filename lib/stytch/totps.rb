@@ -57,7 +57,7 @@ module Stytch
       expiration_minutes: nil
     )
       request = {
-        user_id: user_id
+        user_id:
       }
       request[:expiration_minutes] = expiration_minutes unless expiration_minutes.nil?
 
@@ -134,8 +134,8 @@ module Stytch
       session_custom_claims: nil
     )
       request = {
-        user_id: user_id,
-        totp_code: totp_code
+        user_id:,
+        totp_code:
       }
       request[:session_token] = session_token unless session_token.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
@@ -170,7 +170,7 @@ module Stytch
       user_id:
     )
       request = {
-        user_id: user_id
+        user_id:
       }
 
       post_request('/v1/totps/recovery_codes', request)
@@ -246,8 +246,8 @@ module Stytch
       session_custom_claims: nil
     )
       request = {
-        user_id: user_id,
-        recovery_code: recovery_code
+        user_id:,
+        recovery_code:
       }
       request[:session_token] = session_token unless session_token.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?

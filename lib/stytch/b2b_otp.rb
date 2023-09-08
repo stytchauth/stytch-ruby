@@ -83,8 +83,8 @@ module StytchB2B
         locale: nil
       )
         request = {
-          organization_id: organization_id,
-          member_id: member_id
+          organization_id:,
+          member_id:
         }
         request[:mfa_phone_number] = mfa_phone_number unless mfa_phone_number.nil?
         request[:locale] = locale unless locale.nil?
@@ -196,9 +196,9 @@ module StytchB2B
         set_mfa_enrollment: nil
       )
         request = {
-          organization_id: organization_id,
-          member_id: member_id,
-          code: code
+          organization_id:,
+          member_id:,
+          code:
         }
         request[:intermediate_session_token] = intermediate_session_token unless intermediate_session_token.nil?
         request[:session_token] = session_token unless session_token.nil?

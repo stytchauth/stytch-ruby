@@ -100,7 +100,7 @@ module Stytch
       code_verifier: nil
     )
       request = {
-        token: token
+        token:
       }
       request[:attributes] = attributes unless attributes.nil?
       request[:options] = options unless options.nil?
@@ -149,7 +149,7 @@ module Stytch
       attributes: nil
     )
       request = {
-        user_id: user_id
+        user_id:
       }
       request[:expiration_minutes] = expiration_minutes unless expiration_minutes.nil?
       request[:attributes] = attributes unless attributes.nil?
@@ -248,7 +248,7 @@ module Stytch
         signup_template_id: nil
       )
         request = {
-          email: email
+          email:
         }
         request[:login_template_id] = login_template_id unless login_template_id.nil?
         request[:attributes] = attributes unless attributes.nil?
@@ -346,7 +346,7 @@ module Stytch
         locale: nil
       )
         request = {
-          email: email
+          email:
         }
         request[:login_magic_link_url] = login_magic_link_url unless login_magic_link_url.nil?
         request[:signup_magic_link_url] = signup_magic_link_url unless signup_magic_link_url.nil?
@@ -419,7 +419,7 @@ module Stytch
         locale: nil
       )
         request = {
-          email: email
+          email:
         }
         request[:invite_template_id] = invite_template_id unless invite_template_id.nil?
         request[:attributes] = attributes unless attributes.nil?
@@ -450,7 +450,7 @@ module Stytch
         email:
       )
         request = {
-          email: email
+          email:
         }
 
         post_request('/v1/magic_links/email/revoke_invite', request)

@@ -54,7 +54,7 @@ module Stytch
       session_jwt: nil
     )
       request = {
-        provider: provider
+        provider:
       }
       request[:user_id] = user_id unless user_id.nil?
       request[:session_token] = session_token unless session_token.nil?
@@ -147,7 +147,7 @@ module Stytch
       code_verifier: nil
     )
       request = {
-        token: token
+        token:
       }
       request[:session_token] = session_token unless session_token.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?

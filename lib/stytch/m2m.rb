@@ -28,7 +28,7 @@ module Stytch
           get_jwks(project_id: @project_id)['keys'].each do |r|
             keys << r
           end
-          { keys: keys }
+          { keys: }
         end
       end
     end
@@ -75,8 +75,8 @@ module Stytch
     def token(client_id:, client_secret:, scopes: nil)
       request = {
         grant_type: 'client_credentials',
-        client_id: client_id,
-        client_secret: client_secret
+        client_id:,
+        client_secret:
       }
       request[:scope] = scopes.join(' ') unless scopes.nil?
 
@@ -366,7 +366,7 @@ module Stytch
         trusted_metadata: nil
       )
         request = {
-          scopes: scopes
+          scopes:
         }
         request[:client_id] = client_id unless client_id.nil?
         request[:client_secret] = client_secret unless client_secret.nil?

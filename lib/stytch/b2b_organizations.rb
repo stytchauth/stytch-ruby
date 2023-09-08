@@ -120,7 +120,7 @@ module StytchB2B
       mfa_policy: nil
     )
       request = {
-        organization_name: organization_name
+        organization_name:
       }
       request[:organization_slug] = organization_slug unless organization_slug.nil?
       request[:organization_logo_url] = organization_logo_url unless organization_logo_url.nil?
@@ -579,7 +579,7 @@ module StytchB2B
         query: nil
       )
         request = {
-          organization_ids: organization_ids
+          organization_ids:
         }
         request[:cursor] = cursor unless cursor.nil?
         request[:limit] = limit unless limit.nil?
@@ -684,7 +684,7 @@ module StytchB2B
         mfa_enrolled: nil
       )
         request = {
-          email_address: email_address
+          email_address:
         }
         request[:name] = name unless name.nil?
         request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
@@ -733,8 +733,8 @@ module StytchB2B
         email_address: nil
       )
         query_params = {
-          member_id: member_id,
-          email_address: email_address
+          member_id:,
+          email_address:
         }
         request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/member", query_params)
         get_request(request)

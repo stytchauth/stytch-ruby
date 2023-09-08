@@ -102,8 +102,8 @@ module Stytch
       session_custom_claims: nil
     )
       request = {
-        method_id: method_id,
-        code: code
+        method_id:,
+        code:
       }
       request[:attributes] = attributes unless attributes.nil?
       request[:options] = options unless options.nil?
@@ -189,7 +189,7 @@ module Stytch
         session_jwt: nil
       )
         request = {
-          phone_number: phone_number
+          phone_number:
         }
         request[:expiration_minutes] = expiration_minutes unless expiration_minutes.nil?
         request[:attributes] = attributes unless attributes.nil?
@@ -260,7 +260,7 @@ module Stytch
         locale: nil
       )
         request = {
-          phone_number: phone_number
+          phone_number:
         }
         request[:expiration_minutes] = expiration_minutes unless expiration_minutes.nil?
         request[:attributes] = attributes unless attributes.nil?
@@ -345,7 +345,7 @@ module Stytch
         session_jwt: nil
       )
         request = {
-          phone_number: phone_number
+          phone_number:
         }
         request[:expiration_minutes] = expiration_minutes unless expiration_minutes.nil?
         request[:attributes] = attributes unless attributes.nil?
@@ -417,7 +417,7 @@ module Stytch
         locale: nil
       )
         request = {
-          phone_number: phone_number
+          phone_number:
         }
         request[:expiration_minutes] = expiration_minutes unless expiration_minutes.nil?
         request[:attributes] = attributes unless attributes.nil?
@@ -503,7 +503,7 @@ module Stytch
         signup_template_id: nil
       )
         request = {
-          email: email
+          email:
         }
         request[:expiration_minutes] = expiration_minutes unless expiration_minutes.nil?
         request[:attributes] = attributes unless attributes.nil?
@@ -582,7 +582,7 @@ module Stytch
         signup_template_id: nil
       )
         request = {
-          email: email
+          email:
         }
         request[:expiration_minutes] = expiration_minutes unless expiration_minutes.nil?
         request[:attributes] = attributes unless attributes.nil?

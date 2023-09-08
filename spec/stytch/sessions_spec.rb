@@ -6,7 +6,7 @@ RSpec.describe Stytch::Sessions do
     sessions = Stytch::Sessions.new(nil, project_id) # the methods we're calling don't require a connection
 
     kid = 'jwk-test-00000000-0000-0000-0000-000000000000'
-    headers = { kid: kid }
+    headers = { kid: }
 
     now = Time.now
     now_timestamp = format_timestamp(now)

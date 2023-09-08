@@ -28,7 +28,7 @@ module Stytch
           get_jwks(project_id: @project_id)['keys'].each do |r|
             keys << r
           end
-          { keys: keys }
+          { keys: }
         end
       end
     end
@@ -55,7 +55,7 @@ module Stytch
       user_id:
     )
       query_params = {
-        user_id: user_id
+        user_id:
       }
       request = request_with_query_params('/v1/sessions', query_params)
       get_request(request)
@@ -194,9 +194,9 @@ module Stytch
     )
       if max_token_age_seconds == 0
         return authenticate(
-          session_jwt: session_jwt,
-          session_duration_minutes: session_duration_minutes,
-          session_custom_claims: session_custom_claims
+          session_jwt:,
+          session_duration_minutes:,
+          session_custom_claims:
         )
       end
 
@@ -207,17 +207,17 @@ module Stytch
         { 'session' => session }
       else
         authenticate(
-          session_jwt: session_jwt,
-          session_duration_minutes: session_duration_minutes,
-          session_custom_claims: session_custom_claims
+          session_jwt:,
+          session_duration_minutes:,
+          session_custom_claims:
         )
       end
     rescue StandardError
       # JWT could not be verified locally. Check with the Stytch API.
       authenticate(
-        session_jwt: session_jwt,
-        session_duration_minutes: session_duration_minutes,
-        session_custom_claims: session_custom_claims
+        session_jwt:,
+        session_duration_minutes:,
+        session_custom_claims:
       )
     end
 

@@ -28,7 +28,7 @@ module StytchB2B
           get_jwks(project_id: @project_id)['keys'].each do |r|
             keys << r
           end
-          { keys: keys }
+          { keys: }
         end
       end
     end
@@ -59,8 +59,8 @@ module StytchB2B
       member_id:
     )
       query_params = {
-        organization_id: organization_id,
-        member_id: member_id
+        organization_id:,
+        member_id:
       }
       request = request_with_query_params('/v1/b2b/sessions', query_params)
       get_request(request)
@@ -271,7 +271,7 @@ module StytchB2B
       locale: nil
     )
       request = {
-        organization_id: organization_id
+        organization_id:
       }
       request[:session_token] = session_token unless session_token.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
@@ -325,9 +325,9 @@ module StytchB2B
     )
       if max_token_age_seconds == 0
         return authenticate(
-          session_jwt: session_jwt,
-          session_duration_minutes: session_duration_minutes,
-          session_custom_claims: session_custom_claims
+          session_jwt:,
+          session_duration_minutes:,
+          session_custom_claims:
         )
       end
 
@@ -338,17 +338,17 @@ module StytchB2B
         { 'session' => session }
       else
         authenticate(
-          session_jwt: session_jwt,
-          session_duration_minutes: session_duration_minutes,
-          session_custom_claims: session_custom_claims
+          session_jwt:,
+          session_duration_minutes:,
+          session_custom_claims:
         )
       end
     rescue StandardError
       # JWT could not be verified locally. Check with the Stytch API.
       authenticate(
-        session_jwt: session_jwt,
-        session_duration_minutes: session_duration_minutes,
-        session_custom_claims: session_custom_claims
+        session_jwt:,
+        session_duration_minutes:,
+        session_custom_claims:
       )
     end
 

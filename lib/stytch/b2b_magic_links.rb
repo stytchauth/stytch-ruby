@@ -134,7 +134,7 @@ module StytchB2B
       locale: nil
     )
       request = {
-        magic_links_token: magic_links_token
+        magic_links_token:
       }
       request[:pkce_code_verifier] = pkce_code_verifier unless pkce_code_verifier.nil?
       request[:session_token] = session_token unless session_token.nil?
@@ -226,8 +226,8 @@ module StytchB2B
         locale: nil
       )
         request = {
-          organization_id: organization_id,
-          email_address: email_address
+          organization_id:,
+          email_address:
         }
         request[:login_redirect_url] = login_redirect_url unless login_redirect_url.nil?
         request[:signup_redirect_url] = signup_redirect_url unless signup_redirect_url.nil?
@@ -309,8 +309,8 @@ module StytchB2B
         locale: nil
       )
         request = {
-          organization_id: organization_id,
-          email_address: email_address
+          organization_id:,
+          email_address:
         }
         request[:invite_redirect_url] = invite_redirect_url unless invite_redirect_url.nil?
         request[:invited_by_member_id] = invited_by_member_id unless invited_by_member_id.nil?
@@ -373,7 +373,7 @@ module StytchB2B
           locale: nil
         )
           request = {
-            email_address: email_address
+            email_address:
           }
           request[:discovery_redirect_url] = discovery_redirect_url unless discovery_redirect_url.nil?
           request[:pkce_code_challenge] = pkce_code_challenge unless pkce_code_challenge.nil?
@@ -438,7 +438,7 @@ module StytchB2B
         pkce_code_verifier: nil
       )
         request = {
-          discovery_magic_links_token: discovery_magic_links_token
+          discovery_magic_links_token:
         }
         request[:pkce_code_verifier] = pkce_code_verifier unless pkce_code_verifier.nil?
 

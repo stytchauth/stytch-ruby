@@ -79,7 +79,7 @@ module StytchB2B
       email_address: nil
     )
       request = {
-        password: password
+        password:
       }
       request[:email_address] = email_address unless email_address.nil?
 
@@ -163,10 +163,10 @@ module StytchB2B
       untrusted_metadata: nil
     )
       request = {
-        email_address: email_address,
-        hash: hash,
-        hash_type: hash_type,
-        organization_id: organization_id
+        email_address:,
+        hash:,
+        hash_type:,
+        organization_id:
       }
       request[:md_5_config] = md_5_config unless md_5_config.nil?
       request[:argon_2_config] = argon_2_config unless argon_2_config.nil?
@@ -289,9 +289,9 @@ module StytchB2B
       locale: nil
     )
       request = {
-        organization_id: organization_id,
-        email_address: email_address,
-        password: password
+        organization_id:,
+        email_address:,
+        password:
       }
       request[:session_token] = session_token unless session_token.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
@@ -378,8 +378,8 @@ module StytchB2B
         reset_password_template_id: nil
       )
         request = {
-          organization_id: organization_id,
-          email_address: email_address
+          organization_id:,
+          email_address:
         }
         request[:reset_password_redirect_url] = reset_password_redirect_url unless reset_password_redirect_url.nil?
         unless reset_password_expiration_minutes.nil?
@@ -507,8 +507,8 @@ module StytchB2B
         locale: nil
       )
         request = {
-          password_reset_token: password_reset_token,
-          password: password
+          password_reset_token:,
+          password:
         }
         request[:session_token] = session_token unless session_token.nil?
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
@@ -571,8 +571,8 @@ module StytchB2B
         session_jwt: nil
       )
         request = {
-          organization_id: organization_id,
-          password: password
+          organization_id:,
+          password:
         }
         request[:session_token] = session_token unless session_token.nil?
         request[:session_jwt] = session_jwt unless session_jwt.nil?
@@ -699,10 +699,10 @@ module StytchB2B
         locale: nil
       )
         request = {
-          email_address: email_address,
-          existing_password: existing_password,
-          new_password: new_password,
-          organization_id: organization_id
+          email_address:,
+          existing_password:,
+          new_password:,
+          organization_id:
         }
         request[:session_token] = session_token unless session_token.nil?
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?

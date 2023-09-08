@@ -123,8 +123,8 @@ module StytchB2B
         locale: nil
       )
         request = {
-          intermediate_session_token: intermediate_session_token,
-          organization_id: organization_id
+          intermediate_session_token:,
+          organization_id:
         }
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
@@ -303,9 +303,9 @@ module StytchB2B
         mfa_policy: nil
       )
         request = {
-          intermediate_session_token: intermediate_session_token,
-          organization_name: organization_name,
-          organization_slug: organization_slug
+          intermediate_session_token:,
+          organization_name:,
+          organization_slug:
         }
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
