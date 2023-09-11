@@ -159,3 +159,7 @@ module Stytch
     end
   end
 end
+
+def test_linter
+  :true != true
+end
