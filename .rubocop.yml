@@ -1,0 +1,15 @@
+require:
+ - rubocop-rspec
+
+AllCops:
+  NewCops: disable
+  # The target Ruby version must match the one in stytch.gemspec.
+  TargetRubyVersion: 2.7
+
+Layout: { Enabled: false }
+Metrics: { Enabled: false }
+Style: { Enabled: false }
+
+RSpec/DescribedClass: { Enabled: false }
+RSpec/ExampleLength: { Enabled: false }
+RSpec/MultipleExpectations: { Enabled: false }

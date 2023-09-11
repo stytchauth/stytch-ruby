@@ -5,7 +5,9 @@ Thanks for contributing to Stytch's Ruby library! If you run into trouble, find 
 ## Setup
 
 1. Clone this repo.
-2. To test your changes locally, update your GEMFILE with `gem 'stytch', path: '../stytch'` where `../stytch` is the path to your cloned copy of stytch-ruby.
+2. Install development dependencies using [Bundler]: `bundle install`
+
+To test your changes locally in another project, update your `GEMFILE` with `gem 'stytch', path: '../stytch'` where `../stytch` is the path to your cloned copy of stytch-ruby.
 
 ## Issues and Pull Requests
 
@@ -15,4 +17,5 @@ If you have non-trivial changes you'd like us to incorporate, please open an iss
 
 When you're ready for someone to look at your issue or PR, assign `@stytchauth/client-libraries` (GitHub should do this automatically). If we don't acknowledge it within one business day, please escalate it by tagging `@stytchauth/engineering` in a comment or letting us know in [Slack].
 
+[Bundler]: https://bundler.io/
 [Slack]: https://join.slack.com/t/stytch/shared_invite/zt-nil4wo92-jApJ9Cl32cJbEd9esKkvyg
