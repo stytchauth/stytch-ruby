@@ -131,7 +131,7 @@ module Stytch
       session_token: nil,
       session_duration_minutes: nil,
       session_jwt: nil,
-      session_custom_claims: nil,
+      session_custom_claims: nil
     )
       request = {
         user_id: user_id,
