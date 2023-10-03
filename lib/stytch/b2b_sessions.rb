@@ -9,7 +9,7 @@
 require 'jwt'
 require 'json/jwt'
 require_relative 'errors'
-require_relative 'request_helper'
+require_relative "request_helper"
 
 module StytchB2B
   class Sessions
@@ -17,6 +17,7 @@ module StytchB2B
 
     def initialize(connection, project_id)
       @connection = connection
+
 
       @project_id = project_id
       @cache_last_update = 0
@@ -34,7 +35,7 @@ module StytchB2B
     end
 
     # Retrieves all active Sessions for a Member.
-    #
+    # 
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -42,7 +43,7 @@ module StytchB2B
     # member_id::
     #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
     #   The type of this field is +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -55,34 +56,34 @@ module StytchB2B
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def get(
-      organization_id:,
-      member_id:
+      organization_id: ,
+      member_id: 
     )
       query_params = {
         organization_id: organization_id,
         member_id: member_id
       }
-      request = request_with_query_params('/v1/b2b/sessions', query_params)
+      request = request_with_query_params("/v1/b2b/sessions", query_params)
       get_request(request)
     end
 
     # Authenticates a Session and updates its lifetime by the specified `session_duration_minutes`. If the `session_duration_minutes` is not specified, a Session will not be extended. This endpoint requires either a `session_jwt` or `session_token` be included in the request. It will return an error if both are present.
-    #
+    # 
     # You may provide a JWT that needs to be refreshed and is expired according to its `exp` claim. A new JWT will be returned if both the signature and the underlying Session are still valid.
-    #
+    # 
     # == Parameters:
     # session_token::
     #   A secret token for a given Stytch Session.
     #   The type of this field is nilable +String+.
     # session_duration_minutes::
-    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
+    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist, 
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
     #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-    #
+    # 
     #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-    #
+    #   
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-    #
+    #   
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
     #   to use the Stytch session product, you can ignore the session fields in the response.
     #   The type of this field is nilable +Integer+.
@@ -95,7 +96,7 @@ module StytchB2B
     #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
     #   Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -125,17 +126,18 @@ module StytchB2B
       session_jwt: nil,
       session_custom_claims: nil
     )
-      request = {}
-      request[:session_token] = session_token unless session_token.nil?
-      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
-      request[:session_jwt] = session_jwt unless session_jwt.nil?
-      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request = {
+      }
+      request[:session_token] = session_token if session_token != nil
+      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
+      request[:session_jwt] = session_jwt if session_jwt != nil
+      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
 
-      post_request('/v1/b2b/sessions/authenticate', request)
+      post_request("/v1/b2b/sessions/authenticate", request)
     end
 
     # Revoke a Session and immediately invalidate all its tokens. To revoke a specific Session, pass either the `member_session_id`, `session_token`, or `session_jwt`. To revoke all Sessions for a Member, pass the `member_id`.
-    #
+    # 
     # == Parameters:
     # member_session_id::
     #   Globally unique UUID that identifies a specific Session in the Stytch API. The `member_session_id` is critical to perform operations on an Session, so be sure to preserve this value.
@@ -149,7 +151,7 @@ module StytchB2B
     # member_id::
     #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
     #   The type of this field is nilable +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -164,27 +166,28 @@ module StytchB2B
       session_jwt: nil,
       member_id: nil
     )
-      request = {}
-      request[:member_session_id] = member_session_id unless member_session_id.nil?
-      request[:session_token] = session_token unless session_token.nil?
-      request[:session_jwt] = session_jwt unless session_jwt.nil?
-      request[:member_id] = member_id unless member_id.nil?
+      request = {
+      }
+      request[:member_session_id] = member_session_id if member_session_id != nil
+      request[:session_token] = session_token if session_token != nil
+      request[:session_jwt] = session_jwt if session_jwt != nil
+      request[:member_id] = member_id if member_id != nil
 
-      post_request('/v1/b2b/sessions/revoke', request)
+      post_request("/v1/b2b/sessions/revoke", request)
     end
 
     # Use this endpoint to exchange a Member's existing session for another session in a different Organization. This can be used to accept an invite, but not to create a new member via domain matching.
-    #
+    # 
     # To create a new member via domain matching, use the [Exchange Intermediate Session](https://stytch.com/docs/b2b/api/exchange-intermediate-session) flow instead.
-    #
+    # 
     # Only Email Magic Link, OAuth, and SMS OTP factors can be transferred between sessions. Other authentication factors, such as password factors, will not be transferred to the new session.
     # SMS OTP factors can be used to fulfill MFA requirements for the target Organization if both the original and target Member have the same phone number and the phone number is verified for both Members.
-    #
+    # 
     # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
     # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
     # The `intermediate_session_token` can also be used with the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to join a different Organization or create a new one.
     # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
-    #
+    # 
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -196,14 +199,14 @@ module StytchB2B
     #   The `session_jwt` belonging to the member that you wish to associate the email with.
     #   The type of this field is nilable +String+.
     # session_duration_minutes::
-    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
+    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist, 
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
     #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-    #
+    # 
     #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-    #
+    #   
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-    #
+    #   
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
     #   to use the Stytch session product, you can ignore the session fields in the response.
     #   The type of this field is nilable +Integer+.
@@ -215,15 +218,15 @@ module StytchB2B
     #   The type of this field is nilable +object+.
     # locale::
     #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
-    #
+    # 
     # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
-    #
+    # 
     # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
-    #
+    # 
     # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
-    #
+    # 
     #   The type of this field is nilable +ExchangeRequestLocale+ (string enum).
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -263,7 +266,7 @@ module StytchB2B
     #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
     #   The type of this field is nilable +MfaRequired+ (+object+).
     def exchange(
-      organization_id:,
+      organization_id: ,
       session_token: nil,
       session_jwt: nil,
       session_duration_minutes: nil,
@@ -273,22 +276,22 @@ module StytchB2B
       request = {
         organization_id: organization_id
       }
-      request[:session_token] = session_token unless session_token.nil?
-      request[:session_jwt] = session_jwt unless session_jwt.nil?
-      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
-      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
-      request[:locale] = locale unless locale.nil?
+      request[:session_token] = session_token if session_token != nil
+      request[:session_jwt] = session_jwt if session_jwt != nil
+      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
+      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
+      request[:locale] = locale if locale != nil
 
-      post_request('/v1/b2b/sessions/exchange', request)
+      post_request("/v1/b2b/sessions/exchange", request)
     end
 
     # Get the JSON Web Key Set (JWKS) for a project.
-    #
+    # 
     # == Parameters:
     # project_id::
     #   The `project_id` to get the JWKS for.
     #   The type of this field is +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # keys::
@@ -301,98 +304,102 @@ module StytchB2B
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def get_jwks(
-      project_id:
+      project_id: 
     )
-      query_params = {}
+      query_params = {
+      }
       request = request_with_query_params("/v1/b2b/sessions/jwks/#{project_id}", query_params)
       get_request(request)
     end
 
+
     # MANUAL(Sessions::authenticate_jwt)(SERVICE_METHOD)
-    # ADDIMPORT: require 'jwt'
-    # ADDIMPORT: require 'json/jwt'
-    # ADDIMPORT: require_relative 'errors'
+      # ADDIMPORT: require 'jwt'
+      # ADDIMPORT: require 'json/jwt'
+      # ADDIMPORT: require_relative 'errors'
 
-    # Parse a JWT and verify the signature. If max_token_age_seconds is unset, call the API directly
-    # If max_token_age_seconds is set and the JWT was issued (based on the "iat" claim) less than
-    # max_token_age_seconds seconds ago, then just verify locally and don't call the API
-    # To force remote validation for all tokens, set max_token_age_seconds to 0 or call authenticate()
-    def authenticate_jwt(
-      session_jwt,
-      max_token_age_seconds: nil,
-      session_duration_minutes: nil,
-      session_custom_claims: nil
-    )
-      if max_token_age_seconds == 0
-        return authenticate(
-          session_jwt: session_jwt,
-          session_duration_minutes: session_duration_minutes,
-          session_custom_claims: session_custom_claims
-        )
-      end
+      # Parse a JWT and verify the signature. If max_token_age_seconds is unset, call the API directly
+      # If max_token_age_seconds is set and the JWT was issued (based on the "iat" claim) less than
+      # max_token_age_seconds seconds ago, then just verify locally and don't call the API
+      # To force remote validation for all tokens, set max_token_age_seconds to 0 or call authenticate()
+      def authenticate_jwt(
+        session_jwt,
+        max_token_age_seconds: nil,
+        session_duration_minutes: nil,
+        session_custom_claims: nil
+      )
+        if max_token_age_seconds == 0
+          return authenticate(
+            session_jwt: session_jwt,
+            session_duration_minutes: session_duration_minutes,
+            session_custom_claims: session_custom_claims
+          )
+        end
 
-      decoded_jwt = authenticate_jwt_local(session_jwt)
-      iat_time = Time.at(decoded_jwt['iat']).to_datetime
-      if iat_time + max_token_age_seconds >= Time.now
-        session = marshal_jwt_into_session(decoded_jwt)
-        { 'session' => session }
-      else
+        decoded_jwt = authenticate_jwt_local(session_jwt)
+        iat_time = Time.at(decoded_jwt['iat']).to_datetime
+        if iat_time + max_token_age_seconds >= Time.now
+          session = marshal_jwt_into_session(decoded_jwt)
+          { 'session' => session }
+        else
+          authenticate(
+            session_jwt: session_jwt,
+            session_duration_minutes: session_duration_minutes,
+            session_custom_claims: session_custom_claims
+          )
+        end
+      rescue StandardError
+        # JWT could not be verified locally. Check with the Stytch API.
         authenticate(
           session_jwt: session_jwt,
           session_duration_minutes: session_duration_minutes,
           session_custom_claims: session_custom_claims
         )
       end
-    rescue StandardError
-      # JWT could not be verified locally. Check with the Stytch API.
-      authenticate(
-        session_jwt: session_jwt,
-        session_duration_minutes: session_duration_minutes,
-        session_custom_claims: session_custom_claims
-      )
-    end
 
-    # Parse a JWT and verify the signature locally (without calling /authenticate in the API)
-    # Uses the cached value to get the JWK but if it is unavailable, it calls the get_jwks()
-    # function to get the JWK
-    # This method never authenticates a JWT directly with the API
-    def authenticate_jwt_local(session_jwt)
-      issuer = 'stytch.com/' + @project_id
-      begin
-        decoded_token = JWT.decode session_jwt, nil, true,
-                                   { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'] }
-        decoded_token[0]
-      rescue JWT::InvalidIssuerError
-        raise JWTInvalidIssuerError
-      rescue JWT::InvalidAudError
-        raise JWTInvalidAudienceError
-      rescue JWT::ExpiredSignature
-        raise JWTExpiredSignatureError
-      rescue JWT::IncorrectAlgorithm
-        raise JWTIncorrectAlgorithmError
+      # Parse a JWT and verify the signature locally (without calling /authenticate in the API)
+      # Uses the cached value to get the JWK but if it is unavailable, it calls the get_jwks()
+      # function to get the JWK
+      # This method never authenticates a JWT directly with the API
+      def authenticate_jwt_local(session_jwt)
+        issuer = 'stytch.com/' + @project_id
+        begin
+          decoded_token = JWT.decode session_jwt, nil, true,
+                                     { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'] }
+          decoded_token[0]
+        rescue JWT::InvalidIssuerError
+          raise JWTInvalidIssuerError
+        rescue JWT::InvalidAudError
+          raise JWTInvalidAudienceError
+        rescue JWT::ExpiredSignature
+          raise JWTExpiredSignatureError
+        rescue JWT::IncorrectAlgorithm
+          raise JWTIncorrectAlgorithmError
+        end
       end
-    end
 
-    def marshal_jwt_into_session(jwt)
-      stytch_claim = 'https://stytch.com/session'
-      expires_at = jwt[stytch_claim]['expires_at'] || Time.at(jwt['exp']).to_datetime.utc.strftime('%Y-%m-%dT%H:%M:%SZ')
-      # The custom claim set is all the claims in the payload except for the standard claims and
-      # the Stytch session claim. The cleanest way to collect those seems to be naming what we want
-      # to omit and filtering the rest to collect the custom claims.
-      reserved_claims = ['aud', 'exp', 'iat', 'iss', 'jti', 'nbf', 'sub', stytch_claim]
-      custom_claims = jwt.reject { |key, _| reserved_claims.include?(key) }
-      {
-        'session_id' => jwt[stytch_claim]['id'],
-        'user_id' => jwt['sub'],
-        'started_at' => jwt[stytch_claim]['started_at'],
-        'last_accessed_at' => jwt[stytch_claim]['last_accessed_at'],
-        # For JWTs that include it, prefer the inner expires_at claim.
-        'expires_at' => expires_at,
-        'attributes' => jwt[stytch_claim]['attributes'],
-        'authentication_factors' => jwt[stytch_claim]['authentication_factors'],
-        'custom_claims' => custom_claims
-      }
-    end
-    # ENDMANUAL(Sessions::authenticate_jwt)
+      def marshal_jwt_into_session(jwt)
+        stytch_claim = 'https://stytch.com/session'
+        expires_at = jwt[stytch_claim]['expires_at'] || Time.at(jwt['exp']).to_datetime.utc.strftime('%Y-%m-%dT%H:%M:%SZ')
+        # The custom claim set is all the claims in the payload except for the standard claims and
+        # the Stytch session claim. The cleanest way to collect those seems to be naming what we want
+        # to omit and filtering the rest to collect the custom claims.
+        reserved_claims = ['aud', 'exp', 'iat', 'iss', 'jti', 'nbf', 'sub', stytch_claim]
+        custom_claims = jwt.reject { |key, _| reserved_claims.include?(key) }
+        {
+          'session_id' => jwt[stytch_claim]['id'],
+          'user_id' => jwt['sub'],
+          'started_at' => jwt[stytch_claim]['started_at'],
+          'last_accessed_at' => jwt[stytch_claim]['last_accessed_at'],
+          # For JWTs that include it, prefer the inner expires_at claim.
+          'expires_at' => expires_at,
+          'attributes' => jwt[stytch_claim]['attributes'],
+          'authentication_factors' => jwt[stytch_claim]['authentication_factors'],
+          'custom_claims' => custom_claims
+        }
+      end
+      # ENDMANUAL(Sessions::authenticate_jwt)
+
+
   end
 end
