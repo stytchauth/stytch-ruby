@@ -35,131 +35,131 @@ module Stytch
 
 
     # MANUAL(M2M::get_jwks)(SERVICE_METHOD)
-        # This is a helper so we can retrieve the JWKS for a project for decoding M2M access tokens
-        def get_jwks(
-          project_id:
-        )
-          query_params = {}
-          request = request_with_query_params("/v1/sessions/jwks/#{project_id}", query_params)
-          get_request(request)
-        end
-        # ENDMANUAL(M2M::get_jwks)
+                # This is a helper so we can retrieve the JWKS for a project for decoding M2M access tokens
+                def get_jwks(
+                  project_id:
+                )
+                  query_params = {}
+                  request = request_with_query_params("/v1/sessions/jwks/#{project_id}", query_params)
+                  get_request(request)
+                end
+                # ENDMANUAL(M2M::get_jwks)
 
     # MANUAL(M2M::token)(SERVICE_METHOD)
-        # +token+ retrieves an access token for the given M2M Client.
-        # Access tokens are JWTs signed with the project's JWKs, and are valid for one hour after issuance.
-        # M2M Access tokens contain a standard set of claims as well as any custom claims generated from templates.
-        #
-        # == Parameters:
-        # client_id::
-        #   The ID of the client.
-        #   The type of this field is +String+.
-        # client_secret::
-        #   The secret of the client.
-        #   The type of this field is +String+.
-        # scopes::
-        #   An array scopes requested. If omitted, all scopes assigned to the client will be returned.
-        #   The type of this field is nilable list of +String+.
-        #
-        # == Returns:
-        # An object with the following fields:
-        # access_token::
-        #   The access token granted to the client. Access tokens are JWTs signed with the project's JWKs.
-        #   The type of this field is +String+.
-        # expires_in::
-        #   The lifetime in seconds of the access token.
-        #   For example, the value 3600 denotes that the access token will expire in one hour from the time the response was generated.
-        #   The type of this field is +Integer+.
-        # token_type::
-        #   The type of the returned access token. Today, this value will always be equal to "bearer"
-        #   The type of this field is +String+.
-        def token(client_id:, client_secret:, scopes: nil)
-          request = {
-            grant_type: 'client_credentials',
-            client_id: client_id,
-            client_secret: client_secret
-          }
-          request[:scope] = scopes.join(' ') unless scopes.nil?
+                # +token+ retrieves an access token for the given M2M Client.
+                # Access tokens are JWTs signed with the project's JWKs, and are valid for one hour after issuance.
+                # M2M Access tokens contain a standard set of claims as well as any custom claims generated from templates.
+                #
+                # == Parameters:
+                # client_id::
+                #   The ID of the client.
+                #   The type of this field is +String+.
+                # client_secret::
+                #   The secret of the client.
+                #   The type of this field is +String+.
+                # scopes::
+                #   An array scopes requested. If omitted, all scopes assigned to the client will be returned.
+                #   The type of this field is nilable list of +String+.
+                #
+                # == Returns:
+                # An object with the following fields:
+                # access_token::
+                #   The access token granted to the client. Access tokens are JWTs signed with the project's JWKs.
+                #   The type of this field is +String+.
+                # expires_in::
+                #   The lifetime in seconds of the access token.
+                #   For example, the value 3600 denotes that the access token will expire in one hour from the time the response was generated.
+                #   The type of this field is +Integer+.
+                # token_type::
+                #   The type of the returned access token. Today, this value will always be equal to "bearer"
+                #   The type of this field is +String+.
+                def token(client_id:, client_secret:, scopes: nil)
+                  request = {
+                    grant_type: 'client_credentials',
+                    client_id: client_id,
+                    client_secret: client_secret
+                  }
+                  request[:scope] = scopes.join(' ') unless scopes.nil?
 
-          JSON.parse(post_request("/v1/public/#{@project_id}/oauth2/token", request), { symbolize_names: true })
-        end
-        # ENDMANUAL(M2M::token)
+                  JSON.parse(post_request("/v1/public/#{@project_id}/oauth2/token", request), { symbolize_names: true })
+                end
+                # ENDMANUAL(M2M::token)
 
     # MANUAL(M2M::authenticate_token)(SERVICE_METHOD)
-        # +authenticate_token+ validates a M2M JWT locally.
-        #
-        # == Parameters:
-        # access_token::
-        #   The access token granted to the client. Access tokens are JWTs signed with the project's JWKs.
-        #   The type of this field is +String+.
-        # required_scopes::
-        #   A list of scopes the token must have to be valid.
-        #   The type of this field is nilable list of +String+.
-        # max_token_age::
-        #   The maximum possible lifetime in seconds for the token to be valid.
-        #   The type of this field is nilable +Integer+.
-        # == Returns:
-        # +nil+ if the token could not be validated, or an object with the following fields:
-        # scopes::
-        #   An array of scopes granted to the token holder.
-        #   The type of this field is list of +String+.
-        # client_id::
-        #   The ID of the client that was issued the token
-        #   The type of this field is +String+.
-        # custom_claims::
-        #   A map of custom claims present in the token.
-        #   The type of this field is +object+.
-        def authenticate_token(access_token:, required_scopes: nil, max_token_age: nil)
-          # Intentionally allow this to re-raise if authentication fails
-          decoded_jwt = authenticate_token_local(access_token)
+                # +authenticate_token+ validates a M2M JWT locally.
+                #
+                # == Parameters:
+                # access_token::
+                #   The access token granted to the client. Access tokens are JWTs signed with the project's JWKs.
+                #   The type of this field is +String+.
+                # required_scopes::
+                #   A list of scopes the token must have to be valid.
+                #   The type of this field is nilable list of +String+.
+                # max_token_age::
+                #   The maximum possible lifetime in seconds for the token to be valid.
+                #   The type of this field is nilable +Integer+.
+                # == Returns:
+                # +nil+ if the token could not be validated, or an object with the following fields:
+                # scopes::
+                #   An array of scopes granted to the token holder.
+                #   The type of this field is list of +String+.
+                # client_id::
+                #   The ID of the client that was issued the token
+                #   The type of this field is +String+.
+                # custom_claims::
+                #   A map of custom claims present in the token.
+                #   The type of this field is +object+.
+                def authenticate_token(access_token:, required_scopes: nil, max_token_age: nil)
+                  # Intentionally allow this to re-raise if authentication fails
+                  decoded_jwt = authenticate_token_local(access_token)
 
-          iat_time = Time.at(decoded_jwt['iat']).to_datetime
+                  iat_time = Time.at(decoded_jwt['iat']).to_datetime
 
-          # Token too old
-          raise JWTExpiredError if !max_token_age.nil? && (iat_time + max_token_age < Time.now)
+                  # Token too old
+                  raise JWTExpiredError if !max_token_age.nil? && (iat_time + max_token_age < Time.now)
 
-          resp = marshal_jwt_into_response(decoded_jwt)
+                  resp = marshal_jwt_into_response(decoded_jwt)
 
-          unless required_scopes.nil?
-            for scope in required_scopes
-              raise TokenMissingScopeError, scope unless resp['scopes'].include?(scope)
-            end
-          end
+                  unless required_scopes.nil?
+                    for scope in required_scopes
+                      raise TokenMissingScopeError, scope unless resp['scopes'].include?(scope)
+                    end
+                  end
 
-          resp
-        end
+                  resp
+                end
 
-        # Parse a M2M token and verify the signature locally (without calling /authenticate in the API)
-        def authenticate_token_local(jwt)
-          issuer = 'stytch.com/' + @project_id
-          begin
-            decoded_token = JWT.decode jwt, nil, true,
-                                       { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'] }
-            decoded_token[0]
-          rescue JWT::InvalidIssuerError
-            raise JWTInvalidIssuerError
-          rescue JWT::InvalidAudError
-            raise JWTInvalidAudienceError
-          rescue JWT::ExpiredSignature
-            raise JWTExpiredSignatureError
-          rescue JWT::IncorrectAlgorithm
-            raise JWTIncorrectAlgorithmError
-          end
-        end
+                # Parse a M2M token and verify the signature locally (without calling /authenticate in the API)
+                def authenticate_token_local(jwt)
+                  issuer = 'stytch.com/' + @project_id
+                  begin
+                    decoded_token = JWT.decode jwt, nil, true,
+                                               { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'] }
+                    decoded_token[0]
+                  rescue JWT::InvalidIssuerError
+                    raise JWTInvalidIssuerError
+                  rescue JWT::InvalidAudError
+                    raise JWTInvalidAudienceError
+                  rescue JWT::ExpiredSignature
+                    raise JWTExpiredSignatureError
+                  rescue JWT::IncorrectAlgorithm
+                    raise JWTIncorrectAlgorithmError
+                  end
+                end
 
-        def marshal_jwt_into_response(jwt)
-          # The custom claim set is all the claims in the payload except for the standard claims.
-          # The cleanest way to collect those seems to be naming what we want
-          # to omit and filtering the rest to collect the custom claims.
-          reserved_claims = %w[aud exp iat iss jti nbf sub]
-          custom_claims = jwt.reject { |key, _| reserved_claims.include?(key) }
-          {
-            'scopes' => jwt['scope'].split(' '),
-            'client_id' => jwt['sub'],
-            'custom_claims' => custom_claims
-          }
-        end
-        # ENDMANUAL(M2M::authenticate_token)
+                def marshal_jwt_into_response(jwt)
+                  # The custom claim set is all the claims in the payload except for the standard claims.
+                  # The cleanest way to collect those seems to be naming what we want
+                  # to omit and filtering the rest to collect the custom claims.
+                  reserved_claims = %w[aud exp iat iss jti nbf sub]
+                  custom_claims = jwt.reject { |key, _| reserved_claims.include?(key) }
+                  {
+                    'scopes' => jwt['scope'].split(' '),
+                    'client_id' => jwt['sub'],
+                    'custom_claims' => custom_claims
+                  }
+                end
+                # ENDMANUAL(M2M::authenticate_token)
 
 
     class Clients
