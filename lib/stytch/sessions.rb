@@ -183,91 +183,91 @@ module Stytch
 
 
     # MANUAL(Sessions::authenticate_jwt)(SERVICE_METHOD)
-      # ADDIMPORT: require 'jwt'
-      # ADDIMPORT: require 'json/jwt'
-      # ADDIMPORT: require_relative 'errors'
+        # ADDIMPORT: require 'jwt'
+        # ADDIMPORT: require 'json/jwt'
+        # ADDIMPORT: require_relative 'errors'
 
-      # Parse a JWT and verify the signature. If max_token_age_seconds is unset, call the API directly
-      # If max_token_age_seconds is set and the JWT was issued (based on the "iat" claim) less than
-      # max_token_age_seconds seconds ago, then just verify locally and don't call the API
-      # To force remote validation for all tokens, set max_token_age_seconds to 0 or call authenticate()
-      def authenticate_jwt(
-        session_jwt,
-        max_token_age_seconds: nil,
-        session_duration_minutes: nil,
-        session_custom_claims: nil
-      )
-        if max_token_age_seconds == 0
-          return authenticate(
-            session_jwt: session_jwt,
-            session_duration_minutes: session_duration_minutes,
-            session_custom_claims: session_custom_claims
-          )
-        end
+        # Parse a JWT and verify the signature. If max_token_age_seconds is unset, call the API directly
+        # If max_token_age_seconds is set and the JWT was issued (based on the "iat" claim) less than
+        # max_token_age_seconds seconds ago, then just verify locally and don't call the API
+        # To force remote validation for all tokens, set max_token_age_seconds to 0 or call authenticate()
+        def authenticate_jwt(
+          session_jwt,
+          max_token_age_seconds: nil,
+          session_duration_minutes: nil,
+          session_custom_claims: nil
+        )
+          if max_token_age_seconds == 0
+            return authenticate(
+              session_jwt: session_jwt,
+              session_duration_minutes: session_duration_minutes,
+              session_custom_claims: session_custom_claims
+            )
+          end
 
-        decoded_jwt = authenticate_jwt_local(session_jwt)
-        iat_time = Time.at(decoded_jwt['iat']).to_datetime
-        if iat_time + max_token_age_seconds >= Time.now
-          session = marshal_jwt_into_session(decoded_jwt)
-          { 'session' => session }
-        else
+          decoded_jwt = authenticate_jwt_local(session_jwt)
+          iat_time = Time.at(decoded_jwt['iat']).to_datetime
+          if iat_time + max_token_age_seconds >= Time.now
+            session = marshal_jwt_into_session(decoded_jwt)
+            { 'session' => session }
+          else
+            authenticate(
+              session_jwt: session_jwt,
+              session_duration_minutes: session_duration_minutes,
+              session_custom_claims: session_custom_claims
+            )
+          end
+        rescue StandardError
+          # JWT could not be verified locally. Check with the Stytch API.
           authenticate(
             session_jwt: session_jwt,
             session_duration_minutes: session_duration_minutes,
             session_custom_claims: session_custom_claims
           )
         end
-      rescue StandardError
-        # JWT could not be verified locally. Check with the Stytch API.
-        authenticate(
-          session_jwt: session_jwt,
-          session_duration_minutes: session_duration_minutes,
-          session_custom_claims: session_custom_claims
-        )
-      end
 
-      # Parse a JWT and verify the signature locally (without calling /authenticate in the API)
-      # Uses the cached value to get the JWK but if it is unavailable, it calls the get_jwks()
-      # function to get the JWK
-      # This method never authenticates a JWT directly with the API
-      def authenticate_jwt_local(session_jwt)
-        issuer = 'stytch.com/' + @project_id
-        begin
-          decoded_token = JWT.decode session_jwt, nil, true,
-                                     { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'] }
-          decoded_token[0]
-        rescue JWT::InvalidIssuerError
-          raise JWTInvalidIssuerError
-        rescue JWT::InvalidAudError
-          raise JWTInvalidAudienceError
-        rescue JWT::ExpiredSignature
-          raise JWTExpiredSignatureError
-        rescue JWT::IncorrectAlgorithm
-          raise JWTIncorrectAlgorithmError
+        # Parse a JWT and verify the signature locally (without calling /authenticate in the API)
+        # Uses the cached value to get the JWK but if it is unavailable, it calls the get_jwks()
+        # function to get the JWK
+        # This method never authenticates a JWT directly with the API
+        def authenticate_jwt_local(session_jwt)
+          issuer = 'stytch.com/' + @project_id
+          begin
+            decoded_token = JWT.decode session_jwt, nil, true,
+                                       { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'] }
+            decoded_token[0]
+          rescue JWT::InvalidIssuerError
+            raise JWTInvalidIssuerError
+          rescue JWT::InvalidAudError
+            raise JWTInvalidAudienceError
+          rescue JWT::ExpiredSignature
+            raise JWTExpiredSignatureError
+          rescue JWT::IncorrectAlgorithm
+            raise JWTIncorrectAlgorithmError
+          end
         end
-      end
 
-      def marshal_jwt_into_session(jwt)
-        stytch_claim = 'https://stytch.com/session'
-        expires_at = jwt[stytch_claim]['expires_at'] || Time.at(jwt['exp']).to_datetime.utc.strftime('%Y-%m-%dT%H:%M:%SZ')
-        # The custom claim set is all the claims in the payload except for the standard claims and
-        # the Stytch session claim. The cleanest way to collect those seems to be naming what we want
-        # to omit and filtering the rest to collect the custom claims.
-        reserved_claims = ['aud', 'exp', 'iat', 'iss', 'jti', 'nbf', 'sub', stytch_claim]
-        custom_claims = jwt.reject { |key, _| reserved_claims.include?(key) }
-        {
-          'session_id' => jwt[stytch_claim]['id'],
-          'user_id' => jwt['sub'],
-          'started_at' => jwt[stytch_claim]['started_at'],
-          'last_accessed_at' => jwt[stytch_claim]['last_accessed_at'],
-          # For JWTs that include it, prefer the inner expires_at claim.
-          'expires_at' => expires_at,
-          'attributes' => jwt[stytch_claim]['attributes'],
-          'authentication_factors' => jwt[stytch_claim]['authentication_factors'],
-          'custom_claims' => custom_claims
-        }
-      end
-      # ENDMANUAL(Sessions::authenticate_jwt)
+        def marshal_jwt_into_session(jwt)
+          stytch_claim = 'https://stytch.com/session'
+          expires_at = jwt[stytch_claim]['expires_at'] || Time.at(jwt['exp']).to_datetime.utc.strftime('%Y-%m-%dT%H:%M:%SZ')
+          # The custom claim set is all the claims in the payload except for the standard claims and
+          # the Stytch session claim. The cleanest way to collect those seems to be naming what we want
+          # to omit and filtering the rest to collect the custom claims.
+          reserved_claims = ['aud', 'exp', 'iat', 'iss', 'jti', 'nbf', 'sub', stytch_claim]
+          custom_claims = jwt.reject { |key, _| reserved_claims.include?(key) }
+          {
+            'session_id' => jwt[stytch_claim]['id'],
+            'user_id' => jwt['sub'],
+            'started_at' => jwt[stytch_claim]['started_at'],
+            'last_accessed_at' => jwt[stytch_claim]['last_accessed_at'],
+            # For JWTs that include it, prefer the inner expires_at claim.
+            'expires_at' => expires_at,
+            'attributes' => jwt[stytch_claim]['attributes'],
+            'authentication_factors' => jwt[stytch_claim]['authentication_factors'],
+            'custom_claims' => custom_claims
+          }
+        end
+        # ENDMANUAL(Sessions::authenticate_jwt)
 
 
   end
