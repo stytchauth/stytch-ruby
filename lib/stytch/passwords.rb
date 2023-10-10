@@ -419,10 +419,7 @@ module Stytch
           email: email
         }
         request[:reset_password_redirect_url] = reset_password_redirect_url unless reset_password_redirect_url.nil?
-        unless reset_password_expiration_minutes.nil?
-          request[:reset_password_expiration_minutes] =
-            reset_password_expiration_minutes
-        end
+        request[:reset_password_expiration_minutes] = reset_password_expiration_minutes unless reset_password_expiration_minutes.nil?
         request[:code_challenge] = code_challenge unless code_challenge.nil?
         request[:attributes] = attributes unless attributes.nil?
         request[:login_redirect_url] = login_redirect_url unless login_redirect_url.nil?
@@ -436,9 +433,15 @@ module Stytch
       #
       # The provided password needs to meet our password strength requirements, which can be checked in advance with the password strength endpoint. If the token and password are accepted, the password is securely stored for future authentication and the user is authenticated.
       #
+      # Note that a successful password reset by email will revoke all active sessions for the `user_id`.
+      #
       # == Parameters:
       # token::
-      #   The token to authenticate.
+      #   The Passwords `token` from the `?token=` query parameter in the URL.
+      #
+      #       In the redirect URL, the `stytch_token_type` will be `login` or `reset_password`.
+      #
+      #       See examples and read more about redirect URLs [here](https://stytch.com/docs/guides/dashboard/redirect-urls).
       #   The type of this field is +String+.
       # password::
       #   The password of the user
@@ -537,6 +540,8 @@ module Stytch
 
       # Reset the User’s password using their existing password.
       #
+      # Note that a successful password reset via an existing password will revoke all active sessions for the `user_id`.
+      #
       # == Parameters:
       # email::
       #   The email address of the end user.
@@ -628,6 +633,8 @@ module Stytch
 
       # Reset the user’s password using their existing session. The endpoint will error if the session does not have a password, email magic link, or email OTP authentication factor that has been issued within the last 5 minutes. This endpoint requires either a `session_jwt` or `session_token` be included in the request.
       #
+      # Note that a successful password reset via an existing session will revoke all active sessions for the `user_id`, except for the one used during the reset flow.
+      #
       # == Parameters:
       # password::
       #   The password of the user
@@ -638,6 +645,22 @@ module Stytch
       # session_jwt::
       #   The `session_jwt` associated with a User's existing Session.
       #   The type of this field is nilable +String+.
+      # session_duration_minutes::
+      #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
+      #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
+      #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
+      #
+      #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
+      #
+      #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
+      #
+      #   If the `session_duration_minutes` parameter is not specified, a Stytch session will not be created.
+      #   The type of this field is nilable +Integer+.
+      # session_custom_claims::
+      #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
+      #
+      #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
+      #   The type of this field is nilable +object+.
       #
       # == Returns:
       # An object with the following fields:
@@ -650,6 +673,12 @@ module Stytch
       # user::
       #   The `user` object affected by this API call. See the [Get user endpoint](https://stytch.com/docs/api/get-user) for complete response field details.
       #   The type of this field is +User+ (+object+).
+      # session_token::
+      #   A secret token for a given Stytch Session.
+      #   The type of this field is +String+.
+      # session_jwt::
+      #   The JSON Web Token (JWT) for a given Stytch Session.
+      #   The type of this field is +String+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
@@ -662,13 +691,17 @@ module Stytch
       def reset(
         password:,
         session_token: nil,
-        session_jwt: nil
+        session_jwt: nil,
+        session_duration_minutes: nil,
+        session_custom_claims: nil
       )
         request = {
           password: password
         }
         request[:session_token] = session_token unless session_token.nil?
         request[:session_jwt] = session_jwt unless session_jwt.nil?
+        request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+        request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
         post_request('/v1/passwords/session/reset', request)
       end

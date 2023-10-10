@@ -67,7 +67,11 @@ module Stytch
     #
     # == Parameters:
     # token::
-    #   The token to authenticate.
+    #   The OAuth `token` from the `?token=` query parameter in the URL.
+    #
+    #       The redirect URL will look like `https://example.com/authenticate?stytch_token_type=oauth&token=rM_kw42CWBhsHLF62V75jELMbvJ87njMe3tFVj7Qupu7`
+    #
+    #       In the redirect URL, the `stytch_token_type` will be `oauth`. See [here](https://stytch.com/docs/guides/dashboard/redirect-urls) for more detail.
     #   The type of this field is +String+.
     # session_token::
     #   Reuse an existing session instead of creating a new one. If you provide us with a `session_token`, then we'll update the session represented by this session token with this OAuth factor. If this `session_token` belongs to a different user than the OAuth token, the session_jwt will be ignored. This endpoint will error if both `session_token` and `session_jwt` are provided.

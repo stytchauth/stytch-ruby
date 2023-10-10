@@ -180,12 +180,9 @@ module StytchB2B
       post_request('/v1/b2b/passwords/migrate', request)
     end
 
-    # Authenticate a member with their email address and password. This endpoint verifies that the member has a password currently set, and that the entered password is correct. There are two instances where the endpoint will return a reset_password error even if they enter their previous password:
-    # * The member’s credentials appeared in the HaveIBeenPwned dataset.
-    #     * We force a password reset to ensure that the member is the legitimate owner of the email address, and not a malicious actor abusing the compromised credentials.
-    # * A member that has previously authenticated with email/password uses a passwordless authentication method tied to the same email address (e.g. Magic Links) for the first time. Any subsequent email/password authentication attempt will result in this error.
-    #     * We force a password reset in this instance in order to safely deduplicate the account by email address, without introducing the risk of a pre-hijack account takeover attack.
-    #     * Imagine a bad actor creates many accounts using passwords and the known email addresses of their victims. If a victim comes to the site and logs in for the first time with an email-based passwordless authentication method then both the victim and the bad actor have credentials to access to the same account. To prevent this, any further email/password login attempts first require a password reset which can only be accomplished by someone with access to the underlying email address.
+    # Authenticate a member with their email address and password. This endpoint verifies that the member has a password currently set, and that the entered password is correct.
+    #
+    # If you have breach detection during authentication enabled in your [password strength policy](https://stytch.com/docs/b2b/guides/passwords/strength-policies) and the member's credentials have appeared in the HaveIBeenPwned dataset, this endpoint will return a `member_reset_password` error even if the member enters a correct password. We force a password reset in this case to ensure that the member is the legitimate owner of the email address and not a malicious actor abusing the compromised credentials.
     #
     # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
     # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
@@ -382,10 +379,7 @@ module StytchB2B
           email_address: email_address
         }
         request[:reset_password_redirect_url] = reset_password_redirect_url unless reset_password_redirect_url.nil?
-        unless reset_password_expiration_minutes.nil?
-          request[:reset_password_expiration_minutes] =
-            reset_password_expiration_minutes
-        end
+        request[:reset_password_expiration_minutes] = reset_password_expiration_minutes unless reset_password_expiration_minutes.nil?
         request[:code_challenge] = code_challenge unless code_challenge.nil?
         request[:login_redirect_url] = login_redirect_url unless login_redirect_url.nil?
         request[:locale] = locale unless locale.nil?
@@ -543,6 +537,32 @@ module StytchB2B
       # session_jwt::
       #   The JSON Web Token (JWT) for a given Stytch Session.
       #   The type of this field is nilable +String+.
+      # session_duration_minutes::
+      #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
+      #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
+      #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
+      #
+      #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
+      #
+      #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
+      #
+      #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
+      #   to use the Stytch session product, you can ignore the session fields in the response.
+      #   The type of this field is nilable +Integer+.
+      # session_custom_claims::
+      #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in
+      #   `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To
+      #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
+      #   Total custom claims size cannot exceed four kilobytes.
+      #   The type of this field is nilable +object+.
+      # locale::
+      #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+      #
+      # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
+      #
+      # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
+      #
+      #   The type of this field is nilable +ResetRequestLocale+ (string enum).
       #
       # == Returns:
       # An object with the following fields:
@@ -558,17 +578,38 @@ module StytchB2B
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
       #   The type of this field is +Organization+ (+object+).
+      # session_token::
+      #   A secret token for a given Stytch Session.
+      #   The type of this field is +String+.
+      # session_jwt::
+      #   The JSON Web Token (JWT) for a given Stytch Session.
+      #   The type of this field is +String+.
+      # intermediate_session_token::
+      #   The Intermediate Session Token. This token does not necessarily belong to a specific instance of a Member, but represents a bag of factors that may be converted to a member session.
+      #     The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete an MFA flow;
+      #     the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) to join a specific Organization that allows the factors represented by the intermediate session token;
+      #     or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to create a new Organization and Member.
+      #   The type of this field is +String+.
+      # member_authenticated::
+      #   Indicates whether the Member is fully authenticated. If false, the Member needs to complete an MFA step to log in to the Organization.
+      #   The type of this field is +Boolean+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       # member_session::
       #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
       #   The type of this field is nilable +MemberSession+ (+object+).
+      # mfa_required::
+      #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
+      #   The type of this field is nilable +MfaRequired+ (+object+).
       def reset(
         organization_id:,
         password:,
         session_token: nil,
-        session_jwt: nil
+        session_jwt: nil,
+        session_duration_minutes: nil,
+        session_custom_claims: nil,
+        locale: nil
       )
         request = {
           organization_id: organization_id,
@@ -576,6 +617,9 @@ module StytchB2B
         }
         request[:session_token] = session_token unless session_token.nil?
         request[:session_jwt] = session_jwt unless session_jwt.nil?
+        request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+        request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+        request[:locale] = locale unless locale.nil?
 
         post_request('/v1/b2b/passwords/session/reset', request)
       end

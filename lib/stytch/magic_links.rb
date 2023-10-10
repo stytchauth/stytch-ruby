@@ -23,7 +23,11 @@ module Stytch
     #
     # == Parameters:
     # token::
-    #   The token to authenticate.
+    #   The Magic Link `token` from the `?token=` query parameter in the URL.
+    #
+    #       The redirect URL will look like `https://example.com/authenticate?stytch_token_type=magic_links&token=rM_kw42CWBhsHLF62V75jELMbvJ87njMe3tFVj7Qupu7`
+    #
+    #       In the redirect URL, the `stytch_token_type` will be `magic_link`. See [here](https://stytch.com/docs/guides/dashboard/redirect-urls) for more detail.
     #   The type of this field is +String+.
     # attributes::
     #   Provided attributes help with fraud detection.
@@ -167,7 +171,7 @@ module Stytch
       # Send a magic link to an existing Stytch user using their email address. If you'd like to create a user and send them a magic link by email with one request, use our [log in or create endpoint](https://stytch.com/docs/api/log-in-or-create-user-by-email).
       #
       # ### Add an email to an existing user
-      # This endpoint also allows you to add a new email address to an existing Stytch User. Including a `user_id`, `session_token`, or `session_jwt` in your Send Magic Link by email request will add the new, unverified email address to the existing Stytch User. Upon successful authentication, the email address will be marked as verified.
+      # This endpoint also allows you to add a new email address to an existing Stytch User. Including a `user_id`, `session_token`, or `session_jwt` in your Send Magic Link by email request will add the new, unverified email address to the existing Stytch User. If the user successfully authenticates within 5 minutes, the new email address will be marked as verified and remain permanently on the existing Stytch User. Otherwise, it will be removed from the User object, and any subsequent login requests using that email address will create a new User.
       #
       # ### Next steps
       # The user is emailed a magic link which redirects them to the provided [redirect URL](https://stytch.com/docs/guides/magic-links/email-magic-links/redirect-routing). Collect the `token` from the URL query parameters, and call [Authenticate magic link](https://stytch.com/docs/api/authenticate-magic-link) to complete authentication.
@@ -269,7 +273,7 @@ module Stytch
       # Send either a login or signup Magic Link to the User based on if the email is associated with a User already. A new or pending User will receive a signup Magic Link. An active User will receive a login Magic Link. For more information on how to control the status your Users are created in see the `create_user_as_pending` flag.
       #
       # ### Next steps
-      # The User is emailed a Magic Link which redirects them to the provided [redirect URL](https://stytch.com/docs/magic-links#email-magic-links_redirect-routing). Collect the `token` from the URL query parameters and call [Authenticate Magic Link](https://stytch.com/docs/api/authenticate-magic-link) to complete authentication.
+      # The User is emailed a Magic Link which redirects them to the provided [redirect URL](https://stytch.com/docs/guides/magic-links/email-magic-links/redirect-routing). Collect the `token` from the URL query parameters and call [Authenticate Magic Link](https://stytch.com/docs/api/authenticate-magic-link) to complete authentication.
       #
       # == Parameters:
       # email::
@@ -365,7 +369,7 @@ module Stytch
       # Create a User and send an invite Magic Link to the provided `email`. The User will be created with a `pending` status until they click the Magic Link in the invite email.
       #
       # ### Next steps
-      # The User is emailed a Magic Link which redirects them to the provided [redirect URL](https://stytch.com/docs/magic-links#email-magic-links_redirect-routing). Collect the `token` from the URL query parameters and call [Authenticate Magic Link](https://stytch.com/docs/api/authenticate-magic-link) to complete authentication.
+      # The User is emailed a Magic Link which redirects them to the provided [redirect URL](https://stytch.com/docs/guides/magic-links/email-magic-links/redirect-routing). Collect the `token` from the URL query parameters and call [Authenticate Magic Link](https://stytch.com/docs/api/authenticate-magic-link) to complete authentication.
       #
       # == Parameters:
       # email::

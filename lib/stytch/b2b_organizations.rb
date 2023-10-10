@@ -280,10 +280,7 @@ module StytchB2B
       request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
       request[:sso_default_connection_id] = sso_default_connection_id unless sso_default_connection_id.nil?
       request[:sso_jit_provisioning] = sso_jit_provisioning unless sso_jit_provisioning.nil?
-      unless sso_jit_provisioning_allowed_connections.nil?
-        request[:sso_jit_provisioning_allowed_connections] =
-          sso_jit_provisioning_allowed_connections
-      end
+      request[:sso_jit_provisioning_allowed_connections] = sso_jit_provisioning_allowed_connections unless sso_jit_provisioning_allowed_connections.nil?
       request[:email_allowed_domains] = email_allowed_domains unless email_allowed_domains.nil?
       request[:email_jit_provisioning] = email_jit_provisioning unless email_jit_provisioning.nil?
       request[:email_invites] = email_invites unless email_invites.nil?
