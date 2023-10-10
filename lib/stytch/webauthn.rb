@@ -6,7 +6,7 @@
 # or your changes may be overwritten later!
 # !!!
 
-require_relative "request_helper"
+require_relative 'request_helper'
 
 module Stytch
   class WebAuthn
@@ -14,14 +14,12 @@ module Stytch
 
     def initialize(connection)
       @connection = connection
-
-
     end
 
-    # Initiate the process of creating a new WebAuthn registration. After calling this endpoint, the browser will need to call [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) with the data from [public_key_credential_creation_options](https://w3c.github.io/webauthn/#dictionary-makecredentialoptions) passed to the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) request via the public key argument. We recommend using the `create()` wrapper provided by the webauthn-json library. 
-    # 
+    # Initiate the process of creating a new WebAuthn registration. After calling this endpoint, the browser will need to call [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) with the data from [public_key_credential_creation_options](https://w3c.github.io/webauthn/#dictionary-makecredentialoptions) passed to the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) request via the public key argument. We recommend using the `create()` wrapper provided by the webauthn-json library.
+    #
     # If you are not using the [webauthn-json](https://github.com/github/webauthn-json) library, the `public_key_credential_creation_options` will need to be converted to a suitable public key by unmarshalling the JSON, base64 decoding the user ID field, and converting user ID and the challenge fields into an array buffer.
-    # 
+    #
     # == Parameters:
     # user_id::
     #   The `user_id` of an active user the WebAuthn registration should be tied to.
@@ -35,7 +33,7 @@ module Stytch
     # authenticator_type::
     #   The requested authenticator type of the WebAuthn device. The two valid value are platform and cross-platform. If no value passed, we assume both values are allowed.
     #   The type of this field is nilable +String+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -51,8 +49,8 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def register_start(
-      user_id: ,
-      domain: ,
+      user_id:,
+      domain:,
       user_agent: nil,
       authenticator_type: nil
     )
@@ -60,16 +58,16 @@ module Stytch
         user_id: user_id,
         domain: domain
       }
-      request[:user_agent] = user_agent if user_agent != nil
-      request[:authenticator_type] = authenticator_type if authenticator_type != nil
+      request[:user_agent] = user_agent unless user_agent.nil?
+      request[:authenticator_type] = authenticator_type unless authenticator_type.nil?
 
-      post_request("/v1/webauthn/register/start", request)
+      post_request('/v1/webauthn/register/start', request)
     end
 
-    # Complete the creation of a WebAuthn registration by passing the response from the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) request to this endpoint as the `public_key_credential` parameter. 
-    # 
+    # Complete the creation of a WebAuthn registration by passing the response from the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) request to this endpoint as the `public_key_credential` parameter.
+    #
     # If the [webauthn-json](https://github.com/github/webauthn-json) library's `create()` method was used, the response can be passed directly to the [register endpoint](https://stytch.com/docs/api/webauthn-register). If not, some fields (the client data and the attestation object) from the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) response will need to be converted from array buffers to strings and marshalled into JSON.
-    # 
+    #
     # == Parameters:
     # user_id::
     #   The `user_id` of an active user the WebAuthn registration should be tied to.
@@ -77,7 +75,7 @@ module Stytch
     # public_key_credential::
     #   The response of the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential).
     #   The type of this field is +String+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -93,21 +91,21 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def register(
-      user_id: ,
-      public_key_credential: 
+      user_id:,
+      public_key_credential:
     )
       request = {
         user_id: user_id,
         public_key_credential: public_key_credential
       }
 
-      post_request("/v1/webauthn/register", request)
+      post_request('/v1/webauthn/register', request)
     end
 
-    # Initiate the authentication of a WebAuthn registration. After calling this endpoint, the browser will need to call [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) with the data from `public_key_credential_request_options` passed to the [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) request via the public key argument. We recommend using the `get()` wrapper provided by the webauthn-json library. 
-    # 
+    # Initiate the authentication of a WebAuthn registration. After calling this endpoint, the browser will need to call [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) with the data from `public_key_credential_request_options` passed to the [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) request via the public key argument. We recommend using the `get()` wrapper provided by the webauthn-json library.
+    #
     # If you are not using the [webauthn-json](https://github.com/github/webauthn-json) library, `the public_key_credential_request_options` will need to be converted to a suitable public key by unmarshalling the JSON and converting some the fields to array buffers.
-    # 
+    #
     # == Parameters:
     # user_id::
     #   The `user_id` of an active user the WebAuthn registration should be tied to.
@@ -115,7 +113,7 @@ module Stytch
     # domain::
     #   The domain for WebAuthn. Defaults to `window.location.hostname`.
     #   The type of this field is +String+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -131,21 +129,21 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def authenticate_start(
-      user_id: ,
-      domain: 
+      user_id:,
+      domain:
     )
       request = {
         user_id: user_id,
         domain: domain
       }
 
-      post_request("/v1/webauthn/authenticate/start", request)
+      post_request('/v1/webauthn/authenticate/start', request)
     end
 
-    # Complete the authentication of a WebAuthn registration by passing the response from the [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) request to the authenticate endpoint. 
-    # 
+    # Complete the authentication of a WebAuthn registration by passing the response from the [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) request to the authenticate endpoint.
+    #
     # If the [webauthn-json](https://github.com/github/webauthn-json) library's `get()` method was used, the response can be passed directly to the [authenticate endpoint](https://stytch.com/docs/api/webauthn-authenticate). If not some fields from the [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) response will need to be converted from array buffers to strings and marshalled into JSON.
-    # 
+    #
     # == Parameters:
     # public_key_credential::
     #   The response of the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential).
@@ -154,14 +152,14 @@ module Stytch
     #   The `session_token` associated with a User's existing Session.
     #   The type of this field is nilable +String+.
     # session_duration_minutes::
-    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist, 
+    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
     #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-    # 
+    #
     #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-    #   
+    #
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-    #   
+    #
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will not be created.
     #   The type of this field is nilable +Integer+.
     # session_jwt::
@@ -169,10 +167,10 @@ module Stytch
     #   The type of this field is nilable +String+.
     # session_custom_claims::
     #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
-    # 
+    #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -198,12 +196,12 @@ module Stytch
     #   The type of this field is +Integer+.
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
-    # 
+    #
     #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
-    #   
+    #
     #   The type of this field is nilable +Session+ (+object+).
     def authenticate(
-      public_key_credential: ,
+      public_key_credential:,
       session_token: nil,
       session_duration_minutes: nil,
       session_jwt: nil,
@@ -212,15 +210,12 @@ module Stytch
       request = {
         public_key_credential: public_key_credential
       }
-      request[:session_token] = session_token if session_token != nil
-      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
-      request[:session_jwt] = session_jwt if session_jwt != nil
-      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
+      request[:session_token] = session_token unless session_token.nil?
+      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+      request[:session_jwt] = session_jwt unless session_jwt.nil?
+      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
-      post_request("/v1/webauthn/authenticate", request)
+      post_request('/v1/webauthn/authenticate', request)
     end
-
-
-
   end
 end
