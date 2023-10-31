@@ -34,7 +34,7 @@ module Stytch
     #   The requested authenticator type of the WebAuthn device. The two valid value are platform and cross-platform. If no value passed, we assume both values are allowed.
     #   The type of this field is nilable +String+.
     # return_passkey_credential_options::
-    #   (no documentation yet)
+    #   If true, the public_key_credential_creation_options returned will be optimized for Passkeys.
     #   The type of this field is nilable +Boolean+.
     #
     # == Returns:
@@ -62,9 +62,9 @@ module Stytch
         user_id: user_id,
         domain: domain
       }
-      request[:user_agent] = user_agent if user_agent != nil
-      request[:authenticator_type] = authenticator_type if authenticator_type != nil
-      request[:return_passkey_credential_options] = return_passkey_credential_options if return_passkey_credential_options != nil
+      request[:user_agent] = user_agent unless user_agent.nil?
+      request[:authenticator_type] = authenticator_type unless authenticator_type.nil?
+      request[:return_passkey_credential_options] = return_passkey_credential_options unless return_passkey_credential_options.nil?
 
       post_request('/v1/webauthn/register/start', request)
     end
@@ -81,16 +81,18 @@ module Stytch
     #   The response of the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential).
     #   The type of this field is +String+.
     # session_token::
-    #   (no documentation yet)
+    #   The session token to authenticate.
     #   The type of this field is nilable +String+.
     # session_duration_minutes::
-    #   (no documentation yet)
+    #   Set the session lifetime to be this many minutes from now; minimum of 5 and a maximum of 527040 minutes (366 days). Note that a successful authentication will continue to extend the session this many minutes.
     #   The type of this field is nilable +Integer+.
     # session_jwt::
-    #   (no documentation yet)
+    #   The JWT to authenticate. You may provide a JWT that has expired according to its `exp` claim and needs to be refreshed. If the signature is valid and the underlying session is still active then Stytch will return a new JWT.
     #   The type of this field is nilable +String+.
     # session_custom_claims::
-    #   (no documentation yet)
+    #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
+    #
+    #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     #
     # == Returns:
@@ -105,19 +107,22 @@ module Stytch
     #   The unique ID for the WebAuthn registration.
     #   The type of this field is +String+.
     # session_token::
-    #   (no documentation yet)
+    #   A secret token for a given Stytch Session.
     #   The type of this field is +String+.
     # session_jwt::
-    #   (no documentation yet)
+    #   The JSON Web Token (JWT) for a given Stytch Session.
     #   The type of this field is +String+.
     # user::
-    #   (no documentation yet)
+    #   The `user` object affected by this API call. See the [Get user endpoint](https://stytch.com/docs/api/get-user) for complete response field details.
     #   The type of this field is +User+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     # session::
-    #   (no documentation yet)
+    #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
+    #
+    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #
     #   The type of this field is nilable +Session+ (+object+).
     def register(
       user_id:,
@@ -131,10 +136,10 @@ module Stytch
         user_id: user_id,
         public_key_credential: public_key_credential
       }
-      request[:session_token] = session_token if session_token != nil
-      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
-      request[:session_jwt] = session_jwt if session_jwt != nil
-      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
+      request[:session_token] = session_token unless session_token.nil?
+      request[:session_jwt] = session_jwt unless session_jwt.nil?
+      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
       post_request('/v1/webauthn/register', request)
     end
@@ -151,7 +156,7 @@ module Stytch
     #   The `user_id` of an active user the WebAuthn registration should be tied to.
     #   The type of this field is nilable +String+.
     # return_passkey_credential_options::
-    #   (no documentation yet)
+    #   If true, the public_key_credential_creation_options returned will be optimized for Passkeys.
     #   The type of this field is nilable +Boolean+.
     #
     # == Returns:
@@ -176,8 +181,8 @@ module Stytch
       request = {
         domain: domain
       }
-      request[:user_id] = user_id if user_id != nil
-      request[:return_passkey_credential_options] = return_passkey_credential_options if return_passkey_credential_options != nil
+      request[:user_id] = user_id unless user_id.nil?
+      request[:return_passkey_credential_options] = return_passkey_credential_options unless return_passkey_credential_options.nil?
 
       post_request('/v1/webauthn/authenticate/start', request)
     end
@@ -261,7 +266,7 @@ module Stytch
     end
 
     def update(
-      webauthn_registration_id: ,
+      webauthn_registration_id:,
       name: 
     )
       request = {
