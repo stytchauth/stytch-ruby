@@ -267,13 +267,13 @@ module Stytch
 
     def update(
       webauthn_registration_id:,
-      name: 
+      name:
     )
       request = {
         name: name
       }
 
-      put_request('/v1/webauthn/#{webauthn_registration_id}', request)
+      put_request("/v1/webauthn/#{webauthn_registration_id}", request)
     end
   end
 end
