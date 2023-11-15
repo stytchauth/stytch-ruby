@@ -23,7 +23,7 @@ module Stytch
     #   The `user_id` of an active user the TOTP registration should be tied to.
     #   The type of this field is +String+.
     # expiration_minutes::
-    #   The expiration for the TOTP instance. If the newly created TOTP is not authenticated within this time frame the TOTP will be unusable. Defaults to 60 (1 hour) with a minimum of 5 and a maximum of 1440.
+    #   The expiration for the TOTP instance. If the newly created TOTP is not authenticated within this time frame the TOTP will be unusable. Defaults to 1440 (1 day) with a minimum of 5 and a maximum of 1440.
     #   The type of this field is nilable +Integer+.
     #
     # == Returns:

@@ -394,6 +394,9 @@ module StytchB2B
       # idp_sso_url::
       #   The URL for which assertions for login requests will be sent. This will be provided by the IdP.
       #   The type of this field is nilable +String+.
+      # alternative_audience_uri::
+      #   An alternative URL to use for the Audience Restriction. This value can be used when you wish to migrate an existing SAML integration to Stytch with zero downtime.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -413,7 +416,8 @@ module StytchB2B
         display_name: nil,
         attribute_mapping: nil,
         x509_certificate: nil,
-        idp_sso_url: nil
+        idp_sso_url: nil,
+        alternative_audience_uri: nil
       )
         request = {}
         request[:idp_entity_id] = idp_entity_id unless idp_entity_id.nil?
@@ -421,8 +425,51 @@ module StytchB2B
         request[:attribute_mapping] = attribute_mapping unless attribute_mapping.nil?
         request[:x509_certificate] = x509_certificate unless x509_certificate.nil?
         request[:idp_sso_url] = idp_sso_url unless idp_sso_url.nil?
+        request[:alternative_audience_uri] = alternative_audience_uri unless alternative_audience_uri.nil?
 
         put_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}", request)
+      end
+
+      # Used to update an existing SAML connection using an IDP metadata URL.
+      #
+      # A newly created connection will not become active until all the following are provided:
+      # * `idp_sso_url`
+      # * `idp_entity_id`
+      # * `x509_certificate`
+      # * `attribute_mapping` (must be supplied using [Update SAML Connection](update-saml-connection))
+      #
+      # == Parameters:
+      # organization_id::
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+      #   The type of this field is +String+.
+      # connection_id::
+      #   Globally unique UUID that identifies a specific SSO `connection_id` for a Member.
+      #   The type of this field is +String+.
+      # metadata_url::
+      #   A URL that points to the IdP metadata. This will be provided by the IdP.
+      #   The type of this field is +String+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # status_code::
+      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+      #   The type of this field is +Integer+.
+      # connection::
+      #   The `SAML Connection` object affected by this API call. See the [SAML Connection Object](https://stytch.com/docs/b2b/api/saml-connection-object) for complete response field details.
+      #   The type of this field is nilable +SAMLConnection+ (+object+).
+      def update_by_url(
+        organization_id:,
+        connection_id:,
+        metadata_url:
+      )
+        request = {
+          metadata_url: metadata_url
+        }
+
+        put_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}/url", request)
       end
 
       # Delete a SAML verification certificate.

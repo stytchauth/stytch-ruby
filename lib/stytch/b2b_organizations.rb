@@ -27,10 +27,10 @@ module StytchB2B
     #
     # == Parameters:
     # organization_name::
-    #   The name of the Organization.
+    #   The name of the Organization. Must be between 1 and 128 characters in length.
     #   The type of this field is +String+.
     # organization_slug::
-    #   The unique URL slug of the Organization. A minimum of two characters is required. The slug only accepts alphanumeric characters and the following reserved characters: `-` `.` `_` `~`.
+    #   The unique URL slug of the Organization. The slug only accepts alphanumeric characters and the following reserved characters: `-` `.` `_` `~`. Must be between 2 and 128 characters in length.
     #   The type of this field is nilable +String+.
     # organization_logo_url::
     #   The image URL of the Organization logo.
@@ -162,7 +162,7 @@ module StytchB2B
       get_request(request)
     end
 
-    # Updates an Organization specified by `organization_id`. An Organization must always have at least one auth setting set to either `RESTRICTED` or `ALL_ALLOWED` in order to provision new Members. test
+    # Updates an Organization specified by `organization_id`. An Organization must always have at least one auth setting set to either `RESTRICTED` or `ALL_ALLOWED` in order to provision new Members.
     #
     # *See the [Organization authentication settings](https://stytch.com/docs/b2b/api/org-auth-settings) resource to learn more about fields like `email_jit_provisioning`, `email_invites`, `sso_jit_provisioning`, etc., and their behaviors.
     #
@@ -171,10 +171,10 @@ module StytchB2B
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
     #   The type of this field is +String+.
     # organization_name::
-    #   The name of the Organization.
+    #   The name of the Organization. Must be between 1 and 128 characters in length.
     #   The type of this field is nilable +String+.
     # organization_slug::
-    #   The unique URL slug of the Organization. A minimum of two characters is required. The slug only accepts alphanumeric characters and the following reserved characters: `-` `.` `_` `~`.
+    #   The unique URL slug of the Organization. The slug only accepts alphanumeric characters and the following reserved characters: `-` `.` `_` `~`. Must be between 2 and 128 characters in length.
     #   The type of this field is nilable +String+.
     # organization_logo_url::
     #   The image URL of the Organization logo.
@@ -617,6 +617,38 @@ module StytchB2B
         member_password_id:
       )
         delete_request("/v1/b2b/organizations/#{organization_id}/members/passwords/#{member_password_id}")
+      end
+
+      # Get a Member by `member_id`. This endpoint does not require an `organization_id`, so you can use it to get members across organizations. This is a dangerous operation. Incorrect use may open you up to indirect object reference (IDOR) attacks. We recommend using the [Get Member](https://stytch.com/docs/b2b/api/get-member) API instead.
+      #
+      # == Parameters:
+      # member_id::
+      #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
+      #   The type of this field is +String+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # member_id::
+      #   Globally unique UUID that identifies a specific Member.
+      #   The type of this field is +String+.
+      # member::
+      #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
+      #   The type of this field is +Member+ (+object+).
+      # organization::
+      #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
+      #   The type of this field is +Organization+ (+object+).
+      # status_code::
+      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+      #   The type of this field is +Integer+.
+      def dangerously_get(
+        member_id:
+      )
+        query_params = {}
+        request = request_with_query_params("/v1/b2b/organizations/members/dangerously_get/#{member_id}", query_params)
+        get_request(request)
       end
 
       # Creates a Member. An `organization_id` and `email_address` are required.
