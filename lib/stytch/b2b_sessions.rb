@@ -15,9 +15,10 @@ module StytchB2B
   class Sessions
     include Stytch::RequestHelper
 
-    def initialize(connection, project_id)
+    def initialize(connection, project_id, policy_cache)
       @connection = connection
 
+      @policy_cache = policy_cache
       @project_id = project_id
       @cache_last_update = 0
       @jwks_loader = lambda do |options|
@@ -325,11 +326,14 @@ module StytchB2B
     # If max_token_age_seconds is set and the JWT was issued (based on the "iat" claim) less than
     # max_token_age_seconds seconds ago, then just verify locally and don't call the API
     # To force remote validation for all tokens, set max_token_age_seconds to 0 or call authenticate()
+    # Note that the 'user_id' field of the returned session is DEPRECATED: Use member_id instead
+    # This field will be removed in a future MAJOR release.
     def authenticate_jwt(
       session_jwt,
       max_token_age_seconds: nil,
       session_duration_minutes: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      authorization_check: nil
     )
       if max_token_age_seconds == 0
         return authenticate(
@@ -343,7 +347,15 @@ module StytchB2B
       iat_time = Time.at(decoded_jwt['iat']).to_datetime
       if iat_time + max_token_age_seconds >= Time.now
         session = marshal_jwt_into_session(decoded_jwt)
-        { 'session' => session }
+        if authorization_check and session['roles']
+          @policy_cache.perform_authorization_check(
+            subject_roles: session['roles'],
+            subject_org_id: session['organization_id'],
+            authz_request: authorization_check
+          )
+        end
+
+        { 'session' => session['member_session'] }
       else
         authenticate(
           session_jwt: session_jwt,
@@ -364,7 +376,7 @@ module StytchB2B
     # Uses the cached value to get the JWK but if it is unavailable, it calls the get_jwks()
     # function to get the JWK
     # This method never authenticates a JWT directly with the API
-    def authenticate_jwt_local(session_jwt)
+    def authenticate_jwt_local(session_jwt, authorization_check: nil)
       issuer = 'stytch.com/' + @project_id
       begin
         decoded_token = JWT.decode session_jwt, nil, true,
@@ -381,24 +393,35 @@ module StytchB2B
       end
     end
 
+    # Note that the 'user_id' field is DEPRECATED: Use member_id instead
+    # This field will be removed in a future MAJOR release.
     def marshal_jwt_into_session(jwt)
       stytch_claim = 'https://stytch.com/session'
+      organization_claim = 'https://stytch.com/organization'
+      roles_claim = 'https://stytch.com/roles'
+
       expires_at = jwt[stytch_claim]['expires_at'] || Time.at(jwt['exp']).to_datetime.utc.strftime('%Y-%m-%dT%H:%M:%SZ')
       # The custom claim set is all the claims in the payload except for the standard claims and
       # the Stytch session claim. The cleanest way to collect those seems to be naming what we want
       # to omit and filtering the rest to collect the custom claims.
-      reserved_claims = ['aud', 'exp', 'iat', 'iss', 'jti', 'nbf', 'sub', stytch_claim]
+      reserved_claims = ['aud', 'exp', 'iat', 'iss', 'jti', 'nbf', 'sub', stytch_claim, organization_claim, roles_claim]
       custom_claims = jwt.reject { |key, _| reserved_claims.include?(key) }
       {
-        'session_id' => jwt[stytch_claim]['id'],
-        'user_id' => jwt['sub'],
-        'started_at' => jwt[stytch_claim]['started_at'],
-        'last_accessed_at' => jwt[stytch_claim]['last_accessed_at'],
-        # For JWTs that include it, prefer the inner expires_at claim.
-        'expires_at' => expires_at,
-        'attributes' => jwt[stytch_claim]['attributes'],
-        'authentication_factors' => jwt[stytch_claim]['authentication_factors'],
-        'custom_claims' => custom_claims
+        'member_session' => {
+          'session_id' => jwt[stytch_claim]['id'],
+          'organization_id' => jwt[organization_claim]['id'],
+          'member_id' => jwt['sub'],
+          # DEPRECATED: Use member_id instead
+          'user_id' => jwt['sub'],
+          'started_at' => jwt[stytch_claim]['started_at'],
+          'last_accessed_at' => jwt[stytch_claim]['last_accessed_at'],
+          # For JWTs that include it, prefer the inner expires_at claim.
+          'expires_at' => expires_at,
+          'attributes' => jwt[stytch_claim]['attributes'],
+          'authentication_factors' => jwt[stytch_claim]['authentication_factors'],
+          'custom_claims' => custom_claims
+        },
+        'roles' => jwt[roles_claim]
       }
     end
     # ENDMANUAL(Sessions::authenticate_jwt)

@@ -35,4 +35,18 @@ module Stytch
       super(msg)
     end
   end
+
+  class TenancyError < StandardError
+    def initialize(subject_org_id, request_org_id)
+      msg = "Subject organization_id #{subject_org_id} does not match authZ request organization_id #{request_org_id}"
+      super(msg)
+    end
+  end
+
+  class PermissionError < StandardError
+    def initialize(request)
+      msg = "Permission denied for request #{request}"
+      super(msg)
+    end
+  end
 end
