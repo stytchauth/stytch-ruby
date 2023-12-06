@@ -96,6 +96,9 @@ module StytchB2B
     #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
     #   Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
+    # authorization_check::
+    #   (no documentation yet)
+    #   The type of this field is nilable +AuthorizationCheck+ (+object+).
     #
     # == Returns:
     # An object with the following fields:
@@ -124,13 +127,15 @@ module StytchB2B
       session_token: nil,
       session_duration_minutes: nil,
       session_jwt: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      authorization_check: nil
     )
       request = {}
       request[:session_token] = session_token unless session_token.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:authorization_check] = authorization_check unless authorization_check.nil?
 
       post_request('/v1/b2b/sessions/authenticate', request)
     end
