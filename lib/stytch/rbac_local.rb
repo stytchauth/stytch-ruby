@@ -5,6 +5,7 @@ require_relative 'request_helper'
 module StytchB2B
   class PolicyCache
     def initialize(rbac_client:)
+      @rbac_client = rbac_client
       @policy_last_update = 0
       @cached_policy = nil
     end
@@ -23,13 +24,13 @@ module StytchB2B
     # check succeeds, this method will return. If the check fails, a PermissionError
     # will be raised. It's also possible for a TenancyError to be raised if the
     # subject_org_id does not match the authZ request organization_id.
-    # authz_request is an object with keys 'action', 'resource_id', and 'organization_id'
+    # authorization_check is an object with keys 'action', 'resource_id', and 'organization_id'
     def perform_authorization_check(
       subject_roles:,
       subject_org_id:,
-      authz_request:
+      authorization_check:
     )
-      raise TenancyError, subject_org_id if subject_org_id != authz_request['organization_id']
+      raise TenancyError, subject_org_id if subject_org_id != authorization_check['organization_id']
 
       policy = get_policy
 
@@ -39,8 +40,8 @@ module StytchB2B
         for permission in role['permissions']
           actions = permission['actions']
           resource = permission['resource_id']
-          has_matching_action = actions.include?('*') || actions.include?(authz_request['action'])
-          has_matching_resource = resource == authz_request['resource_id']
+          has_matching_action = actions.include?('*') || actions.include?(authorization_check['action'])
+          has_matching_resource = resource == authorization_check['resource_id']
           if has_matching_action && has_matching_resource
             # All good
             return
@@ -49,7 +50,7 @@ module StytchB2B
       end
 
       # If we get here, we didn't find a matching permission
-      raise PermissionError, authz_request
+      raise PermissionError, authorization_check
     end
   end
 end

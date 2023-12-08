@@ -344,7 +344,8 @@ module StytchB2B
         return authenticate(
           session_jwt: session_jwt,
           session_duration_minutes: session_duration_minutes,
-          session_custom_claims: session_custom_claims
+          session_custom_claims: session_custom_claims,
+          authorization_check: authorization_check
         )
       end
 
@@ -352,11 +353,11 @@ module StytchB2B
       iat_time = Time.at(decoded_jwt['iat']).to_datetime
       if iat_time + max_token_age_seconds >= Time.now
         session = marshal_jwt_into_session(decoded_jwt)
-        if authorization_check and session['roles']
+        if authorization_check && session['roles']
           @policy_cache.perform_authorization_check(
             subject_roles: session['roles'],
             subject_org_id: session['organization_id'],
-            authz_request: authorization_check
+            authorization_check: authorization_check
           )
         end
 
@@ -365,7 +366,8 @@ module StytchB2B
         authenticate(
           session_jwt: session_jwt,
           session_duration_minutes: session_duration_minutes,
-          session_custom_claims: session_custom_claims
+          session_custom_claims: session_custom_claims,
+          authorization_check: authorization_check
         )
       end
     rescue StandardError
@@ -373,7 +375,8 @@ module StytchB2B
       authenticate(
         session_jwt: session_jwt,
         session_duration_minutes: session_duration_minutes,
-        session_custom_claims: session_custom_claims
+        session_custom_claims: session_custom_claims,
+        authorization_check: authorization_check
       )
     end
 
@@ -381,7 +384,7 @@ module StytchB2B
     # Uses the cached value to get the JWK but if it is unavailable, it calls the get_jwks()
     # function to get the JWK
     # This method never authenticates a JWT directly with the API
-    def authenticate_jwt_local(session_jwt, authorization_check: nil)
+    def authenticate_jwt_local(session_jwt)
       issuer = 'stytch.com/' + @project_id
       begin
         decoded_token = JWT.decode session_jwt, nil, true,
