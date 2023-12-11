@@ -445,5 +445,7 @@ module StytchB2B
       }
     end
     # ENDMANUAL(Sessions::authenticate_jwt)
+
+
   end
 end

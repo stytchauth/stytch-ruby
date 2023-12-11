@@ -485,6 +485,9 @@ module Stytch
 
           post_request("/v1/m2m/clients/#{client_id}/secrets/rotate", request, headers)
         end
+
+
+
       end
     end
   end
