@@ -9,15 +9,17 @@
 require_relative 'request_helper'
 
 module Stytch
+
   class Users
     include Stytch::RequestHelper
 
     def initialize(connection)
       @connection = connection
+
     end
 
     # Add a User to Stytch. A `user_id` is returned in the response that can then be used to perform other operations within Stytch. An `email` or a `phone_number` is required.
-    #
+    # 
     # == Parameters:
     # email::
     #   The email address of the end user.
@@ -44,7 +46,7 @@ module Stytch
     # untrusted_metadata::
     #   The `untrusted_metadata` field contains an arbitrary JSON object of application-specific data. Untrusted metadata can be edited by end users directly via the SDK, and **cannot be used to store critical information.** See the [Metadata](https://stytch.com/docs/api/metadata) reference for complete field behavior details.
     #   The type of this field is nilable +object+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -77,25 +79,27 @@ module Stytch
       trusted_metadata: nil,
       untrusted_metadata: nil
     )
-      request = {}
-      request[:email] = email unless email.nil?
-      request[:name] = name unless name.nil?
-      request[:attributes] = attributes unless attributes.nil?
-      request[:phone_number] = phone_number unless phone_number.nil?
-      request[:create_user_as_pending] = create_user_as_pending unless create_user_as_pending.nil?
-      request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
-      request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
+      headers = {}
+      request = {
+      }
+      request[:email] = email if email != nil
+      request[:name] = name if name != nil
+      request[:attributes] = attributes if attributes != nil
+      request[:phone_number] = phone_number if phone_number != nil
+      request[:create_user_as_pending] = create_user_as_pending if create_user_as_pending != nil
+      request[:trusted_metadata] = trusted_metadata if trusted_metadata != nil
+      request[:untrusted_metadata] = untrusted_metadata if untrusted_metadata != nil
 
-      post_request('/v1/users', request)
+      post_request("/v1/users", request, headers)
     end
 
     # Get information about a specific User.
-    #
+    # 
     # == Parameters:
     # user_id::
     #   The unique ID of a specific User.
     #   The type of this field is +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -114,7 +118,7 @@ module Stytch
     #   An array of phone number objects linked to the User.
     #   The type of this field is list of +PhoneNumber+ (+object+).
     # webauthn_registrations::
-    #   An array that contains a list of all WebAuthn registrations for a given User in the Stytch API.
+    #   An array that contains a list of all Passkey or WebAuthn registrations for a given User in the Stytch API.
     #   The type of this field is list of +WebAuthnRegistration+ (+object+).
     # providers::
     #   An array of OAuth `provider` objects linked to the User.
@@ -147,15 +151,17 @@ module Stytch
     #   The `untrusted_metadata` field contains an arbitrary JSON object of application-specific data. Untrusted metadata can be edited by end users directly via the SDK, and **cannot be used to store critical information.** See the [Metadata](https://stytch.com/docs/api/metadata) reference for complete field behavior details.
     #   The type of this field is nilable +object+.
     def get(
-      user_id:
+      user_id: 
     )
-      query_params = {}
+      headers = {}
+      query_params = {
+      }
       request = request_with_query_params("/v1/users/#{user_id}", query_params)
-      get_request(request)
+      get_request(request, headers)
     end
 
     # Search for Users within your Stytch Project. Submit an empty `query` in the request to return all Users.
-    #
+    # 
     # == Parameters:
     # cursor::
     #   The `cursor` field allows you to paginate through your results. Each result array is limited to 1000 results. If your query returns more than 1000 results, you will need to paginate the responses using the `cursor`. If you receive a response that includes a non-null `next_cursor` in the `results_metadata` object, repeat the search call with the `next_cursor` value set to the `cursor` field to retrieve the next page of results. Continue to make search calls until the `next_cursor` in the response is null.
@@ -166,7 +172,7 @@ module Stytch
     # query::
     #   The optional query object contains the operator, i.e. `AND` or `OR`, and the operands that will filter your results. Only an operator is required. If you include no operands, no filtering will be applied. If you include no query object, it will return all results with no filtering applied.
     #   The type of this field is nilable +SearchUsersQuery+ (+object+).
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -186,18 +192,20 @@ module Stytch
       limit: nil,
       query: nil
     )
-      request = {}
-      request[:cursor] = cursor unless cursor.nil?
-      request[:limit] = limit unless limit.nil?
-      request[:query] = query unless query.nil?
+      headers = {}
+      request = {
+      }
+      request[:cursor] = cursor if cursor != nil
+      request[:limit] = limit if limit != nil
+      request[:query] = query if query != nil
 
-      post_request('/v1/users/search', request)
+      post_request("/v1/users/search", request, headers)
     end
 
     # Update a User's attributes.
-    #
+    # 
     # **Note:** In order to add a new email address or phone number to an existing User object, pass the new email address or phone number into the respective `/send` endpoint for the authentication method of your choice. If you specify the existing User's `user_id` while calling the `/send` endpoint, the new, unverified email address or phone number will be added to the existing User object. If the user successfully authenticates within 5 minutes of the `/send` request, the new email address or phone number will be marked as verified and remain permanently on the existing Stytch User. Otherwise, it will be removed from the User object, and any subsequent login requests using that phone number will create a new User. We require this process to guard against an account takeover vulnerability.
-    #
+    # 
     # == Parameters:
     # user_id::
     #   The unique ID of a specific User.
@@ -214,7 +222,7 @@ module Stytch
     # untrusted_metadata::
     #   The `untrusted_metadata` field contains an arbitrary JSON object of application-specific data. Untrusted metadata can be edited by end users directly via the SDK, and **cannot be used to store critical information.** See the [Metadata](https://stytch.com/docs/api/metadata) reference for complete field behavior details.
     #   The type of this field is nilable +object+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -239,29 +247,31 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def update(
-      user_id:,
+      user_id: ,
       name: nil,
       attributes: nil,
       trusted_metadata: nil,
       untrusted_metadata: nil
     )
-      request = {}
-      request[:name] = name unless name.nil?
-      request[:attributes] = attributes unless attributes.nil?
-      request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
-      request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
+      headers = {}
+      request = {
+      }
+      request[:name] = name if name != nil
+      request[:attributes] = attributes if attributes != nil
+      request[:trusted_metadata] = trusted_metadata if trusted_metadata != nil
+      request[:untrusted_metadata] = untrusted_metadata if untrusted_metadata != nil
 
-      put_request("/v1/users/#{user_id}", request)
+      put_request("/v1/users/#{user_id}", request, headers)
     end
 
     # Exchange a user's email address or phone number for another.
-    #
+    # 
     # Must pass either an `email_address` or a `phone_number`.
-    #
+    # 
     # This endpoint only works if the user has exactly one factor. You are able to exchange the type of factor for another as well, i.e. exchange an `email_address` for a `phone_number`.
-    #
+    # 
     # Use this endpoint with caution as it performs an admin level action.
-    #
+    # 
     # == Parameters:
     # user_id::
     #   The unique ID of a specific User.
@@ -272,7 +282,7 @@ module Stytch
     # phone_number::
     #   The phone number to exchange to. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX).
     #   The type of this field is nilable +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -288,24 +298,26 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def exchange_primary_factor(
-      user_id:,
+      user_id: ,
       email_address: nil,
       phone_number: nil
     )
-      request = {}
-      request[:email_address] = email_address unless email_address.nil?
-      request[:phone_number] = phone_number unless phone_number.nil?
+      headers = {}
+      request = {
+      }
+      request[:email_address] = email_address if email_address != nil
+      request[:phone_number] = phone_number if phone_number != nil
 
-      put_request("/v1/users/#{user_id}/exchange_primary_factor", request)
+      put_request("/v1/users/#{user_id}/exchange_primary_factor", request, headers)
     end
 
     # Delete a User from Stytch.
-    #
+    # 
     # == Parameters:
     # user_id::
     #   The unique ID of a specific User.
     #   The type of this field is +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -318,18 +330,19 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def delete(
-      user_id:
+      user_id: 
     )
-      delete_request("/v1/users/#{user_id}")
+      headers = {}
+      delete_request("/v1/users/#{user_id}", headers)
     end
 
     # Delete an email from a User.
-    #
+    # 
     # == Parameters:
     # email_id::
     #   The `email_id` to be deleted.
     #   The type of this field is +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -345,18 +358,19 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def delete_email(
-      email_id:
+      email_id: 
     )
-      delete_request("/v1/users/emails/#{email_id}")
+      headers = {}
+      delete_request("/v1/users/emails/#{email_id}", headers)
     end
 
     # Delete a phone number from a User.
-    #
+    # 
     # == Parameters:
     # phone_id::
     #   The `phone_id` to be deleted.
     #   The type of this field is +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -372,18 +386,19 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def delete_phone_number(
-      phone_id:
+      phone_id: 
     )
-      delete_request("/v1/users/phone_numbers/#{phone_id}")
+      headers = {}
+      delete_request("/v1/users/phone_numbers/#{phone_id}", headers)
     end
 
     # Delete a WebAuthn registration from a User.
-    #
+    # 
     # == Parameters:
     # webauthn_registration_id::
     #   The `webauthn_registration_id` to be deleted.
     #   The type of this field is +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -399,18 +414,19 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def delete_webauthn_registration(
-      webauthn_registration_id:
+      webauthn_registration_id: 
     )
-      delete_request("/v1/users/webauthn_registrations/#{webauthn_registration_id}")
+      headers = {}
+      delete_request("/v1/users/webauthn_registrations/#{webauthn_registration_id}", headers)
     end
 
     # Delete a biometric registration from a User.
-    #
+    # 
     # == Parameters:
     # biometric_registration_id::
     #   The `biometric_registration_id` to be deleted.
     #   The type of this field is +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -426,18 +442,19 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def delete_biometric_registration(
-      biometric_registration_id:
+      biometric_registration_id: 
     )
-      delete_request("/v1/users/biometric_registrations/#{biometric_registration_id}")
+      headers = {}
+      delete_request("/v1/users/biometric_registrations/#{biometric_registration_id}", headers)
     end
 
     # Delete a TOTP from a User.
-    #
+    # 
     # == Parameters:
     # totp_id::
     #   The `totp_id` to be deleted.
     #   The type of this field is +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -453,18 +470,19 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def delete_totp(
-      totp_id:
+      totp_id: 
     )
-      delete_request("/v1/users/totps/#{totp_id}")
+      headers = {}
+      delete_request("/v1/users/totps/#{totp_id}", headers)
     end
 
     # Delete a crypto wallet from a User.
-    #
+    # 
     # == Parameters:
     # crypto_wallet_id::
     #   The `crypto_wallet_id` to be deleted.
     #   The type of this field is +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -480,18 +498,19 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def delete_crypto_wallet(
-      crypto_wallet_id:
+      crypto_wallet_id: 
     )
-      delete_request("/v1/users/crypto_wallets/#{crypto_wallet_id}")
+      headers = {}
+      delete_request("/v1/users/crypto_wallets/#{crypto_wallet_id}", headers)
     end
 
     # Delete a password from a User.
-    #
+    # 
     # == Parameters:
     # password_id::
     #   The `password_id` to be deleted.
     #   The type of this field is +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -507,18 +526,19 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def delete_password(
-      password_id:
+      password_id: 
     )
-      delete_request("/v1/users/passwords/#{password_id}")
+      headers = {}
+      delete_request("/v1/users/passwords/#{password_id}", headers)
     end
 
     # Delete an OAuth registration from a User.
-    #
+    # 
     # == Parameters:
     # oauth_user_registration_id::
     #   The `oauth_user_registration_id` to be deleted.
     #   The type of this field is +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -534,9 +554,13 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def delete_oauth_registration(
-      oauth_user_registration_id:
+      oauth_user_registration_id: 
     )
-      delete_request("/v1/users/oauth/#{oauth_user_registration_id}")
+      headers = {}
+      delete_request("/v1/users/oauth/#{oauth_user_registration_id}", headers)
     end
+
+
+
   end
 end
