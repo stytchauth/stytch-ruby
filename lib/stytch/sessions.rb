@@ -198,12 +198,17 @@ module Stytch
     # If max_token_age_seconds is set and the JWT was issued (based on the "iat" claim) less than
     # max_token_age_seconds seconds ago, then just verify locally and don't call the API
     # To force remote validation for all tokens, set max_token_age_seconds to 0 or call authenticate()
+    # If max_token_age_seconds is not supplied 300 seconds will be used as the default.
     def authenticate_jwt(
       session_jwt,
       max_token_age_seconds: nil,
       session_duration_minutes: nil,
       session_custom_claims: nil
     )
+      if max_token_age_seconds.nil?
+        max_token_age_seconds = 300
+      end
+
       if max_token_age_seconds == 0
         return authenticate(
           session_jwt: session_jwt,
