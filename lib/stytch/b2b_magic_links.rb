@@ -253,9 +253,6 @@ module StytchB2B
       # email_address::
       #   The email address of the Member.
       #   The type of this field is +String+.
-      # roles::
-      #   (no documentation yet)
-      #   The type of this field is list of +String+.
       # invite_redirect_url::
       #   The URL that the Member clicks from the invite Email Magic Link. This URL should be an endpoint in the backend server that verifies
       #   the request by querying Stytch's authenticate endpoint and finishes the invite flow. If this value is not passed, the default `invite_redirect_url`
@@ -287,6 +284,9 @@ module StytchB2B
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       # 
       #   The type of this field is nilable +InviteRequestLocale+ (string enum).
+      # roles::
+      #   (no documentation yet)
+      #   The type of this field is nilable list of +String+.
       # 
       # == Returns:
       # An object with the following fields:
@@ -311,7 +311,6 @@ module StytchB2B
       def invite(
         organization_id: ,
         email_address: ,
-        roles: ,
         invite_redirect_url: nil,
         invited_by_member_id: nil,
         name: nil,
@@ -319,14 +318,14 @@ module StytchB2B
         untrusted_metadata: nil,
         invite_template_id: nil,
         locale: nil,
+        roles: nil,
         method_options: nil
       )
         headers = {}
         headers = headers.merge(method_options.to_headers) if method_options != nil
         request = {
           organization_id: organization_id,
-          email_address: email_address,
-          roles: roles
+          email_address: email_address
         }
         request[:invite_redirect_url] = invite_redirect_url if invite_redirect_url != nil
         request[:invited_by_member_id] = invited_by_member_id if invited_by_member_id != nil
@@ -335,6 +334,7 @@ module StytchB2B
         request[:untrusted_metadata] = untrusted_metadata if untrusted_metadata != nil
         request[:invite_template_id] = invite_template_id if invite_template_id != nil
         request[:locale] = locale if locale != nil
+        request[:roles] = roles if roles != nil
 
         post_request("/v1/b2b/magic_links/email/invite", request, headers)
       end

@@ -761,9 +761,6 @@ module StytchB2B
       # email_address::
       #   The email address of the Member.
       #   The type of this field is +String+.
-      # roles::
-      #   Directly assigns role to Member being created
-      #   The type of this field is list of +String+.
       # name::
       #   The name of the Member.
       #   The type of this field is nilable +String+.
@@ -787,6 +784,9 @@ module StytchB2B
       # mfa_enrolled::
       #   Sets whether the Member is enrolled in MFA. If true, the Member must complete an MFA step whenever they wish to log in to their Organization. If false, the Member only needs to complete an MFA step if the Organization's MFA policy is set to `REQUIRED_FOR_ALL`.
       #   The type of this field is nilable +Boolean+.
+      # roles::
+      #   Directly assigns role to Member being created
+      #   The type of this field is nilable list of +String+.
       # 
       # == Returns:
       # An object with the following fields:
@@ -811,7 +811,6 @@ module StytchB2B
       def create(
         organization_id: ,
         email_address: ,
-        roles: ,
         name: nil,
         trusted_metadata: nil,
         untrusted_metadata: nil,
@@ -819,13 +818,13 @@ module StytchB2B
         is_breakglass: nil,
         mfa_phone_number: nil,
         mfa_enrolled: nil,
+        roles: nil,
         method_options: nil
       )
         headers = {}
         headers = headers.merge(method_options.to_headers) if method_options != nil
         request = {
-          email_address: email_address,
-          roles: roles
+          email_address: email_address
         }
         request[:name] = name if name != nil
         request[:trusted_metadata] = trusted_metadata if trusted_metadata != nil
@@ -834,6 +833,7 @@ module StytchB2B
         request[:is_breakglass] = is_breakglass if is_breakglass != nil
         request[:mfa_phone_number] = mfa_phone_number if mfa_phone_number != nil
         request[:mfa_enrolled] = mfa_enrolled if mfa_enrolled != nil
+        request[:roles] = roles if roles != nil
 
         post_request("/v1/b2b/organizations/#{organization_id}/members", request, headers)
       end
