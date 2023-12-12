@@ -12,7 +12,6 @@ require_relative 'errors'
 require_relative 'request_helper'
 
 module Stytch
-
   class Sessions
     include Stytch::RequestHelper
 
@@ -35,12 +34,12 @@ module Stytch
     end
 
     # List all active Sessions for a given `user_id`. All timestamps are formatted according to the RFC 3339 standard and are expressed in UTC, e.g. `2021-12-29T12:33:09Z`.
-    # 
+    #
     # == Parameters:
     # user_id::
     #   The `user_id` to get active Sessions for.
     #   The type of this field is +String+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -53,18 +52,18 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def get(
-      user_id: 
+      user_id:
     )
       headers = {}
       query_params = {
         user_id: user_id
       }
-      request = request_with_query_params("/v1/sessions", query_params)
+      request = request_with_query_params('/v1/sessions', query_params)
       get_request(request, headers)
     end
 
     # Authenticate a session token and retrieve associated session data. If `session_duration_minutes` is included, update the lifetime of the session to be that many minutes from now. All timestamps are formatted according to the RFC 3339 standard and are expressed in UTC, e.g. `2021-12-29T12:33:09Z`. This endpoint requires exactly one `session_jwt` or `session_token` as part of the request. If both are included you will receive a `too_many_session_arguments` error.
-    # 
+    #
     # == Parameters:
     # session_token::
     #   The session token to authenticate.
@@ -77,10 +76,10 @@ module Stytch
     #   The type of this field is nilable +String+.
     # session_custom_claims::
     #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
-    # 
+    #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -88,9 +87,9 @@ module Stytch
     #   The type of this field is +String+.
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
-    # 
+    #
     #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
-    #   
+    #
     #   The type of this field is +Session+ (+object+).
     # session_token::
     #   A secret token for a given Stytch Session.
@@ -111,18 +110,17 @@ module Stytch
       session_custom_claims: nil
     )
       headers = {}
-      request = {
-      }
-      request[:session_token] = session_token if session_token != nil
-      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
-      request[:session_jwt] = session_jwt if session_jwt != nil
-      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
+      request = {}
+      request[:session_token] = session_token unless session_token.nil?
+      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+      request[:session_jwt] = session_jwt unless session_jwt.nil?
+      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
-      post_request("/v1/sessions/authenticate", request, headers)
+      post_request('/v1/sessions/authenticate', request, headers)
     end
 
     # Revoke a Session, immediately invalidating all of its session tokens. You can revoke a session in three ways: using its ID, or using one of its session tokens, or one of its JWTs. This endpoint requires exactly one of those to be included in the request. It will return an error if multiple are present.
-    # 
+    #
     # == Parameters:
     # session_id::
     #   The `session_id` to revoke.
@@ -133,7 +131,7 @@ module Stytch
     # session_jwt::
     #   A JWT for the session to revoke.
     #   The type of this field is nilable +String+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -148,30 +146,29 @@ module Stytch
       session_jwt: nil
     )
       headers = {}
-      request = {
-      }
-      request[:session_id] = session_id if session_id != nil
-      request[:session_token] = session_token if session_token != nil
-      request[:session_jwt] = session_jwt if session_jwt != nil
+      request = {}
+      request[:session_id] = session_id unless session_id.nil?
+      request[:session_token] = session_token unless session_token.nil?
+      request[:session_jwt] = session_jwt unless session_jwt.nil?
 
-      post_request("/v1/sessions/revoke", request, headers)
+      post_request('/v1/sessions/revoke', request, headers)
     end
 
     # Get the JSON Web Key Set (JWKS) for a project.
-    # 
-    # JWKS are rotated every ~6 months. Upon rotation, new JWTs will be signed using the new key set, and both key sets will be returned by this endpoint for a period of 1 month. 
-    # 
-    # JWTs have a set lifetime of 5 minutes, so there will be a 5 minute period where some JWTs will be signed by the old JWKS, and some JWTs will be signed by the new JWKS. The correct JWKS to use for validation is determined by matching the `kid` value of the JWT and JWKS. 
-    # 
+    #
+    # JWKS are rotated every ~6 months. Upon rotation, new JWTs will be signed using the new key set, and both key sets will be returned by this endpoint for a period of 1 month.
+    #
+    # JWTs have a set lifetime of 5 minutes, so there will be a 5 minute period where some JWTs will be signed by the old JWKS, and some JWTs will be signed by the new JWKS. The correct JWKS to use for validation is determined by matching the `kid` value of the JWT and JWKS.
+    #
     # If you're using one of our [backend SDKs](https://stytch.com/docs/sdks), the JWKS roll will be handled for you.
-    # 
+    #
     # If you're using your own JWT validation library, many have built-in support for JWKS rotation, and you'll just need to supply this API endpoint. If not, your application should decide which JWKS to use for validation by inspecting the `kid` value.
-    # 
+    #
     # == Parameters:
     # project_id::
     #   The `project_id` to get the JWKS for.
     #   The type of this field is +String+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # keys::
@@ -184,15 +181,13 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def get_jwks(
-      project_id: 
+      project_id:
     )
       headers = {}
-      query_params = {
-      }
+      query_params = {}
       request = request_with_query_params("/v1/sessions/jwks/#{project_id}", query_params)
       get_request(request, headers)
     end
-
 
     # MANUAL(Sessions::authenticate_jwt)(SERVICE_METHOD)
     # ADDIMPORT: require 'jwt'
@@ -280,7 +275,5 @@ module Stytch
       }
     end
     # ENDMANUAL(Sessions::authenticate_jwt)
-
-
   end
 end

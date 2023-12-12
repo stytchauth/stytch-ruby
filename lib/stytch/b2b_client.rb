@@ -48,7 +48,7 @@ module StytchB2B
         'https://api.stytch.com'
       when :test
         'https://test.stytch.com'
-      when /\Ahttps?:\/\//
+      when %r{\Ahttps?://}
         # If this is a string that looks like a URL, assume it's an internal development URL.
         env
       else
