@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'errors'
 require_relative 'request_helper'
 
 module StytchB2B
@@ -11,7 +12,7 @@ module StytchB2B
     end
 
     def reload_policy
-      @cached_policy = rbac_client.get_policy
+      @cached_policy = @rbac_client.policy()["policy"]
       @policy_last_update = Time.now.to_i
     end
 
@@ -30,7 +31,10 @@ module StytchB2B
       subject_org_id:,
       authorization_check:
     )
-      raise TenancyError, subject_org_id if subject_org_id != authorization_check['organization_id']
+      request_org_id = authorization_check['organization_id']
+      if request_org_id != subject_org_id
+        raise Stytch::TenancyError.new(subject_org_id, request_org_id)
+      end
 
       policy = get_policy
 
@@ -50,7 +54,7 @@ module StytchB2B
       end
 
       # If we get here, we didn't find a matching permission
-      raise PermissionError, authorization_check
+      raise Stytch::PermissionError.new(authorization_check)
     end
   end
 end

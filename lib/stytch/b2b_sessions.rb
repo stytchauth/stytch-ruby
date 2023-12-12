@@ -341,6 +341,7 @@ module StytchB2B
     # To force remote validation for all tokens, set max_token_age_seconds to 0 or call authenticate()
     # Note that the 'user_id' field of the returned session is DEPRECATED: Use member_id instead
     # This field will be removed in a future MAJOR release.
+    # If max_token_age_seconds is not supplied 300 seconds will be used as the default.
     def authenticate_jwt(
       session_jwt,
       max_token_age_seconds: nil,
@@ -348,6 +349,10 @@ module StytchB2B
       session_custom_claims: nil,
       authorization_check: nil
     )
+      if max_token_age_seconds.nil?
+        max_token_age_seconds = 300
+      end
+
       if max_token_age_seconds == 0
         return authenticate(
           session_jwt: session_jwt,
@@ -357,19 +362,9 @@ module StytchB2B
         )
       end
 
-      decoded_jwt = authenticate_jwt_local(session_jwt)
-      iat_time = Time.at(decoded_jwt['iat']).to_datetime
-      if iat_time + max_token_age_seconds >= Time.now
-        session = marshal_jwt_into_session(decoded_jwt)
-        if authorization_check && session['roles']
-          @policy_cache.perform_authorization_check(
-            subject_roles: session['roles'],
-            subject_org_id: session['organization_id'],
-            authorization_check: authorization_check
-          )
-        end
-
-        { 'session' => session['member_session'] }
+      decoded_jwt = authenticate_jwt_local(session_jwt: session_jwt, authorization_check: authorization_check)
+      if decoded_jwt.not_nil?
+        return decoded_jwt
       else
         authenticate(
           session_jwt: session_jwt,
@@ -392,21 +387,44 @@ module StytchB2B
     # Uses the cached value to get the JWK but if it is unavailable, it calls the get_jwks()
     # function to get the JWK
     # This method never authenticates a JWT directly with the API
-    def authenticate_jwt_local(session_jwt)
+    # If max_token_age_seconds is not supplied 300 seconds will be used as the default.
+    def authenticate_jwt_local(session_jwt, max_token_age_seconds: nil, authorization_check: nil)
+      if max_token_age_seconds.nil?
+        max_token_age_seconds = 300
+      end
+
       issuer = 'stytch.com/' + @project_id
       begin
         decoded_token = JWT.decode session_jwt, nil, true,
                                    { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'] }
-        decoded_token[0]
+
+        session = decoded_token[0]
+        iat_time = Time.at(session['iat']).to_datetime
+        if iat_time + max_token_age_seconds >= Time.now
+          session = marshal_jwt_into_session(session)
+        else
+          return nil
+        end
       rescue JWT::InvalidIssuerError
-        raise JWTInvalidIssuerError
+        raise Stytch::JWTInvalidIssuerError
       rescue JWT::InvalidAudError
-        raise JWTInvalidAudienceError
+        raise Stytch::JWTInvalidAudienceError
       rescue JWT::ExpiredSignature
-        raise JWTExpiredSignatureError
+        raise Stytch::JWTExpiredSignatureError
       rescue JWT::IncorrectAlgorithm
-        raise JWTIncorrectAlgorithmError
+        raise Stytch::JWTIncorrectAlgorithmError
       end
+
+      # Do the auth check - intentionally don't rescue errors from here
+      if authorization_check && session['roles']
+        @policy_cache.perform_authorization_check(
+          subject_roles: session['roles'],
+          subject_org_id: session['member_session']['organization_id'],
+          authorization_check: authorization_check
+        )
+      end
+
+      session
     end
 
     # Note that the 'user_id' field is DEPRECATED: Use member_id instead
@@ -424,7 +442,7 @@ module StytchB2B
       {
         'member_session' => {
           'session_id' => jwt[stytch_claim]['id'],
-          'organization_id' => jwt[organization_claim]['id'],
+          'organization_id' => jwt[organization_claim]['organization_id'],
           'member_id' => jwt['sub'],
           # DEPRECATED: Use member_id instead
           'user_id' => jwt['sub'],
