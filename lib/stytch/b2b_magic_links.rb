@@ -241,7 +241,7 @@ module StytchB2B
         post_request('/v1/b2b/magic_links/email/login_or_signup', request, headers)
       end
 
-      # Send an invite email to a new Member to join an Organization. The Member will be created with an `invited` status until they successfully authenticate. Sending invites to `pending` Members will update their status to `invited`. Sending invites to already `active` Members will return an error.
+      # Send an invite email to a new Member to join an Organization. The Member will be created with an `invited` status until they successfully authenticate. Sending invites to `pending` Members will update their status to `invited`. Sending invites to already `active` Members will return an error. /%}
       #
       # == Parameters:
       # organization_id::
@@ -282,7 +282,8 @@ module StytchB2B
       #
       #   The type of this field is nilable +InviteRequestLocale+ (string enum).
       # roles::
-      #   (no documentation yet)
+      #   (Coming Soon) Roles to explicitly assign to this Member. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment)
+      #    for more information about role assignment.
       #   The type of this field is nilable list of +String+.
       #
       # == Returns:

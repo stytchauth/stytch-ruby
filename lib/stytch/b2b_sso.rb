@@ -58,7 +58,7 @@ module StytchB2B
       @saml = StytchB2B::SSO::SAML.new(@connection)
     end
 
-    # Get all SSO Connections owned by the organization.
+    # Get all SSO Connections owned by the organization. /%}
     #
     # == Parameters:
     # organization_id::
@@ -93,7 +93,7 @@ module StytchB2B
       get_request(request, headers)
     end
 
-    # Delete an existing SSO connection.
+    # Delete an existing SSO connection. /%}
     #
     # == Parameters:
     # organization_id::
@@ -255,7 +255,7 @@ module StytchB2B
         @connection = connection
       end
 
-      # Create a new OIDC Connection.
+      # Create a new OIDC Connection. /%}
       #
       # == Parameters:
       # organization_id::
@@ -310,6 +310,7 @@ module StytchB2B
       # * `token_url`
       # * `userinfo_url`
       # * `jwks_url`
+      #  /%}
       #
       # == Parameters:
       # organization_id::
@@ -396,7 +397,7 @@ module StytchB2B
         @connection = connection
       end
 
-      # Create a new SAML Connection.
+      # Create a new SAML Connection. /%}
       #
       # == Parameters:
       # organization_id::
@@ -440,6 +441,7 @@ module StytchB2B
       # * `attribute_mapping`
       # * `idp_entity_id`
       # * `x509_certificate`
+      #  /%}
       #
       # == Parameters:
       # organization_id::
@@ -463,6 +465,17 @@ module StytchB2B
       # idp_sso_url::
       #   The URL for which assertions for login requests will be sent. This will be provided by the IdP.
       #   The type of this field is nilable +String+.
+      # saml_connection_implicit_role_assignments::
+      #   (Coming Soon) All Members who log in with this SAML connection will implicitly receive the specified Roles. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment.
+      #   The type of this field is nilable list of +String+.
+      # saml_group_implicit_role_assignments::
+      #   (Coming Soon) Defines the names of the SAML groups
+      #  that grant specific role assignments. For each group-Role pair, if a Member logs in with this SAML connection and
+      #  belongs to the specified SAML group, they will be granted the associated Role. See the
+      #  [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment.
+      #          Before adding any group implicit role assignments, you must add a "groups" key to your SAML connection's
+      #          `attribute_mapping`. Make sure that your IdP is configured to correctly send the group information.
+      #   The type of this field is nilable list of +String+.
       # alternative_audience_uri::
       #   An alternative URL to use for the Audience Restriction. This value can be used when you wish to migrate an existing SAML integration to Stytch with zero downtime.
       #   The type of this field is nilable +String+.
@@ -489,6 +502,8 @@ module StytchB2B
         attribute_mapping: nil,
         x509_certificate: nil,
         idp_sso_url: nil,
+        saml_connection_implicit_role_assignments: nil,
+        saml_group_implicit_role_assignments: nil,
         alternative_audience_uri: nil,
         method_options: nil
       )
@@ -500,6 +515,8 @@ module StytchB2B
         request[:attribute_mapping] = attribute_mapping unless attribute_mapping.nil?
         request[:x509_certificate] = x509_certificate unless x509_certificate.nil?
         request[:idp_sso_url] = idp_sso_url unless idp_sso_url.nil?
+        request[:saml_connection_implicit_role_assignments] = saml_connection_implicit_role_assignments unless saml_connection_implicit_role_assignments.nil?
+        request[:saml_group_implicit_role_assignments] = saml_group_implicit_role_assignments unless saml_group_implicit_role_assignments.nil?
         request[:alternative_audience_uri] = alternative_audience_uri unless alternative_audience_uri.nil?
 
         put_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}", request, headers)
@@ -512,6 +529,7 @@ module StytchB2B
       # * `idp_entity_id`
       # * `x509_certificate`
       # * `attribute_mapping` (must be supplied using [Update SAML Connection](update-saml-connection))
+      #  /%}
       #
       # == Parameters:
       # organization_id::
@@ -556,6 +574,7 @@ module StytchB2B
       # Delete a SAML verification certificate.
       #
       # You may need to do this when rotating certificates from your IdP, since Stytch allows a maximum of 5 certificates per connection. There must always be at least one certificate per active connection.
+      #  /%}
       #
       # == Parameters:
       # organization_id::

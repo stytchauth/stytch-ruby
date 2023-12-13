@@ -142,12 +142,15 @@ module StytchB2B
         @connection = connection
       end
 
-      # If an end user does not want to join any already-existing organization, or has no possible organizations to join, this endpoint can be used to create a new
+      # If an end user does not want to join any already-existing Organization, or has no possible Organizations to join, this endpoint can be used to create a new
       # [Organization](https://stytch.com/docs/b2b/api/organization-object) and [Member](https://stytch.com/docs/b2b/api/member-object).
       #
       # This operation consumes the Intermediate Session.
       #
-      # This endpoint can also be used to start an initial session for the newly created member and organization.
+      # This endpoint will also create an initial Member Session for the newly created Member.
+      #
+      # The Member created by this endpoint will automatically be granted the `stytch_admin` Role. See the
+      # [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/stytch-defaults) for more details on this Role.
       #
       # If the new Organization is created with a `mfa_policy` of `REQUIRED_FOR_ALL`, the newly created Member will need to complete an MFA step to log in to the Organization.
       # The `intermediate_session_token` will not be consumed and instead will be returned in the response.
@@ -235,7 +238,6 @@ module StytchB2B
       #
       #   The type of this field is nilable +String+.
       # allowed_auth_methods::
-      #
       #   An array of allowed authentication methods. This list is enforced when `auth_methods` is set to `RESTRICTED`.
       #   The list's accepted values are: `sso`, `magic_link`, `password`, `google_oauth`, and `microsoft_oauth`.
       #
@@ -248,6 +250,12 @@ module StytchB2B
       #   `OPTIONAL` – The default value. The Organization does not require MFA by default for all Members. Members will be required to complete MFA only if their `mfa_enrolled` status is set to true.
       #
       #   The type of this field is nilable +String+.
+      # rbac_email_implicit_role_assignments::
+      #   (Coming Soon) Implicit role assignments based off of email domains.
+      #   For each domain-Role pair, all Members whose email addresses have the specified email domain will be granted the
+      #   associated Role, regardless of their login method. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment)
+      #   for more information about role assignment.
+      #   The type of this field is nilable list of +EmailImplicitRoleAssignment+ (+object+).
       #
       # == Returns:
       # An object with the following fields:
@@ -301,7 +309,8 @@ module StytchB2B
         email_invites: nil,
         auth_methods: nil,
         allowed_auth_methods: nil,
-        mfa_policy: nil
+        mfa_policy: nil,
+        rbac_email_implicit_role_assignments: nil
       )
         headers = {}
         request = {
@@ -320,6 +329,7 @@ module StytchB2B
         request[:auth_methods] = auth_methods unless auth_methods.nil?
         request[:allowed_auth_methods] = allowed_auth_methods unless allowed_auth_methods.nil?
         request[:mfa_policy] = mfa_policy unless mfa_policy.nil?
+        request[:rbac_email_implicit_role_assignments] = rbac_email_implicit_role_assignments unless rbac_email_implicit_role_assignments.nil?
 
         post_request('/v1/b2b/discovery/organizations/create', request, headers)
       end
