@@ -217,10 +217,8 @@ module Stytch
         )
       end
 
-      decoded_jwt = authenticate_jwt_local(session_jwt)
-      iat_time = Time.at(decoded_jwt['iat']).to_datetime
-      if iat_time + max_token_age_seconds >= Time.now
-        session = marshal_jwt_into_session(decoded_jwt)
+      session = authenticate_jwt_local(session_jwt)
+      if !session.nil?
         { 'session' => session }
       else
         authenticate(
@@ -241,13 +239,23 @@ module Stytch
     # Parse a JWT and verify the signature locally (without calling /authenticate in the API)
     # Uses the cached value to get the JWK but if it is unavailable, it calls the get_jwks()
     # function to get the JWK
-    # This method never authenticates a JWT directly with the API
-    def authenticate_jwt_local(session_jwt)
+    # If max_token_age_seconds is not supplied 300 seconds will be used as the default.
+    def authenticate_jwt_local(session_jwt, max_token_age_seconds: nil)
+      if max_token_age_seconds.nil?
+        max_token_age_seconds = 300
+      end
+
       issuer = 'stytch.com/' + @project_id
       begin
         decoded_token = JWT.decode session_jwt, nil, true,
                                    { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'] }
-        decoded_token[0]
+        session = decoded_token[0]
+        iat_time = Time.at(session['iat']).to_datetime
+        if iat_time + max_token_age_seconds >= Time.now
+          session = marshal_jwt_into_session(session)
+        else
+          return nil
+        end
       rescue JWT::InvalidIssuerError
         raise JWTInvalidIssuerError
       rescue JWT::InvalidAudError
@@ -257,6 +265,8 @@ module Stytch
       rescue JWT::IncorrectAlgorithm
         raise JWTIncorrectAlgorithmError
       end
+
+      session
     end
 
     def marshal_jwt_into_session(jwt)

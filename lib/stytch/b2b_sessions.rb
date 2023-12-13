@@ -363,7 +363,7 @@ module StytchB2B
       end
 
       decoded_jwt = authenticate_jwt_local(session_jwt: session_jwt, authorization_check: authorization_check)
-      if decoded_jwt.not_nil?
+      if !decoded_jwt.nil?
         return decoded_jwt
       else
         authenticate(
