@@ -205,9 +205,7 @@ module Stytch
       session_duration_minutes: nil,
       session_custom_claims: nil
     )
-      if max_token_age_seconds.nil?
-        max_token_age_seconds = 300
-      end
+      max_token_age_seconds = 300 if max_token_age_seconds.nil?
 
       if max_token_age_seconds == 0
         return authenticate(
@@ -241,9 +239,7 @@ module Stytch
     # function to get the JWK
     # If max_token_age_seconds is not supplied 300 seconds will be used as the default.
     def authenticate_jwt_local(session_jwt, max_token_age_seconds: nil)
-      if max_token_age_seconds.nil?
-        max_token_age_seconds = 300
-      end
+      max_token_age_seconds = 300 if max_token_age_seconds.nil?
 
       issuer = 'stytch.com/' + @project_id
       begin
@@ -251,11 +247,9 @@ module Stytch
                                    { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'] }
         session = decoded_token[0]
         iat_time = Time.at(session['iat']).to_datetime
-        if iat_time + max_token_age_seconds >= Time.now
-          session = marshal_jwt_into_session(session)
-        else
-          return nil
-        end
+        return nil unless iat_time + max_token_age_seconds >= Time.now
+
+        session = marshal_jwt_into_session(session)
       rescue JWT::InvalidIssuerError
         raise JWTInvalidIssuerError
       rescue JWT::InvalidAudError

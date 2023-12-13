@@ -349,9 +349,7 @@ module StytchB2B
       session_custom_claims: nil,
       authorization_check: nil
     )
-      if max_token_age_seconds.nil?
-        max_token_age_seconds = 300
-      end
+      max_token_age_seconds = 300 if max_token_age_seconds.nil?
 
       if max_token_age_seconds == 0
         return authenticate(
@@ -363,16 +361,14 @@ module StytchB2B
       end
 
       decoded_jwt = authenticate_jwt_local(session_jwt: session_jwt, authorization_check: authorization_check)
-      if !decoded_jwt.nil?
-        return decoded_jwt
-      else
-        authenticate(
-          session_jwt: session_jwt,
-          session_duration_minutes: session_duration_minutes,
-          session_custom_claims: session_custom_claims,
-          authorization_check: authorization_check
-        )
-      end
+      return decoded_jwt unless decoded_jwt.nil?
+
+      authenticate(
+        session_jwt: session_jwt,
+        session_duration_minutes: session_duration_minutes,
+        session_custom_claims: session_custom_claims,
+        authorization_check: authorization_check
+      )
     rescue StandardError
       # JWT could not be verified locally. Check with the Stytch API.
       authenticate(
@@ -389,9 +385,7 @@ module StytchB2B
     # This method never authenticates a JWT directly with the API
     # If max_token_age_seconds is not supplied 300 seconds will be used as the default.
     def authenticate_jwt_local(session_jwt, max_token_age_seconds: nil, authorization_check: nil)
-      if max_token_age_seconds.nil?
-        max_token_age_seconds = 300
-      end
+      max_token_age_seconds = 300 if max_token_age_seconds.nil?
 
       issuer = 'stytch.com/' + @project_id
       begin
@@ -400,11 +394,9 @@ module StytchB2B
 
         session = decoded_token[0]
         iat_time = Time.at(session['iat']).to_datetime
-        if iat_time + max_token_age_seconds >= Time.now
-          session = marshal_jwt_into_session(session)
-        else
-          return nil
-        end
+        return nil unless iat_time + max_token_age_seconds >= Time.now
+
+        session = marshal_jwt_into_session(session)
       rescue JWT::InvalidIssuerError
         raise Stytch::JWTInvalidIssuerError
       rescue JWT::InvalidAudError
