@@ -17,7 +17,6 @@ module Stytch
       @connection = connection
 
       @clients = Stytch::M2M::Clients.new(@connection)
-
       @project_id = project_id
       @cache_last_update = 0
       @jwks_loader = lambda do |options|
@@ -191,9 +190,10 @@ module Stytch
       def get(
         client_id:
       )
+        headers = {}
         query_params = {}
         request = request_with_query_params("/v1/m2m/clients/#{client_id}", query_params)
-        get_request(request)
+        get_request(request, headers)
       end
 
       # Search for M2M Clients within your Stytch Project. Submit an empty `query` in the request to return all M2M Clients.
@@ -233,12 +233,13 @@ module Stytch
         limit: nil,
         query: nil
       )
+        headers = {}
         request = {}
         request[:cursor] = cursor unless cursor.nil?
         request[:limit] = limit unless limit.nil?
         request[:query] = query unless query.nil?
 
-        post_request('/v1/m2m/clients/search', request)
+        post_request('/v1/m2m/clients/search', request, headers)
       end
 
       # Updates an existing M2M Client. You can use this endpoint to activate or deactivate a M2M Client by changing its `status`. A deactivated M2M Client will not be allowed to perform future token exchange flows until it is reactivated.
@@ -285,6 +286,7 @@ module Stytch
         scopes: nil,
         trusted_metadata: nil
       )
+        headers = {}
         request = {}
         request[:client_name] = client_name unless client_name.nil?
         request[:client_description] = client_description unless client_description.nil?
@@ -292,7 +294,7 @@ module Stytch
         request[:scopes] = scopes unless scopes.nil?
         request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
 
-        put_request("/v1/m2m/clients/#{client_id}", request)
+        put_request("/v1/m2m/clients/#{client_id}", request, headers)
       end
 
       # Deletes the M2M Client.
@@ -319,7 +321,8 @@ module Stytch
       def delete(
         client_id:
       )
-        delete_request("/v1/m2m/clients/#{client_id}")
+        headers = {}
+        delete_request("/v1/m2m/clients/#{client_id}", headers)
       end
 
       # Creates a new M2M Client. On initial client creation, you may pass in a custom `client_id` or `client_secret` to import an existing M2M client. If you do not pass in a custom `client_id` or `client_secret`, one will be generated automatically. The `client_id` must be unique among all clients in your project.
@@ -365,6 +368,7 @@ module Stytch
         client_description: nil,
         trusted_metadata: nil
       )
+        headers = {}
         request = {
           scopes: scopes
         }
@@ -374,7 +378,7 @@ module Stytch
         request[:client_description] = client_description unless client_description.nil?
         request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
 
-        post_request('/v1/m2m/clients', request)
+        post_request('/v1/m2m/clients', request, headers)
       end
 
       class Secrets
@@ -408,9 +412,10 @@ module Stytch
         def rotate_start(
           client_id:
         )
+          headers = {}
           request = {}
 
-          post_request("/v1/m2m/clients/#{client_id}/secrets/rotate/start", request)
+          post_request("/v1/m2m/clients/#{client_id}/secrets/rotate/start", request, headers)
         end
 
         # Cancel the rotation of an M2M client secret started with the [Start Secret Rotation Endpoint](https://stytch.com/docs/b2b/api/m2m-rotate-secret-start) [Start Secret Rotation Endpoint](https://stytch.com/docs/api/m2m-rotate-secret-start).
@@ -435,9 +440,10 @@ module Stytch
         def rotate_cancel(
           client_id:
         )
+          headers = {}
           request = {}
 
-          post_request("/v1/m2m/clients/#{client_id}/secrets/rotate/cancel", request)
+          post_request("/v1/m2m/clients/#{client_id}/secrets/rotate/cancel", request, headers)
         end
 
         # Complete the rotation of an M2M client secret started with the [Start Secret Rotation Endpoint](https://stytch.com/docs/b2b/api/m2m-rotate-secret-start) [Start Secret Rotation Endpoint](https://stytch.com/docs/api/m2m-rotate-secret-start).
@@ -462,9 +468,10 @@ module Stytch
         def rotate(
           client_id:
         )
+          headers = {}
           request = {}
 
-          post_request("/v1/m2m/clients/#{client_id}/secrets/rotate", request)
+          post_request("/v1/m2m/clients/#{client_id}/secrets/rotate", request, headers)
         end
       end
     end

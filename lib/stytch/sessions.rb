@@ -54,11 +54,12 @@ module Stytch
     def get(
       user_id:
     )
+      headers = {}
       query_params = {
         user_id: user_id
       }
       request = request_with_query_params('/v1/sessions', query_params)
-      get_request(request)
+      get_request(request, headers)
     end
 
     # Authenticate a session token and retrieve associated session data. If `session_duration_minutes` is included, update the lifetime of the session to be that many minutes from now. All timestamps are formatted according to the RFC 3339 standard and are expressed in UTC, e.g. `2021-12-29T12:33:09Z`. This endpoint requires exactly one `session_jwt` or `session_token` as part of the request. If both are included you will receive a `too_many_session_arguments` error.
@@ -108,13 +109,14 @@ module Stytch
       session_jwt: nil,
       session_custom_claims: nil
     )
+      headers = {}
       request = {}
       request[:session_token] = session_token unless session_token.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
-      post_request('/v1/sessions/authenticate', request)
+      post_request('/v1/sessions/authenticate', request, headers)
     end
 
     # Revoke a Session, immediately invalidating all of its session tokens. You can revoke a session in three ways: using its ID, or using one of its session tokens, or one of its JWTs. This endpoint requires exactly one of those to be included in the request. It will return an error if multiple are present.
@@ -143,12 +145,13 @@ module Stytch
       session_token: nil,
       session_jwt: nil
     )
+      headers = {}
       request = {}
       request[:session_id] = session_id unless session_id.nil?
       request[:session_token] = session_token unless session_token.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
 
-      post_request('/v1/sessions/revoke', request)
+      post_request('/v1/sessions/revoke', request, headers)
     end
 
     # Get the JSON Web Key Set (JWKS) for a project.
@@ -180,9 +183,10 @@ module Stytch
     def get_jwks(
       project_id:
     )
+      headers = {}
       query_params = {}
       request = request_with_query_params("/v1/sessions/jwks/#{project_id}", query_params)
-      get_request(request)
+      get_request(request, headers)
     end
 
     # MANUAL(Sessions::authenticate_jwt)(SERVICE_METHOD)
@@ -194,12 +198,15 @@ module Stytch
     # If max_token_age_seconds is set and the JWT was issued (based on the "iat" claim) less than
     # max_token_age_seconds seconds ago, then just verify locally and don't call the API
     # To force remote validation for all tokens, set max_token_age_seconds to 0 or call authenticate()
+    # If max_token_age_seconds is not supplied 300 seconds will be used as the default.
     def authenticate_jwt(
       session_jwt,
       max_token_age_seconds: nil,
       session_duration_minutes: nil,
       session_custom_claims: nil
     )
+      max_token_age_seconds = 300 if max_token_age_seconds.nil?
+
       if max_token_age_seconds == 0
         return authenticate(
           session_jwt: session_jwt,
@@ -208,10 +215,8 @@ module Stytch
         )
       end
 
-      decoded_jwt = authenticate_jwt_local(session_jwt)
-      iat_time = Time.at(decoded_jwt['iat']).to_datetime
-      if iat_time + max_token_age_seconds >= Time.now
-        session = marshal_jwt_into_session(decoded_jwt)
+      session = authenticate_jwt_local(session_jwt)
+      if !session.nil?
         { 'session' => session }
       else
         authenticate(
@@ -232,13 +237,19 @@ module Stytch
     # Parse a JWT and verify the signature locally (without calling /authenticate in the API)
     # Uses the cached value to get the JWK but if it is unavailable, it calls the get_jwks()
     # function to get the JWK
-    # This method never authenticates a JWT directly with the API
-    def authenticate_jwt_local(session_jwt)
+    # If max_token_age_seconds is not supplied 300 seconds will be used as the default.
+    def authenticate_jwt_local(session_jwt, max_token_age_seconds: nil)
+      max_token_age_seconds = 300 if max_token_age_seconds.nil?
+
       issuer = 'stytch.com/' + @project_id
       begin
         decoded_token = JWT.decode session_jwt, nil, true,
                                    { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'] }
-        decoded_token[0]
+        session = decoded_token[0]
+        iat_time = Time.at(session['iat']).to_datetime
+        return nil unless iat_time + max_token_age_seconds >= Time.now
+
+        session = marshal_jwt_into_session(session)
       rescue JWT::InvalidIssuerError
         raise JWTInvalidIssuerError
       rescue JWT::InvalidAudError
@@ -248,6 +259,8 @@ module Stytch
       rescue JWT::IncorrectAlgorithm
         raise JWTIncorrectAlgorithmError
       end
+
+      session
     end
 
     def marshal_jwt_into_session(jwt)

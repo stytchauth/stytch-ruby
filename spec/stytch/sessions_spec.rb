@@ -45,8 +45,9 @@ RSpec.describe Stytch::Sessions do
       { 'keys' => [jwk.export] }
     end
     sessions.instance_variable_set(:@jwks_loader, patch_jwks_loader)
+    expected = sessions.marshal_jwt_into_session(claims)
 
-    expect(sessions.authenticate_jwt_local(token)).to eq(claims)
+    expect(sessions.authenticate_jwt_local(token)).to eq(expected)
   end
 
   it 'marshals JWT into session (new format)' do

@@ -56,12 +56,13 @@ module Stytch
       user_id:,
       expiration_minutes: nil
     )
+      headers = {}
       request = {
         user_id: user_id
       }
       request[:expiration_minutes] = expiration_minutes unless expiration_minutes.nil?
 
-      post_request('/v1/totps', request)
+      post_request('/v1/totps', request, headers)
     end
 
     # Authenticate a TOTP code entered by a user.
@@ -133,6 +134,7 @@ module Stytch
       session_jwt: nil,
       session_custom_claims: nil
     )
+      headers = {}
       request = {
         user_id: user_id,
         totp_code: totp_code
@@ -142,7 +144,7 @@ module Stytch
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
-      post_request('/v1/totps/authenticate', request)
+      post_request('/v1/totps/authenticate', request, headers)
     end
 
     # Retrieve the recovery codes for a TOTP instance tied to a User.
@@ -169,11 +171,12 @@ module Stytch
     def recovery_codes(
       user_id:
     )
+      headers = {}
       request = {
         user_id: user_id
       }
 
-      post_request('/v1/totps/recovery_codes', request)
+      post_request('/v1/totps/recovery_codes', request, headers)
     end
 
     # Authenticate a recovery code for a TOTP instance.
@@ -245,6 +248,7 @@ module Stytch
       session_jwt: nil,
       session_custom_claims: nil
     )
+      headers = {}
       request = {
         user_id: user_id,
         recovery_code: recovery_code
@@ -254,7 +258,7 @@ module Stytch
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
-      post_request('/v1/totps/recover', request)
+      post_request('/v1/totps/recover', request, headers)
     end
   end
 end

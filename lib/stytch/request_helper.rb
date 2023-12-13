@@ -2,29 +2,33 @@
 
 module Stytch
   module RequestHelper
-    def get_request(path)
+    def get_request(path, headers)
       @connection.get(
-        path
+        path,
+        headers
       ).body
     end
 
-    def post_request(path, payload)
+    def post_request(path, payload, headers)
       @connection.post(
         path,
-        payload
+        payload,
+        headers
       ).body
     end
 
-    def put_request(path, payload)
+    def put_request(path, payload, headers)
       @connection.put(
         path,
-        payload
+        payload,
+        headers
       ).body
     end
 
-    def delete_request(path)
+    def delete_request(path, headers)
       @connection.delete(
-        path
+        path,
+        headers
       ).body
     end
 

@@ -133,6 +133,7 @@ module StytchB2B
       session_custom_claims: nil,
       locale: nil
     )
+      headers = {}
       request = {
         magic_links_token: magic_links_token
       }
@@ -143,7 +144,7 @@ module StytchB2B
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
       request[:locale] = locale unless locale.nil?
 
-      post_request('/v1/b2b/magic_links/authenticate', request)
+      post_request('/v1/b2b/magic_links/authenticate', request, headers)
     end
 
     class Email
@@ -225,6 +226,7 @@ module StytchB2B
         signup_template_id: nil,
         locale: nil
       )
+        headers = {}
         request = {
           organization_id: organization_id,
           email_address: email_address
@@ -236,10 +238,10 @@ module StytchB2B
         request[:signup_template_id] = signup_template_id unless signup_template_id.nil?
         request[:locale] = locale unless locale.nil?
 
-        post_request('/v1/b2b/magic_links/email/login_or_signup', request)
+        post_request('/v1/b2b/magic_links/email/login_or_signup', request, headers)
       end
 
-      # Send an invite email to a new Member to join an Organization. The Member will be created with an `invited` status until they successfully authenticate. Sending invites to `pending` Members will update their status to `invited`. Sending invites to already `active` Members will return an error.
+      # Send an invite email to a new Member to join an Organization. The Member will be created with an `invited` status until they successfully authenticate. Sending invites to `pending` Members will update their status to `invited`. Sending invites to already `active` Members will return an error. /%}
       #
       # == Parameters:
       # organization_id::
@@ -279,6 +281,10 @@ module StytchB2B
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
       #   The type of this field is nilable +InviteRequestLocale+ (string enum).
+      # roles::
+      #   (Coming Soon) Roles to explicitly assign to this Member. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment)
+      #    for more information about role assignment.
+      #   The type of this field is nilable list of +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -297,6 +303,9 @@ module StytchB2B
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
+      #
+      # == Method Options:
+      # This method supports an optional +InviteRequestOptions+ object which will modify the headers sent in the HTTP request.
       def invite(
         organization_id:,
         email_address:,
@@ -306,8 +315,12 @@ module StytchB2B
         trusted_metadata: nil,
         untrusted_metadata: nil,
         invite_template_id: nil,
-        locale: nil
+        locale: nil,
+        roles: nil,
+        method_options: nil
       )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
         request = {
           organization_id: organization_id,
           email_address: email_address
@@ -319,8 +332,9 @@ module StytchB2B
         request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
         request[:invite_template_id] = invite_template_id unless invite_template_id.nil?
         request[:locale] = locale unless locale.nil?
+        request[:roles] = roles unless roles.nil?
 
-        post_request('/v1/b2b/magic_links/email/invite', request)
+        post_request('/v1/b2b/magic_links/email/invite', request, headers)
       end
 
       class Discovery
@@ -372,6 +386,7 @@ module StytchB2B
           login_template_id: nil,
           locale: nil
         )
+          headers = {}
           request = {
             email_address: email_address
           }
@@ -380,7 +395,7 @@ module StytchB2B
           request[:login_template_id] = login_template_id unless login_template_id.nil?
           request[:locale] = locale unless locale.nil?
 
-          post_request('/v1/b2b/magic_links/email/discovery/send', request)
+          post_request('/v1/b2b/magic_links/email/discovery/send', request, headers)
         end
       end
     end
@@ -437,12 +452,13 @@ module StytchB2B
         discovery_magic_links_token:,
         pkce_code_verifier: nil
       )
+        headers = {}
         request = {
           discovery_magic_links_token: discovery_magic_links_token
         }
         request[:pkce_code_verifier] = pkce_code_verifier unless pkce_code_verifier.nil?
 
-        post_request('/v1/b2b/magic_links/discovery/authenticate', request)
+        post_request('/v1/b2b/magic_links/discovery/authenticate', request, headers)
       end
     end
   end

@@ -59,6 +59,7 @@ module Stytch
       session_token: nil,
       session_jwt: nil
     )
+      headers = {}
       request = {
         crypto_wallet_type: crypto_wallet_type,
         crypto_wallet_address: crypto_wallet_address
@@ -67,7 +68,7 @@ module Stytch
       request[:session_token] = session_token unless session_token.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
 
-      post_request('/v1/crypto_wallets/authenticate/start', request)
+      post_request('/v1/crypto_wallets/authenticate/start', request, headers)
     end
 
     # Complete the authentication of a crypto wallet by passing the signature.
@@ -140,6 +141,7 @@ module Stytch
       session_jwt: nil,
       session_custom_claims: nil
     )
+      headers = {}
       request = {
         crypto_wallet_type: crypto_wallet_type,
         crypto_wallet_address: crypto_wallet_address,
@@ -150,7 +152,7 @@ module Stytch
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
-      post_request('/v1/crypto_wallets/authenticate', request)
+      post_request('/v1/crypto_wallets/authenticate', request, headers)
     end
   end
 end

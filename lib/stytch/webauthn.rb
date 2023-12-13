@@ -16,25 +16,30 @@ module Stytch
       @connection = connection
     end
 
-    # Initiate the process of creating a new WebAuthn registration. After calling this endpoint, the browser will need to call [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) with the data from [public_key_credential_creation_options](https://w3c.github.io/webauthn/#dictionary-makecredentialoptions) passed to the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) request via the public key argument. We recommend using the `create()` wrapper provided by the webauthn-json library.
+    # Initiate the process of creating a new Passkey or WebAuthn registration.
+    #
+    # To optimize for Passkeys, set the `return_passkey_credential_options` field to `true`.
+    #
+    # After calling this endpoint, the browser will need to call [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) with the data from [public_key_credential_creation_options](https://w3c.github.io/webauthn/#dictionary-makecredentialoptions) passed to the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) request via the public key argument. We recommend using the `create()` wrapper provided by the webauthn-json library.
     #
     # If you are not using the [webauthn-json](https://github.com/github/webauthn-json) library, the `public_key_credential_creation_options` will need to be converted to a suitable public key by unmarshalling the JSON, base64 decoding the user ID field, and converting user ID and the challenge fields into an array buffer.
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` of an active user the WebAuthn registration should be tied to.
+    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to.
     #   The type of this field is +String+.
     # domain::
-    #   The domain for WebAuthn. Defaults to `window.location.hostname`.
+    #   The domain for Passkeys or WebAuthn. Defaults to `window.location.hostname`.
     #   The type of this field is +String+.
     # user_agent::
     #   The user agent of the User.
     #   The type of this field is nilable +String+.
     # authenticator_type::
-    #   The requested authenticator type of the WebAuthn device. The two valid values are platform and cross-platform. If no value passed, we assume both values are allowed.
+    #   The requested authenticator type of the Passkey or WebAuthn device. The two valid values are platform and cross-platform. If no value passed, we assume both values are allowed.
     #   The type of this field is nilable +String+.
     # return_passkey_credential_options::
-    #   If true, the `public_key_credential_creation_options` returned will be optimized for Passkeys. This includes making `residentKey` required, `userVerification` preferred, and ignoring the `authenticator_type` passed.
+    #   If true, the `public_key_credential_creation_options` returned will be optimized for Passkeys with `residentKey` set to `"required"` and `userVerification` set to `"preferred"`.
+    #
     #   The type of this field is nilable +Boolean+.
     #
     # == Returns:
@@ -46,7 +51,7 @@ module Stytch
     #   The unique ID of the affected User.
     #   The type of this field is +String+.
     # public_key_credential_creation_options::
-    #   Options used for WebAuthn registration.
+    #   Options used for Passkey or WebAuthn registration.
     #   The type of this field is +String+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
@@ -58,6 +63,7 @@ module Stytch
       authenticator_type: nil,
       return_passkey_credential_options: nil
     )
+      headers = {}
       request = {
         user_id: user_id,
         domain: domain
@@ -66,7 +72,7 @@ module Stytch
       request[:authenticator_type] = authenticator_type unless authenticator_type.nil?
       request[:return_passkey_credential_options] = return_passkey_credential_options unless return_passkey_credential_options.nil?
 
-      post_request('/v1/webauthn/register/start', request)
+      post_request('/v1/webauthn/register/start', request, headers)
     end
 
     # Complete the creation of a WebAuthn registration by passing the response from the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) request to this endpoint as the `public_key_credential` parameter.
@@ -75,7 +81,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` of an active user the WebAuthn registration should be tied to.
+    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to.
     #   The type of this field is +String+.
     # public_key_credential::
     #   The response of the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential).
@@ -112,7 +118,7 @@ module Stytch
     #   The unique ID of the affected User.
     #   The type of this field is +String+.
     # webauthn_registration_id::
-    #   The unique ID for the WebAuthn registration.
+    #   The unique ID for the Passkey or WebAuthn registration.
     #   The type of this field is +String+.
     # session_token::
     #   A secret token for a given Stytch Session.
@@ -140,6 +146,7 @@ module Stytch
       session_jwt: nil,
       session_custom_claims: nil
     )
+      headers = {}
       request = {
         user_id: user_id,
         public_key_credential: public_key_credential
@@ -149,22 +156,27 @@ module Stytch
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
-      post_request('/v1/webauthn/register', request)
+      post_request('/v1/webauthn/register', request, headers)
     end
 
-    # Initiate the authentication of a WebAuthn registration. After calling this endpoint, the browser will need to call [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) with the data from `public_key_credential_request_options` passed to the [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) request via the public key argument. We recommend using the `get()` wrapper provided by the webauthn-json library.
+    # Initiate the authentication of a Passkey or WebAuthn registration.
+    #
+    # To optimize for Passkeys, set the `return_passkey_credential_options` field to `true`.
+    #
+    # After calling this endpoint, the browser will need to call [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) with the data from `public_key_credential_request_options` passed to the [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) request via the public key argument. We recommend using the `get()` wrapper provided by the webauthn-json library.
     #
     # If you are not using the [webauthn-json](https://github.com/github/webauthn-json) library, `the public_key_credential_request_options` will need to be converted to a suitable public key by unmarshalling the JSON and converting some the fields to array buffers.
     #
     # == Parameters:
     # domain::
-    #   The domain for WebAuthn. Defaults to `window.location.hostname`.
+    #   The domain for Passkeys or WebAuthn. Defaults to `window.location.hostname`.
     #   The type of this field is +String+.
     # user_id::
-    #   The `user_id` of an active user the WebAuthn registration should be tied to.
+    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to.
     #   The type of this field is nilable +String+.
     # return_passkey_credential_options::
-    #   If true, the `public_key_credential_creation_options` returned will be optimized for Passkeys. This includes making `userVerification` preferred.
+    #   If true, the `public_key_credential_creation_options` returned will be optimized for Passkeys with `userVerification` set to `"preferred"`.
+    #
     #   The type of this field is nilable +Boolean+.
     #
     # == Returns:
@@ -176,7 +188,7 @@ module Stytch
     #   The unique ID of the affected User.
     #   The type of this field is +String+.
     # public_key_credential_request_options::
-    #   Options used for WebAuthn authentication.
+    #   Options used for Passkey or WebAuthn authentication.
     #   The type of this field is +String+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
@@ -186,16 +198,17 @@ module Stytch
       user_id: nil,
       return_passkey_credential_options: nil
     )
+      headers = {}
       request = {
         domain: domain
       }
       request[:user_id] = user_id unless user_id.nil?
       request[:return_passkey_credential_options] = return_passkey_credential_options unless return_passkey_credential_options.nil?
 
-      post_request('/v1/webauthn/authenticate/start', request)
+      post_request('/v1/webauthn/authenticate/start', request, headers)
     end
 
-    # Complete the authentication of a WebAuthn registration by passing the response from the [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) request to the authenticate endpoint.
+    # Complete the authentication of a Passkey or WebAuthn registration by passing the response from the [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) request to the authenticate endpoint.
     #
     # If the [webauthn-json](https://github.com/github/webauthn-json) library's `get()` method was used, the response can be passed directly to the [authenticate endpoint](https://stytch.com/docs/api/webauthn-authenticate). If not some fields from the [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) response will need to be converted from array buffers to strings and marshalled into JSON.
     #
@@ -235,7 +248,7 @@ module Stytch
     #   The unique ID of the affected User.
     #   The type of this field is +String+.
     # webauthn_registration_id::
-    #   The unique ID for the WebAuthn registration.
+    #   The unique ID for the Passkey or WebAuthn registration.
     #   The type of this field is +String+.
     # session_token::
     #   A secret token for a given Stytch Session.
@@ -262,6 +275,7 @@ module Stytch
       session_jwt: nil,
       session_custom_claims: nil
     )
+      headers = {}
       request = {
         public_key_credential: public_key_credential
       }
@@ -270,17 +284,17 @@ module Stytch
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
-      post_request('/v1/webauthn/authenticate', request)
+      post_request('/v1/webauthn/authenticate', request, headers)
     end
 
-    # Updates a WebAuthn registration.
+    # Updates a Passkey or WebAuthn registration.
     #
     # == Parameters:
     # webauthn_registration_id::
-    #   Globally unique UUID that identifies a WebAuthn registration in the Stytch API. The `webautn_registration_id` is used when you need to operate on a specific User's WebAuthn registartion.
+    #   Globally unique UUID that identifies a Passkey or WebAuthn registration in the Stytch API. The `webautn_registration_id` is used when you need to operate on a specific User's WebAuthn registartion.
     #   The type of this field is +String+.
     # name::
-    #   The `name` of the WebAuthn registration.
+    #   The `name` of the WebAuthn registration or Passkey.
     #   The type of this field is +String+.
     #
     # == Returns:
@@ -292,17 +306,18 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     # webauthn_registration::
-    #   A WebAuthn registration.
+    #   A Passkey or WebAuthn registration.
     #   The type of this field is nilable +WebAuthnRegistration+ (+object+).
     def update(
       webauthn_registration_id:,
       name:
     )
+      headers = {}
       request = {
         name: name
       }
 
-      put_request("/v1/webauthn/#{webauthn_registration_id}", request)
+      put_request("/v1/webauthn/#{webauthn_registration_id}", request, headers)
     end
   end
 end

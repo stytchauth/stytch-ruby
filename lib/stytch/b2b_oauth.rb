@@ -28,6 +28,8 @@ module StytchB2B
     #
     # If a valid `session_token` or `session_jwt` is passed in, the Member will not be required to complete an MFA step.
     #
+    # We’re actively accepting requests for new OAuth providers! Please [email us](mailto:support@stytch.com) or [post in our community](https://stytch.com/docs/b2b/resources) if you are looking for an OAuth provider that is not currently supported.
+    #
     # == Parameters:
     # oauth_token::
     #   The token to authenticate.
@@ -134,6 +136,7 @@ module StytchB2B
       pkce_code_verifier: nil,
       locale: nil
     )
+      headers = {}
       request = {
         oauth_token: oauth_token
       }
@@ -144,7 +147,7 @@ module StytchB2B
       request[:pkce_code_verifier] = pkce_code_verifier unless pkce_code_verifier.nil?
       request[:locale] = locale unless locale.nil?
 
-      post_request('/v1/b2b/oauth/authenticate', request)
+      post_request('/v1/b2b/oauth/authenticate', request, headers)
     end
 
     class Discovery
@@ -204,6 +207,12 @@ module StytchB2B
       #
       #       c) The Organization has at least one other Member with a verified email address with the same domain as the end user (to prevent phishing attacks).
       #   The type of this field is list of +DiscoveredOrganization+ (+object+).
+      # provider_type::
+      #   (no documentation yet)
+      #   The type of this field is +String+.
+      # provider_tenant_id::
+      #   (no documentation yet)
+      #   The type of this field is +String+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
@@ -215,6 +224,7 @@ module StytchB2B
         session_custom_claims: nil,
         pkce_code_verifier: nil
       )
+        headers = {}
         request = {
           discovery_oauth_token: discovery_oauth_token
         }
@@ -224,7 +234,7 @@ module StytchB2B
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:pkce_code_verifier] = pkce_code_verifier unless pkce_code_verifier.nil?
 
-        post_request('/v1/b2b/oauth/discovery/authenticate', request)
+        post_request('/v1/b2b/oauth/discovery/authenticate', request, headers)
       end
     end
   end

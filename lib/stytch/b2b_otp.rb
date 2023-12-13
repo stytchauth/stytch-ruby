@@ -84,6 +84,7 @@ module StytchB2B
         mfa_phone_number: nil,
         locale: nil
       )
+        headers = {}
         request = {
           organization_id: organization_id,
           member_id: member_id
@@ -91,7 +92,7 @@ module StytchB2B
         request[:mfa_phone_number] = mfa_phone_number unless mfa_phone_number.nil?
         request[:locale] = locale unless locale.nil?
 
-        post_request('/v1/b2b/otps/sms/send', request)
+        post_request('/v1/b2b/otps/sms/send', request, headers)
       end
 
       # SMS OTPs may not be used as a primary authentication mechanism. They can be used to complete an MFA requirement, or they can be used as a step-up factor to be added to an existing session.
@@ -197,6 +198,7 @@ module StytchB2B
         session_custom_claims: nil,
         set_mfa_enrollment: nil
       )
+        headers = {}
         request = {
           organization_id: organization_id,
           member_id: member_id,
@@ -209,7 +211,7 @@ module StytchB2B
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:set_mfa_enrollment] = set_mfa_enrollment unless set_mfa_enrollment.nil?
 
-        post_request('/v1/b2b/otps/sms/authenticate', request)
+        post_request('/v1/b2b/otps/sms/authenticate', request, headers)
       end
     end
   end

@@ -78,12 +78,13 @@ module StytchB2B
       password:,
       email_address: nil
     )
+      headers = {}
       request = {
         password: password
       }
       request[:email_address] = email_address unless email_address.nil?
 
-      post_request('/v1/b2b/passwords/strength_check', request)
+      post_request('/v1/b2b/passwords/strength_check', request, headers)
     end
 
     # Adds an existing password to a member's email that doesn't have a password yet. We support migrating members from passwords stored with bcrypt, scrypt, argon2, MD-5, SHA-1, and PBKDF2. This endpoint has a rate limit of 100 requests per second.
@@ -101,6 +102,11 @@ module StytchB2B
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
     #   The type of this field is +String+.
+    # preserve_existing_sessions::
+    #   (Coming Soon) Whether to preserve existing sessions when explicit Roles that are revoked are also implicitly assigned
+    #   by SSO connection or SSO group. Defaults to `false` - that is, existing Member Sessions that contain SSO
+    #   authentication factors with the affected SSO connection IDs will be revoked.
+    #   The type of this field is +Boolean+.
     # md_5_config::
     #   Optional parameters for MD-5 hash types.
     #   The type of this field is nilable +MD5Config+ (+object+).
@@ -127,6 +133,16 @@ module StytchB2B
     #   frontend SDK, and should not be used to store critical information. See the [Metadata resource](https://stytch.com/docs/b2b/api/metadata)
     #   for complete field behavior details.
     #   The type of this field is nilable +object+.
+    # roles::
+    #   (Coming Soon) Roles to explicitly assign to this Member.
+    #  Will completely replace any existing explicitly assigned roles. See the
+    #  [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment.
+    #
+    #    If a Role is removed from a Member, and the Member is also implicitly assigned this Role from an SSO connection
+    #    or an SSO group, we will by default revoke any existing sessions for the Member that contain any SSO
+    #    authentication factors with the affected connection ID. You can preserve these sessions by passing in the
+    #    `preserve_existing_sessions` parameter with a value of `true`.
+    #   The type of this field is nilable list of +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -153,6 +169,7 @@ module StytchB2B
       hash:,
       hash_type:,
       organization_id:,
+      preserve_existing_sessions:,
       md_5_config: nil,
       argon_2_config: nil,
       sha_1_config: nil,
@@ -160,13 +177,16 @@ module StytchB2B
       pbkdf_2_config: nil,
       name: nil,
       trusted_metadata: nil,
-      untrusted_metadata: nil
+      untrusted_metadata: nil,
+      roles: nil
     )
+      headers = {}
       request = {
         email_address: email_address,
         hash: hash,
         hash_type: hash_type,
-        organization_id: organization_id
+        organization_id: organization_id,
+        preserve_existing_sessions: preserve_existing_sessions
       }
       request[:md_5_config] = md_5_config unless md_5_config.nil?
       request[:argon_2_config] = argon_2_config unless argon_2_config.nil?
@@ -176,8 +196,9 @@ module StytchB2B
       request[:name] = name unless name.nil?
       request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
       request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
+      request[:roles] = roles unless roles.nil?
 
-      post_request('/v1/b2b/passwords/migrate', request)
+      post_request('/v1/b2b/passwords/migrate', request, headers)
     end
 
     # Authenticate a member with their email address and password. This endpoint verifies that the member has a password currently set, and that the entered password is correct.
@@ -285,6 +306,7 @@ module StytchB2B
       session_custom_claims: nil,
       locale: nil
     )
+      headers = {}
       request = {
         organization_id: organization_id,
         email_address: email_address,
@@ -296,7 +318,7 @@ module StytchB2B
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
       request[:locale] = locale unless locale.nil?
 
-      post_request('/v1/b2b/passwords/authenticate', request)
+      post_request('/v1/b2b/passwords/authenticate', request, headers)
     end
 
     class Email
@@ -374,6 +396,7 @@ module StytchB2B
         locale: nil,
         reset_password_template_id: nil
       )
+        headers = {}
         request = {
           organization_id: organization_id,
           email_address: email_address
@@ -385,7 +408,7 @@ module StytchB2B
         request[:locale] = locale unless locale.nil?
         request[:reset_password_template_id] = reset_password_template_id unless reset_password_template_id.nil?
 
-        post_request('/v1/b2b/passwords/email/reset/start', request)
+        post_request('/v1/b2b/passwords/email/reset/start', request, headers)
       end
 
       # Reset the member's password and authenticate them. This endpoint checks that the password reset token is valid, hasn’t expired, or already been used.
@@ -500,6 +523,7 @@ module StytchB2B
         session_custom_claims: nil,
         locale: nil
       )
+        headers = {}
         request = {
           password_reset_token: password_reset_token,
           password: password
@@ -511,7 +535,7 @@ module StytchB2B
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:locale] = locale unless locale.nil?
 
-        post_request('/v1/b2b/passwords/email/reset', request)
+        post_request('/v1/b2b/passwords/email/reset', request, headers)
       end
     end
 
@@ -611,6 +635,7 @@ module StytchB2B
         session_custom_claims: nil,
         locale: nil
       )
+        headers = {}
         request = {
           organization_id: organization_id,
           password: password
@@ -621,7 +646,7 @@ module StytchB2B
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:locale] = locale unless locale.nil?
 
-        post_request('/v1/b2b/passwords/session/reset', request)
+        post_request('/v1/b2b/passwords/session/reset', request, headers)
       end
     end
 
@@ -742,6 +767,7 @@ module StytchB2B
         session_custom_claims: nil,
         locale: nil
       )
+        headers = {}
         request = {
           email_address: email_address,
           existing_password: existing_password,
@@ -754,7 +780,7 @@ module StytchB2B
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:locale] = locale unless locale.nil?
 
-        post_request('/v1/b2b/passwords/existing_password/reset', request)
+        post_request('/v1/b2b/passwords/existing_password/reset', request, headers)
       end
     end
   end

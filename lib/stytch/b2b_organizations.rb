@@ -9,6 +9,44 @@
 require_relative 'request_helper'
 
 module StytchB2B
+  class UpdateRequestOptions
+    # Optional authorization object.
+    # Pass in an active Stytch Member session token or session JWT and the request
+    # will be run using that member's permissions.
+    attr_accessor :authorization
+
+    def initialize(
+      authorization: nil
+    )
+      @authorization = authorization
+    end
+
+    def to_headers
+      headers = {}
+      headers.merge!(@authorization.to_headers) if authorization
+      headers
+    end
+  end
+
+  class DeleteRequestOptions
+    # Optional authorization object.
+    # Pass in an active Stytch Member session token or session JWT and the request
+    # will be run using that member's permissions.
+    attr_accessor :authorization
+
+    def initialize(
+      authorization: nil
+    )
+      @authorization = authorization
+    end
+
+    def to_headers
+      headers = {}
+      headers.merge!(@authorization.to_headers) if authorization
+      headers
+    end
+  end
+
   class Organizations
     include Stytch::RequestHelper
     attr_reader :members
@@ -55,11 +93,11 @@ module StytchB2B
     #     Common domains such as `gmail.com` are not allowed. See the [common email domains resource](https://stytch.com/docs/b2b/api/common-email-domains) for the full list.
     #   The type of this field is nilable list of +String+.
     # email_jit_provisioning::
-    #   The authentication setting that controls how a new Member can be provisioned by authenticating via Email Magic Link. The accepted values are:
+    #   The authentication setting that controls how a new Member can be provisioned by authenticating via Email Magic Link or OAuth. The accepted values are:
     #
-    #   `RESTRICTED` – only new Members with verified emails that comply with `email_allowed_domains` can be provisioned upon authentication via Email Magic Link.
+    #   `RESTRICTED` – only new Members with verified emails that comply with `email_allowed_domains` can be provisioned upon authentication via Email Magic Link or OAuth.
     #
-    #   `NOT_ALLOWED` – disable JIT provisioning via Email Magic Link.
+    #   `NOT_ALLOWED` – disable JIT provisioning via Email Magic Link and OAuth.
     #
     #   The type of this field is nilable +String+.
     # email_invites::
@@ -81,7 +119,6 @@ module StytchB2B
     #
     #   The type of this field is nilable +String+.
     # allowed_auth_methods::
-    #
     #   An array of allowed authentication methods. This list is enforced when `auth_methods` is set to `RESTRICTED`.
     #   The list's accepted values are: `sso`, `magic_link`, `password`, `google_oauth`, and `microsoft_oauth`.
     #
@@ -89,11 +126,17 @@ module StytchB2B
     # mfa_policy::
     #   The setting that controls the MFA policy for all Members in the Organization. The accepted values are:
     #
-    #   `REQUIRED_FOR_ALL` – All Members within the Organization will be required to complete MFA every time they wish to log in.
+    #   `REQUIRED_FOR_ALL` – All Members within the Organization will be required to complete MFA every time they wish to log in. However, any active Session that existed prior to this setting change will remain valid.
     #
     #   `OPTIONAL` – The default value. The Organization does not require MFA by default for all Members. Members will be required to complete MFA only if their `mfa_enrolled` status is set to true.
     #
     #   The type of this field is nilable +String+.
+    # rbac_email_implicit_role_assignments::
+    #   (Coming Soon) Implicit role assignments based off of email domains.
+    #   For each domain-Role pair, all Members whose email addresses have the specified email domain will be granted the
+    #   associated Role, regardless of their login method. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment)
+    #   for more information about role assignment.
+    #   The type of this field is nilable list of +EmailImplicitRoleAssignment+ (+object+).
     #
     # == Returns:
     # An object with the following fields:
@@ -117,8 +160,10 @@ module StytchB2B
       email_invites: nil,
       auth_methods: nil,
       allowed_auth_methods: nil,
-      mfa_policy: nil
+      mfa_policy: nil,
+      rbac_email_implicit_role_assignments: nil
     )
+      headers = {}
       request = {
         organization_name: organization_name
       }
@@ -132,8 +177,9 @@ module StytchB2B
       request[:auth_methods] = auth_methods unless auth_methods.nil?
       request[:allowed_auth_methods] = allowed_auth_methods unless allowed_auth_methods.nil?
       request[:mfa_policy] = mfa_policy unless mfa_policy.nil?
+      request[:rbac_email_implicit_role_assignments] = rbac_email_implicit_role_assignments unless rbac_email_implicit_role_assignments.nil?
 
-      post_request('/v1/b2b/organizations', request)
+      post_request('/v1/b2b/organizations', request, headers)
     end
 
     # Returns an Organization specified by `organization_id`.
@@ -157,14 +203,27 @@ module StytchB2B
     def get(
       organization_id:
     )
+      headers = {}
       query_params = {}
       request = request_with_query_params("/v1/b2b/organizations/#{organization_id}", query_params)
-      get_request(request)
+      get_request(request, headers)
     end
 
     # Updates an Organization specified by `organization_id`. An Organization must always have at least one auth setting set to either `RESTRICTED` or `ALL_ALLOWED` in order to provision new Members.
     #
     # *See the [Organization authentication settings](https://stytch.com/docs/b2b/api/org-auth-settings) resource to learn more about fields like `email_jit_provisioning`, `email_invites`, `sso_jit_provisioning`, etc., and their behaviors.
+    #
+    # (Coming Soon) Our RBAC implementation offers out-of-the-box handling of authorization checks for this endpoint. If you pass in
+    # a header containing a `session_token` or a `session_jwt` for an unexpired Member Session, we will check that the
+    # Member Session has the necessary permissions. The specific permissions needed depend on which of the optional fields
+    # are passed in the request. For example, if the `organization_name` argument is provided, the Member Session must have
+    # permission to perform the `update.info.name` action on the `stytch.organization` Resource.
+    #
+    # If the Member Session does not contain a Role that satisfies the requested permissions, or if the Member's Organization
+    # does not match the `organization_id` passed in the request, a 403 error will be thrown. Otherwise, the request will
+    # proceed as normal.
+    #
+    # To learn more about our RBAC implementation, see our [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/overview).
     #
     # == Parameters:
     # organization_id::
@@ -172,18 +231,28 @@ module StytchB2B
     #   The type of this field is +String+.
     # organization_name::
     #   The name of the Organization. Must be between 1 and 128 characters in length.
+    #
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.info.name` action on the `stytch.organization` Resource.
     #   The type of this field is nilable +String+.
     # organization_slug::
     #   The unique URL slug of the Organization. The slug only accepts alphanumeric characters and the following reserved characters: `-` `.` `_` `~`. Must be between 2 and 128 characters in length.
+    #
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.info.slug` action on the `stytch.organization` Resource.
     #   The type of this field is nilable +String+.
     # organization_logo_url::
     #   The image URL of the Organization logo.
+    #
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.info.logo-url` action on the `stytch.organization` Resource.
     #   The type of this field is nilable +String+.
     # trusted_metadata::
     #   An arbitrary JSON object for storing application-specific data or identity-provider-specific data.
+    #           If a session header is passed into the request, this field may **not** be passed into the request. You cannot
+    #           update trusted metadata when acting as a Member.
     #   The type of this field is nilable +object+.
     # sso_default_connection_id::
     #   The default connection used for SSO when there are multiple active connections.
+    #
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.default-sso-connection` action on the `stytch.organization` Resource.
     #   The type of this field is nilable +String+.
     # sso_jit_provisioning::
     #   The authentication setting that controls the JIT provisioning of Members when authenticating via SSO. The accepted values are:
@@ -194,24 +263,32 @@ module StytchB2B
     #
     #   `NOT_ALLOWED` – disable JIT provisioning via SSO.
     #
+    #
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.sso-jit-provisioning` action on the `stytch.organization` Resource.
     #   The type of this field is nilable +String+.
     # sso_jit_provisioning_allowed_connections::
     #   An array of `connection_id`s that reference [SAML Connection objects](https://stytch.com/docs/b2b/api/saml-connection-object).
     #   Only these connections will be allowed to JIT provision Members via SSO when `sso_jit_provisioning` is set to `RESTRICTED`.
+    #
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.sso-jit-provisioning` action on the `stytch.organization` Resource.
     #   The type of this field is nilable list of +String+.
     # email_allowed_domains::
     #   An array of email domains that allow invites or JIT provisioning for new Members. This list is enforced when either `email_invites` or `email_jit_provisioning` is set to `RESTRICTED`.
     #
     #
     #     Common domains such as `gmail.com` are not allowed. See the [common email domains resource](https://stytch.com/docs/b2b/api/common-email-domains) for the full list.
+    #
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.allowed-domains` action on the `stytch.organization` Resource.
     #   The type of this field is nilable list of +String+.
     # email_jit_provisioning::
-    #   The authentication setting that controls how a new Member can be provisioned by authenticating via Email Magic Link. The accepted values are:
+    #   The authentication setting that controls how a new Member can be provisioned by authenticating via Email Magic Link or OAuth. The accepted values are:
     #
-    #   `RESTRICTED` – only new Members with verified emails that comply with `email_allowed_domains` can be provisioned upon authentication via Email Magic Link.
+    #   `RESTRICTED` – only new Members with verified emails that comply with `email_allowed_domains` can be provisioned upon authentication via Email Magic Link or OAuth.
     #
-    #   `NOT_ALLOWED` – disable JIT provisioning via Email Magic Link.
+    #   `NOT_ALLOWED` – disable JIT provisioning via Email Magic Link and OAuth.
     #
+    #
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.email-jit-provisioning` action on the `stytch.organization` Resource.
     #   The type of this field is nilable +String+.
     # email_invites::
     #   The authentication setting that controls how a new Member can be invited to an organization by email. The accepted values are:
@@ -222,6 +299,8 @@ module StytchB2B
     #
     #   `NOT_ALLOWED` – disable email invites.
     #
+    #
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.email-invites` action on the `stytch.organization` Resource.
     #   The type of this field is nilable +String+.
     # auth_methods::
     #   The setting that controls which authentication methods can be used by Members of an Organization. The accepted values are:
@@ -230,21 +309,34 @@ module StytchB2B
     #
     #   `RESTRICTED` – only methods that comply with `allowed_auth_methods` can be used for authentication. This setting does not apply to Members with `is_breakglass` set to `true`.
     #
+    #
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.allowed-auth-methods` action on the `stytch.organization` Resource.
     #   The type of this field is nilable +String+.
     # allowed_auth_methods::
-    #
     #   An array of allowed authentication methods. This list is enforced when `auth_methods` is set to `RESTRICTED`.
     #   The list's accepted values are: `sso`, `magic_link`, `password`, `google_oauth`, and `microsoft_oauth`.
     #
+    #
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.allowed-auth-methods` action on the `stytch.organization` Resource.
     #   The type of this field is nilable list of +String+.
     # mfa_policy::
     #   The setting that controls the MFA policy for all Members in the Organization. The accepted values are:
     #
-    #   `REQUIRED_FOR_ALL` – All Members within the Organization will be required to complete MFA every time they wish to log in.
+    #   `REQUIRED_FOR_ALL` – All Members within the Organization will be required to complete MFA every time they wish to log in. However, any active Session that existed prior to this setting change will remain valid.
     #
     #   `OPTIONAL` – The default value. The Organization does not require MFA by default for all Members. Members will be required to complete MFA only if their `mfa_enrolled` status is set to true.
     #
+    #
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.mfa-policy` action on the `stytch.organization` Resource.
     #   The type of this field is nilable +String+.
+    # rbac_email_implicit_role_assignments::
+    #   (Coming Soon) Implicit role assignments based off of email domains.
+    #   For each domain-Role pair, all Members whose email addresses have the specified email domain will be granted the
+    #   associated Role, regardless of their login method. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment)
+    #   for more information about role assignment.
+    #
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.implicit-roles` action on the `stytch.organization` Resource.
+    #   The type of this field is nilable list of +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -257,6 +349,9 @@ module StytchB2B
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
+    #
+    # == Method Options:
+    # This method supports an optional +UpdateRequestOptions+ object which will modify the headers sent in the HTTP request.
     def update(
       organization_id:,
       organization_name: nil,
@@ -271,8 +366,12 @@ module StytchB2B
       email_invites: nil,
       auth_methods: nil,
       allowed_auth_methods: nil,
-      mfa_policy: nil
+      mfa_policy: nil,
+      rbac_email_implicit_role_assignments: nil,
+      method_options: nil
     )
+      headers = {}
+      headers = headers.merge(method_options.to_headers) unless method_options.nil?
       request = {}
       request[:organization_name] = organization_name unless organization_name.nil?
       request[:organization_slug] = organization_slug unless organization_slug.nil?
@@ -287,11 +386,12 @@ module StytchB2B
       request[:auth_methods] = auth_methods unless auth_methods.nil?
       request[:allowed_auth_methods] = allowed_auth_methods unless allowed_auth_methods.nil?
       request[:mfa_policy] = mfa_policy unless mfa_policy.nil?
+      request[:rbac_email_implicit_role_assignments] = rbac_email_implicit_role_assignments unless rbac_email_implicit_role_assignments.nil?
 
-      put_request("/v1/b2b/organizations/#{organization_id}", request)
+      put_request("/v1/b2b/organizations/#{organization_id}", request, headers)
     end
 
-    # Deletes an Organization specified by `organization_id`. All Members of the Organization will also be deleted.
+    # Deletes an Organization specified by `organization_id`. All Members of the Organization will also be deleted. /%}
     #
     # == Parameters:
     # organization_id::
@@ -309,10 +409,16 @@ module StytchB2B
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
+    #
+    # == Method Options:
+    # This method supports an optional +DeleteRequestOptions+ object which will modify the headers sent in the HTTP request.
     def delete(
-      organization_id:
+      organization_id:,
+      method_options: nil
     )
-      delete_request("/v1/b2b/organizations/#{organization_id}")
+      headers = {}
+      headers = headers.merge(method_options.to_headers) unless method_options.nil?
+      delete_request("/v1/b2b/organizations/#{organization_id}", headers)
     end
 
     # Search for Organizations. If you send a request with no body params, no filtering will be applied and the endpoint will return all Organizations. All fuzzy search filters require a minimum of three characters.
@@ -347,12 +453,13 @@ module StytchB2B
       limit: nil,
       query: nil
     )
+      headers = {}
       request = {}
       request[:cursor] = cursor unless cursor.nil?
       request[:limit] = limit unless limit.nil?
       request[:query] = query unless query.nil?
 
-      post_request('/v1/b2b/organizations/search', request)
+      post_request('/v1/b2b/organizations/search', request, headers)
     end
 
     class Members
@@ -364,6 +471,18 @@ module StytchB2B
 
       # Updates a Member specified by `organization_id` and `member_id`.
       #
+      # (Coming Soon) Our RBAC implementation offers out-of-the-box handling of authorization checks for this endpoint. If you pass in
+      # a header containing a `session_token` or a `session_jwt` for an unexpired Member Session, we will check that the
+      # Member Session has the necessary permissions. The specific permissions needed depend on which of the optional fields
+      # are passed in the request. For example, if the `organization_name` argument is provided, the Member Session must have
+      # permission to perform the `update.info.name` action on the `stytch.organization` Resource.
+      #
+      # If the Member Session does not contain a Role that satisfies the requested permissions, or if the Member's Organization
+      # does not match the `organization_id` passed in the request, a 403 error will be thrown. Otherwise, the request will
+      # proceed as normal.
+      #
+      # To learn more about our RBAC implementation, see our [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/overview).
+      #
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -371,26 +490,59 @@ module StytchB2B
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
       #   The type of this field is +String+.
+      # preserve_existing_sessions::
+      #   (Coming Soon) Whether to preserve existing sessions when explicit Roles that are revoked are also implicitly assigned
+      #   by SSO connection or SSO group. Defaults to `false` - that is, existing Member Sessions that contain SSO
+      #   authentication factors with the affected SSO connection IDs will be revoked.
+      #   The type of this field is +Boolean+.
       # name::
       #   The name of the Member.
+      #
+      # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.info.name` action on the `stytch.member` Resource.
+      #   Alternatively, if the Member Session matches the Member associated with the `member_id` passed in the request, the authorization check will also allow a Member Session that has permission to perform the `update.info.name` action on the `stytch.self` Resource.
       #   The type of this field is nilable +String+.
       # trusted_metadata::
       #   An arbitrary JSON object for storing application-specific data or identity-provider-specific data.
+      #           If a session header is passed into the request, this field may **not** be passed into the request. You cannot
+      #           update trusted metadata when acting as a Member.
       #   The type of this field is nilable +object+.
       # untrusted_metadata::
       #   An arbitrary JSON object of application-specific data. These fields can be edited directly by the
       #   frontend SDK, and should not be used to store critical information. See the [Metadata resource](https://stytch.com/docs/b2b/api/metadata)
       #   for complete field behavior details.
+      #
+      # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.info.untrusted-metadata` action on the `stytch.member` Resource.
+      #   Alternatively, if the Member Session matches the Member associated with the `member_id` passed in the request, the authorization check will also allow a Member Session that has permission to perform the `update.info.untrusted-metadata` action on the `stytch.self` Resource.
       #   The type of this field is nilable +object+.
       # is_breakglass::
       #   Identifies the Member as a break glass user - someone who has permissions to authenticate into an Organization by bypassing the Organization's settings. A break glass account is typically used for emergency purposes to gain access outside of normal authentication procedures. Refer to the [Organization object](organization-object) and its `auth_methods` and `allowed_auth_methods` fields for more details.
+      #
+      # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.info.is-breakglass` action on the `stytch.member` Resource.
       #   The type of this field is nilable +Boolean+.
       # mfa_phone_number::
       #   Sets the Member's phone number. Throws an error if the Member already has a phone number. To change the Member's phone number, use the [Delete member phone number endpoint](https://stytch.com/docs/b2b/api/delete-member-mfa-phone-number) to delete the Member's existing phone number first.
+      #
+      # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.info.mfa-phone` action on the `stytch.member` Resource.
+      #   Alternatively, if the Member Session matches the Member associated with the `member_id` passed in the request, the authorization check will also allow a Member Session that has permission to perform the `update.info.mfa-phone` action on the `stytch.self` Resource.
       #   The type of this field is nilable +String+.
       # mfa_enrolled::
       #   Sets whether the Member is enrolled in MFA. If true, the Member must complete an MFA step whenever they wish to log in to their Organization. If false, the Member only needs to complete an MFA step if the Organization's MFA policy is set to `REQUIRED_FOR_ALL`.
+      #
+      # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.mfa-enrolled` action on the `stytch.member` Resource.
+      #   Alternatively, if the Member Session matches the Member associated with the `member_id` passed in the request, the authorization check will also allow a Member Session that has permission to perform the `update.settings.mfa-enrolled` action on the `stytch.self` Resource.
       #   The type of this field is nilable +Boolean+.
+      # roles::
+      #   (Coming Soon) Roles to explicitly assign to this Member.
+      #  Will completely replace any existing explicitly assigned roles. See the
+      #  [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment.
+      #
+      #    If a Role is removed from a Member, and the Member is also implicitly assigned this Role from an SSO connection
+      #    or an SSO group, we will by default revoke any existing sessions for the Member that contain any SSO
+      #    authentication factors with the affected connection ID. You can preserve these sessions by passing in the
+      #    `preserve_existing_sessions` parameter with a value of `true`.
+      #
+      # If this field is provided, the logged-in Member must have permission to perform the `update.settings.roles` action on the `stytch.member` Resource.
+      #   The type of this field is nilable list of +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -409,28 +561,39 @@ module StytchB2B
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
+      #
+      # == Method Options:
+      # This method supports an optional +UpdateRequestOptions+ object which will modify the headers sent in the HTTP request.
       def update(
         organization_id:,
         member_id:,
+        preserve_existing_sessions:,
         name: nil,
         trusted_metadata: nil,
         untrusted_metadata: nil,
         is_breakglass: nil,
         mfa_phone_number: nil,
-        mfa_enrolled: nil
+        mfa_enrolled: nil,
+        roles: nil,
+        method_options: nil
       )
-        request = {}
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        request = {
+          preserve_existing_sessions: preserve_existing_sessions
+        }
         request[:name] = name unless name.nil?
         request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
         request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
         request[:is_breakglass] = is_breakglass unless is_breakglass.nil?
         request[:mfa_phone_number] = mfa_phone_number unless mfa_phone_number.nil?
         request[:mfa_enrolled] = mfa_enrolled unless mfa_enrolled.nil?
+        request[:roles] = roles unless roles.nil?
 
-        put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", request)
+        put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", request, headers)
       end
 
-      # Deletes a Member specified by `organization_id` and `member_id`.
+      # Deletes a Member specified by `organization_id` and `member_id`. /%}
       #
       # == Parameters:
       # organization_id::
@@ -451,14 +614,20 @@ module StytchB2B
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
+      #
+      # == Method Options:
+      # This method supports an optional +DeleteRequestOptions+ object which will modify the headers sent in the HTTP request.
       def delete(
         organization_id:,
-        member_id:
+        member_id:,
+        method_options: nil
       )
-        delete_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}")
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        delete_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", headers)
       end
 
-      # Reactivates a deleted Member's status and its associated email status (if applicable) to active, specified by `organization_id` and `member_id`.
+      # Reactivates a deleted Member's status and its associated email status (if applicable) to active, specified by `organization_id` and `member_id`. /%}
       #
       # == Parameters:
       # organization_id::
@@ -485,13 +654,19 @@ module StytchB2B
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
+      #
+      # == Method Options:
+      # This method supports an optional +ReactivateRequestOptions+ object which will modify the headers sent in the HTTP request.
       def reactivate(
         organization_id:,
-        member_id:
+        member_id:,
+        method_options: nil
       )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
         request = {}
 
-        put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/reactivate", request)
+        put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/reactivate", request, headers)
       end
 
       # Delete a Member's MFA phone number.
@@ -501,6 +676,7 @@ module StytchB2B
       # Existing Member Sessions that include a phone number authentication factor will not be revoked if the phone number is deleted, and MFA will not be enforced until the Member logs in again.
       # If you wish to enforce MFA immediately after a phone number is deleted, you can do so by prompting the Member to enter a new phone number
       # and calling the [OTP SMS send](https://stytch.com/docs/b2b/api/otp-sms-send) endpoint, then calling the [OTP SMS Authenticate](https://stytch.com/docs/b2b/api/authenticate-otp-sms) endpoint.
+      #  /%}
       #
       # == Parameters:
       # organization_id::
@@ -527,16 +703,34 @@ module StytchB2B
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
+      #
+      # == Method Options:
+      # This method supports an optional +DeleteMFAPhoneNumberRequestOptions+ object which will modify the headers sent in the HTTP request.
       def delete_mfa_phone_number(
         organization_id:,
-        member_id:
+        member_id:,
+        method_options: nil
       )
-        delete_request("/v1/b2b/organizations/#{organization_id}/members/mfa_phone_numbers/#{member_id}")
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        delete_request("/v1/b2b/organizations/#{organization_id}/members/mfa_phone_numbers/#{member_id}", headers)
       end
 
       # Search for Members within specified Organizations. An array with at least one `organization_id` is required. Submitting an empty `query` returns all non-deleted Members within the specified Organizations.
       #
       # *All fuzzy search filters require a minimum of three characters.
+      #
+      # (Coming Soon) Our RBAC implementation offers out-of-the-box handling of authorization checks for this endpoint. If you pass in
+      # a header containing a `session_token` or a `session_jwt` for an unexpired Member Session, we will check that the
+      # Member Session has permission to perform the `search` action on the `stytch.member` Resource. In addition, enforcing
+      # RBAC on this endpoint means that you may only search for Members within the calling Member's Organization, so the
+      # `organization_ids` argument may only contain the `organization_id` of the Member Session passed in the header.
+      #
+      # If the Member Session does not contain a Role that satisfies the requested permission, or if the `organization_ids`
+      # argument contains an `organization_id` that the Member Session does not belong to, a 403 error will be thrown.
+      # Otherwise, the request will proceed as normal.
+      #
+      # To learn more about our RBAC implementation, see our [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/overview).
       #
       # == Parameters:
       # organization_ids::
@@ -569,12 +763,18 @@ module StytchB2B
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
+      #
+      # == Method Options:
+      # This method supports an optional +SearchRequestOptions+ object which will modify the headers sent in the HTTP request.
       def search(
         organization_ids:,
         cursor: nil,
         limit: nil,
-        query: nil
+        query: nil,
+        method_options: nil
       )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
         request = {
           organization_ids: organization_ids
         }
@@ -582,10 +782,10 @@ module StytchB2B
         request[:limit] = limit unless limit.nil?
         request[:query] = query unless query.nil?
 
-        post_request('/v1/b2b/organizations/members/search', request)
+        post_request('/v1/b2b/organizations/members/search', request, headers)
       end
 
-      # Delete a Member's password.
+      # Delete a Member's password. /%}
       #
       # == Parameters:
       # organization_id::
@@ -612,14 +812,20 @@ module StytchB2B
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
+      #
+      # == Method Options:
+      # This method supports an optional +DeletePasswordRequestOptions+ object which will modify the headers sent in the HTTP request.
       def delete_password(
         organization_id:,
-        member_password_id:
+        member_password_id:,
+        method_options: nil
       )
-        delete_request("/v1/b2b/organizations/#{organization_id}/members/passwords/#{member_password_id}")
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        delete_request("/v1/b2b/organizations/#{organization_id}/members/passwords/#{member_password_id}", headers)
       end
 
-      # Get a Member by `member_id`. This endpoint does not require an `organization_id`, so you can use it to get members across organizations. This is a dangerous operation. Incorrect use may open you up to indirect object reference (IDOR) attacks. We recommend using the [Get Member](https://stytch.com/docs/b2b/api/get-member) API instead.
+      # Get a Member by `member_id`. This endpoint does not require an `organization_id`, enabling you to get members across organizations. This is a dangerous operation. Incorrect use may open you up to indirect object reference (IDOR) attacks. We recommend using the [Get Member](https://stytch.com/docs/b2b/api/get-member) API instead.
       #
       # == Parameters:
       # member_id::
@@ -646,12 +852,13 @@ module StytchB2B
       def dangerously_get(
         member_id:
       )
+        headers = {}
         query_params = {}
         request = request_with_query_params("/v1/b2b/organizations/members/dangerously_get/#{member_id}", query_params)
-        get_request(request)
+        get_request(request, headers)
       end
 
-      # Creates a Member. An `organization_id` and `email_address` are required.
+      # Creates a Member. An `organization_id` and `email_address` are required. /%}
       #
       # == Parameters:
       # organization_id::
@@ -683,6 +890,10 @@ module StytchB2B
       # mfa_enrolled::
       #   Sets whether the Member is enrolled in MFA. If true, the Member must complete an MFA step whenever they wish to log in to their Organization. If false, the Member only needs to complete an MFA step if the Organization's MFA policy is set to `REQUIRED_FOR_ALL`.
       #   The type of this field is nilable +Boolean+.
+      # roles::
+      #   (Coming Soon) Roles to explicitly assign to this Member. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment)
+      #    for more information about role assignment.
+      #   The type of this field is nilable list of +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -701,6 +912,9 @@ module StytchB2B
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
+      #
+      # == Method Options:
+      # This method supports an optional +CreateRequestOptions+ object which will modify the headers sent in the HTTP request.
       def create(
         organization_id:,
         email_address:,
@@ -710,8 +924,12 @@ module StytchB2B
         create_member_as_pending: nil,
         is_breakglass: nil,
         mfa_phone_number: nil,
-        mfa_enrolled: nil
+        mfa_enrolled: nil,
+        roles: nil,
+        method_options: nil
       )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
         request = {
           email_address: email_address
         }
@@ -722,8 +940,9 @@ module StytchB2B
         request[:is_breakglass] = is_breakglass unless is_breakglass.nil?
         request[:mfa_phone_number] = mfa_phone_number unless mfa_phone_number.nil?
         request[:mfa_enrolled] = mfa_enrolled unless mfa_enrolled.nil?
+        request[:roles] = roles unless roles.nil?
 
-        post_request("/v1/b2b/organizations/#{organization_id}/members", request)
+        post_request("/v1/b2b/organizations/#{organization_id}/members", request, headers)
       end
 
       # Get a Member by `member_id` or `email_address`.
@@ -761,12 +980,13 @@ module StytchB2B
         member_id: nil,
         email_address: nil
       )
+        headers = {}
         query_params = {
           member_id: member_id,
           email_address: email_address
         }
         request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/member", query_params)
-        get_request(request)
+        get_request(request, headers)
       end
     end
   end

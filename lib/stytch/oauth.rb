@@ -53,6 +53,7 @@ module Stytch
       session_token: nil,
       session_jwt: nil
     )
+      headers = {}
       request = {
         provider: provider
       }
@@ -60,7 +61,7 @@ module Stytch
       request[:session_token] = session_token unless session_token.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
 
-      post_request('/v1/oauth/attach', request)
+      post_request('/v1/oauth/attach', request, headers)
     end
 
     # Authenticate a User given a `token`. This endpoint verifies that the user completed the OAuth flow by verifying that the token is valid and hasn't expired. To initiate a Stytch session for the user while authenticating their OAuth token, include `session_duration_minutes`; a session with the identity provider, e.g. Google or Facebook, will always be initiated upon successful authentication.
@@ -150,6 +151,7 @@ module Stytch
       session_custom_claims: nil,
       code_verifier: nil
     )
+      headers = {}
       request = {
         token: token
       }
@@ -159,7 +161,7 @@ module Stytch
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
       request[:code_verifier] = code_verifier unless code_verifier.nil?
 
-      post_request('/v1/oauth/authenticate', request)
+      post_request('/v1/oauth/authenticate', request, headers)
     end
   end
 end

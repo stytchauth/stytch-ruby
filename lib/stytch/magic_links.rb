@@ -103,6 +103,7 @@ module Stytch
       session_custom_claims: nil,
       code_verifier: nil
     )
+      headers = {}
       request = {
         token: token
       }
@@ -114,7 +115,7 @@ module Stytch
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
       request[:code_verifier] = code_verifier unless code_verifier.nil?
 
-      post_request('/v1/magic_links/authenticate', request)
+      post_request('/v1/magic_links/authenticate', request, headers)
     end
 
     # Create an embeddable Magic Link token for a User. Access to this endpoint is restricted. To enable it, please send us a note at support@stytch.com.
@@ -152,13 +153,14 @@ module Stytch
       expiration_minutes: nil,
       attributes: nil
     )
+      headers = {}
       request = {
         user_id: user_id
       }
       request[:expiration_minutes] = expiration_minutes unless expiration_minutes.nil?
       request[:attributes] = attributes unless attributes.nil?
 
-      post_request('/v1/magic_links', request)
+      post_request('/v1/magic_links', request, headers)
     end
 
     class Email
@@ -251,6 +253,7 @@ module Stytch
         locale: nil,
         signup_template_id: nil
       )
+        headers = {}
         request = {
           email: email
         }
@@ -267,7 +270,7 @@ module Stytch
         request[:locale] = locale unless locale.nil?
         request[:signup_template_id] = signup_template_id unless signup_template_id.nil?
 
-        post_request('/v1/magic_links/email/send', request)
+        post_request('/v1/magic_links/email/send', request, headers)
       end
 
       # Send either a login or signup Magic Link to the User based on if the email is associated with a User already. A new or pending User will receive a signup Magic Link. An active User will receive a login Magic Link. For more information on how to control the status your Users are created in see the `create_user_as_pending` flag.
@@ -349,6 +352,7 @@ module Stytch
         code_challenge: nil,
         locale: nil
       )
+        headers = {}
         request = {
           email: email
         }
@@ -363,7 +367,7 @@ module Stytch
         request[:code_challenge] = code_challenge unless code_challenge.nil?
         request[:locale] = locale unless locale.nil?
 
-        post_request('/v1/magic_links/email/login_or_create', request)
+        post_request('/v1/magic_links/email/login_or_create', request, headers)
       end
 
       # Create a User and send an invite Magic Link to the provided `email`. The User will be created with a `pending` status until they click the Magic Link in the invite email.
@@ -422,6 +426,7 @@ module Stytch
         invite_expiration_minutes: nil,
         locale: nil
       )
+        headers = {}
         request = {
           email: email
         }
@@ -432,7 +437,7 @@ module Stytch
         request[:invite_expiration_minutes] = invite_expiration_minutes unless invite_expiration_minutes.nil?
         request[:locale] = locale unless locale.nil?
 
-        post_request('/v1/magic_links/email/invite', request)
+        post_request('/v1/magic_links/email/invite', request, headers)
       end
 
       # Revoke a pending invite based on the `email` provided.
@@ -453,11 +458,12 @@ module Stytch
       def revoke_invite(
         email:
       )
+        headers = {}
         request = {
           email: email
         }
 
-        post_request('/v1/magic_links/email/revoke_invite', request)
+        post_request('/v1/magic_links/email/revoke_invite', request, headers)
       end
     end
   end

@@ -77,6 +77,7 @@ module Stytch
       trusted_metadata: nil,
       untrusted_metadata: nil
     )
+      headers = {}
       request = {}
       request[:email] = email unless email.nil?
       request[:name] = name unless name.nil?
@@ -86,7 +87,7 @@ module Stytch
       request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
       request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
 
-      post_request('/v1/users', request)
+      post_request('/v1/users', request, headers)
     end
 
     # Get information about a specific User.
@@ -114,7 +115,7 @@ module Stytch
     #   An array of phone number objects linked to the User.
     #   The type of this field is list of +PhoneNumber+ (+object+).
     # webauthn_registrations::
-    #   An array that contains a list of all WebAuthn registrations for a given User in the Stytch API.
+    #   An array that contains a list of all Passkey or WebAuthn registrations for a given User in the Stytch API.
     #   The type of this field is list of +WebAuthnRegistration+ (+object+).
     # providers::
     #   An array of OAuth `provider` objects linked to the User.
@@ -149,9 +150,10 @@ module Stytch
     def get(
       user_id:
     )
+      headers = {}
       query_params = {}
       request = request_with_query_params("/v1/users/#{user_id}", query_params)
-      get_request(request)
+      get_request(request, headers)
     end
 
     # Search for Users within your Stytch Project. Submit an empty `query` in the request to return all Users.
@@ -186,12 +188,13 @@ module Stytch
       limit: nil,
       query: nil
     )
+      headers = {}
       request = {}
       request[:cursor] = cursor unless cursor.nil?
       request[:limit] = limit unless limit.nil?
       request[:query] = query unless query.nil?
 
-      post_request('/v1/users/search', request)
+      post_request('/v1/users/search', request, headers)
     end
 
     # Update a User's attributes.
@@ -245,13 +248,14 @@ module Stytch
       trusted_metadata: nil,
       untrusted_metadata: nil
     )
+      headers = {}
       request = {}
       request[:name] = name unless name.nil?
       request[:attributes] = attributes unless attributes.nil?
       request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
       request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
 
-      put_request("/v1/users/#{user_id}", request)
+      put_request("/v1/users/#{user_id}", request, headers)
     end
 
     # Exchange a user's email address or phone number for another.
@@ -292,11 +296,12 @@ module Stytch
       email_address: nil,
       phone_number: nil
     )
+      headers = {}
       request = {}
       request[:email_address] = email_address unless email_address.nil?
       request[:phone_number] = phone_number unless phone_number.nil?
 
-      put_request("/v1/users/#{user_id}/exchange_primary_factor", request)
+      put_request("/v1/users/#{user_id}/exchange_primary_factor", request, headers)
     end
 
     # Delete a User from Stytch.
@@ -320,7 +325,8 @@ module Stytch
     def delete(
       user_id:
     )
-      delete_request("/v1/users/#{user_id}")
+      headers = {}
+      delete_request("/v1/users/#{user_id}", headers)
     end
 
     # Delete an email from a User.
@@ -347,7 +353,8 @@ module Stytch
     def delete_email(
       email_id:
     )
-      delete_request("/v1/users/emails/#{email_id}")
+      headers = {}
+      delete_request("/v1/users/emails/#{email_id}", headers)
     end
 
     # Delete a phone number from a User.
@@ -374,7 +381,8 @@ module Stytch
     def delete_phone_number(
       phone_id:
     )
-      delete_request("/v1/users/phone_numbers/#{phone_id}")
+      headers = {}
+      delete_request("/v1/users/phone_numbers/#{phone_id}", headers)
     end
 
     # Delete a WebAuthn registration from a User.
@@ -401,7 +409,8 @@ module Stytch
     def delete_webauthn_registration(
       webauthn_registration_id:
     )
-      delete_request("/v1/users/webauthn_registrations/#{webauthn_registration_id}")
+      headers = {}
+      delete_request("/v1/users/webauthn_registrations/#{webauthn_registration_id}", headers)
     end
 
     # Delete a biometric registration from a User.
@@ -428,7 +437,8 @@ module Stytch
     def delete_biometric_registration(
       biometric_registration_id:
     )
-      delete_request("/v1/users/biometric_registrations/#{biometric_registration_id}")
+      headers = {}
+      delete_request("/v1/users/biometric_registrations/#{biometric_registration_id}", headers)
     end
 
     # Delete a TOTP from a User.
@@ -455,7 +465,8 @@ module Stytch
     def delete_totp(
       totp_id:
     )
-      delete_request("/v1/users/totps/#{totp_id}")
+      headers = {}
+      delete_request("/v1/users/totps/#{totp_id}", headers)
     end
 
     # Delete a crypto wallet from a User.
@@ -482,7 +493,8 @@ module Stytch
     def delete_crypto_wallet(
       crypto_wallet_id:
     )
-      delete_request("/v1/users/crypto_wallets/#{crypto_wallet_id}")
+      headers = {}
+      delete_request("/v1/users/crypto_wallets/#{crypto_wallet_id}", headers)
     end
 
     # Delete a password from a User.
@@ -509,7 +521,8 @@ module Stytch
     def delete_password(
       password_id:
     )
-      delete_request("/v1/users/passwords/#{password_id}")
+      headers = {}
+      delete_request("/v1/users/passwords/#{password_id}", headers)
     end
 
     # Delete an OAuth registration from a User.
@@ -536,7 +549,8 @@ module Stytch
     def delete_oauth_registration(
       oauth_user_registration_id:
     )
-      delete_request("/v1/users/oauth/#{oauth_user_registration_id}")
+      headers = {}
+      delete_request("/v1/users/oauth/#{oauth_user_registration_id}", headers)
     end
   end
 end

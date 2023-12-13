@@ -100,6 +100,7 @@ module Stytch
       untrusted_metadata: nil,
       name: nil
     )
+      headers = {}
       request = {
         email: email,
         password: password
@@ -110,7 +111,7 @@ module Stytch
       request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
       request[:name] = name unless name.nil?
 
-      post_request('/v1/passwords', request)
+      post_request('/v1/passwords', request, headers)
     end
 
     # Authenticate a user with their email address and password. This endpoint verifies that the user has a password currently set, and that the entered password is correct. There are two instances where the endpoint will return a `reset_password` error even if they enter their previous password:
@@ -185,6 +186,7 @@ module Stytch
       session_jwt: nil,
       session_custom_claims: nil
     )
+      headers = {}
       request = {
         email: email,
         password: password
@@ -194,7 +196,7 @@ module Stytch
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
-      post_request('/v1/passwords/authenticate', request)
+      post_request('/v1/passwords/authenticate', request, headers)
     end
 
     # This API allows you to check whether or not the user’s provided password is valid, and to provide feedback to the user on how to increase the strength of their password.
@@ -248,12 +250,13 @@ module Stytch
       password:,
       email: nil
     )
+      headers = {}
       request = {
         password: password
       }
       request[:email] = email unless email.nil?
 
-      post_request('/v1/passwords/strength_check', request)
+      post_request('/v1/passwords/strength_check', request, headers)
     end
 
     # Adds an existing password to a User's email that doesn't have a password yet. We support migrating users from passwords stored with `bcrypt`, `scrypt`, `argon2`, `MD-5`, `SHA-1`, or `PBKDF2`. This endpoint has a rate limit of 100 requests per second.
@@ -326,6 +329,7 @@ module Stytch
       untrusted_metadata: nil,
       name: nil
     )
+      headers = {}
       request = {
         email: email,
         hash: hash,
@@ -340,7 +344,7 @@ module Stytch
       request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
       request[:name] = name unless name.nil?
 
-      post_request('/v1/passwords/migrate', request)
+      post_request('/v1/passwords/migrate', request, headers)
     end
 
     class Email
@@ -415,6 +419,7 @@ module Stytch
         locale: nil,
         reset_password_template_id: nil
       )
+        headers = {}
         request = {
           email: email
         }
@@ -426,7 +431,7 @@ module Stytch
         request[:locale] = locale unless locale.nil?
         request[:reset_password_template_id] = reset_password_template_id unless reset_password_template_id.nil?
 
-        post_request('/v1/passwords/email/reset/start', request)
+        post_request('/v1/passwords/email/reset/start', request, headers)
       end
 
       # Reset the user’s password and authenticate them. This endpoint checks that the magic link `token` is valid, hasn’t expired, or already been used – and can optionally require additional security settings, such as the IP address and user agent matching the initial reset request.
@@ -515,6 +520,7 @@ module Stytch
         attributes: nil,
         options: nil
       )
+        headers = {}
         request = {
           token: token,
           password: password
@@ -527,7 +533,7 @@ module Stytch
         request[:attributes] = attributes unless attributes.nil?
         request[:options] = options unless options.nil?
 
-        post_request('/v1/passwords/email/reset', request)
+        post_request('/v1/passwords/email/reset', request, headers)
       end
     end
 
@@ -610,6 +616,7 @@ module Stytch
         session_jwt: nil,
         session_custom_claims: nil
       )
+        headers = {}
         request = {
           email: email,
           existing_password: existing_password,
@@ -620,7 +627,7 @@ module Stytch
         request[:session_jwt] = session_jwt unless session_jwt.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
-        post_request('/v1/passwords/existing_password/reset', request)
+        post_request('/v1/passwords/existing_password/reset', request, headers)
       end
     end
 
@@ -695,6 +702,7 @@ module Stytch
         session_duration_minutes: nil,
         session_custom_claims: nil
       )
+        headers = {}
         request = {
           password: password
         }
@@ -703,7 +711,7 @@ module Stytch
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
-        post_request('/v1/passwords/session/reset', request)
+        post_request('/v1/passwords/session/reset', request, headers)
       end
     end
   end

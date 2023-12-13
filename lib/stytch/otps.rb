@@ -101,6 +101,7 @@ module Stytch
       session_jwt: nil,
       session_custom_claims: nil
     )
+      headers = {}
       request = {
         method_id: method_id,
         code: code
@@ -112,7 +113,7 @@ module Stytch
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
-      post_request('/v1/otps/authenticate', request)
+      post_request('/v1/otps/authenticate', request, headers)
     end
 
     class Sms
@@ -190,6 +191,7 @@ module Stytch
         session_token: nil,
         session_jwt: nil
       )
+        headers = {}
         request = {
           phone_number: phone_number
         }
@@ -200,7 +202,7 @@ module Stytch
         request[:session_token] = session_token unless session_token.nil?
         request[:session_jwt] = session_jwt unless session_jwt.nil?
 
-        post_request('/v1/otps/sms/send', request)
+        post_request('/v1/otps/sms/send', request, headers)
       end
 
       # Send a One-Time Passcode (OTP) to a User using their phone number. If the phone number is not associated with a user already, a user will be created.
@@ -264,6 +266,7 @@ module Stytch
         create_user_as_pending: nil,
         locale: nil
       )
+        headers = {}
         request = {
           phone_number: phone_number
         }
@@ -272,7 +275,7 @@ module Stytch
         request[:create_user_as_pending] = create_user_as_pending unless create_user_as_pending.nil?
         request[:locale] = locale unless locale.nil?
 
-        post_request('/v1/otps/sms/login_or_create', request)
+        post_request('/v1/otps/sms/login_or_create', request, headers)
       end
     end
 
@@ -349,6 +352,7 @@ module Stytch
         session_token: nil,
         session_jwt: nil
       )
+        headers = {}
         request = {
           phone_number: phone_number
         }
@@ -359,7 +363,7 @@ module Stytch
         request[:session_token] = session_token unless session_token.nil?
         request[:session_jwt] = session_jwt unless session_jwt.nil?
 
-        post_request('/v1/otps/whatsapp/send', request)
+        post_request('/v1/otps/whatsapp/send', request, headers)
       end
 
       # Send a one-time passcode (OTP) to a User's WhatsApp using their phone number. If the phone number is not associated with a User already, a User will be created.
@@ -421,6 +425,7 @@ module Stytch
         create_user_as_pending: nil,
         locale: nil
       )
+        headers = {}
         request = {
           phone_number: phone_number
         }
@@ -429,7 +434,7 @@ module Stytch
         request[:create_user_as_pending] = create_user_as_pending unless create_user_as_pending.nil?
         request[:locale] = locale unless locale.nil?
 
-        post_request('/v1/otps/whatsapp/login_or_create', request)
+        post_request('/v1/otps/whatsapp/login_or_create', request, headers)
       end
     end
 
@@ -507,6 +512,7 @@ module Stytch
         login_template_id: nil,
         signup_template_id: nil
       )
+        headers = {}
         request = {
           email: email
         }
@@ -519,7 +525,7 @@ module Stytch
         request[:login_template_id] = login_template_id unless login_template_id.nil?
         request[:signup_template_id] = signup_template_id unless signup_template_id.nil?
 
-        post_request('/v1/otps/email/send', request)
+        post_request('/v1/otps/email/send', request, headers)
       end
 
       # Send a one-time passcode (OTP) to a User using their email. If the email is not associated with a User already, a User will be created.
@@ -586,6 +592,7 @@ module Stytch
         login_template_id: nil,
         signup_template_id: nil
       )
+        headers = {}
         request = {
           email: email
         }
@@ -596,7 +603,7 @@ module Stytch
         request[:login_template_id] = login_template_id unless login_template_id.nil?
         request[:signup_template_id] = signup_template_id unless signup_template_id.nil?
 
-        post_request('/v1/otps/email/login_or_create', request)
+        post_request('/v1/otps/email/login_or_create', request, headers)
       end
     end
   end

@@ -9,6 +9,44 @@
 require_relative 'request_helper'
 
 module StytchB2B
+  class GetConnectionsRequestOptions
+    # Optional authorization object.
+    # Pass in an active Stytch Member session token or session JWT and the request
+    # will be run using that member's permissions.
+    attr_accessor :authorization
+
+    def initialize(
+      authorization: nil
+    )
+      @authorization = authorization
+    end
+
+    def to_headers
+      headers = {}
+      headers.merge!(@authorization.to_headers) if authorization
+      headers
+    end
+  end
+
+  class DeleteConnectionRequestOptions
+    # Optional authorization object.
+    # Pass in an active Stytch Member session token or session JWT and the request
+    # will be run using that member's permissions.
+    attr_accessor :authorization
+
+    def initialize(
+      authorization: nil
+    )
+      @authorization = authorization
+    end
+
+    def to_headers
+      headers = {}
+      headers.merge!(@authorization.to_headers) if authorization
+      headers
+    end
+  end
+
   class SSO
     include Stytch::RequestHelper
     attr_reader :oidc, :saml
@@ -20,7 +58,7 @@ module StytchB2B
       @saml = StytchB2B::SSO::SAML.new(@connection)
     end
 
-    # Get all SSO Connections owned by the organization.
+    # Get all SSO Connections owned by the organization. /%}
     #
     # == Parameters:
     # organization_id::
@@ -41,15 +79,21 @@ module StytchB2B
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
+    #
+    # == Method Options:
+    # This method supports an optional +GetConnectionsRequestOptions+ object which will modify the headers sent in the HTTP request.
     def get_connections(
-      organization_id:
+      organization_id:,
+      method_options: nil
     )
+      headers = {}
+      headers = headers.merge(method_options.to_headers) unless method_options.nil?
       query_params = {}
       request = request_with_query_params("/v1/b2b/sso/#{organization_id}", query_params)
-      get_request(request)
+      get_request(request, headers)
     end
 
-    # Delete an existing SSO connection.
+    # Delete an existing SSO connection. /%}
     #
     # == Parameters:
     # organization_id::
@@ -70,11 +114,17 @@ module StytchB2B
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
+    #
+    # == Method Options:
+    # This method supports an optional +DeleteConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
     def delete_connection(
       organization_id:,
-      connection_id:
+      connection_id:,
+      method_options: nil
     )
-      delete_request("/v1/b2b/sso/#{organization_id}/connections/#{connection_id}")
+      headers = {}
+      headers = headers.merge(method_options.to_headers) unless method_options.nil?
+      delete_request("/v1/b2b/sso/#{organization_id}/connections/#{connection_id}", headers)
     end
 
     # Authenticate a user given a token.
@@ -184,6 +234,7 @@ module StytchB2B
       session_custom_claims: nil,
       locale: nil
     )
+      headers = {}
       request = {
         sso_token: sso_token
       }
@@ -194,7 +245,7 @@ module StytchB2B
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
       request[:locale] = locale unless locale.nil?
 
-      post_request('/v1/b2b/sso/authenticate', request)
+      post_request('/v1/b2b/sso/authenticate', request, headers)
     end
 
     class OIDC
@@ -204,7 +255,7 @@ module StytchB2B
         @connection = connection
       end
 
-      # Create a new OIDC Connection.
+      # Create a new OIDC Connection. /%}
       #
       # == Parameters:
       # organization_id::
@@ -225,14 +276,20 @@ module StytchB2B
       # connection::
       #   The `OIDC Connection` object affected by this API call. See the [OIDC Connection Object](https://stytch.com/docs/b2b/api/oidc-connection-object) for complete response field details.
       #   The type of this field is nilable +OIDCConnection+ (+object+).
+      #
+      # == Method Options:
+      # This method supports an optional +CreateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
       def create_connection(
         organization_id:,
-        display_name: nil
+        display_name: nil,
+        method_options: nil
       )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
         request = {}
         request[:display_name] = display_name unless display_name.nil?
 
-        post_request("/v1/b2b/sso/oidc/#{organization_id}", request)
+        post_request("/v1/b2b/sso/oidc/#{organization_id}", request, headers)
       end
 
       # Updates an existing OIDC connection.
@@ -253,6 +310,7 @@ module StytchB2B
       # * `token_url`
       # * `userinfo_url`
       # * `jwks_url`
+      #  /%}
       #
       # == Parameters:
       # organization_id::
@@ -300,6 +358,9 @@ module StytchB2B
       # warning::
       #   If it is not possible to resolve the well-known metadata document from the OIDC issuer, this field will explain what went wrong if the request is successful otherwise. In other words, even if the overall request succeeds, there could be relevant warnings related to the connection update.
       #   The type of this field is nilable +String+.
+      #
+      # == Method Options:
+      # This method supports an optional +UpdateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
       def update_connection(
         organization_id:,
         connection_id:,
@@ -310,8 +371,11 @@ module StytchB2B
         authorization_url: nil,
         token_url: nil,
         userinfo_url: nil,
-        jwks_url: nil
+        jwks_url: nil,
+        method_options: nil
       )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
         request = {}
         request[:display_name] = display_name unless display_name.nil?
         request[:client_id] = client_id unless client_id.nil?
@@ -322,7 +386,7 @@ module StytchB2B
         request[:userinfo_url] = userinfo_url unless userinfo_url.nil?
         request[:jwks_url] = jwks_url unless jwks_url.nil?
 
-        put_request("/v1/b2b/sso/oidc/#{organization_id}/connections/#{connection_id}", request)
+        put_request("/v1/b2b/sso/oidc/#{organization_id}/connections/#{connection_id}", request, headers)
       end
     end
 
@@ -333,7 +397,7 @@ module StytchB2B
         @connection = connection
       end
 
-      # Create a new SAML Connection.
+      # Create a new SAML Connection. /%}
       #
       # == Parameters:
       # organization_id::
@@ -354,14 +418,20 @@ module StytchB2B
       # connection::
       #   The `SAML Connection` object affected by this API call. See the [SAML Connection Object](https://stytch.com/docs/b2b/api/saml-connection-object) for complete response field details.
       #   The type of this field is nilable +SAMLConnection+ (+object+).
+      #
+      # == Method Options:
+      # This method supports an optional +CreateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
       def create_connection(
         organization_id:,
-        display_name: nil
+        display_name: nil,
+        method_options: nil
       )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
         request = {}
         request[:display_name] = display_name unless display_name.nil?
 
-        post_request("/v1/b2b/sso/saml/#{organization_id}", request)
+        post_request("/v1/b2b/sso/saml/#{organization_id}", request, headers)
       end
 
       # Updates an existing SAML connection.
@@ -371,6 +441,7 @@ module StytchB2B
       # * `attribute_mapping`
       # * `idp_entity_id`
       # * `x509_certificate`
+      #  /%}
       #
       # == Parameters:
       # organization_id::
@@ -394,6 +465,17 @@ module StytchB2B
       # idp_sso_url::
       #   The URL for which assertions for login requests will be sent. This will be provided by the IdP.
       #   The type of this field is nilable +String+.
+      # saml_connection_implicit_role_assignments::
+      #   (Coming Soon) All Members who log in with this SAML connection will implicitly receive the specified Roles. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment.
+      #   The type of this field is nilable list of +String+.
+      # saml_group_implicit_role_assignments::
+      #   (Coming Soon) Defines the names of the SAML groups
+      #  that grant specific role assignments. For each group-Role pair, if a Member logs in with this SAML connection and
+      #  belongs to the specified SAML group, they will be granted the associated Role. See the
+      #  [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment.
+      #          Before adding any group implicit role assignments, you must add a "groups" key to your SAML connection's
+      #          `attribute_mapping`. Make sure that your IdP is configured to correctly send the group information.
+      #   The type of this field is nilable list of +String+.
       # alternative_audience_uri::
       #   An alternative URL to use for the Audience Restriction. This value can be used when you wish to migrate an existing SAML integration to Stytch with zero downtime.
       #   The type of this field is nilable +String+.
@@ -409,6 +491,9 @@ module StytchB2B
       # connection::
       #   The `SAML Connection` object affected by this API call. See the [SAML Connection Object](https://stytch.com/docs/b2b/api/saml-connection-object) for complete response field details.
       #   The type of this field is nilable +SAMLConnection+ (+object+).
+      #
+      # == Method Options:
+      # This method supports an optional +UpdateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
       def update_connection(
         organization_id:,
         connection_id:,
@@ -417,17 +502,24 @@ module StytchB2B
         attribute_mapping: nil,
         x509_certificate: nil,
         idp_sso_url: nil,
-        alternative_audience_uri: nil
+        saml_connection_implicit_role_assignments: nil,
+        saml_group_implicit_role_assignments: nil,
+        alternative_audience_uri: nil,
+        method_options: nil
       )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
         request = {}
         request[:idp_entity_id] = idp_entity_id unless idp_entity_id.nil?
         request[:display_name] = display_name unless display_name.nil?
         request[:attribute_mapping] = attribute_mapping unless attribute_mapping.nil?
         request[:x509_certificate] = x509_certificate unless x509_certificate.nil?
         request[:idp_sso_url] = idp_sso_url unless idp_sso_url.nil?
+        request[:saml_connection_implicit_role_assignments] = saml_connection_implicit_role_assignments unless saml_connection_implicit_role_assignments.nil?
+        request[:saml_group_implicit_role_assignments] = saml_group_implicit_role_assignments unless saml_group_implicit_role_assignments.nil?
         request[:alternative_audience_uri] = alternative_audience_uri unless alternative_audience_uri.nil?
 
-        put_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}", request)
+        put_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}", request, headers)
       end
 
       # Used to update an existing SAML connection using an IDP metadata URL.
@@ -437,6 +529,7 @@ module StytchB2B
       # * `idp_entity_id`
       # * `x509_certificate`
       # * `attribute_mapping` (must be supplied using [Update SAML Connection](update-saml-connection))
+      #  /%}
       #
       # == Parameters:
       # organization_id::
@@ -460,21 +553,28 @@ module StytchB2B
       # connection::
       #   The `SAML Connection` object affected by this API call. See the [SAML Connection Object](https://stytch.com/docs/b2b/api/saml-connection-object) for complete response field details.
       #   The type of this field is nilable +SAMLConnection+ (+object+).
+      #
+      # == Method Options:
+      # This method supports an optional +UpdateByURLRequestOptions+ object which will modify the headers sent in the HTTP request.
       def update_by_url(
         organization_id:,
         connection_id:,
-        metadata_url:
+        metadata_url:,
+        method_options: nil
       )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
         request = {
           metadata_url: metadata_url
         }
 
-        put_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}/url", request)
+        put_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}/url", request, headers)
       end
 
       # Delete a SAML verification certificate.
       #
       # You may need to do this when rotating certificates from your IdP, since Stytch allows a maximum of 5 certificates per connection. There must always be at least one certificate per active connection.
+      #  /%}
       #
       # == Parameters:
       # organization_id::
@@ -498,12 +598,18 @@ module StytchB2B
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
+      #
+      # == Method Options:
+      # This method supports an optional +DeleteVerificationCertificateRequestOptions+ object which will modify the headers sent in the HTTP request.
       def delete_verification_certificate(
         organization_id:,
         connection_id:,
-        certificate_id:
+        certificate_id:,
+        method_options: nil
       )
-        delete_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}/verification_certificates/#{certificate_id}")
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        delete_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}/verification_certificates/#{certificate_id}", headers)
       end
     end
   end
