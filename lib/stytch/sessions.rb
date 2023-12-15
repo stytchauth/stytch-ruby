@@ -216,15 +216,13 @@ module Stytch
       end
 
       session = authenticate_jwt_local(session_jwt, max_token_age_seconds: max_token_age_seconds)
-      if !session.nil?
-        { 'session' => session }
-      else
-        authenticate(
-          session_jwt: session_jwt,
-          session_duration_minutes: session_duration_minutes,
-          session_custom_claims: session_custom_claims
-        )
-      end
+      return session unless session.nil?
+
+      authenticate(
+        session_jwt: session_jwt,
+        session_duration_minutes: session_duration_minutes,
+        session_custom_claims: session_custom_claims
+      )
     rescue StandardError
       # JWT could not be verified locally. Check with the Stytch API.
       authenticate(
