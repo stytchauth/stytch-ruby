@@ -59,7 +59,7 @@ RSpec.describe Stytch::Sessions do
 
     session = sessions.marshal_jwt_into_session(claims)
     # The session expires an hour after `now`.
-    expect(session['expires_at']).to eq('2022-05-03T19:51:41Z')
+    expect(session['session']['expires_at']).to eq('2022-05-03T19:51:41Z')
   end
 
   it 'marshals JWT into session (old format)' do
@@ -73,7 +73,7 @@ RSpec.describe Stytch::Sessions do
     session = sessions.marshal_jwt_into_session(claims)
 
     # The "exp" claim is five minutes after `now`.
-    expect(session['expires_at']).to eq('2022-05-03T18:56:41Z')
+    expect(session['session']['expires_at']).to eq('2022-05-03T18:56:41Z')
   end
 
   private
