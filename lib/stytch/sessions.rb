@@ -215,7 +215,7 @@ module Stytch
         )
       end
 
-      session = authenticate_jwt_local(session_jwt)
+      session = authenticate_jwt_local(session_jwt, max_token_age_seconds: max_token_age_seconds)
       if !session.nil?
         { 'session' => session }
       else
@@ -237,6 +237,7 @@ module Stytch
     # Parse a JWT and verify the signature locally (without calling /authenticate in the API)
     # Uses the cached value to get the JWK but if it is unavailable, it calls the get_jwks()
     # function to get the JWK
+    # This method never authenticates a JWT directly with the API
     # If max_token_age_seconds is not supplied 300 seconds will be used as the default.
     def authenticate_jwt_local(session_jwt, max_token_age_seconds: nil)
       max_token_age_seconds = 300 if max_token_age_seconds.nil?
@@ -245,6 +246,7 @@ module Stytch
       begin
         decoded_token = JWT.decode session_jwt, nil, true,
                                    { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'] }
+
         session = decoded_token[0]
         iat_time = Time.at(session['iat']).to_datetime
         return nil unless iat_time + max_token_age_seconds >= Time.now

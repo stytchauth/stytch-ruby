@@ -380,7 +380,7 @@ module StytchB2B
         )
       end
 
-      decoded_jwt = authenticate_jwt_local(session_jwt: session_jwt, authorization_check: authorization_check)
+      decoded_jwt = authenticate_jwt_local(session_jwt, max_token_age_seconds: max_token_age_seconds, authorization_check: authorization_check)
       return decoded_jwt unless decoded_jwt.nil?
 
       authenticate(
