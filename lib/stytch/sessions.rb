@@ -274,15 +274,17 @@ module Stytch
       reserved_claims = ['aud', 'exp', 'iat', 'iss', 'jti', 'nbf', 'sub', stytch_claim]
       custom_claims = jwt.reject { |key, _| reserved_claims.include?(key) }
       {
-        'session_id' => jwt[stytch_claim]['id'],
-        'user_id' => jwt['sub'],
-        'started_at' => jwt[stytch_claim]['started_at'],
-        'last_accessed_at' => jwt[stytch_claim]['last_accessed_at'],
-        # For JWTs that include it, prefer the inner expires_at claim.
-        'expires_at' => expires_at,
-        'attributes' => jwt[stytch_claim]['attributes'],
-        'authentication_factors' => jwt[stytch_claim]['authentication_factors'],
-        'custom_claims' => custom_claims
+        'session' => {
+          'session_id' => jwt[stytch_claim]['id'],
+          'user_id' => jwt['sub'],
+          'started_at' => jwt[stytch_claim]['started_at'],
+          'last_accessed_at' => jwt[stytch_claim]['last_accessed_at'],
+          # For JWTs that include it, prefer the inner expires_at claim.
+          'expires_at' => expires_at,
+          'attributes' => jwt[stytch_claim]['attributes'],
+          'authentication_factors' => jwt[stytch_claim]['authentication_factors'],
+          'custom_claims' => custom_claims
+        }
       }
     end
     # ENDMANUAL(Sessions::authenticate_jwt)
