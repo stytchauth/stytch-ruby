@@ -490,11 +490,6 @@ module StytchB2B
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
       #   The type of this field is +String+.
-      # preserve_existing_sessions::
-      #   (Coming Soon) Whether to preserve existing sessions when explicit Roles that are revoked are also implicitly assigned
-      #   by SSO connection or SSO group. Defaults to `false` - that is, existing Member Sessions that contain SSO
-      #   authentication factors with the affected SSO connection IDs will be revoked.
-      #   The type of this field is +Boolean+.
       # name::
       #   The name of the Member.
       #
@@ -541,8 +536,13 @@ module StytchB2B
       #    authentication factors with the affected connection ID. You can preserve these sessions by passing in the
       #    `preserve_existing_sessions` parameter with a value of `true`.
       #
-      # If this field is provided, the logged-in Member must have permission to perform the `update.settings.roles` action on the `stytch.member` Resource.
+      # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.roles` action on the `stytch.member` Resource.
       #   The type of this field is nilable list of +String+.
+      # preserve_existing_sessions::
+      #   (Coming Soon) Whether to preserve existing sessions when explicit Roles that are revoked are also implicitly assigned
+      #   by SSO connection or SSO group. Defaults to `false` - that is, existing Member Sessions that contain SSO
+      #   authentication factors with the affected SSO connection IDs will be revoked.
+      #   The type of this field is nilable +Boolean+.
       #
       # == Returns:
       # An object with the following fields:
@@ -567,7 +567,6 @@ module StytchB2B
       def update(
         organization_id:,
         member_id:,
-        preserve_existing_sessions:,
         name: nil,
         trusted_metadata: nil,
         untrusted_metadata: nil,
@@ -575,13 +574,12 @@ module StytchB2B
         mfa_phone_number: nil,
         mfa_enrolled: nil,
         roles: nil,
+        preserve_existing_sessions: nil,
         method_options: nil
       )
         headers = {}
         headers = headers.merge(method_options.to_headers) unless method_options.nil?
-        request = {
-          preserve_existing_sessions: preserve_existing_sessions
-        }
+        request = {}
         request[:name] = name unless name.nil?
         request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
         request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
@@ -589,6 +587,7 @@ module StytchB2B
         request[:mfa_phone_number] = mfa_phone_number unless mfa_phone_number.nil?
         request[:mfa_enrolled] = mfa_enrolled unless mfa_enrolled.nil?
         request[:roles] = roles unless roles.nil?
+        request[:preserve_existing_sessions] = preserve_existing_sessions unless preserve_existing_sessions.nil?
 
         put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", request, headers)
       end

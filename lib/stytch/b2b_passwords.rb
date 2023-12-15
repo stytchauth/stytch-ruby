@@ -102,11 +102,6 @@ module StytchB2B
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
     #   The type of this field is +String+.
-    # preserve_existing_sessions::
-    #   (Coming Soon) Whether to preserve existing sessions when explicit Roles that are revoked are also implicitly assigned
-    #   by SSO connection or SSO group. Defaults to `false` - that is, existing Member Sessions that contain SSO
-    #   authentication factors with the affected SSO connection IDs will be revoked.
-    #   The type of this field is +Boolean+.
     # md_5_config::
     #   Optional parameters for MD-5 hash types.
     #   The type of this field is nilable +MD5Config+ (+object+).
@@ -143,6 +138,11 @@ module StytchB2B
     #    authentication factors with the affected connection ID. You can preserve these sessions by passing in the
     #    `preserve_existing_sessions` parameter with a value of `true`.
     #   The type of this field is nilable list of +String+.
+    # preserve_existing_sessions::
+    #   (Coming Soon) Whether to preserve existing sessions when explicit Roles that are revoked are also implicitly assigned
+    #   by SSO connection or SSO group. Defaults to `false` - that is, existing Member Sessions that contain SSO
+    #   authentication factors with the affected SSO connection IDs will be revoked.
+    #   The type of this field is nilable +Boolean+.
     #
     # == Returns:
     # An object with the following fields:
@@ -169,7 +169,6 @@ module StytchB2B
       hash:,
       hash_type:,
       organization_id:,
-      preserve_existing_sessions:,
       md_5_config: nil,
       argon_2_config: nil,
       sha_1_config: nil,
@@ -178,15 +177,15 @@ module StytchB2B
       name: nil,
       trusted_metadata: nil,
       untrusted_metadata: nil,
-      roles: nil
+      roles: nil,
+      preserve_existing_sessions: nil
     )
       headers = {}
       request = {
         email_address: email_address,
         hash: hash,
         hash_type: hash_type,
-        organization_id: organization_id,
-        preserve_existing_sessions: preserve_existing_sessions
+        organization_id: organization_id
       }
       request[:md_5_config] = md_5_config unless md_5_config.nil?
       request[:argon_2_config] = argon_2_config unless argon_2_config.nil?
@@ -197,6 +196,7 @@ module StytchB2B
       request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
       request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
       request[:roles] = roles unless roles.nil?
+      request[:preserve_existing_sessions] = preserve_existing_sessions unless preserve_existing_sessions.nil?
 
       post_request('/v1/b2b/passwords/migrate', request, headers)
     end
