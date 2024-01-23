@@ -9,17 +9,15 @@
 require_relative 'request_helper'
 
 module StytchB2B
-
   class RecoveryCodes
     include Stytch::RequestHelper
 
     def initialize(connection)
       @connection = connection
-
     end
 
     # Allows a Member to complete an MFA flow by consuming a recovery code. This consumes the recovery code and returns a session token that can be used to authenticate the Member.
-    # 
+    #
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -43,14 +41,14 @@ module StytchB2B
     #   The JSON Web Token (JWT) for a given Stytch Session.
     #   The type of this field is nilable +String+.
     # session_duration_minutes::
-    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist, 
+    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
     #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-    # 
+    #
     #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-    #   
+    #
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-    #   
+    #
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
     #   to use the Stytch session product, you can ignore the session fields in the response.
     #   The type of this field is nilable +Integer+.
@@ -60,7 +58,7 @@ module StytchB2B
     #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
     #   Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -91,9 +89,9 @@ module StytchB2B
     #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
     #   The type of this field is nilable +MemberSession+ (+object+).
     def recover(
-      organization_id: ,
-      member_id: ,
-      recovery_code: ,
+      organization_id:,
+      member_id:,
+      recovery_code:,
       intermediate_session_token: nil,
       session_token: nil,
       session_jwt: nil,
@@ -106,17 +104,17 @@ module StytchB2B
         member_id: member_id,
         recovery_code: recovery_code
       }
-      request[:intermediate_session_token] = intermediate_session_token if intermediate_session_token != nil
-      request[:session_token] = session_token if session_token != nil
-      request[:session_jwt] = session_jwt if session_jwt != nil
-      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
-      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
+      request[:intermediate_session_token] = intermediate_session_token unless intermediate_session_token.nil?
+      request[:session_token] = session_token unless session_token.nil?
+      request[:session_jwt] = session_jwt unless session_jwt.nil?
+      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
-      post_request("/v1/b2b/recovery_codes/recover", request, headers)
+      post_request('/v1/b2b/recovery_codes/recover', request, headers)
     end
 
     # Returns a Member's full set of active recovery codes.
-    # 
+    #
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -124,7 +122,7 @@ module StytchB2B
     # member_id::
     #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
     #   The type of this field is +String+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -146,18 +144,17 @@ module StytchB2B
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def b2_b_get(
-      organization_id: ,
-      member_id: 
+      organization_id:,
+      member_id:
     )
       headers = {}
-      query_params = {
-      }
+      query_params = {}
       request = request_with_query_params("/v1/b2b/recovery_codes/#{organization_id}/#{member_id}", query_params)
       get_request(request, headers)
     end
 
     # Rotate a Member's recovery codes. This invalidates all existing recovery codes and generates a new set of recovery codes.
-    # 
+    #
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -165,7 +162,7 @@ module StytchB2B
     # member_id::
     #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
     #   The type of this field is +String+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -187,8 +184,8 @@ module StytchB2B
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def rotate(
-      organization_id: ,
-      member_id: 
+      organization_id:,
+      member_id:
     )
       headers = {}
       request = {
@@ -196,10 +193,7 @@ module StytchB2B
         member_id: member_id
       }
 
-      post_request("/v1/b2b/recovery_codes/rotate", request, headers)
+      post_request('/v1/b2b/recovery_codes/rotate', request, headers)
     end
-
-
-
   end
 end
