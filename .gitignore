@@ -8,6 +8,8 @@
 /tmp/
 *.gem
 Gemfile.lock
+.idea/
+.envrc
 
 # rspec failure tracking
 .rspec_status

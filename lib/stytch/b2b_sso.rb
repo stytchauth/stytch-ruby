@@ -466,10 +466,10 @@ module StytchB2B
       #   The URL for which assertions for login requests will be sent. This will be provided by the IdP.
       #   The type of this field is nilable +String+.
       # saml_connection_implicit_role_assignments::
-      #   (Coming Soon) All Members who log in with this SAML connection will implicitly receive the specified Roles. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment.
+      #   All Members who log in with this SAML connection will implicitly receive the specified Roles. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment.
       #   The type of this field is nilable list of +String+.
       # saml_group_implicit_role_assignments::
-      #   (Coming Soon) Defines the names of the SAML groups
+      #   Defines the names of the SAML groups
       #  that grant specific role assignments. For each group-Role pair, if a Member logs in with this SAML connection and
       #  belongs to the specified SAML group, they will be granted the associated Role. See the
       #  [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment.

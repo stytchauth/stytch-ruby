@@ -23,7 +23,7 @@ module StytchB2B
     # Resources and Roles can be created and managed within the [Dashboard](/dashboard). Additionally, [Role assignment](https://stytch.com/docs/b2b/guides/rbac/role-assignment) can be programmatically managed through certain Stytch API endpoints.
     #
     #
-    # Check out the [RBAC overview](https://stytch.com/docs/b2b/guides/rbac/overview) to learn more about Stytch's RBAC permissioning model or [contact us](https://share.hsforms.com/1qkU__-1CT1--lnqRDxphXgd4bkb) to request early access.
+    # Check out the [RBAC overview](https://stytch.com/docs/b2b/guides/rbac/overview) to learn more about Stytch's RBAC permissioning model.
     #
     # == Parameters:
     #

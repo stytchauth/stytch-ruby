@@ -132,11 +132,24 @@ module StytchB2B
     #
     #   The type of this field is nilable +String+.
     # rbac_email_implicit_role_assignments::
-    #   (Coming Soon) Implicit role assignments based off of email domains.
+    #   Implicit role assignments based off of email domains.
     #   For each domain-Role pair, all Members whose email addresses have the specified email domain will be granted the
     #   associated Role, regardless of their login method. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment)
     #   for more information about role assignment.
     #   The type of this field is nilable list of +EmailImplicitRoleAssignment+ (+object+).
+    # mfa_methods::
+    #   The setting that controls which mfa methods can be used by Members of an Organization. The accepted values are:
+    #
+    #   `ALL_ALLOWED` – the default setting which allows all authentication methods to be used.
+    #
+    #   `RESTRICTED` – only methods that comply with `allowed_auth_methods` can be used for authentication. This setting does not apply to Members with `is_breakglass` set to `true`.
+    #
+    #   The type of this field is nilable +String+.
+    # allowed_mfa_methods::
+    #   An array of allowed mfa authentication methods. This list is enforced when `mfa_methods` is set to `RESTRICTED`.
+    #   The list's accepted values are: `sms_otp` and `totp`.
+    #
+    #   The type of this field is nilable list of +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -161,7 +174,9 @@ module StytchB2B
       auth_methods: nil,
       allowed_auth_methods: nil,
       mfa_policy: nil,
-      rbac_email_implicit_role_assignments: nil
+      rbac_email_implicit_role_assignments: nil,
+      mfa_methods: nil,
+      allowed_mfa_methods: nil
     )
       headers = {}
       request = {
@@ -178,6 +193,8 @@ module StytchB2B
       request[:allowed_auth_methods] = allowed_auth_methods unless allowed_auth_methods.nil?
       request[:mfa_policy] = mfa_policy unless mfa_policy.nil?
       request[:rbac_email_implicit_role_assignments] = rbac_email_implicit_role_assignments unless rbac_email_implicit_role_assignments.nil?
+      request[:mfa_methods] = mfa_methods unless mfa_methods.nil?
+      request[:allowed_mfa_methods] = allowed_mfa_methods unless allowed_mfa_methods.nil?
 
       post_request('/v1/b2b/organizations', request, headers)
     end
@@ -213,7 +230,7 @@ module StytchB2B
     #
     # *See the [Organization authentication settings](https://stytch.com/docs/b2b/api/org-auth-settings) resource to learn more about fields like `email_jit_provisioning`, `email_invites`, `sso_jit_provisioning`, etc., and their behaviors.
     #
-    # (Coming Soon) Our RBAC implementation offers out-of-the-box handling of authorization checks for this endpoint. If you pass in
+    # Our RBAC implementation offers out-of-the-box handling of authorization checks for this endpoint. If you pass in
     # a header containing a `session_token` or a `session_jwt` for an unexpired Member Session, we will check that the
     # Member Session has the necessary permissions. The specific permissions needed depend on which of the optional fields
     # are passed in the request. For example, if the `organization_name` argument is provided, the Member Session must have
@@ -330,12 +347,29 @@ module StytchB2B
     # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.mfa-policy` action on the `stytch.organization` Resource.
     #   The type of this field is nilable +String+.
     # rbac_email_implicit_role_assignments::
-    #   (Coming Soon) Implicit role assignments based off of email domains.
+    #   Implicit role assignments based off of email domains.
     #   For each domain-Role pair, all Members whose email addresses have the specified email domain will be granted the
     #   associated Role, regardless of their login method. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment)
     #   for more information about role assignment.
     #
     # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.implicit-roles` action on the `stytch.organization` Resource.
+    #   The type of this field is nilable list of +String+.
+    # mfa_methods::
+    #   The setting that controls which mfa methods can be used by Members of an Organization. The accepted values are:
+    #
+    #   `ALL_ALLOWED` – the default setting which allows all authentication methods to be used.
+    #
+    #   `RESTRICTED` – only methods that comply with `allowed_auth_methods` can be used for authentication. This setting does not apply to Members with `is_breakglass` set to `true`.
+    #
+    #
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.allowed-auth-methods` action on the `stytch.organization` Resource.
+    #   The type of this field is nilable +String+.
+    # allowed_mfa_methods::
+    #   An array of allowed mfa authentication methods. This list is enforced when `mfa_methods` is set to `RESTRICTED`.
+    #   The list's accepted values are: `sms_otp` and `totp`.
+    #
+    #
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.allowed-mfa-methods` action on the `stytch.organization` Resource.
     #   The type of this field is nilable list of +String+.
     #
     # == Returns:
@@ -368,6 +402,8 @@ module StytchB2B
       allowed_auth_methods: nil,
       mfa_policy: nil,
       rbac_email_implicit_role_assignments: nil,
+      mfa_methods: nil,
+      allowed_mfa_methods: nil,
       method_options: nil
     )
       headers = {}
@@ -387,6 +423,8 @@ module StytchB2B
       request[:allowed_auth_methods] = allowed_auth_methods unless allowed_auth_methods.nil?
       request[:mfa_policy] = mfa_policy unless mfa_policy.nil?
       request[:rbac_email_implicit_role_assignments] = rbac_email_implicit_role_assignments unless rbac_email_implicit_role_assignments.nil?
+      request[:mfa_methods] = mfa_methods unless mfa_methods.nil?
+      request[:allowed_mfa_methods] = allowed_mfa_methods unless allowed_mfa_methods.nil?
 
       put_request("/v1/b2b/organizations/#{organization_id}", request, headers)
     end
@@ -471,7 +509,7 @@ module StytchB2B
 
       # Updates a Member specified by `organization_id` and `member_id`.
       #
-      # (Coming Soon) Our RBAC implementation offers out-of-the-box handling of authorization checks for this endpoint. If you pass in
+      # Our RBAC implementation offers out-of-the-box handling of authorization checks for this endpoint. If you pass in
       # a header containing a `session_token` or a `session_jwt` for an unexpired Member Session, we will check that the
       # Member Session has the necessary permissions. The specific permissions needed depend on which of the optional fields
       # are passed in the request. For example, if the `organization_name` argument is provided, the Member Session must have
@@ -527,7 +565,7 @@ module StytchB2B
       #   Alternatively, if the Member Session matches the Member associated with the `member_id` passed in the request, the authorization check will also allow a Member Session that has permission to perform the `update.settings.mfa-enrolled` action on the `stytch.self` Resource.
       #   The type of this field is nilable +Boolean+.
       # roles::
-      #   (Coming Soon) Roles to explicitly assign to this Member.
+      #   Roles to explicitly assign to this Member.
       #  Will completely replace any existing explicitly assigned roles. See the
       #  [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment.
       #
@@ -539,10 +577,13 @@ module StytchB2B
       # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.roles` action on the `stytch.member` Resource.
       #   The type of this field is nilable list of +String+.
       # preserve_existing_sessions::
-      #   (Coming Soon) Whether to preserve existing sessions when explicit Roles that are revoked are also implicitly assigned
+      #   Whether to preserve existing sessions when explicit Roles that are revoked are also implicitly assigned
       #   by SSO connection or SSO group. Defaults to `false` - that is, existing Member Sessions that contain SSO
       #   authentication factors with the affected SSO connection IDs will be revoked.
       #   The type of this field is nilable +Boolean+.
+      # default_mfa_method::
+      #   The Member's default MFA method. This value is used to determine which secondary MFA method to use in the case of multiple methods registered for a Member. The current possible values are `sms_otp` and `totp`.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -575,6 +616,7 @@ module StytchB2B
         mfa_enrolled: nil,
         roles: nil,
         preserve_existing_sessions: nil,
+        default_mfa_method: nil,
         method_options: nil
       )
         headers = {}
@@ -588,6 +630,7 @@ module StytchB2B
         request[:mfa_enrolled] = mfa_enrolled unless mfa_enrolled.nil?
         request[:roles] = roles unless roles.nil?
         request[:preserve_existing_sessions] = preserve_existing_sessions unless preserve_existing_sessions.nil?
+        request[:default_mfa_method] = default_mfa_method unless default_mfa_method.nil?
 
         put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", request, headers)
       end
@@ -715,11 +758,21 @@ module StytchB2B
         delete_request("/v1/b2b/organizations/#{organization_id}/members/mfa_phone_numbers/#{member_id}", headers)
       end
 
+      def delete_totp(
+        organization_id:,
+        member_id:,
+        method_options: nil
+      )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        delete_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/totp", headers)
+      end
+
       # Search for Members within specified Organizations. An array with at least one `organization_id` is required. Submitting an empty `query` returns all non-deleted Members within the specified Organizations.
       #
       # *All fuzzy search filters require a minimum of three characters.
       #
-      # (Coming Soon) Our RBAC implementation offers out-of-the-box handling of authorization checks for this endpoint. If you pass in
+      # Our RBAC implementation offers out-of-the-box handling of authorization checks for this endpoint. If you pass in
       # a header containing a `session_token` or a `session_jwt` for an unexpired Member Session, we will check that the
       # Member Session has permission to perform the `search` action on the `stytch.member` Resource. In addition, enforcing
       # RBAC on this endpoint means that you may only search for Members within the calling Member's Organization, so the
@@ -890,7 +943,7 @@ module StytchB2B
       #   Sets whether the Member is enrolled in MFA. If true, the Member must complete an MFA step whenever they wish to log in to their Organization. If false, the Member only needs to complete an MFA step if the Organization's MFA policy is set to `REQUIRED_FOR_ALL`.
       #   The type of this field is nilable +Boolean+.
       # roles::
-      #   (Coming Soon) Roles to explicitly assign to this Member. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment)
+      #   Roles to explicitly assign to this Member. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment)
       #    for more information about role assignment.
       #   The type of this field is nilable list of +String+.
       #

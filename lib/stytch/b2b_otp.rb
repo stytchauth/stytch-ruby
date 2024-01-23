@@ -37,8 +37,12 @@ module StytchB2B
       #
       # If a Member has a phone number and is enrolled in MFA, then after a successful primary authentication event (e.g. [email magic link](https://stytch.com/docs/b2b/api/authenticate-magic-link) or [SSO](https://stytch.com/docs/b2b/api/sso-authenticate) login is complete), an SMS OTP will automatically be sent to their phone number. In that case, this endpoint should only be used for subsequent authentication events, such as prompting a Member for an OTP again after a period of inactivity.
       #
+      # Passing an intermediate session token, session token, or session JWT is not required, but if passed must match the Member ID passed.
+      #
       # ### Cost to send SMS OTP
       # Before configuring SMS or WhatsApp OTPs, please review how Stytch [bills the costs of international OTPs](https://stytch.com/pricing) and understand how to protect your app against [toll fraud](https://stytch.com/docs/guides/passcodes/toll-fraud/overview).
+      #
+      # Even when international SMS is enabled, we do not support sending SMS to countries on our [Unsupported countries list](https://stytch.com/docs/guides/passcodes/unsupported-countries).
       #
       # __Note:__ SMS to phone numbers outside of the US and Canada is disabled by default for customers who did not use SMS prior to October 2023. If you're interested in sending international SMS, please reach out to [support@stytch.com](mailto:support@stytch.com?subject=Enable%20international%20SMS).
       #
@@ -60,6 +64,18 @@ module StytchB2B
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
       #   The type of this field is nilable +SendRequestLocale+ (string enum).
+      # intermediate_session_token::
+      #   The Intermediate Session Token. This token does not necessarily belong to a specific instance of a Member, but represents a bag of factors that may be converted to a member session.
+      #     The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete an MFA flow;
+      #     the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) to join a specific Organization that allows the factors represented by the intermediate session token;
+      #     or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to create a new Organization and Member.
+      #   The type of this field is nilable +String+.
+      # session_token::
+      #   A secret token for a given Stytch Session.
+      #   The type of this field is nilable +String+.
+      # session_jwt::
+      #   The JSON Web Token (JWT) for a given Stytch Session.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -82,7 +98,10 @@ module StytchB2B
         organization_id:,
         member_id:,
         mfa_phone_number: nil,
-        locale: nil
+        locale: nil,
+        intermediate_session_token: nil,
+        session_token: nil,
+        session_jwt: nil
       )
         headers = {}
         request = {
@@ -91,6 +110,9 @@ module StytchB2B
         }
         request[:mfa_phone_number] = mfa_phone_number unless mfa_phone_number.nil?
         request[:locale] = locale unless locale.nil?
+        request[:intermediate_session_token] = intermediate_session_token unless intermediate_session_token.nil?
+        request[:session_token] = session_token unless session_token.nil?
+        request[:session_jwt] = session_jwt unless session_jwt.nil?
 
         post_request('/v1/b2b/otps/sms/send', request, headers)
       end
@@ -160,6 +182,9 @@ module StytchB2B
       #   `unenroll` –  sets the Member's `mfa_enrolled` boolean to `false`. The Member will no longer be required to complete MFA steps when logging in to the Organization.
       #
       #   The type of this field is nilable +String+.
+      # set_default_mfa::
+      #   (no documentation yet)
+      #   The type of this field is nilable +Boolean+.
       #
       # == Returns:
       # An object with the following fields:
@@ -196,7 +221,8 @@ module StytchB2B
         session_jwt: nil,
         session_duration_minutes: nil,
         session_custom_claims: nil,
-        set_mfa_enrollment: nil
+        set_mfa_enrollment: nil,
+        set_default_mfa: nil
       )
         headers = {}
         request = {
@@ -210,6 +236,7 @@ module StytchB2B
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:set_mfa_enrollment] = set_mfa_enrollment unless set_mfa_enrollment.nil?
+        request[:set_default_mfa] = set_default_mfa unless set_default_mfa.nil?
 
         post_request('/v1/b2b/otps/sms/authenticate', request, headers)
       end

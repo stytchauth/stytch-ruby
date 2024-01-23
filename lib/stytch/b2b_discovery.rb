@@ -251,11 +251,24 @@ module StytchB2B
       #
       #   The type of this field is nilable +String+.
       # rbac_email_implicit_role_assignments::
-      #   (Coming Soon) Implicit role assignments based off of email domains.
+      #   Implicit role assignments based off of email domains.
       #   For each domain-Role pair, all Members whose email addresses have the specified email domain will be granted the
       #   associated Role, regardless of their login method. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment)
       #   for more information about role assignment.
       #   The type of this field is nilable list of +EmailImplicitRoleAssignment+ (+object+).
+      # mfa_methods::
+      #   The setting that controls which mfa methods can be used by Members of an Organization. The accepted values are:
+      #
+      #   `ALL_ALLOWED` – the default setting which allows all authentication methods to be used.
+      #
+      #   `RESTRICTED` – only methods that comply with `allowed_auth_methods` can be used for authentication. This setting does not apply to Members with `is_breakglass` set to `true`.
+      #
+      #   The type of this field is nilable +String+.
+      # allowed_mfa_methods::
+      #   An array of allowed mfa authentication methods. This list is enforced when `mfa_methods` is set to `RESTRICTED`.
+      #   The list's accepted values are: `sms_otp` and `totp`.
+      #
+      #   The type of this field is nilable list of +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -310,7 +323,9 @@ module StytchB2B
         auth_methods: nil,
         allowed_auth_methods: nil,
         mfa_policy: nil,
-        rbac_email_implicit_role_assignments: nil
+        rbac_email_implicit_role_assignments: nil,
+        mfa_methods: nil,
+        allowed_mfa_methods: nil
       )
         headers = {}
         request = {
@@ -330,6 +345,8 @@ module StytchB2B
         request[:allowed_auth_methods] = allowed_auth_methods unless allowed_auth_methods.nil?
         request[:mfa_policy] = mfa_policy unless mfa_policy.nil?
         request[:rbac_email_implicit_role_assignments] = rbac_email_implicit_role_assignments unless rbac_email_implicit_role_assignments.nil?
+        request[:mfa_methods] = mfa_methods unless mfa_methods.nil?
+        request[:allowed_mfa_methods] = allowed_mfa_methods unless allowed_mfa_methods.nil?
 
         post_request('/v1/b2b/discovery/organizations/create', request, headers)
       end

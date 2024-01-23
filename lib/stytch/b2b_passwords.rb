@@ -129,7 +129,7 @@ module StytchB2B
     #   for complete field behavior details.
     #   The type of this field is nilable +object+.
     # roles::
-    #   (Coming Soon) Roles to explicitly assign to this Member.
+    #   Roles to explicitly assign to this Member.
     #  Will completely replace any existing explicitly assigned roles. See the
     #  [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment.
     #
@@ -139,7 +139,7 @@ module StytchB2B
     #    `preserve_existing_sessions` parameter with a value of `true`.
     #   The type of this field is nilable list of +String+.
     # preserve_existing_sessions::
-    #   (Coming Soon) Whether to preserve existing sessions when explicit Roles that are revoked are also implicitly assigned
+    #   Whether to preserve existing sessions when explicit Roles that are revoked are also implicitly assigned
     #   by SSO connection or SSO group. Defaults to `false` - that is, existing Member Sessions that contain SSO
     #   authentication factors with the affected SSO connection IDs will be revoked.
     #   The type of this field is nilable +Boolean+.
@@ -383,6 +383,9 @@ module StytchB2B
       # member_email_id::
       #   Globally unique UUID that identifies a member's email
       #   The type of this field is +String+.
+      # member::
+      #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
+      #   The type of this field is +Member+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.

@@ -282,7 +282,7 @@ module StytchB2B
       #
       #   The type of this field is nilable +InviteRequestLocale+ (string enum).
       # roles::
-      #   (Coming Soon) Roles to explicitly assign to this Member. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment)
+      #   Roles to explicitly assign to this Member. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment)
       #    for more information about role assignment.
       #   The type of this field is nilable list of +String+.
       #
