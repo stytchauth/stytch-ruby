@@ -758,7 +758,7 @@ module StytchB2B
         delete_request("/v1/b2b/organizations/#{organization_id}/members/mfa_phone_numbers/#{member_id}", headers)
       end
 
-      def totp(
+      def delete_totp(
         organization_id:,
         member_id:,
         method_options: nil
