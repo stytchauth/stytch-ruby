@@ -138,15 +138,15 @@ module StytchB2B
     #   for more information about role assignment.
     #   The type of this field is nilable list of +EmailImplicitRoleAssignment+ (+object+).
     # mfa_methods::
-    #   The setting that controls which mfa methods can be used by Members of an Organization. The accepted values are:
+    #   The setting that controls which MFA methods can be used by Members of an Organization. The accepted values are:
     #
     #   `ALL_ALLOWED` – the default setting which allows all authentication methods to be used.
     #
-    #   `RESTRICTED` – only methods that comply with `allowed_auth_methods` can be used for authentication. This setting does not apply to Members with `is_breakglass` set to `true`.
+    #   `RESTRICTED` – only methods that comply with `allowed_mfa_methods` can be used for authentication. This setting does not apply to Members with `is_breakglass` set to `true`.
     #
     #   The type of this field is nilable +String+.
     # allowed_mfa_methods::
-    #   An array of allowed mfa authentication methods. This list is enforced when `mfa_methods` is set to `RESTRICTED`.
+    #   An array of allowed MFA authentication methods. This list is enforced when `mfa_methods` is set to `RESTRICTED`.
     #   The list's accepted values are: `sms_otp` and `totp`.
     #
     #   The type of this field is nilable list of +String+.
@@ -355,17 +355,17 @@ module StytchB2B
     # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.implicit-roles` action on the `stytch.organization` Resource.
     #   The type of this field is nilable list of +String+.
     # mfa_methods::
-    #   The setting that controls which mfa methods can be used by Members of an Organization. The accepted values are:
+    #   The setting that controls which MFA methods can be used by Members of an Organization. The accepted values are:
     #
     #   `ALL_ALLOWED` – the default setting which allows all authentication methods to be used.
     #
-    #   `RESTRICTED` – only methods that comply with `allowed_auth_methods` can be used for authentication. This setting does not apply to Members with `is_breakglass` set to `true`.
+    #   `RESTRICTED` – only methods that comply with `allowed_mfa_methods` can be used for authentication. This setting does not apply to Members with `is_breakglass` set to `true`.
     #
     #
-    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.allowed-auth-methods` action on the `stytch.organization` Resource.
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.allowed-mfa-methods` action on the `stytch.organization` Resource.
     #   The type of this field is nilable +String+.
     # allowed_mfa_methods::
-    #   An array of allowed mfa authentication methods. This list is enforced when `mfa_methods` is set to `RESTRICTED`.
+    #   An array of allowed MFA authentication methods. This list is enforced when `mfa_methods` is set to `RESTRICTED`.
     #   The list's accepted values are: `sms_otp` and `totp`.
     #
     #
@@ -550,7 +550,7 @@ module StytchB2B
       # is_breakglass::
       #   Identifies the Member as a break glass user - someone who has permissions to authenticate into an Organization by bypassing the Organization's settings. A break glass account is typically used for emergency purposes to gain access outside of normal authentication procedures. Refer to the [Organization object](organization-object) and its `auth_methods` and `allowed_auth_methods` fields for more details.
       #
-      # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.info.is-breakglass` action on the `stytch.member` Resource.
+      # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.is-breakglass` action on the `stytch.member` Resource.
       #   The type of this field is nilable +Boolean+.
       # mfa_phone_number::
       #   Sets the Member's phone number. Throws an error if the Member already has a phone number. To change the Member's phone number, use the [Delete member phone number endpoint](https://stytch.com/docs/b2b/api/delete-member-mfa-phone-number) to delete the Member's existing phone number first.

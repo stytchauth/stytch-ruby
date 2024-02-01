@@ -292,6 +292,11 @@ module Stytch
     # untrusted_metadata::
     #   The `untrusted_metadata` field contains an arbitrary JSON object of application-specific data. Untrusted metadata can be edited by end users directly via the SDK, and **cannot be used to store critical information.** See the [Metadata](https://stytch.com/docs/api/metadata) reference for complete field behavior details.
     #   The type of this field is nilable +object+.
+    # set_email_verified::
+    #   Whether to set the user's email as verified. This is a dangerous field. Incorrect use may lead to users getting erroneously
+    #                 deduplicated into one user object. This flag should only be set if you can attest that the user owns the email address in question.
+    #                 Access to this field is restricted. To enable it, please send us a note at support@stytch.com.
+    #   The type of this field is nilable +Boolean+.
     # name::
     #   The name of the user. Each field in the name object is optional.
     #   The type of this field is nilable +Name+ (+object+).
@@ -327,6 +332,7 @@ module Stytch
       pbkdf_2_config: nil,
       trusted_metadata: nil,
       untrusted_metadata: nil,
+      set_email_verified: nil,
       name: nil
     )
       headers = {}
@@ -342,6 +348,7 @@ module Stytch
       request[:pbkdf_2_config] = pbkdf_2_config unless pbkdf_2_config.nil?
       request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
       request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
+      request[:set_email_verified] = set_email_verified unless set_email_verified.nil?
       request[:name] = name unless name.nil?
 
       post_request('/v1/passwords/migrate', request, headers)
