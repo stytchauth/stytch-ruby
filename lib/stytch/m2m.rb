@@ -9,6 +9,7 @@
 require_relative 'request_helper'
 
 module Stytch
+
   class M2M
     include Stytch::RequestHelper
     attr_reader :clients
@@ -31,6 +32,7 @@ module Stytch
         end
       end
     end
+
 
     # MANUAL(M2M::get_jwks)(SERVICE_METHOD)
     # This is a helper so we can retrieve the JWKS for a project for decoding M2M access tokens
@@ -159,6 +161,7 @@ module Stytch
     end
     # ENDMANUAL(M2M::authenticate_token)
 
+
     class Clients
       include Stytch::RequestHelper
       attr_reader :secrets
@@ -170,12 +173,12 @@ module Stytch
       end
 
       # Gets information about an existing M2M Client.
-      #
+      # 
       # == Parameters:
       # client_id::
       #   The ID of the client.
       #   The type of this field is +String+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -188,21 +191,22 @@ module Stytch
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def get(
-        client_id:
+        client_id: 
       )
         headers = {}
-        query_params = {}
+        query_params = {
+        }
         request = request_with_query_params("/v1/m2m/clients/#{client_id}", query_params)
         get_request(request, headers)
       end
 
       # Search for M2M Clients within your Stytch Project. Submit an empty `query` in the request to return all M2M Clients.
-      #
+      # 
       # The following search filters are supported today:
       # - `client_id`: Pass in a list of client IDs to get many clients in a single request
       # - `client_name`: Search for clients by exact match on client name
       # - `scopes`: Search for clients assigned a specific scope
-      #
+      # 
       # == Parameters:
       # cursor::
       #   The `cursor` field allows you to paginate through your results. Each result array is limited to 1000 results. If your query returns more than 1000 results, you will need to paginate the responses using the `cursor`. If you receive a response that includes a non-null `next_cursor` in the `results_metadata` object, repeat the search call with the `next_cursor` value set to the `cursor` field to retrieve the next page of results. Continue to make search calls until the `next_cursor` in the response is null.
@@ -213,7 +217,7 @@ module Stytch
       # query::
       #   The optional query object contains the operator, i.e. `AND` or `OR`, and the operands that will filter your results. Only an operator is required. If you include no operands, no filtering will be applied. If you include no query object, it will return all results with no filtering applied.
       #   The type of this field is nilable +M2MSearchQuery+ (+object+).
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -234,19 +238,20 @@ module Stytch
         query: nil
       )
         headers = {}
-        request = {}
-        request[:cursor] = cursor unless cursor.nil?
-        request[:limit] = limit unless limit.nil?
-        request[:query] = query unless query.nil?
+        request = {
+        }
+        request[:cursor] = cursor if cursor != nil
+        request[:limit] = limit if limit != nil
+        request[:query] = query if query != nil
 
-        post_request('/v1/m2m/clients/search', request, headers)
+        post_request("/v1/m2m/clients/search", request, headers)
       end
 
       # Updates an existing M2M Client. You can use this endpoint to activate or deactivate a M2M Client by changing its `status`. A deactivated M2M Client will not be allowed to perform future token exchange flows until it is reactivated.
-      #
+      # 
       # **Important:** Deactivating a M2M Client will not invalidate any existing JWTs issued to the client, only prevent it from receiving new ones.
       # To protect more-sensitive routes, pass a lower `max_token_age` value when[authenticating the token](https://stytch.com/docs/b2b/api/authenticate-m2m-token)[authenticating the token](https://stytch.com/docs/api/authenticate-m2m-token).
-      #
+      # 
       # == Parameters:
       # client_id::
       #   The ID of the client.
@@ -266,7 +271,7 @@ module Stytch
       # trusted_metadata::
       #   The `trusted_metadata` field contains an arbitrary JSON object of application-specific data. See the [Metadata](https://stytch.com/docs/api/metadata) reference for complete field behavior details.
       #   The type of this field is nilable +object+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -279,7 +284,7 @@ module Stytch
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def update(
-        client_id:,
+        client_id: ,
         client_name: nil,
         client_description: nil,
         status: nil,
@@ -287,26 +292,27 @@ module Stytch
         trusted_metadata: nil
       )
         headers = {}
-        request = {}
-        request[:client_name] = client_name unless client_name.nil?
-        request[:client_description] = client_description unless client_description.nil?
-        request[:status] = status unless status.nil?
-        request[:scopes] = scopes unless scopes.nil?
-        request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
+        request = {
+        }
+        request[:client_name] = client_name if client_name != nil
+        request[:client_description] = client_description if client_description != nil
+        request[:status] = status if status != nil
+        request[:scopes] = scopes if scopes != nil
+        request[:trusted_metadata] = trusted_metadata if trusted_metadata != nil
 
         put_request("/v1/m2m/clients/#{client_id}", request, headers)
       end
 
       # Deletes the M2M Client.
-      #
+      # 
       # **Important:** Deleting a M2M Client will not invalidate any existing JWTs issued to the client, only prevent it from receiving new ones.
       # To protect more-sensitive routes, pass a lower `max_token_age` value when[authenticating the token](https://stytch.com/docs/b2b/api/authenticate-m2m-token)[authenticating the token](https://stytch.com/docs/api/authenticate-m2m-token).
-      #
+      # 
       # == Parameters:
       # client_id::
       #   The ID of the client.
       #   The type of this field is +String+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -319,16 +325,16 @@ module Stytch
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def delete(
-        client_id:
+        client_id: 
       )
         headers = {}
         delete_request("/v1/m2m/clients/#{client_id}", headers)
       end
 
       # Creates a new M2M Client. On initial client creation, you may pass in a custom `client_id` or `client_secret` to import an existing M2M client. If you do not pass in a custom `client_id` or `client_secret`, one will be generated automatically. The `client_id` must be unique among all clients in your project.
-      #
+      # 
       # **Important:** This is the only time you will be able to view the generated `client_secret` in the API response. Stytch stores a hash of the `client_secret` and cannot recover the value if lost. Be sure to persist the `client_secret` in a secure location. If the `client_secret` is lost, you will need to trigger a secret rotation flow to receive another one.
-      #
+      # 
       # == Parameters:
       # scopes::
       #   An array of scopes assigned to the client.
@@ -348,7 +354,7 @@ module Stytch
       # trusted_metadata::
       #   The `trusted_metadata` field contains an arbitrary JSON object of application-specific data. See the [Metadata](https://stytch.com/docs/api/metadata) reference for complete field behavior details.
       #   The type of this field is nilable +object+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -361,7 +367,7 @@ module Stytch
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def create(
-        scopes:,
+        scopes: ,
         client_id: nil,
         client_secret: nil,
         client_name: nil,
@@ -372,32 +378,35 @@ module Stytch
         request = {
           scopes: scopes
         }
-        request[:client_id] = client_id unless client_id.nil?
-        request[:client_secret] = client_secret unless client_secret.nil?
-        request[:client_name] = client_name unless client_name.nil?
-        request[:client_description] = client_description unless client_description.nil?
-        request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
+        request[:client_id] = client_id if client_id != nil
+        request[:client_secret] = client_secret if client_secret != nil
+        request[:client_name] = client_name if client_name != nil
+        request[:client_description] = client_description if client_description != nil
+        request[:trusted_metadata] = trusted_metadata if trusted_metadata != nil
 
-        post_request('/v1/m2m/clients', request, headers)
+        post_request("/v1/m2m/clients", request, headers)
       end
+
+
 
       class Secrets
         include Stytch::RequestHelper
 
         def initialize(connection)
           @connection = connection
+
         end
 
         # Initiate the rotation of an M2M client secret. After this endpoint is called, both the client's `client_secret` and `next_client_secret` will be valid. To complete the secret rotation flow, update all usages of `client_secret` to `next_client_secret` and call the [Rotate Secret Endpoint](https://stytch.com/docs/b2b/api/m2m-rotate-secret)[Rotate Secret Endpoint](https://stytch.com/docs/api/m2m-rotate-secret) to complete the flow.
         # Secret rotation can be cancelled using the [Rotate Cancel Endpoint](https://stytch.com/docs/b2b/api/m2m-rotate-secret-cancel)[Rotate Cancel Endpoint](https://stytch.com/docs/api/m2m-rotate-secret-cancel).
-        #
+        # 
         # **Important:** This is the only time you will be able to view the generated `next_client_secret` in the API response. Stytch stores a hash of the `next_client_secret` and cannot recover the value if lost. Be sure to persist the `next_client_secret` in a secure location. If the `next_client_secret` is lost, you will need to trigger a secret rotation flow to receive another one.
-        #
+        # 
         # == Parameters:
         # client_id::
         #   The ID of the client.
         #   The type of this field is +String+.
-        #
+        # 
         # == Returns:
         # An object with the following fields:
         # request_id::
@@ -410,22 +419,23 @@ module Stytch
         #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
         #   The type of this field is +Integer+.
         def rotate_start(
-          client_id:
+          client_id: 
         )
           headers = {}
-          request = {}
+          request = {
+          }
 
           post_request("/v1/m2m/clients/#{client_id}/secrets/rotate/start", request, headers)
         end
 
         # Cancel the rotation of an M2M client secret started with the [Start Secret Rotation Endpoint](https://stytch.com/docs/b2b/api/m2m-rotate-secret-start) [Start Secret Rotation Endpoint](https://stytch.com/docs/api/m2m-rotate-secret-start).
         # After this endpoint is called, the client's `next_client_secret` is discarded and only the original `client_secret` will be valid.
-        #
+        # 
         # == Parameters:
         # client_id::
         #   The ID of the client.
         #   The type of this field is +String+.
-        #
+        # 
         # == Returns:
         # An object with the following fields:
         # request_id::
@@ -438,22 +448,23 @@ module Stytch
         #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
         #   The type of this field is +Integer+.
         def rotate_cancel(
-          client_id:
+          client_id: 
         )
           headers = {}
-          request = {}
+          request = {
+          }
 
           post_request("/v1/m2m/clients/#{client_id}/secrets/rotate/cancel", request, headers)
         end
 
         # Complete the rotation of an M2M client secret started with the [Start Secret Rotation Endpoint](https://stytch.com/docs/b2b/api/m2m-rotate-secret-start) [Start Secret Rotation Endpoint](https://stytch.com/docs/api/m2m-rotate-secret-start).
         # After this endpoint is called, the client's `next_client_secret` becomes its `client_secret` and the previous `client_secret` will no longer be valid.
-        #
+        # 
         # == Parameters:
         # client_id::
         #   The ID of the client.
         #   The type of this field is +String+.
-        #
+        # 
         # == Returns:
         # An object with the following fields:
         # request_id::
@@ -466,13 +477,17 @@ module Stytch
         #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
         #   The type of this field is +Integer+.
         def rotate(
-          client_id:
+          client_id: 
         )
           headers = {}
-          request = {}
+          request = {
+          }
 
           post_request("/v1/m2m/clients/#{client_id}/secrets/rotate", request, headers)
         end
+
+
+
       end
     end
   end
