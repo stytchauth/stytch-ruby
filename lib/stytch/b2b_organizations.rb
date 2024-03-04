@@ -502,9 +502,12 @@ module StytchB2B
 
     class Members
       include Stytch::RequestHelper
+      attr_reader :oauth_providers
 
       def initialize(connection)
         @connection = connection
+
+        @oauth_providers = StytchB2B::Organizations::Members::OAuthProviders.new(@connection)
       end
 
       # Updates a Member specified by `organization_id` and `member_id`.
@@ -582,7 +585,10 @@ module StytchB2B
       #   authentication factors with the affected SSO connection IDs will be revoked.
       #   The type of this field is nilable +Boolean+.
       # default_mfa_method::
-      #   The Member's default MFA method. This value is used to determine which secondary MFA method to use in the case of multiple methods registered for a Member. The current possible values are `sms_otp` and `totp`.
+      #   Sets whether the Member is enrolled in MFA. If true, the Member must complete an MFA step whenever they wish to log in to their Organization. If false, the Member only needs to complete an MFA step if the Organization's MFA policy is set to `REQUIRED_FOR_ALL`.
+      #
+      # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.default-mfa-method` action on the `stytch.member` Resource.
+      #   Alternatively, if the Member Session matches the Member associated with the `member_id` passed in the request, the authorization check will also allow a Member Session that has permission to perform the `update.settings.default-mfa-method` action on the `stytch.self` Resource.
       #   The type of this field is nilable +String+.
       #
       # == Returns:
@@ -1039,6 +1045,114 @@ module StytchB2B
         }
         request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/member", query_params)
         get_request(request, headers)
+      end
+
+      class OAuthProviders
+        include Stytch::RequestHelper
+
+        def initialize(connection)
+          @connection = connection
+        end
+
+        # Retrieve the saved Google access token and ID token for a member. After a successful OAuth login, Stytch will save the
+        # issued access token and ID token from the identity provider. If a refresh token has been issued, Stytch will refresh the
+        # access token automatically.
+        #
+        # __Note:__ Google does not issue a refresh token on every login, and refresh tokens may expire if unused.
+        # To force a refresh token to be issued, pass the `?provider_prompt=consent` query param into the
+        # [Start Google OAuth flow](https://stytch.com/docs/b2b/api/oauth-google-start) endpoint.
+        #
+        # == Parameters:
+        # organization_id::
+        #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+        #   The type of this field is +String+.
+        # member_id::
+        #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
+        #   The type of this field is +String+.
+        #
+        # == Returns:
+        # An object with the following fields:
+        # request_id::
+        #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+        #   The type of this field is +String+.
+        # provider_type::
+        #   Denotes the OAuth identity provider that the user has authenticated with, e.g. Google, Microsoft, GitHub etc.
+        #   The type of this field is +String+.
+        # provider_subject::
+        #   The unique identifier for the User within a given OAuth provider. Also commonly called the `sub` or "Subject field" in OAuth protocols.
+        #   The type of this field is +String+.
+        # access_token::
+        #   The `access_token` that you may use to access the User's data in the provider's API.
+        #   The type of this field is +String+.
+        # access_token_expires_in::
+        #   The number of seconds until the access token expires.
+        #   The type of this field is +Integer+.
+        # id_token::
+        #   The `id_token` returned by the OAuth provider. ID Tokens are JWTs that contain structured information about a user. The exact content of each ID Token varies from provider to provider. ID Tokens are returned from OAuth providers that conform to the [OpenID Connect](https://openid.net/foundation/) specification, which is based on OAuth.
+        #   The type of this field is +String+.
+        # scopes::
+        #   The OAuth scopes included for a given provider. See each provider's section above to see which scopes are included by default and how to add custom scopes.
+        #   The type of this field is list of +String+.
+        # status_code::
+        #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+        #   The type of this field is +Integer+.
+        def google(
+          organization_id:,
+          member_id:
+        )
+          headers = {}
+          query_params = {}
+          request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/oauth_providers/google", query_params)
+          get_request(request, headers)
+        end
+
+        # Retrieve the saved Microsoft access token and ID token for a member. After a successful OAuth login, Stytch will save the
+        # issued access token and ID token from the identity provider. If a refresh token has been issued, Stytch will refresh the
+        # access token automatically.
+        #
+        # == Parameters:
+        # organization_id::
+        #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+        #   The type of this field is +String+.
+        # member_id::
+        #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
+        #   The type of this field is +String+.
+        #
+        # == Returns:
+        # An object with the following fields:
+        # request_id::
+        #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+        #   The type of this field is +String+.
+        # provider_type::
+        #   Denotes the OAuth identity provider that the user has authenticated with, e.g. Google, Microsoft, GitHub etc.
+        #   The type of this field is +String+.
+        # provider_subject::
+        #   The unique identifier for the User within a given OAuth provider. Also commonly called the `sub` or "Subject field" in OAuth protocols.
+        #   The type of this field is +String+.
+        # access_token::
+        #   The `access_token` that you may use to access the User's data in the provider's API.
+        #   The type of this field is +String+.
+        # access_token_expires_in::
+        #   The number of seconds until the access token expires.
+        #   The type of this field is +Integer+.
+        # id_token::
+        #   The `id_token` returned by the OAuth provider. ID Tokens are JWTs that contain structured information about a user. The exact content of each ID Token varies from provider to provider. ID Tokens are returned from OAuth providers that conform to the [OpenID Connect](https://openid.net/foundation/) specification, which is based on OAuth.
+        #   The type of this field is +String+.
+        # scopes::
+        #   The OAuth scopes included for a given provider. See each provider's section above to see which scopes are included by default and how to add custom scopes.
+        #   The type of this field is list of +String+.
+        # status_code::
+        #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+        #   The type of this field is +Integer+.
+        def microsoft(
+          organization_id:,
+          member_id:
+        )
+          headers = {}
+          query_params = {}
+          request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/oauth_providers/microsoft", query_params)
+          get_request(request, headers)
+        end
       end
     end
   end
