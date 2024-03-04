@@ -584,6 +584,9 @@ module StytchB2B
       # default_mfa_method::
       #   The Member's default MFA method. This value is used to determine which secondary MFA method to use in the case of multiple methods registered for a Member. The current possible values are `sms_otp` and `totp`.
       #   The type of this field is nilable +String+.
+      # email_address::
+      #   Updates the Member's `email_address`, if provided.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -617,6 +620,7 @@ module StytchB2B
         roles: nil,
         preserve_existing_sessions: nil,
         default_mfa_method: nil,
+        email_address: nil,
         method_options: nil
       )
         headers = {}
@@ -631,6 +635,7 @@ module StytchB2B
         request[:roles] = roles unless roles.nil?
         request[:preserve_existing_sessions] = preserve_existing_sessions unless preserve_existing_sessions.nil?
         request[:default_mfa_method] = default_mfa_method unless default_mfa_method.nil?
+        request[:email_address] = email_address unless email_address.nil?
 
         put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", request, headers)
       end
