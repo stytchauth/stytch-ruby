@@ -590,6 +590,9 @@ module StytchB2B
       # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.default-mfa-method` action on the `stytch.member` Resource.
       #   Alternatively, if the Member Session matches the Member associated with the `member_id` passed in the request, the authorization check will also allow a Member Session that has permission to perform the `update.settings.default-mfa-method` action on the `stytch.self` Resource.
       #   The type of this field is nilable +String+.
+      # email_address::
+      #   Updates the Member's `email_address`, if provided.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -623,6 +626,7 @@ module StytchB2B
         roles: nil,
         preserve_existing_sessions: nil,
         default_mfa_method: nil,
+        email_address: nil,
         method_options: nil
       )
         headers = {}
@@ -637,6 +641,7 @@ module StytchB2B
         request[:roles] = roles unless roles.nil?
         request[:preserve_existing_sessions] = preserve_existing_sessions unless preserve_existing_sessions.nil?
         request[:default_mfa_method] = default_mfa_method unless default_mfa_method.nil?
+        request[:email_address] = email_address unless email_address.nil?
 
         put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", request, headers)
       end
