@@ -592,6 +592,10 @@ module StytchB2B
       #   The type of this field is nilable +String+.
       # email_address::
       #   Updates the Member's `email_address`, if provided.
+      #         If a Member's email address is changed, other Members in the same Organization cannot use the old email address, although the Member may update back to their old email address.
+      #         A Member's email address can only be useable again by other Members if the Member is deleted.
+      #
+      # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.info.email` action on the `stytch.member` Resource. Members cannot update their own email address.
       #   The type of this field is nilable +String+.
       #
       # == Returns:
@@ -1074,6 +1078,9 @@ module StytchB2B
         # member_id::
         #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
         #   The type of this field is +String+.
+        # include_refresh_token::
+        #   Whether to return the refresh token Stytch has stored for the OAuth Provider. **Important:** If your application exchanges the refresh token, Stytch may not be able to automatically refresh access tokens in the future.
+        #   The type of this field is nilable +Boolean+.
         #
         # == Returns:
         # An object with the following fields:
@@ -1101,12 +1108,18 @@ module StytchB2B
         # status_code::
         #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
         #   The type of this field is +Integer+.
+        # refresh_token::
+        #   The `refresh_token` that you may use to obtain a new `access_token` for the User within the provider's API.
+        #   The type of this field is nilable +String+.
         def google(
           organization_id:,
-          member_id:
+          member_id:,
+          include_refresh_token: nil
         )
           headers = {}
-          query_params = {}
+          query_params = {
+            include_refresh_token: include_refresh_token
+          }
           request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/oauth_providers/google", query_params)
           get_request(request, headers)
         end
@@ -1122,6 +1135,9 @@ module StytchB2B
         # member_id::
         #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
         #   The type of this field is +String+.
+        # include_refresh_token::
+        #   Whether to return the refresh token Stytch has stored for the OAuth Provider. **Important:** If your application exchanges the refresh token, Stytch may not be able to automatically refresh access tokens in the future.
+        #   The type of this field is nilable +Boolean+.
         #
         # == Returns:
         # An object with the following fields:
@@ -1149,12 +1165,18 @@ module StytchB2B
         # status_code::
         #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
         #   The type of this field is +Integer+.
+        # refresh_token::
+        #   The `refresh_token` that you may use to obtain a new `access_token` for the User within the provider's API.
+        #   The type of this field is nilable +String+.
         def microsoft(
           organization_id:,
-          member_id:
+          member_id:,
+          include_refresh_token: nil
         )
           headers = {}
-          query_params = {}
+          query_params = {
+            include_refresh_token: include_refresh_token
+          }
           request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/oauth_providers/microsoft", query_params)
           get_request(request, headers)
         end
