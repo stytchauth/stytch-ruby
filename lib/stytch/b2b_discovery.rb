@@ -117,6 +117,9 @@ module StytchB2B
       # mfa_required::
       #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
       #   The type of this field is nilable +MfaRequired+ (+object+).
+      # primary_required::
+      #   (no documentation yet)
+      #   The type of this field is nilable +PrimaryRequired+ (+object+).
       def exchange(
         intermediate_session_token:,
         organization_id:,
@@ -312,6 +315,9 @@ module StytchB2B
       # mfa_required::
       #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
       #   The type of this field is nilable +MfaRequired+ (+object+).
+      # primary_required::
+      #   (no documentation yet)
+      #   The type of this field is nilable +PrimaryRequired+ (+object+).
       def create(
         intermediate_session_token:,
         organization_name:,

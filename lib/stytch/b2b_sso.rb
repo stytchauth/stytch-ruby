@@ -181,6 +181,9 @@ module StytchB2B
     # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
     #
     #   The type of this field is nilable +AuthenticateRequestLocale+ (string enum).
+    # intermediate_session_token::
+    #   (no documentation yet)
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -234,7 +237,8 @@ module StytchB2B
       session_jwt: nil,
       session_duration_minutes: nil,
       session_custom_claims: nil,
-      locale: nil
+      locale: nil,
+      intermediate_session_token: nil
     )
       headers = {}
       request = {
@@ -246,6 +250,7 @@ module StytchB2B
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
       request[:locale] = locale unless locale.nil?
+      request[:intermediate_session_token] = intermediate_session_token unless intermediate_session_token.nil?
 
       post_request('/v1/b2b/sso/authenticate', request, headers)
     end
@@ -469,7 +474,7 @@ module StytchB2B
       #   The type of this field is nilable +String+.
       # saml_connection_implicit_role_assignments::
       #   All Members who log in with this SAML connection will implicitly receive the specified Roles. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment.
-      #   The type of this field is nilable list of +String+.
+      #   The type of this field is nilable list of +SAMLConnectionImplicitRoleAssignment+.
       # saml_group_implicit_role_assignments::
       #   Defines the names of the SAML groups
       #  that grant specific role assignments. For each group-Role pair, if a Member logs in with this SAML connection and
@@ -477,7 +482,7 @@ module StytchB2B
       #  [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment.
       #          Before adding any group implicit role assignments, you must add a "groups" key to your SAML connection's
       #          `attribute_mapping`. Make sure that your IdP is configured to correctly send the group information.
-      #   The type of this field is nilable list of +String+.
+      #   The type of this field is nilable list of +SAMLGroupImplicitRoleAssignment+.
       # alternative_audience_uri::
       #   An alternative URL to use for the Audience Restriction. This value can be used when you wish to migrate an existing SAML integration to Stytch with zero downtime.
       #   The type of this field is nilable +String+.

@@ -71,6 +71,9 @@ module StytchB2B
     # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
     #
     #   The type of this field is nilable +AuthenticateRequestLocale+ (string enum).
+    # intermediate_session_token::
+    #   (no documentation yet)
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -128,6 +131,9 @@ module StytchB2B
     # mfa_required::
     #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
     #   The type of this field is nilable +MfaRequired+ (+object+).
+    # primary_required::
+    #   (no documentation yet)
+    #   The type of this field is nilable +PrimaryRequired+ (+object+).
     def authenticate(
       oauth_token:,
       session_token: nil,
@@ -135,7 +141,8 @@ module StytchB2B
       session_jwt: nil,
       session_custom_claims: nil,
       pkce_code_verifier: nil,
-      locale: nil
+      locale: nil,
+      intermediate_session_token: nil
     )
       headers = {}
       request = {
@@ -147,6 +154,7 @@ module StytchB2B
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
       request[:pkce_code_verifier] = pkce_code_verifier unless pkce_code_verifier.nil?
       request[:locale] = locale unless locale.nil?
+      request[:intermediate_session_token] = intermediate_session_token unless intermediate_session_token.nil?
 
       post_request('/v1/b2b/oauth/authenticate', request, headers)
     end

@@ -76,6 +76,9 @@ module StytchB2B
     # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
     #
     #   The type of this field is nilable +AuthenticateRequestLocale+ (string enum).
+    # intermediate_session_token::
+    #   (no documentation yet)
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -133,7 +136,8 @@ module StytchB2B
       session_jwt: nil,
       session_duration_minutes: nil,
       session_custom_claims: nil,
-      locale: nil
+      locale: nil,
+      intermediate_session_token: nil
     )
       headers = {}
       request = {
@@ -145,6 +149,7 @@ module StytchB2B
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
       request[:locale] = locale unless locale.nil?
+      request[:intermediate_session_token] = intermediate_session_token unless intermediate_session_token.nil?
 
       post_request('/v1/b2b/magic_links/authenticate', request, headers)
     end
