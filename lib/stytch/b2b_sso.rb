@@ -474,7 +474,7 @@ module StytchB2B
       #   The type of this field is nilable +String+.
       # saml_connection_implicit_role_assignments::
       #   All Members who log in with this SAML connection will implicitly receive the specified Roles. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment.
-      #   The type of this field is nilable list of +String+.
+      #   The type of this field is nilable list of +SAMLConnectionImplicitRoleAssignment+.
       # saml_group_implicit_role_assignments::
       #   Defines the names of the SAML groups
       #  that grant specific role assignments. For each group-Role pair, if a Member logs in with this SAML connection and
@@ -482,7 +482,7 @@ module StytchB2B
       #  [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment.
       #          Before adding any group implicit role assignments, you must add a "groups" key to your SAML connection's
       #          `attribute_mapping`. Make sure that your IdP is configured to correctly send the group information.
-      #   The type of this field is nilable list of +String+.
+      #   The type of this field is nilable list of +SAMLGroupImplicitRoleAssignment+.
       # alternative_audience_uri::
       #   An alternative URL to use for the Audience Restriction. This value can be used when you wish to migrate an existing SAML integration to Stytch with zero downtime.
       #   The type of this field is nilable +String+.

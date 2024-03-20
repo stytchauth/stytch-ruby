@@ -353,7 +353,7 @@ module StytchB2B
     #   for more information about role assignment.
     #
     # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.implicit-roles` action on the `stytch.organization` Resource.
-    #   The type of this field is nilable list of +String+.
+    #   The type of this field is nilable list of +EmailImplicitRoleAssignment+.
     # mfa_methods::
     #   The setting that controls which MFA methods can be used by Members of an Organization. The accepted values are:
     #
@@ -1079,7 +1079,7 @@ module StytchB2B
         #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
         #   The type of this field is +String+.
         # include_refresh_token::
-        #   Whether to return the refresh token Stytch has stored for the OAuth Provider. **Important:** If your application exchanges the refresh token, Stytch may not be able to automatically refresh access tokens in the future.
+        #   (no documentation yet)
         #   The type of this field is nilable +Boolean+.
         #
         # == Returns:
@@ -1109,7 +1109,7 @@ module StytchB2B
         #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
         #   The type of this field is +Integer+.
         # refresh_token::
-        #   The `refresh_token` that you may use to obtain a new `access_token` for the User within the provider's API.
+        #   (no documentation yet)
         #   The type of this field is nilable +String+.
         def google(
           organization_id:,
@@ -1136,7 +1136,7 @@ module StytchB2B
         #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
         #   The type of this field is +String+.
         # include_refresh_token::
-        #   Whether to return the refresh token Stytch has stored for the OAuth Provider. **Important:** If your application exchanges the refresh token, Stytch may not be able to automatically refresh access tokens in the future.
+        #   (no documentation yet)
         #   The type of this field is nilable +Boolean+.
         #
         # == Returns:
@@ -1166,7 +1166,7 @@ module StytchB2B
         #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
         #   The type of this field is +Integer+.
         # refresh_token::
-        #   The `refresh_token` that you may use to obtain a new `access_token` for the User within the provider's API.
+        #   (no documentation yet)
         #   The type of this field is nilable +String+.
         def microsoft(
           organization_id:,
