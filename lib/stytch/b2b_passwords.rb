@@ -256,7 +256,7 @@ module StytchB2B
     #
     #   The type of this field is nilable +AuthenticateRequestLocale+ (string enum).
     # intermediate_session_token::
-    #   (no documentation yet)
+    #   Adds this primary authentication factor to the intermediate session token. If the resulting set of factors satisfies the organization's primary authentication requirements and MFA requirements, the intermediate session token will be consumed and converted to a member session. If not, the same intermediate session token will be returned.
     #   The type of this field is nilable +String+.
     #
     # == Returns:
@@ -283,10 +283,7 @@ module StytchB2B
     #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
     #   The type of this field is +Organization+ (+object+).
     # intermediate_session_token::
-    #   The returned Intermediate Session Token contains a password factor associated with the Member.
-    #       The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp),
-    #       or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete the MFA flow and log in to the Organization.
-    #       Password factors are not transferable between Organizations, so the intermediate session token is not valid for use with discovery endpoints.
+    #   The returned Intermediate Session Token contains a password factor associated with the Member. If this value is non-empty, the member must complete an MFA step to finish logging in to the Organization. The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp), or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete an MFA flow and log in to the Organization. Password factors are not transferable between Organizations, so the intermediate session token is not valid for use with discovery endpoints.
     #   The type of this field is +String+.
     # member_authenticated::
     #   Indicates whether the Member is fully authenticated. If false, the Member needs to complete an MFA step to log in to the Organization.
@@ -479,7 +476,7 @@ module StytchB2B
       #
       #   The type of this field is nilable +ResetRequestLocale+ (string enum).
       # intermediate_session_token::
-      #   (no documentation yet)
+      #   Adds this primary authentication factor to the intermediate session token. If the resulting set of factors satisfies the organization's primary authentication requirements and MFA requirements, the intermediate session token will be consumed and converted to a member session. If not, the same intermediate session token will be returned.
       #   The type of this field is nilable +String+.
       #
       # == Returns:
@@ -509,10 +506,7 @@ module StytchB2B
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
       #   The type of this field is +Organization+ (+object+).
       # intermediate_session_token::
-      #   The returned Intermediate Session Token contains a password factor associated with the Member.
-      #       The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp),
-      #       or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete the MFA flow and log in to the Organization.
-      #       Password factors are not transferable between Organizations, so the intermediate session token is not valid for use with discovery endpoints.
+      #   The returned Intermediate Session Token contains a password factor associated with the Member. If this value is non-empty, the member must complete an MFA step to finish logging in to the Organization. The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp), or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete an MFA flow and log in to the Organization. Password factors are not transferable between Organizations, so the intermediate session token is not valid for use with discovery endpoints.
       #   The type of this field is +String+.
       # member_authenticated::
       #   Indicates whether the Member is fully authenticated. If false, the Member needs to complete an MFA step to log in to the Organization.
@@ -624,11 +618,7 @@ module StytchB2B
       #   The JSON Web Token (JWT) for a given Stytch Session.
       #   The type of this field is +String+.
       # intermediate_session_token::
-      #   The Intermediate Session Token. This token does not necessarily belong to a specific instance of a Member, but represents a bag of factors that may be converted to a member session.
-      #     The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp),
-      #     or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete an MFA flow;
-      #     the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) to join a specific Organization that allows the factors represented by the intermediate session token;
-      #     or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to create a new Organization and Member.
+      #   The Intermediate Session Token. This token does not necessarily belong to a specific instance of a Member, but represents a bag of factors that may be converted to a member session. The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp), or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete an MFA flow and log in to the Organization. It can also be used with the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) to join a specific Organization that allows the factors represented by the intermediate session token; or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to create a new Organization and Member.
       #   The type of this field is +String+.
       # member_authenticated::
       #   Indicates whether the Member is fully authenticated. If false, the Member needs to complete an MFA step to log in to the Organization.
@@ -756,10 +746,7 @@ module StytchB2B
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
       #   The type of this field is +Organization+ (+object+).
       # intermediate_session_token::
-      #   The returned Intermediate Session Token contains a password factor associated with the Member.
-      #       The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp),
-      #       or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete the MFA flow and log in to the Organization.
-      #       Password factors are not transferable between Organizations, so the intermediate session token is not valid for use with discovery endpoints.
+      #   The returned Intermediate Session Token contains a password factor associated with the Member. If this value is non-empty, the member must complete an MFA step to finish logging in to the Organization. The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp), or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete an MFA flow and log in to the Organization. Password factors are not transferable between Organizations, so the intermediate session token is not valid for use with discovery endpoints.
       #   The type of this field is +String+.
       # member_authenticated::
       #   Indicates whether the Member is fully authenticated. If false, the Member needs to complete an MFA step to log in to the Organization.
