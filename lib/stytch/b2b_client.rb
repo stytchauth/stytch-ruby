@@ -13,13 +13,14 @@ require_relative 'b2b_sessions'
 require_relative 'b2b_sso'
 require_relative 'b2b_totps'
 require_relative 'm2m'
+require_relative 'project'
 require_relative 'rbac_local'
 
 module StytchB2B
   class Client
     ENVIRONMENTS = %i[live test].freeze
 
-    attr_reader :discovery, :m2m, :magic_links, :oauth, :otps, :organizations, :passwords, :rbac, :recovery_codes, :scim, :sso, :sessions, :totps
+    attr_reader :discovery, :m2m, :magic_links, :oauth, :otps, :organizations, :passwords, :project, :rbac, :recovery_codes, :scim, :sso, :sessions, :totps
 
     def initialize(project_id:, secret:, env: nil, &block)
       @api_host   = api_host(env, project_id)
@@ -38,6 +39,7 @@ module StytchB2B
       @otps = StytchB2B::OTPs.new(@connection)
       @organizations = StytchB2B::Organizations.new(@connection)
       @passwords = StytchB2B::Passwords.new(@connection)
+      @project = Stytch::Project.new(@connection)
       @rbac = StytchB2B::RBAC.new(@connection)
       @recovery_codes = StytchB2B::RecoveryCodes.new(@connection)
       @scim = StytchB2B::SCIM.new(@connection)
