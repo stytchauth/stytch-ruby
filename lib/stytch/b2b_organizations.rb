@@ -500,6 +500,15 @@ module StytchB2B
       post_request('/v1/b2b/organizations/search', request, headers)
     end
 
+    def metrics(
+      organization_id:
+    )
+      headers = {}
+      query_params = {}
+      request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/metrics", query_params)
+      get_request(request, headers)
+    end
+
     class Members
       include Stytch::RequestHelper
       attr_reader :oauth_providers
