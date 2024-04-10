@@ -9,7 +9,6 @@
 require_relative 'request_helper'
 
 module StytchB2B
-
   class MagicLinks
     include Stytch::RequestHelper
     attr_reader :email, :discovery
@@ -23,15 +22,15 @@ module StytchB2B
 
     # Authenticate a Member with a Magic Link. This endpoint requires a Magic Link token that is not expired or previously used. If the Member’s status is `pending` or `invited`, they will be updated to `active`.
     # Provide the `session_duration_minutes` parameter to set the lifetime of the session. If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration.
-    # 
+    #
     # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
-    # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp), 
+    # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp),
     # or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete the MFA step and acquire a full member session.
     # The `intermediate_session_token` can also be used with the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to join a different Organization or create a new one.
     # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
-    # 
+    #
     # If a valid `session_token` or `session_jwt` is passed in, the Member will not be required to complete an MFA step.
-    # 
+    #
     # == Parameters:
     # magic_links_token::
     #   The Email Magic Link token to authenticate.
@@ -50,14 +49,14 @@ module StytchB2B
     #       are provided.
     #   The type of this field is nilable +String+.
     # session_duration_minutes::
-    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist, 
+    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
     #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-    # 
+    #
     #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-    #   
+    #
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-    #   
+    #
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
     #   to use the Stytch session product, you can ignore the session fields in the response.
     #   The type of this field is nilable +Integer+.
@@ -69,18 +68,18 @@ module StytchB2B
     #   The type of this field is nilable +object+.
     # locale::
     #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
-    # 
+    #
     # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
-    # 
+    #
     # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
-    # 
+    #
     # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
-    # 
+    #
     #   The type of this field is nilable +AuthenticateRequestLocale+ (string enum).
     # intermediate_session_token::
     #   Adds this primary authentication factor to the intermediate session token. If the resulting set of factors satisfies the organization's primary authentication requirements and MFA requirements, the intermediate session token will be consumed and converted to a member session. If not, the same intermediate session token will be returned.
     #   The type of this field is nilable +String+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -127,7 +126,7 @@ module StytchB2B
     #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
     #   The type of this field is nilable +MfaRequired+ (+object+).
     def authenticate(
-      magic_links_token: ,
+      magic_links_token:,
       pkce_code_verifier: nil,
       session_token: nil,
       session_jwt: nil,
@@ -140,18 +139,16 @@ module StytchB2B
       request = {
         magic_links_token: magic_links_token
       }
-      request[:pkce_code_verifier] = pkce_code_verifier if pkce_code_verifier != nil
-      request[:session_token] = session_token if session_token != nil
-      request[:session_jwt] = session_jwt if session_jwt != nil
-      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
-      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
-      request[:locale] = locale if locale != nil
-      request[:intermediate_session_token] = intermediate_session_token if intermediate_session_token != nil
+      request[:pkce_code_verifier] = pkce_code_verifier unless pkce_code_verifier.nil?
+      request[:session_token] = session_token unless session_token.nil?
+      request[:session_jwt] = session_jwt unless session_jwt.nil?
+      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:locale] = locale unless locale.nil?
+      request[:intermediate_session_token] = intermediate_session_token unless intermediate_session_token.nil?
 
-      post_request("/v1/b2b/magic_links/authenticate", request, headers)
+      post_request('/v1/b2b/magic_links/authenticate', request, headers)
     end
-
-
 
     class Email
       include Stytch::RequestHelper
@@ -164,7 +161,7 @@ module StytchB2B
       end
 
       # Send either a login or signup magic link to a Member. A new, pending, or invited Member will receive a signup Email Magic Link. Members will have a `pending` status until they successfully authenticate. An active Member will receive a login Email Magic Link.
-      # 
+      #
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -195,13 +192,13 @@ module StytchB2B
       #   The type of this field is nilable +String+.
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
-      # 
+      #
       # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
-      # 
+      #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
-      # 
+      #
       #   The type of this field is nilable +LoginOrSignupRequestLocale+ (string enum).
-      # 
+      #
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -223,8 +220,8 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def login_or_signup(
-        organization_id: ,
-        email_address: ,
+        organization_id:,
+        email_address:,
         login_redirect_url: nil,
         signup_redirect_url: nil,
         pkce_code_challenge: nil,
@@ -237,18 +234,18 @@ module StytchB2B
           organization_id: organization_id,
           email_address: email_address
         }
-        request[:login_redirect_url] = login_redirect_url if login_redirect_url != nil
-        request[:signup_redirect_url] = signup_redirect_url if signup_redirect_url != nil
-        request[:pkce_code_challenge] = pkce_code_challenge if pkce_code_challenge != nil
-        request[:login_template_id] = login_template_id if login_template_id != nil
-        request[:signup_template_id] = signup_template_id if signup_template_id != nil
-        request[:locale] = locale if locale != nil
+        request[:login_redirect_url] = login_redirect_url unless login_redirect_url.nil?
+        request[:signup_redirect_url] = signup_redirect_url unless signup_redirect_url.nil?
+        request[:pkce_code_challenge] = pkce_code_challenge unless pkce_code_challenge.nil?
+        request[:login_template_id] = login_template_id unless login_template_id.nil?
+        request[:signup_template_id] = signup_template_id unless signup_template_id.nil?
+        request[:locale] = locale unless locale.nil?
 
-        post_request("/v1/b2b/magic_links/email/login_or_signup", request, headers)
+        post_request('/v1/b2b/magic_links/email/login_or_signup', request, headers)
       end
 
       # Send an invite email to a new Member to join an Organization. The Member will be created with an `invited` status until they successfully authenticate. Sending invites to `pending` Members will update their status to `invited`. Sending invites to already `active` Members will return an error. /%}
-      # 
+      #
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -281,17 +278,17 @@ module StytchB2B
       #   The type of this field is nilable +String+.
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
-      # 
+      #
       # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
-      # 
+      #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
-      # 
+      #
       #   The type of this field is nilable +InviteRequestLocale+ (string enum).
       # roles::
       #   Roles to explicitly assign to this Member. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment)
       #    for more information about role assignment.
       #   The type of this field is nilable list of +String+.
-      # 
+      #
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -309,12 +306,12 @@ module StytchB2B
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
-      # 
+      #
       # == Method Options:
       # This method supports an optional +InviteRequestOptions+ object which will modify the headers sent in the HTTP request.
       def invite(
-        organization_id: ,
-        email_address: ,
+        organization_id:,
+        email_address:,
         invite_redirect_url: nil,
         invited_by_member_id: nil,
         name: nil,
@@ -326,35 +323,32 @@ module StytchB2B
         method_options: nil
       )
         headers = {}
-        headers = headers.merge(method_options.to_headers) if method_options != nil
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
         request = {
           organization_id: organization_id,
           email_address: email_address
         }
-        request[:invite_redirect_url] = invite_redirect_url if invite_redirect_url != nil
-        request[:invited_by_member_id] = invited_by_member_id if invited_by_member_id != nil
-        request[:name] = name if name != nil
-        request[:trusted_metadata] = trusted_metadata if trusted_metadata != nil
-        request[:untrusted_metadata] = untrusted_metadata if untrusted_metadata != nil
-        request[:invite_template_id] = invite_template_id if invite_template_id != nil
-        request[:locale] = locale if locale != nil
-        request[:roles] = roles if roles != nil
+        request[:invite_redirect_url] = invite_redirect_url unless invite_redirect_url.nil?
+        request[:invited_by_member_id] = invited_by_member_id unless invited_by_member_id.nil?
+        request[:name] = name unless name.nil?
+        request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
+        request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
+        request[:invite_template_id] = invite_template_id unless invite_template_id.nil?
+        request[:locale] = locale unless locale.nil?
+        request[:roles] = roles unless roles.nil?
 
-        post_request("/v1/b2b/magic_links/email/invite", request, headers)
+        post_request('/v1/b2b/magic_links/email/invite', request, headers)
       end
-
-
 
       class Discovery
         include Stytch::RequestHelper
 
         def initialize(connection)
           @connection = connection
-
         end
 
         # Send a discovery magic link to an email address.
-        # 
+        #
         # == Parameters:
         # email_address::
         #   The email address of the Member.
@@ -373,13 +367,13 @@ module StytchB2B
         #   The type of this field is nilable +String+.
         # locale::
         #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
-        # 
+        #
         # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
-        # 
+        #
         # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
-        # 
+        #
         #   The type of this field is nilable +SendRequestLocale+ (string enum).
-        # 
+        #
         # == Returns:
         # An object with the following fields:
         # request_id::
@@ -389,7 +383,7 @@ module StytchB2B
         #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
         #   The type of this field is +Integer+.
         def send(
-          email_address: ,
+          email_address:,
           discovery_redirect_url: nil,
           pkce_code_challenge: nil,
           login_template_id: nil,
@@ -399,28 +393,25 @@ module StytchB2B
           request = {
             email_address: email_address
           }
-          request[:discovery_redirect_url] = discovery_redirect_url if discovery_redirect_url != nil
-          request[:pkce_code_challenge] = pkce_code_challenge if pkce_code_challenge != nil
-          request[:login_template_id] = login_template_id if login_template_id != nil
-          request[:locale] = locale if locale != nil
+          request[:discovery_redirect_url] = discovery_redirect_url unless discovery_redirect_url.nil?
+          request[:pkce_code_challenge] = pkce_code_challenge unless pkce_code_challenge.nil?
+          request[:login_template_id] = login_template_id unless login_template_id.nil?
+          request[:locale] = locale unless locale.nil?
 
-          post_request("/v1/b2b/magic_links/email/discovery/send", request, headers)
+          post_request('/v1/b2b/magic_links/email/discovery/send', request, headers)
         end
-
-
-
       end
     end
+
     class Discovery
       include Stytch::RequestHelper
 
       def initialize(connection)
         @connection = connection
-
       end
 
       # Authenticates the Discovery Magic Link token and exchanges it for an Intermediate Session Token. Intermediate Session Tokens can be used for various Discovery login flows and are valid for 10 minutes.
-      # 
+      #
       # == Parameters:
       # discovery_magic_links_token::
       #   The Discovery Email Magic Link token to authenticate.
@@ -428,7 +419,7 @@ module StytchB2B
       # pkce_code_verifier::
       #   A base64url encoded one time secret used to validate that the request starts and ends on the same device.
       #   The type of this field is nilable +String+.
-      # 
+      #
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -442,36 +433,33 @@ module StytchB2B
       #   The type of this field is +String+.
       # discovered_organizations::
       #   An array of `discovered_organization` objects tied to the `intermediate_session_token`, `session_token`, or `session_jwt`. See the [Discovered Organization Object](https://stytch.com/docs/b2b/api/discovered-organization-object) for complete details.
-      #       
+      #
       #   Note that Organizations will only appear here under any of the following conditions:
       #   1. The end user is already a Member of the Organization.
-      #   2. The end user is invited to the Organization. 
-      #   3. The end user can join the Organization because: 
-      #   
+      #   2. The end user is invited to the Organization.
+      #   3. The end user can join the Organization because:
+      #
       #       a) The Organization allows JIT provisioning.
-      #       
+      #
       #       b) The Organizations' allowed domains list contains the Member's email domain.
-      #       
+      #
       #       c) The Organization has at least one other Member with a verified email address with the same domain as the end user (to prevent phishing attacks).
       #   The type of this field is list of +DiscoveredOrganization+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def authenticate(
-        discovery_magic_links_token: ,
+        discovery_magic_links_token:,
         pkce_code_verifier: nil
       )
         headers = {}
         request = {
           discovery_magic_links_token: discovery_magic_links_token
         }
-        request[:pkce_code_verifier] = pkce_code_verifier if pkce_code_verifier != nil
+        request[:pkce_code_verifier] = pkce_code_verifier unless pkce_code_verifier.nil?
 
-        post_request("/v1/b2b/magic_links/discovery/authenticate", request, headers)
+        post_request('/v1/b2b/magic_links/discovery/authenticate', request, headers)
       end
-
-
-
     end
   end
 end

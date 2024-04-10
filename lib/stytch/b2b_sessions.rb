@@ -12,7 +12,6 @@ require_relative 'errors'
 require_relative 'request_helper'
 
 module StytchB2B
-
   class Sessions
     include Stytch::RequestHelper
 
@@ -36,7 +35,7 @@ module StytchB2B
     end
 
     # Retrieves all active Sessions for a Member.
-    # 
+    #
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -44,7 +43,7 @@ module StytchB2B
     # member_id::
     #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
     #   The type of this field is +String+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -57,42 +56,42 @@ module StytchB2B
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def get(
-      organization_id: ,
-      member_id: 
+      organization_id:,
+      member_id:
     )
       headers = {}
       query_params = {
         organization_id: organization_id,
         member_id: member_id
       }
-      request = request_with_query_params("/v1/b2b/sessions", query_params)
+      request = request_with_query_params('/v1/b2b/sessions', query_params)
       get_request(request, headers)
     end
 
     # Authenticates a Session and updates its lifetime by the specified `session_duration_minutes`. If the `session_duration_minutes` is not specified, a Session will not be extended. This endpoint requires either a `session_jwt` or `session_token` be included in the request. It will return an error if both are present.
-    # 
+    #
     # You may provide a JWT that needs to be refreshed and is expired according to its `exp` claim. A new JWT will be returned if both the signature and the underlying Session are still valid.
-    # 
+    #
     # If an `authorization_check` object is passed in, this method will also check if the Member is authorized to perform the given action on the given Resource in the specified Organization. A Member is authorized if their Member Session contains a Role, assigned [explicitly or implicitly](https://stytch.com/docs/b2b/guides/rbac/role-assignment), with adequate permissions.
     # In addition, the `organization_id` passed in the authorization check must match the Member's Organization.
-    # 
+    #
     # If the Member is not authorized to perform the specified action on the specified Resource, or if the
     # `organization_id` does not match the Member's Organization, a 403 error will be thrown.
     # Otherwise, the response will contain a list of Roles that satisfied the authorization check.
-    # 
+    #
     # == Parameters:
     # session_token::
     #   A secret token for a given Stytch Session.
     #   The type of this field is nilable +String+.
     # session_duration_minutes::
-    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist, 
+    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
     #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-    # 
+    #
     #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-    #   
+    #
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-    #   
+    #
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
     #   to use the Stytch session product, you can ignore the session fields in the response.
     #   The type of this field is nilable +Integer+.
@@ -111,16 +110,16 @@ module StytchB2B
     #   their Member Session contains a Role, assigned
     #   [explicitly or implicitly](https://stytch.com/docs/b2b/guides/rbac/role-assignment), with adequate permissions.
     #   In addition, the `organization_id` passed in the authorization check must match the Member's Organization.
-    #   
+    #
     #   The Roles on the Member Session may differ from the Roles you see on the Member object - Roles that are implicitly
     #   assigned by SSO connection or SSO group will only be valid for a Member Session if there is at least one authentication
     #   factor on the Member Session from the specified SSO connection.
-    #   
+    #
     #   If the Member is not authorized to perform the specified action on the specified Resource, or if the
     #   `organization_id` does not match the Member's Organization, a 403 error will be thrown.
     #   Otherwise, the response will contain a list of Roles that satisfied the authorization check.
     #   The type of this field is nilable +AuthorizationCheck+ (+object+).
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -156,19 +155,18 @@ module StytchB2B
       authorization_check: nil
     )
       headers = {}
-      request = {
-      }
-      request[:session_token] = session_token if session_token != nil
-      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
-      request[:session_jwt] = session_jwt if session_jwt != nil
-      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
-      request[:authorization_check] = authorization_check if authorization_check != nil
+      request = {}
+      request[:session_token] = session_token unless session_token.nil?
+      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+      request[:session_jwt] = session_jwt unless session_jwt.nil?
+      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:authorization_check] = authorization_check unless authorization_check.nil?
 
-      post_request("/v1/b2b/sessions/authenticate", request, headers)
+      post_request('/v1/b2b/sessions/authenticate', request, headers)
     end
 
     # Revoke a Session and immediately invalidate all its tokens. To revoke a specific Session, pass either the `member_session_id`, `session_token`, or `session_jwt`. To revoke all Sessions for a Member, pass the `member_id`.
-    # 
+    #
     # == Parameters:
     # member_session_id::
     #   Globally unique UUID that identifies a specific Session in the Stytch API. The `member_session_id` is critical to perform operations on an Session, so be sure to preserve this value.
@@ -182,7 +180,7 @@ module StytchB2B
     # member_id::
     #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
     #   The type of this field is nilable +String+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -198,29 +196,28 @@ module StytchB2B
       member_id: nil
     )
       headers = {}
-      request = {
-      }
-      request[:member_session_id] = member_session_id if member_session_id != nil
-      request[:session_token] = session_token if session_token != nil
-      request[:session_jwt] = session_jwt if session_jwt != nil
-      request[:member_id] = member_id if member_id != nil
+      request = {}
+      request[:member_session_id] = member_session_id unless member_session_id.nil?
+      request[:session_token] = session_token unless session_token.nil?
+      request[:session_jwt] = session_jwt unless session_jwt.nil?
+      request[:member_id] = member_id unless member_id.nil?
 
-      post_request("/v1/b2b/sessions/revoke", request, headers)
+      post_request('/v1/b2b/sessions/revoke', request, headers)
     end
 
     # Use this endpoint to exchange a Member's existing session for another session in a different Organization. This can be used to accept an invite, but not to create a new member via domain matching.
-    # 
+    #
     # To create a new member via domain matching, use the [Exchange Intermediate Session](https://stytch.com/docs/b2b/api/exchange-intermediate-session) flow instead.
-    # 
+    #
     # Only Email Magic Link, OAuth, and SMS OTP factors can be transferred between sessions. Other authentication factors, such as password factors, will not be transferred to the new session.
     # Any OAuth Tokens owned by the Member will not be transferred to the new Organization.
     # SMS OTP factors can be used to fulfill MFA requirements for the target Organization if both the original and target Member have the same phone number and the phone number is verified for both Members.
-    # 
+    #
     # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
     # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
     # The `intermediate_session_token` can also be used with the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to join a different Organization or create a new one.
     # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
-    # 
+    #
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -232,14 +229,14 @@ module StytchB2B
     #   The `session_jwt` belonging to the member that you wish to associate the email with.
     #   The type of this field is nilable +String+.
     # session_duration_minutes::
-    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist, 
+    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
     #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-    # 
+    #
     #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-    #   
+    #
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-    #   
+    #
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
     #   to use the Stytch session product, you can ignore the session fields in the response.
     #   The type of this field is nilable +Integer+.
@@ -251,15 +248,15 @@ module StytchB2B
     #   The type of this field is nilable +object+.
     # locale::
     #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
-    # 
+    #
     # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
-    # 
+    #
     # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
-    # 
+    #
     # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
-    # 
+    #
     #   The type of this field is nilable +ExchangeRequestLocale+ (string enum).
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -299,7 +296,7 @@ module StytchB2B
     #   (no documentation yet)
     #   The type of this field is nilable +PrimaryRequired+ (+object+).
     def exchange(
-      organization_id: ,
+      organization_id:,
       session_token: nil,
       session_jwt: nil,
       session_duration_minutes: nil,
@@ -310,17 +307,17 @@ module StytchB2B
       request = {
         organization_id: organization_id
       }
-      request[:session_token] = session_token if session_token != nil
-      request[:session_jwt] = session_jwt if session_jwt != nil
-      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
-      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
-      request[:locale] = locale if locale != nil
+      request[:session_token] = session_token unless session_token.nil?
+      request[:session_jwt] = session_jwt unless session_jwt.nil?
+      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:locale] = locale unless locale.nil?
 
-      post_request("/v1/b2b/sessions/exchange", request, headers)
+      post_request('/v1/b2b/sessions/exchange', request, headers)
     end
 
     # Migrate a session from an external endpoint. Stytch will call the UserInfo endpoint specified in your project settings, performing a lookup using the session token passed in. If the endpoint repsonds and the response contains a valid email, Stytch will attempt to match that email with a member in your organization, and create a Stytch Session for you.
-    # 
+    #
     # == Parameters:
     # session_token::
     #   The authorization token Stytch will pass in to the external userinfo endpoint.
@@ -329,14 +326,14 @@ module StytchB2B
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
     #   The type of this field is +String+.
     # session_duration_minutes::
-    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist, 
+    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
     #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-    # 
+    #
     #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-    #   
+    #
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-    #   
+    #
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
     #   to use the Stytch session product, you can ignore the session fields in the response.
     #   The type of this field is nilable +Integer+.
@@ -346,7 +343,7 @@ module StytchB2B
     #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
     #   Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -374,8 +371,8 @@ module StytchB2B
     #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
     #   The type of this field is nilable +MemberSession+ (+object+).
     def migrate(
-      session_token: ,
-      organization_id: ,
+      session_token:,
+      organization_id:,
       session_duration_minutes: nil,
       session_custom_claims: nil
     )
@@ -384,27 +381,27 @@ module StytchB2B
         session_token: session_token,
         organization_id: organization_id
       }
-      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
-      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
+      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
 
-      post_request("/v1/b2b/sessions/migrate", request, headers)
+      post_request('/v1/b2b/sessions/migrate', request, headers)
     end
 
     # Get the JSON Web Key Set (JWKS) for a project.
-    # 
-    # JWKS are rotated every ~6 months. Upon rotation, new JWTs will be signed using the new key set, and both key sets will be returned by this endpoint for a period of 1 month. 
-    # 
-    # JWTs have a set lifetime of 5 minutes, so there will be a 5 minute period where some JWTs will be signed by the old JWKS, and some JWTs will be signed by the new JWKS. The correct JWKS to use for validation is determined by matching the `kid` value of the JWT and JWKS.  
-    # 
+    #
+    # JWKS are rotated every ~6 months. Upon rotation, new JWTs will be signed using the new key set, and both key sets will be returned by this endpoint for a period of 1 month.
+    #
+    # JWTs have a set lifetime of 5 minutes, so there will be a 5 minute period where some JWTs will be signed by the old JWKS, and some JWTs will be signed by the new JWKS. The correct JWKS to use for validation is determined by matching the `kid` value of the JWT and JWKS.
+    #
     # If you're using one of our [backend SDKs](https://stytch.com/docs/b2b/sdks), the JWKS roll will be handled for you.
-    # 
+    #
     # If you're using your own JWT validation library, many have built-in support for JWKS rotation, and you'll just need to supply this API endpoint. If not, your application should decide which JWKS to use for validation by inspecting the `kid` value.
-    # 
+    #
     # == Parameters:
     # project_id::
     #   The `project_id` to get the JWKS for.
     #   The type of this field is +String+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # keys::
@@ -417,15 +414,13 @@ module StytchB2B
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def get_jwks(
-      project_id: 
+      project_id:
     )
       headers = {}
-      query_params = {
-      }
+      query_params = {}
       request = request_with_query_params("/v1/b2b/sessions/jwks/#{project_id}", query_params)
       get_request(request, headers)
     end
-
 
     # MANUAL(Sessions::authenticate_jwt)(SERVICE_METHOD)
     # ADDIMPORT: require 'jwt'
@@ -547,7 +542,5 @@ module StytchB2B
       }
     end
     # ENDMANUAL(Sessions::authenticate_jwt)
-
-
   end
 end
