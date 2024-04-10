@@ -11,38 +11,35 @@ require_relative 'request_helper'
 module StytchB2B
   class GetConnectionsRequestOptions
     # Optional authorization object.
-    # Pass in an active Stytch Member session token or session JWT and the request
-    # will be run using that member's permissions.
+# Pass in an active Stytch Member session token or session JWT and the request
+# will be run using that member's permissions.
     attr_accessor :authorization
 
     def initialize(
-      authorization: nil
-    )
+      authorization: nil    )
       @authorization = authorization
     end
 
     def to_headers
       headers = {}
-      headers.merge!(@authorization.to_headers) if authorization
+      headers.merge!(@authorization.to_headers) if self.authorization
       headers
     end
   end
-
   class DeleteConnectionRequestOptions
     # Optional authorization object.
-    # Pass in an active Stytch Member session token or session JWT and the request
-    # will be run using that member's permissions.
+# Pass in an active Stytch Member session token or session JWT and the request
+# will be run using that member's permissions.
     attr_accessor :authorization
 
     def initialize(
-      authorization: nil
-    )
+      authorization: nil    )
       @authorization = authorization
     end
 
     def to_headers
       headers = {}
-      headers.merge!(@authorization.to_headers) if authorization
+      headers.merge!(@authorization.to_headers) if self.authorization
       headers
     end
   end
@@ -59,12 +56,12 @@ module StytchB2B
     end
 
     # Get all SSO Connections owned by the organization. /%}
-    #
+    # 
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
     #   The type of this field is +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -79,22 +76,23 @@ module StytchB2B
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
-    #
+    # 
     # == Method Options:
     # This method supports an optional +GetConnectionsRequestOptions+ object which will modify the headers sent in the HTTP request.
     def get_connections(
-      organization_id:,
+      organization_id: ,
       method_options: nil
     )
       headers = {}
-      headers = headers.merge(method_options.to_headers) unless method_options.nil?
-      query_params = {}
+      headers = headers.merge(method_options.to_headers) if method_options != nil
+      query_params = {
+      }
       request = request_with_query_params("/v1/b2b/sso/#{organization_id}", query_params)
       get_request(request, headers)
     end
 
     # Delete an existing SSO connection. /%}
-    #
+    # 
     # == Parameters:
     # organization_id::
     #   The organization ID that the SSO connection belongs to.
@@ -102,7 +100,7 @@ module StytchB2B
     # connection_id::
     #   The ID of the SSO connection. Both SAML and OIDC connection IDs can be provided.
     #   The type of this field is +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -114,32 +112,32 @@ module StytchB2B
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
-    #
+    # 
     # == Method Options:
     # This method supports an optional +DeleteConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
     def delete_connection(
-      organization_id:,
-      connection_id:,
+      organization_id: ,
+      connection_id: ,
       method_options: nil
     )
       headers = {}
-      headers = headers.merge(method_options.to_headers) unless method_options.nil?
+      headers = headers.merge(method_options.to_headers) if method_options != nil
       delete_request("/v1/b2b/sso/#{organization_id}/connections/#{connection_id}", headers)
     end
 
-    # Authenticate a user given a token.
+    # Authenticate a user given a token. 
     # This endpoint verifies that the user completed the SSO Authentication flow by verifying that the token is valid and hasn't expired.
-    # Provide the `session_duration_minutes` parameter to set the lifetime of the session.
+    # Provide the `session_duration_minutes` parameter to set the lifetime of the session. 
     # If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration.
     # To link this authentication event to an existing Stytch session, include either the `session_token` or `session_jwt` param.
-    #
+    # 
     # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
     # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp),
     # or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete the MFA step and acquire a full member session.
     # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
-    #
+    # 
     # If a valid `session_token` or `session_jwt` is passed in, the Member will not be required to complete an MFA step.
-    #
+    # 
     # == Parameters:
     # sso_token::
     #   The token to authenticate.
@@ -154,14 +152,14 @@ module StytchB2B
     #   The `session_jwt` belonging to the member that you wish to associate the email with.
     #   The type of this field is nilable +String+.
     # session_duration_minutes::
-    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
+    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist, 
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
     #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-    #
+    # 
     #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-    #
+    #   
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-    #
+    #   
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
     #   to use the Stytch session product, you can ignore the session fields in the response.
     #   The type of this field is nilable +Integer+.
@@ -173,18 +171,18 @@ module StytchB2B
     #   The type of this field is nilable +object+.
     # locale::
     #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
-    #
+    # 
     # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
-    #
+    # 
     # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
-    #
+    # 
     # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
-    #
+    # 
     #   The type of this field is nilable +AuthenticateRequestLocale+ (string enum).
     # intermediate_session_token::
     #   Adds this primary authentication factor to the intermediate session token. If the resulting set of factors satisfies the organization's primary authentication requirements and MFA requirements, the intermediate session token will be consumed and converted to a member session. If not, the same intermediate session token will be returned.
     #   The type of this field is nilable +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -228,7 +226,7 @@ module StytchB2B
     #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
     #   The type of this field is nilable +MfaRequired+ (+object+).
     def authenticate(
-      sso_token:,
+      sso_token: ,
       pkce_code_verifier: nil,
       session_token: nil,
       session_jwt: nil,
@@ -241,26 +239,29 @@ module StytchB2B
       request = {
         sso_token: sso_token
       }
-      request[:pkce_code_verifier] = pkce_code_verifier unless pkce_code_verifier.nil?
-      request[:session_token] = session_token unless session_token.nil?
-      request[:session_jwt] = session_jwt unless session_jwt.nil?
-      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
-      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
-      request[:locale] = locale unless locale.nil?
-      request[:intermediate_session_token] = intermediate_session_token unless intermediate_session_token.nil?
+      request[:pkce_code_verifier] = pkce_code_verifier if pkce_code_verifier != nil
+      request[:session_token] = session_token if session_token != nil
+      request[:session_jwt] = session_jwt if session_jwt != nil
+      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
+      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
+      request[:locale] = locale if locale != nil
+      request[:intermediate_session_token] = intermediate_session_token if intermediate_session_token != nil
 
-      post_request('/v1/b2b/sso/authenticate', request, headers)
+      post_request("/v1/b2b/sso/authenticate", request, headers)
     end
+
+
 
     class OIDC
       include Stytch::RequestHelper
 
       def initialize(connection)
         @connection = connection
+
       end
 
       # Create a new OIDC Connection. /%}
-      #
+      # 
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -268,7 +269,7 @@ module StytchB2B
       # display_name::
       #   A human-readable display name for the connection.
       #   The type of this field is nilable +String+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -280,32 +281,33 @@ module StytchB2B
       # connection::
       #   The `OIDC Connection` object affected by this API call. See the [OIDC Connection Object](https://stytch.com/docs/b2b/api/oidc-connection-object) for complete response field details.
       #   The type of this field is nilable +OIDCConnection+ (+object+).
-      #
+      # 
       # == Method Options:
       # This method supports an optional +CreateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
       def create_connection(
-        organization_id:,
+        organization_id: ,
         display_name: nil,
         method_options: nil
       )
         headers = {}
-        headers = headers.merge(method_options.to_headers) unless method_options.nil?
-        request = {}
-        request[:display_name] = display_name unless display_name.nil?
+        headers = headers.merge(method_options.to_headers) if method_options != nil
+        request = {
+        }
+        request[:display_name] = display_name if display_name != nil
 
         post_request("/v1/b2b/sso/oidc/#{organization_id}", request, headers)
       end
 
       # Updates an existing OIDC connection.
-      #
+      # 
       # When the value of `issuer` changes, Stytch will attempt to retrieve the [OpenID Provider Metadata](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata) document found at `$/.well-known/openid-configuration`.
       # If the metadata document can be retrieved successfully, Stytch will use it to infer the values of `authorization_url`, `token_url`, `jwks_url`, and `userinfo_url`.
       # The `client_id` and `client_secret` values cannot be inferred from the metadata document, and *must* be passed in explicitly.
-      #
+      # 
       # If the metadata document cannot be retrieved, Stytch will still update the connection using values from the request body.
-      #
-      # If the metadata document can be retrieved, and values are passed in the request body, the explicit values passed in from the request body will take precedence over the values inferred from the metadata document.
-      #
+      # 
+      # If the metadata document can be retrieved, and values are passed in the request body, the explicit values passed in from the request body will take precedence over the values inferred from the metadata document. 
+      # 
       # Note that a newly created connection will not become active until all of the following fields are provided:
       # * `issuer`
       # * `client_id`
@@ -315,7 +317,7 @@ module StytchB2B
       # * `userinfo_url`
       # * `jwks_url`
       #  /%}
-      #
+      # 
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -347,7 +349,7 @@ module StytchB2B
       # jwks_url::
       #   The location of the IdP's JSON Web Key Set, used to verify credentials issued by the IdP. This will be provided by the IdP.
       #   The type of this field is nilable +String+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -362,12 +364,12 @@ module StytchB2B
       # warning::
       #   If it is not possible to resolve the well-known metadata document from the OIDC issuer, this field will explain what went wrong if the request is successful otherwise. In other words, even if the overall request succeeds, there could be relevant warnings related to the connection update.
       #   The type of this field is nilable +String+.
-      #
+      # 
       # == Method Options:
       # This method supports an optional +UpdateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
       def update_connection(
-        organization_id:,
-        connection_id:,
+        organization_id: ,
+        connection_id: ,
         display_name: nil,
         client_id: nil,
         client_secret: nil,
@@ -379,30 +381,34 @@ module StytchB2B
         method_options: nil
       )
         headers = {}
-        headers = headers.merge(method_options.to_headers) unless method_options.nil?
-        request = {}
-        request[:display_name] = display_name unless display_name.nil?
-        request[:client_id] = client_id unless client_id.nil?
-        request[:client_secret] = client_secret unless client_secret.nil?
-        request[:issuer] = issuer unless issuer.nil?
-        request[:authorization_url] = authorization_url unless authorization_url.nil?
-        request[:token_url] = token_url unless token_url.nil?
-        request[:userinfo_url] = userinfo_url unless userinfo_url.nil?
-        request[:jwks_url] = jwks_url unless jwks_url.nil?
+        headers = headers.merge(method_options.to_headers) if method_options != nil
+        request = {
+        }
+        request[:display_name] = display_name if display_name != nil
+        request[:client_id] = client_id if client_id != nil
+        request[:client_secret] = client_secret if client_secret != nil
+        request[:issuer] = issuer if issuer != nil
+        request[:authorization_url] = authorization_url if authorization_url != nil
+        request[:token_url] = token_url if token_url != nil
+        request[:userinfo_url] = userinfo_url if userinfo_url != nil
+        request[:jwks_url] = jwks_url if jwks_url != nil
 
         put_request("/v1/b2b/sso/oidc/#{organization_id}/connections/#{connection_id}", request, headers)
       end
-    end
 
+
+
+    end
     class SAML
       include Stytch::RequestHelper
 
       def initialize(connection)
         @connection = connection
+
       end
 
       # Create a new SAML Connection. /%}
-      #
+      # 
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -410,7 +416,7 @@ module StytchB2B
       # display_name::
       #   A human-readable display name for the connection.
       #   The type of this field is nilable +String+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -422,31 +428,32 @@ module StytchB2B
       # connection::
       #   The `SAML Connection` object affected by this API call. See the [SAML Connection Object](https://stytch.com/docs/b2b/api/saml-connection-object) for complete response field details.
       #   The type of this field is nilable +SAMLConnection+ (+object+).
-      #
+      # 
       # == Method Options:
       # This method supports an optional +CreateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
       def create_connection(
-        organization_id:,
+        organization_id: ,
         display_name: nil,
         method_options: nil
       )
         headers = {}
-        headers = headers.merge(method_options.to_headers) unless method_options.nil?
-        request = {}
-        request[:display_name] = display_name unless display_name.nil?
+        headers = headers.merge(method_options.to_headers) if method_options != nil
+        request = {
+        }
+        request[:display_name] = display_name if display_name != nil
 
         post_request("/v1/b2b/sso/saml/#{organization_id}", request, headers)
       end
 
       # Updates an existing SAML connection.
-      #
+      # 
       # Note that a newly created connection will not become active until all of the following are provided:
       # * `idp_sso_url`
       # * `attribute_mapping`
       # * `idp_entity_id`
       # * `x509_certificate`
       #  /%}
-      #
+      # 
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -483,7 +490,7 @@ module StytchB2B
       # alternative_audience_uri::
       #   An alternative URL to use for the Audience Restriction. This value can be used when you wish to migrate an existing SAML integration to Stytch with zero downtime.
       #   The type of this field is nilable +String+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -495,12 +502,12 @@ module StytchB2B
       # connection::
       #   The `SAML Connection` object affected by this API call. See the [SAML Connection Object](https://stytch.com/docs/b2b/api/saml-connection-object) for complete response field details.
       #   The type of this field is nilable +SAMLConnection+ (+object+).
-      #
+      # 
       # == Method Options:
       # This method supports an optional +UpdateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
       def update_connection(
-        organization_id:,
-        connection_id:,
+        organization_id: ,
+        connection_id: ,
         idp_entity_id: nil,
         display_name: nil,
         attribute_mapping: nil,
@@ -512,29 +519,30 @@ module StytchB2B
         method_options: nil
       )
         headers = {}
-        headers = headers.merge(method_options.to_headers) unless method_options.nil?
-        request = {}
-        request[:idp_entity_id] = idp_entity_id unless idp_entity_id.nil?
-        request[:display_name] = display_name unless display_name.nil?
-        request[:attribute_mapping] = attribute_mapping unless attribute_mapping.nil?
-        request[:x509_certificate] = x509_certificate unless x509_certificate.nil?
-        request[:idp_sso_url] = idp_sso_url unless idp_sso_url.nil?
-        request[:saml_connection_implicit_role_assignments] = saml_connection_implicit_role_assignments unless saml_connection_implicit_role_assignments.nil?
-        request[:saml_group_implicit_role_assignments] = saml_group_implicit_role_assignments unless saml_group_implicit_role_assignments.nil?
-        request[:alternative_audience_uri] = alternative_audience_uri unless alternative_audience_uri.nil?
+        headers = headers.merge(method_options.to_headers) if method_options != nil
+        request = {
+        }
+        request[:idp_entity_id] = idp_entity_id if idp_entity_id != nil
+        request[:display_name] = display_name if display_name != nil
+        request[:attribute_mapping] = attribute_mapping if attribute_mapping != nil
+        request[:x509_certificate] = x509_certificate if x509_certificate != nil
+        request[:idp_sso_url] = idp_sso_url if idp_sso_url != nil
+        request[:saml_connection_implicit_role_assignments] = saml_connection_implicit_role_assignments if saml_connection_implicit_role_assignments != nil
+        request[:saml_group_implicit_role_assignments] = saml_group_implicit_role_assignments if saml_group_implicit_role_assignments != nil
+        request[:alternative_audience_uri] = alternative_audience_uri if alternative_audience_uri != nil
 
         put_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}", request, headers)
       end
 
       # Used to update an existing SAML connection using an IDP metadata URL.
-      #
+      # 
       # A newly created connection will not become active until all the following are provided:
       # * `idp_sso_url`
       # * `idp_entity_id`
       # * `x509_certificate`
       # * `attribute_mapping` (must be supplied using [Update SAML Connection](update-saml-connection))
       #  /%}
-      #
+      # 
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -545,7 +553,7 @@ module StytchB2B
       # metadata_url::
       #   A URL that points to the IdP metadata. This will be provided by the IdP.
       #   The type of this field is +String+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -557,17 +565,17 @@ module StytchB2B
       # connection::
       #   The `SAML Connection` object affected by this API call. See the [SAML Connection Object](https://stytch.com/docs/b2b/api/saml-connection-object) for complete response field details.
       #   The type of this field is nilable +SAMLConnection+ (+object+).
-      #
+      # 
       # == Method Options:
       # This method supports an optional +UpdateByURLRequestOptions+ object which will modify the headers sent in the HTTP request.
       def update_by_url(
-        organization_id:,
-        connection_id:,
-        metadata_url:,
+        organization_id: ,
+        connection_id: ,
+        metadata_url: ,
         method_options: nil
       )
         headers = {}
-        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        headers = headers.merge(method_options.to_headers) if method_options != nil
         request = {
           metadata_url: metadata_url
         }
@@ -576,10 +584,10 @@ module StytchB2B
       end
 
       # Delete a SAML verification certificate.
-      #
+      # 
       # You may need to do this when rotating certificates from your IdP, since Stytch allows a maximum of 5 certificates per connection. There must always be at least one certificate per active connection.
       #  /%}
-      #
+      # 
       # == Parameters:
       # organization_id::
       #   The organization ID that the SAML connection belongs to.
@@ -590,7 +598,7 @@ module StytchB2B
       # certificate_id::
       #   The ID of the certificate to be deleted.
       #   The type of this field is +String+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -602,19 +610,22 @@ module StytchB2B
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
-      #
+      # 
       # == Method Options:
       # This method supports an optional +DeleteVerificationCertificateRequestOptions+ object which will modify the headers sent in the HTTP request.
       def delete_verification_certificate(
-        organization_id:,
-        connection_id:,
-        certificate_id:,
+        organization_id: ,
+        connection_id: ,
+        certificate_id: ,
         method_options: nil
       )
         headers = {}
-        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        headers = headers.merge(method_options.to_headers) if method_options != nil
         delete_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}/verification_certificates/#{certificate_id}", headers)
       end
+
+
+
     end
   end
 end
