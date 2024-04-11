@@ -316,6 +316,77 @@ module StytchB2B
       post_request('/v1/b2b/sessions/exchange', request, headers)
     end
 
+    # Migrate a session from an external endpoint. Stytch will call the UserInfo endpoint specified in your project settings, performing a lookup using the session token passed in. If the endpoint repsonds and the response contains a valid email, Stytch will attempt to match that email with a member in your organization, and create a Stytch Session for you.
+    #
+    # == Parameters:
+    # session_token::
+    #   The authorization token Stytch will pass in to the external userinfo endpoint.
+    #   The type of this field is +String+.
+    # organization_id::
+    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+    #   The type of this field is +String+.
+    # session_duration_minutes::
+    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
+    #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
+    #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
+    #
+    #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
+    #
+    #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
+    #
+    #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
+    #   to use the Stytch session product, you can ignore the session fields in the response.
+    #   The type of this field is nilable +Integer+.
+    # session_custom_claims::
+    #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in
+    #   `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To
+    #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
+    #   Total custom claims size cannot exceed four kilobytes.
+    #   The type of this field is nilable +object+.
+    #
+    # == Returns:
+    # An object with the following fields:
+    # request_id::
+    #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+    #   The type of this field is +String+.
+    # member_id::
+    #   Globally unique UUID that identifies a specific Member.
+    #   The type of this field is +String+.
+    # session_token::
+    #   A secret token for a given Stytch Session.
+    #   The type of this field is +String+.
+    # session_jwt::
+    #   The JSON Web Token (JWT) for a given Stytch Session.
+    #   The type of this field is +String+.
+    # member::
+    #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
+    #   The type of this field is +Member+ (+object+).
+    # organization::
+    #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
+    #   The type of this field is +Organization+ (+object+).
+    # status_code::
+    #   (no documentation yet)
+    #   The type of this field is +Integer+.
+    # member_session::
+    #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
+    #   The type of this field is nilable +MemberSession+ (+object+).
+    def migrate(
+      session_token:,
+      organization_id:,
+      session_duration_minutes: nil,
+      session_custom_claims: nil
+    )
+      headers = {}
+      request = {
+        session_token: session_token,
+        organization_id: organization_id
+      }
+      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+
+      post_request('/v1/b2b/sessions/migrate', request, headers)
+    end
+
     # Get the JSON Web Key Set (JWKS) for a project.
     #
     # JWKS are rotated every ~6 months. Upon rotation, new JWTs will be signed using the new key set, and both key sets will be returned by this endpoint for a period of 1 month.
