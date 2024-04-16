@@ -9,6 +9,7 @@
 require_relative 'request_helper'
 
 module Stytch
+
   class MagicLinks
     include Stytch::RequestHelper
     attr_reader :email
@@ -20,13 +21,13 @@ module Stytch
     end
 
     # Authenticate a User given a Magic Link. This endpoint verifies that the Magic Link token is valid, hasn't expired or been previously used, and any optional security settings such as IP match or user agent match are satisfied.
-    #
+    # 
     # == Parameters:
     # token::
     #   The Magic Link `token` from the `?token=` query parameter in the URL.
-    #
+    #       
     #       The redirect URL will look like `https://example.com/authenticate?stytch_token_type=magic_links&token=rM_kw42CWBhsHLF62V75jELMbvJ87njMe3tFVj7Qupu7`
-    #
+    #       
     #       In the redirect URL, the `stytch_token_type` will be `magic_link`. See [here](https://stytch.com/docs/guides/dashboard/redirect-urls) for more detail.
     #   The type of this field is +String+.
     # attributes::
@@ -39,14 +40,14 @@ module Stytch
     #   The `session_token` associated with a User's existing Session.
     #   The type of this field is nilable +String+.
     # session_duration_minutes::
-    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
+    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist, 
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
     #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-    #
+    # 
     #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-    #
+    #   
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-    #
+    #   
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will not be created.
     #   The type of this field is nilable +Integer+.
     # session_jwt::
@@ -54,13 +55,13 @@ module Stytch
     #   The type of this field is nilable +String+.
     # session_custom_claims::
     #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
-    #
+    # 
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     # code_verifier::
     #   A base64url encoded one time secret used to validate that the request starts and ends on the same device.
     #   The type of this field is nilable +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -89,12 +90,12 @@ module Stytch
     #   The type of this field is +Integer+.
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
-    #
+    # 
     #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
-    #
+    #   
     #   The type of this field is nilable +Session+ (+object+).
     def authenticate(
-      token:,
+      token: ,
       attributes: nil,
       options: nil,
       session_token: nil,
@@ -107,22 +108,22 @@ module Stytch
       request = {
         token: token
       }
-      request[:attributes] = attributes unless attributes.nil?
-      request[:options] = options unless options.nil?
-      request[:session_token] = session_token unless session_token.nil?
-      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
-      request[:session_jwt] = session_jwt unless session_jwt.nil?
-      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
-      request[:code_verifier] = code_verifier unless code_verifier.nil?
+      request[:attributes] = attributes if attributes != nil
+      request[:options] = options if options != nil
+      request[:session_token] = session_token if session_token != nil
+      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
+      request[:session_jwt] = session_jwt if session_jwt != nil
+      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
+      request[:code_verifier] = code_verifier if code_verifier != nil
 
-      post_request('/v1/magic_links/authenticate', request, headers)
+      post_request("/v1/magic_links/authenticate", request, headers)
     end
 
     # Create an embeddable Magic Link token for a User. Access to this endpoint is restricted. To enable it, please send us a note at support@stytch.com.
-    #
+    # 
     # ### Next steps
     # Send the returned `token` value to the end user in a link which directs to your application. When the end user follows your link, collect the token, and call [Authenticate Magic Link](https://stytch.com/docs/api/authenticate-magic-link) to complete authentication.
-    #
+    # 
     # == Parameters:
     # user_id::
     #   The unique ID of a specific User.
@@ -133,7 +134,7 @@ module Stytch
     # attributes::
     #   Provided attributes help with fraud detection.
     #   The type of this field is nilable +Attributes+ (+object+).
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -149,7 +150,7 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def create(
-      user_id:,
+      user_id: ,
       expiration_minutes: nil,
       attributes: nil
     )
@@ -157,27 +158,30 @@ module Stytch
       request = {
         user_id: user_id
       }
-      request[:expiration_minutes] = expiration_minutes unless expiration_minutes.nil?
-      request[:attributes] = attributes unless attributes.nil?
+      request[:expiration_minutes] = expiration_minutes if expiration_minutes != nil
+      request[:attributes] = attributes if attributes != nil
 
-      post_request('/v1/magic_links', request, headers)
+      post_request("/v1/magic_links", request, headers)
     end
+
+
 
     class Email
       include Stytch::RequestHelper
 
       def initialize(connection)
         @connection = connection
+
       end
 
       # Send a magic link to an existing Stytch user using their email address. If you'd like to create a user and send them a magic link by email with one request, use our [log in or create endpoint](https://stytch.com/docs/api/log-in-or-create-user-by-email).
-      #
+      # 
       # ### Add an email to an existing user
       # This endpoint also allows you to add a new email address to an existing Stytch User. Including a `user_id`, `session_token`, or `session_jwt` in your Send Magic Link by email request will add the new, unverified email address to the existing Stytch User. If the user successfully authenticates within 5 minutes, the new email address will be marked as verified and remain permanently on the existing Stytch User. Otherwise, it will be removed from the User object, and any subsequent login requests using that email address will create a new User.
-      #
+      # 
       # ### Next steps
       # The user is emailed a magic link which redirects them to the provided [redirect URL](https://stytch.com/docs/guides/magic-links/email-magic-links/redirect-routing). Collect the `token` from the URL query parameters, and call [Authenticate magic link](https://stytch.com/docs/api/authenticate-magic-link) to complete authentication.
-      #
+      # 
       # == Parameters:
       # email::
       #   The email address of the User to send the Magic Link to.
@@ -214,16 +218,16 @@ module Stytch
       #   The type of this field is nilable +String+.
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
-      #
+      # 
       # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
-      #
+      # 
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
-      #
+      # 
       #   The type of this field is nilable +SendRequestLocale+ (string enum).
       # signup_template_id::
       #   Use a custom template for sign-up emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic links - Sign-up.
       #   The type of this field is nilable +String+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -239,7 +243,7 @@ module Stytch
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def send(
-        email:,
+        email: ,
         login_template_id: nil,
         attributes: nil,
         login_magic_link_url: nil,
@@ -257,27 +261,27 @@ module Stytch
         request = {
           email: email
         }
-        request[:login_template_id] = login_template_id unless login_template_id.nil?
-        request[:attributes] = attributes unless attributes.nil?
-        request[:login_magic_link_url] = login_magic_link_url unless login_magic_link_url.nil?
-        request[:signup_magic_link_url] = signup_magic_link_url unless signup_magic_link_url.nil?
-        request[:login_expiration_minutes] = login_expiration_minutes unless login_expiration_minutes.nil?
-        request[:signup_expiration_minutes] = signup_expiration_minutes unless signup_expiration_minutes.nil?
-        request[:code_challenge] = code_challenge unless code_challenge.nil?
-        request[:user_id] = user_id unless user_id.nil?
-        request[:session_token] = session_token unless session_token.nil?
-        request[:session_jwt] = session_jwt unless session_jwt.nil?
-        request[:locale] = locale unless locale.nil?
-        request[:signup_template_id] = signup_template_id unless signup_template_id.nil?
+        request[:login_template_id] = login_template_id if login_template_id != nil
+        request[:attributes] = attributes if attributes != nil
+        request[:login_magic_link_url] = login_magic_link_url if login_magic_link_url != nil
+        request[:signup_magic_link_url] = signup_magic_link_url if signup_magic_link_url != nil
+        request[:login_expiration_minutes] = login_expiration_minutes if login_expiration_minutes != nil
+        request[:signup_expiration_minutes] = signup_expiration_minutes if signup_expiration_minutes != nil
+        request[:code_challenge] = code_challenge if code_challenge != nil
+        request[:user_id] = user_id if user_id != nil
+        request[:session_token] = session_token if session_token != nil
+        request[:session_jwt] = session_jwt if session_jwt != nil
+        request[:locale] = locale if locale != nil
+        request[:signup_template_id] = signup_template_id if signup_template_id != nil
 
-        post_request('/v1/magic_links/email/send', request, headers)
+        post_request("/v1/magic_links/email/send", request, headers)
       end
 
       # Send either a login or signup Magic Link to the User based on if the email is associated with a User already. A new or pending User will receive a signup Magic Link. An active User will receive a login Magic Link. For more information on how to control the status your Users are created in see the `create_user_as_pending` flag.
-      #
+      # 
       # ### Next steps
       # The User is emailed a Magic Link which redirects them to the provided [redirect URL](https://stytch.com/docs/guides/magic-links/email-magic-links/redirect-routing). Collect the `token` from the URL query parameters and call [Authenticate Magic Link](https://stytch.com/docs/api/authenticate-magic-link) to complete authentication.
-      #
+      # 
       # == Parameters:
       # email::
       #   The email address of the end user.
@@ -315,13 +319,13 @@ module Stytch
       #   The type of this field is nilable +String+.
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
-      #
+      # 
       # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
-      #
+      # 
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
-      #
+      # 
       #   The type of this field is nilable +LoginOrCreateRequestLocale+ (string enum).
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -340,7 +344,7 @@ module Stytch
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def login_or_create(
-        email:,
+        email: ,
         login_magic_link_url: nil,
         signup_magic_link_url: nil,
         login_expiration_minutes: nil,
@@ -356,25 +360,25 @@ module Stytch
         request = {
           email: email
         }
-        request[:login_magic_link_url] = login_magic_link_url unless login_magic_link_url.nil?
-        request[:signup_magic_link_url] = signup_magic_link_url unless signup_magic_link_url.nil?
-        request[:login_expiration_minutes] = login_expiration_minutes unless login_expiration_minutes.nil?
-        request[:signup_expiration_minutes] = signup_expiration_minutes unless signup_expiration_minutes.nil?
-        request[:login_template_id] = login_template_id unless login_template_id.nil?
-        request[:signup_template_id] = signup_template_id unless signup_template_id.nil?
-        request[:attributes] = attributes unless attributes.nil?
-        request[:create_user_as_pending] = create_user_as_pending unless create_user_as_pending.nil?
-        request[:code_challenge] = code_challenge unless code_challenge.nil?
-        request[:locale] = locale unless locale.nil?
+        request[:login_magic_link_url] = login_magic_link_url if login_magic_link_url != nil
+        request[:signup_magic_link_url] = signup_magic_link_url if signup_magic_link_url != nil
+        request[:login_expiration_minutes] = login_expiration_minutes if login_expiration_minutes != nil
+        request[:signup_expiration_minutes] = signup_expiration_minutes if signup_expiration_minutes != nil
+        request[:login_template_id] = login_template_id if login_template_id != nil
+        request[:signup_template_id] = signup_template_id if signup_template_id != nil
+        request[:attributes] = attributes if attributes != nil
+        request[:create_user_as_pending] = create_user_as_pending if create_user_as_pending != nil
+        request[:code_challenge] = code_challenge if code_challenge != nil
+        request[:locale] = locale if locale != nil
 
-        post_request('/v1/magic_links/email/login_or_create', request, headers)
+        post_request("/v1/magic_links/email/login_or_create", request, headers)
       end
 
       # Create a User and send an invite Magic Link to the provided `email`. The User will be created with a `pending` status until they click the Magic Link in the invite email.
-      #
+      # 
       # ### Next steps
       # The User is emailed a Magic Link which redirects them to the provided [redirect URL](https://stytch.com/docs/guides/magic-links/email-magic-links/redirect-routing). Collect the `token` from the URL query parameters and call [Authenticate Magic Link](https://stytch.com/docs/api/authenticate-magic-link) to complete authentication.
-      #
+      # 
       # == Parameters:
       # email::
       #   The email address of the User to send the invite Magic Link to.
@@ -396,13 +400,13 @@ module Stytch
       #   The type of this field is nilable +Integer+.
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
-      #
+      # 
       # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
-      #
+      # 
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
-      #
+      # 
       #   The type of this field is nilable +InviteRequestLocale+ (string enum).
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -418,7 +422,7 @@ module Stytch
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def invite(
-        email:,
+        email: ,
         invite_template_id: nil,
         attributes: nil,
         name: nil,
@@ -430,23 +434,23 @@ module Stytch
         request = {
           email: email
         }
-        request[:invite_template_id] = invite_template_id unless invite_template_id.nil?
-        request[:attributes] = attributes unless attributes.nil?
-        request[:name] = name unless name.nil?
-        request[:invite_magic_link_url] = invite_magic_link_url unless invite_magic_link_url.nil?
-        request[:invite_expiration_minutes] = invite_expiration_minutes unless invite_expiration_minutes.nil?
-        request[:locale] = locale unless locale.nil?
+        request[:invite_template_id] = invite_template_id if invite_template_id != nil
+        request[:attributes] = attributes if attributes != nil
+        request[:name] = name if name != nil
+        request[:invite_magic_link_url] = invite_magic_link_url if invite_magic_link_url != nil
+        request[:invite_expiration_minutes] = invite_expiration_minutes if invite_expiration_minutes != nil
+        request[:locale] = locale if locale != nil
 
-        post_request('/v1/magic_links/email/invite', request, headers)
+        post_request("/v1/magic_links/email/invite", request, headers)
       end
 
       # Revoke a pending invite based on the `email` provided.
-      #
+      # 
       # == Parameters:
       # email::
       #   The email of the user.
       #   The type of this field is +String+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -456,15 +460,18 @@ module Stytch
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def revoke_invite(
-        email:
+        email: 
       )
         headers = {}
         request = {
           email: email
         }
 
-        post_request('/v1/magic_links/email/revoke_invite', request, headers)
+        post_request("/v1/magic_links/email/revoke_invite", request, headers)
       end
+
+
+
     end
   end
 end
