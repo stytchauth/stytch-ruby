@@ -9,45 +9,45 @@
 require_relative 'request_helper'
 
 module StytchB2B
-  class GetConnectionsRequestOptions
-    # Optional authorization object.
-    # Pass in an active Stytch Member session token or session JWT and the request
-    # will be run using that member's permissions.
-    attr_accessor :authorization
-
-    def initialize(
-      authorization: nil
-    )
-      @authorization = authorization
-    end
-
-    def to_headers
-      headers = {}
-      headers.merge!(@authorization.to_headers) if authorization
-      headers
-    end
-  end
-
-  class DeleteConnectionRequestOptions
-    # Optional authorization object.
-    # Pass in an active Stytch Member session token or session JWT and the request
-    # will be run using that member's permissions.
-    attr_accessor :authorization
-
-    def initialize(
-      authorization: nil
-    )
-      @authorization = authorization
-    end
-
-    def to_headers
-      headers = {}
-      headers.merge!(@authorization.to_headers) if authorization
-      headers
-    end
-  end
-
   class SSO
+    class GetConnectionsRequestOptions
+      # Optional authorization object.
+      # Pass in an active Stytch Member session token or session JWT and the request
+      # will be run using that member's permissions.
+      attr_accessor :authorization
+
+      def initialize(
+        authorization: nil
+      )
+        @authorization = authorization
+      end
+
+      def to_headers
+        headers = {}
+        headers.merge!(@authorization.to_headers) if authorization
+        headers
+      end
+    end
+
+    class DeleteConnectionRequestOptions
+      # Optional authorization object.
+      # Pass in an active Stytch Member session token or session JWT and the request
+      # will be run using that member's permissions.
+      attr_accessor :authorization
+
+      def initialize(
+        authorization: nil
+      )
+        @authorization = authorization
+      end
+
+      def to_headers
+        headers = {}
+        headers.merge!(@authorization.to_headers) if authorization
+        headers
+      end
+    end
+
     include Stytch::RequestHelper
     attr_reader :oidc, :saml
 
@@ -81,7 +81,7 @@ module StytchB2B
     #   The type of this field is +Integer+.
     #
     # == Method Options:
-    # This method supports an optional +GetConnectionsRequestOptions+ object which will modify the headers sent in the HTTP request.
+    # This method supports an optional +StytchB2B::SSO::GetConnectionsRequestOptions+ object which will modify the headers sent in the HTTP request.
     def get_connections(
       organization_id:,
       method_options: nil
@@ -116,7 +116,7 @@ module StytchB2B
     #   The type of this field is +Integer+.
     #
     # == Method Options:
-    # This method supports an optional +DeleteConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
+    # This method supports an optional +StytchB2B::SSO::DeleteConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
     def delete_connection(
       organization_id:,
       connection_id:,
@@ -253,6 +253,44 @@ module StytchB2B
     end
 
     class OIDC
+      class CreateConnectionRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class UpdateConnectionRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
       include Stytch::RequestHelper
 
       def initialize(connection)
@@ -282,7 +320,7 @@ module StytchB2B
       #   The type of this field is nilable +OIDCConnection+ (+object+).
       #
       # == Method Options:
-      # This method supports an optional +CreateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SSO::OIDC::CreateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
       def create_connection(
         organization_id:,
         display_name: nil,
@@ -364,7 +402,7 @@ module StytchB2B
       #   The type of this field is nilable +String+.
       #
       # == Method Options:
-      # This method supports an optional +UpdateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SSO::OIDC::UpdateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
       def update_connection(
         organization_id:,
         connection_id:,
@@ -395,6 +433,82 @@ module StytchB2B
     end
 
     class SAML
+      class CreateConnectionRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class UpdateConnectionRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class UpdateByURLRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class DeleteVerificationCertificateRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
       include Stytch::RequestHelper
 
       def initialize(connection)
@@ -424,7 +538,7 @@ module StytchB2B
       #   The type of this field is nilable +SAMLConnection+ (+object+).
       #
       # == Method Options:
-      # This method supports an optional +CreateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SSO::SAML::CreateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
       def create_connection(
         organization_id:,
         display_name: nil,
@@ -497,7 +611,7 @@ module StytchB2B
       #   The type of this field is nilable +SAMLConnection+ (+object+).
       #
       # == Method Options:
-      # This method supports an optional +UpdateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SSO::SAML::UpdateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
       def update_connection(
         organization_id:,
         connection_id:,
@@ -559,7 +673,7 @@ module StytchB2B
       #   The type of this field is nilable +SAMLConnection+ (+object+).
       #
       # == Method Options:
-      # This method supports an optional +UpdateByURLRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SSO::SAML::UpdateByURLRequestOptions+ object which will modify the headers sent in the HTTP request.
       def update_by_url(
         organization_id:,
         connection_id:,
@@ -604,7 +718,7 @@ module StytchB2B
       #   The type of this field is +Integer+.
       #
       # == Method Options:
-      # This method supports an optional +DeleteVerificationCertificateRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SSO::SAML::DeleteVerificationCertificateRequestOptions+ object which will modify the headers sent in the HTTP request.
       def delete_verification_certificate(
         organization_id:,
         connection_id:,

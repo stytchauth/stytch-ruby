@@ -9,45 +9,45 @@
 require_relative 'request_helper'
 
 module StytchB2B
-  class UpdateRequestOptions
-    # Optional authorization object.
-    # Pass in an active Stytch Member session token or session JWT and the request
-    # will be run using that member's permissions.
-    attr_accessor :authorization
-
-    def initialize(
-      authorization: nil
-    )
-      @authorization = authorization
-    end
-
-    def to_headers
-      headers = {}
-      headers.merge!(@authorization.to_headers) if authorization
-      headers
-    end
-  end
-
-  class DeleteRequestOptions
-    # Optional authorization object.
-    # Pass in an active Stytch Member session token or session JWT and the request
-    # will be run using that member's permissions.
-    attr_accessor :authorization
-
-    def initialize(
-      authorization: nil
-    )
-      @authorization = authorization
-    end
-
-    def to_headers
-      headers = {}
-      headers.merge!(@authorization.to_headers) if authorization
-      headers
-    end
-  end
-
   class Organizations
+    class UpdateRequestOptions
+      # Optional authorization object.
+      # Pass in an active Stytch Member session token or session JWT and the request
+      # will be run using that member's permissions.
+      attr_accessor :authorization
+
+      def initialize(
+        authorization: nil
+      )
+        @authorization = authorization
+      end
+
+      def to_headers
+        headers = {}
+        headers.merge!(@authorization.to_headers) if authorization
+        headers
+      end
+    end
+
+    class DeleteRequestOptions
+      # Optional authorization object.
+      # Pass in an active Stytch Member session token or session JWT and the request
+      # will be run using that member's permissions.
+      attr_accessor :authorization
+
+      def initialize(
+        authorization: nil
+      )
+        @authorization = authorization
+      end
+
+      def to_headers
+        headers = {}
+        headers.merge!(@authorization.to_headers) if authorization
+        headers
+      end
+    end
+
     include Stytch::RequestHelper
     attr_reader :members
 
@@ -385,7 +385,7 @@ module StytchB2B
     #   The type of this field is +Integer+.
     #
     # == Method Options:
-    # This method supports an optional +UpdateRequestOptions+ object which will modify the headers sent in the HTTP request.
+    # This method supports an optional +StytchB2B::Organizations::UpdateRequestOptions+ object which will modify the headers sent in the HTTP request.
     def update(
       organization_id:,
       organization_name: nil,
@@ -449,7 +449,7 @@ module StytchB2B
     #   The type of this field is +Integer+.
     #
     # == Method Options:
-    # This method supports an optional +DeleteRequestOptions+ object which will modify the headers sent in the HTTP request.
+    # This method supports an optional +StytchB2B::Organizations::DeleteRequestOptions+ object which will modify the headers sent in the HTTP request.
     def delete(
       organization_id:,
       method_options: nil
@@ -510,6 +510,158 @@ module StytchB2B
     end
 
     class Members
+      class UpdateRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class DeleteRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class ReactivateRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class DeleteMFAPhoneNumberRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class DeleteTOTPRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class SearchRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class DeletePasswordRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class CreateRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
       include Stytch::RequestHelper
       attr_reader :oauth_providers
 
@@ -621,7 +773,7 @@ module StytchB2B
       #   The type of this field is +Integer+.
       #
       # == Method Options:
-      # This method supports an optional +UpdateRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::Organizations::Members::UpdateRequestOptions+ object which will modify the headers sent in the HTTP request.
       def update(
         organization_id:,
         member_id:,
@@ -677,7 +829,7 @@ module StytchB2B
       #   The type of this field is +Integer+.
       #
       # == Method Options:
-      # This method supports an optional +DeleteRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::Organizations::Members::DeleteRequestOptions+ object which will modify the headers sent in the HTTP request.
       def delete(
         organization_id:,
         member_id:,
@@ -717,7 +869,7 @@ module StytchB2B
       #   The type of this field is +Integer+.
       #
       # == Method Options:
-      # This method supports an optional +ReactivateRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::Organizations::Members::ReactivateRequestOptions+ object which will modify the headers sent in the HTTP request.
       def reactivate(
         organization_id:,
         member_id:,
@@ -766,7 +918,7 @@ module StytchB2B
       #   The type of this field is +Integer+.
       #
       # == Method Options:
-      # This method supports an optional +DeleteMFAPhoneNumberRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::Organizations::Members::DeleteMFAPhoneNumberRequestOptions+ object which will modify the headers sent in the HTTP request.
       def delete_mfa_phone_number(
         organization_id:,
         member_id:,
@@ -836,7 +988,7 @@ module StytchB2B
       #   The type of this field is +Integer+.
       #
       # == Method Options:
-      # This method supports an optional +SearchRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::Organizations::Members::SearchRequestOptions+ object which will modify the headers sent in the HTTP request.
       def search(
         organization_ids:,
         cursor: nil,
@@ -885,7 +1037,7 @@ module StytchB2B
       #   The type of this field is +Integer+.
       #
       # == Method Options:
-      # This method supports an optional +DeletePasswordRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::Organizations::Members::DeletePasswordRequestOptions+ object which will modify the headers sent in the HTTP request.
       def delete_password(
         organization_id:,
         member_password_id:,
@@ -985,7 +1137,7 @@ module StytchB2B
       #   The type of this field is +Integer+.
       #
       # == Method Options:
-      # This method supports an optional +CreateRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::Organizations::Members::CreateRequestOptions+ object which will modify the headers sent in the HTTP request.
       def create(
         organization_id:,
         email_address:,
