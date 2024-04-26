@@ -151,6 +151,25 @@ module StytchB2B
     end
 
     class Email
+      class InviteRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
       include Stytch::RequestHelper
       attr_reader :discovery
 
@@ -308,7 +327,7 @@ module StytchB2B
       #   The type of this field is +Integer+.
       #
       # == Method Options:
-      # This method supports an optional +InviteRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::MagicLinks::Email::InviteRequestOptions+ object which will modify the headers sent in the HTTP request.
       def invite(
         organization_id:,
         email_address:,

@@ -20,6 +20,139 @@ module StytchB2B
     end
 
     class Connections
+      class UpdateRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class DeleteRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class RotateStartRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class RotateCompleteRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class RotateCancelRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class CreateRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class GetRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
       include Stytch::RequestHelper
 
       def initialize(connection)
@@ -58,7 +191,7 @@ module StytchB2B
       #   The type of this field is nilable +SCIMConnection+ (+object+).
       #
       # == Method Options:
-      # This method supports an optional +UpdateRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SCIM::Connections::UpdateRequestOptions+ object which will modify the headers sent in the HTTP request.
       def update(
         organization_id:,
         connection_id:,
@@ -100,7 +233,7 @@ module StytchB2B
       #   The type of this field is +Integer+.
       #
       # == Method Options:
-      # This method supports an optional +DeleteRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SCIM::Connections::DeleteRequestOptions+ object which will modify the headers sent in the HTTP request.
       def delete(
         organization_id:,
         connection_id:,
@@ -134,7 +267,7 @@ module StytchB2B
       #   The type of this field is nilable +SCIMConnectionWithNextToken+ (+object+).
       #
       # == Method Options:
-      # This method supports an optional +RotateStartRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SCIM::Connections::RotateStartRequestOptions+ object which will modify the headers sent in the HTTP request.
       def rotate_start(
         organization_id:,
         connection_id:,
@@ -170,7 +303,7 @@ module StytchB2B
       #   The type of this field is nilable +SCIMConnection+ (+object+).
       #
       # == Method Options:
-      # This method supports an optional +RotateCompleteRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SCIM::Connections::RotateCompleteRequestOptions+ object which will modify the headers sent in the HTTP request.
       def rotate_complete(
         organization_id:,
         connection_id:,
@@ -206,7 +339,7 @@ module StytchB2B
       #   The type of this field is nilable +SCIMConnection+ (+object+).
       #
       # == Method Options:
-      # This method supports an optional +RotateCancelRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SCIM::Connections::RotateCancelRequestOptions+ object which will modify the headers sent in the HTTP request.
       def rotate_cancel(
         organization_id:,
         connection_id:,
@@ -245,7 +378,7 @@ module StytchB2B
       #   The type of this field is nilable +SCIMConnectionWithToken+ (+object+).
       #
       # == Method Options:
-      # This method supports an optional +CreateRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SCIM::Connections::CreateRequestOptions+ object which will modify the headers sent in the HTTP request.
       def create(
         organization_id:,
         display_name: nil,
@@ -281,7 +414,7 @@ module StytchB2B
       #   The type of this field is +Integer+.
       #
       # == Method Options:
-      # This method supports an optional +GetRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SCIM::Connections::GetRequestOptions+ object which will modify the headers sent in the HTTP request.
       def get(
         organization_id:,
         method_options: nil
