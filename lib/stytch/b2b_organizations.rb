@@ -929,6 +929,41 @@ module StytchB2B
         delete_request("/v1/b2b/organizations/#{organization_id}/members/mfa_phone_numbers/#{member_id}", headers)
       end
 
+      # Delete a Member's MFA TOTP registration.
+      #
+      # To mint a new registration for a Member, you must first call this endpoint to delete the existing registration.
+      #
+      # Existing Member Sessions that include the TOTP authentication factor will not be revoked if the registration is deleted, and MFA will not be enforced until the Member logs in again.
+      #  /%}
+      #
+      # == Parameters:
+      # organization_id::
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+      #   The type of this field is +String+.
+      # member_id::
+      #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
+      #   The type of this field is +String+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # member_id::
+      #   Globally unique UUID that identifies a specific Member.
+      #   The type of this field is +String+.
+      # member::
+      #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
+      #   The type of this field is +Member+ (+object+).
+      # organization::
+      #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
+      #   The type of this field is +Organization+ (+object+).
+      # status_code::
+      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+      #   The type of this field is +Integer+.
+      #
+      # == Method Options:
+      # This method supports an optional +StytchB2B::Organizations::Members::DeleteTOTPRequestOptions+ object which will modify the headers sent in the HTTP request.
       def delete_totp(
         organization_id:,
         member_id:,
@@ -1223,6 +1258,8 @@ module StytchB2B
         # issued access token and ID token from the identity provider. If a refresh token has been issued, Stytch will refresh the
         # access token automatically.
         #
+        # Google One Tap does not return access tokens. If the member has only authenticated through Google One Tap and not through a regular Google OAuth flow, this endpoint will not return any tokens.
+        #
         # __Note:__ Google does not issue a refresh token on every login, and refresh tokens may expire if unused.
         # To force a refresh token to be issued, pass the `?provider_prompt=consent` query param into the
         # [Start Google OAuth flow](https://stytch.com/docs/b2b/api/oauth-google-start) endpoint.
@@ -1249,12 +1286,6 @@ module StytchB2B
         # provider_subject::
         #   The unique identifier for the User within a given OAuth provider. Also commonly called the `sub` or "Subject field" in OAuth protocols.
         #   The type of this field is +String+.
-        # access_token::
-        #   The `access_token` that you may use to access the User's data in the provider's API.
-        #   The type of this field is +String+.
-        # access_token_expires_in::
-        #   The number of seconds until the access token expires.
-        #   The type of this field is +Integer+.
         # id_token::
         #   The `id_token` returned by the OAuth provider. ID Tokens are JWTs that contain structured information about a user. The exact content of each ID Token varies from provider to provider. ID Tokens are returned from OAuth providers that conform to the [OpenID Connect](https://openid.net/foundation/) specification, which is based on OAuth.
         #   The type of this field is +String+.
@@ -1264,6 +1295,12 @@ module StytchB2B
         # status_code::
         #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
         #   The type of this field is +Integer+.
+        # access_token::
+        #   The `access_token` that you may use to access the User's data in the provider's API.
+        #   The type of this field is nilable +String+.
+        # access_token_expires_in::
+        #   The number of seconds until the access token expires.
+        #   The type of this field is nilable +Integer+.
         # refresh_token::
         #   The `refresh_token` that you may use to obtain a new `access_token` for the User within the provider's API.
         #   The type of this field is nilable +String+.

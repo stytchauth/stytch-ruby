@@ -122,7 +122,7 @@ module StytchB2B
     # provider_values::
     #   The `provider_values` object lists relevant identifiers, values, and scopes for a given OAuth provider. For example this object will include a provider's `access_token` that you can use to access the provider's API for a given user.
     #
-    #   Note that these values will vary based on the OAuth provider in question, e.g. `id_token` is only returned by Microsoft.
+    #   Note that these values will vary based on the OAuth provider in question, e.g. `id_token` is only returned by Microsoft. Google One Tap does not return access tokens or refresh tokens.
     #   The type of this field is nilable +ProviderValues+ (+object+).
     # mfa_required::
     #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
