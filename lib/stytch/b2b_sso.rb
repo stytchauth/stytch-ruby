@@ -76,6 +76,9 @@ module StytchB2B
     # oidc_connections::
     #   The list of [OIDC Connections](https://stytch.com/docs/b2b/api/oidc-connection-object) owned by this organization.
     #   The type of this field is list of +OIDCConnection+ (+object+).
+    # external_connections::
+    #   (no documentation yet)
+    #   The type of this field is list of +Connection+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
@@ -306,6 +309,9 @@ module StytchB2B
       # display_name::
       #   A human-readable display name for the connection.
       #   The type of this field is nilable +String+.
+      # identity_provider::
+      #   The identity provider of this connection. For OIDC, the accepted values are `generic`, `okta`, and `microsoft-entra`. For SAML, the accepted values are `generic`, `okta`, `microsoft-entra`, and `google-workspace`.
+      #   The type of this field is nilable +CreateConnectionRequestIdentityProvider+ (string enum).
       #
       # == Returns:
       # An object with the following fields:
@@ -324,12 +330,14 @@ module StytchB2B
       def create_connection(
         organization_id:,
         display_name: nil,
+        identity_provider: nil,
         method_options: nil
       )
         headers = {}
         headers = headers.merge(method_options.to_headers) unless method_options.nil?
         request = {}
         request[:display_name] = display_name unless display_name.nil?
+        request[:identity_provider] = identity_provider unless identity_provider.nil?
 
         post_request("/v1/b2b/sso/oidc/#{organization_id}", request, headers)
       end
@@ -385,6 +393,9 @@ module StytchB2B
       # jwks_url::
       #   The location of the IdP's JSON Web Key Set, used to verify credentials issued by the IdP. This will be provided by the IdP.
       #   The type of this field is nilable +String+.
+      # identity_provider::
+      #   The identity provider of this connection. For OIDC, the accepted values are `generic`, `okta`, and `microsoft-entra`. For SAML, the accepted values are `generic`, `okta`, `microsoft-entra`, and `google-workspace`.
+      #   The type of this field is nilable +UpdateConnectionRequestIdentityProvider+ (string enum).
       #
       # == Returns:
       # An object with the following fields:
@@ -414,6 +425,7 @@ module StytchB2B
         token_url: nil,
         userinfo_url: nil,
         jwks_url: nil,
+        identity_provider: nil,
         method_options: nil
       )
         headers = {}
@@ -427,6 +439,7 @@ module StytchB2B
         request[:token_url] = token_url unless token_url.nil?
         request[:userinfo_url] = userinfo_url unless userinfo_url.nil?
         request[:jwks_url] = jwks_url unless jwks_url.nil?
+        request[:identity_provider] = identity_provider unless identity_provider.nil?
 
         put_request("/v1/b2b/sso/oidc/#{organization_id}/connections/#{connection_id}", request, headers)
       end
@@ -524,6 +537,9 @@ module StytchB2B
       # display_name::
       #   A human-readable display name for the connection.
       #   The type of this field is nilable +String+.
+      # identity_provider::
+      #   The identity provider of this connection. For OIDC, the accepted values are `generic`, `okta`, and `microsoft-entra`. For SAML, the accepted values are `generic`, `okta`, `microsoft-entra`, and `google-workspace`.
+      #   The type of this field is nilable +CreateConnectionRequestIdentityProvider+ (string enum).
       #
       # == Returns:
       # An object with the following fields:
@@ -542,12 +558,14 @@ module StytchB2B
       def create_connection(
         organization_id:,
         display_name: nil,
+        identity_provider: nil,
         method_options: nil
       )
         headers = {}
         headers = headers.merge(method_options.to_headers) unless method_options.nil?
         request = {}
         request[:display_name] = display_name unless display_name.nil?
+        request[:identity_provider] = identity_provider unless identity_provider.nil?
 
         post_request("/v1/b2b/sso/saml/#{organization_id}", request, headers)
       end
@@ -597,6 +615,9 @@ module StytchB2B
       # alternative_audience_uri::
       #   An alternative URL to use for the Audience Restriction. This value can be used when you wish to migrate an existing SAML integration to Stytch with zero downtime.
       #   The type of this field is nilable +String+.
+      # identity_provider::
+      #   The identity provider of this connection. For OIDC, the accepted values are `generic`, `okta`, and `microsoft-entra`. For SAML, the accepted values are `generic`, `okta`, `microsoft-entra`, and `google-workspace`.
+      #   The type of this field is nilable +UpdateConnectionRequestIdentityProvider+ (string enum).
       #
       # == Returns:
       # An object with the following fields:
@@ -623,6 +644,7 @@ module StytchB2B
         saml_connection_implicit_role_assignments: nil,
         saml_group_implicit_role_assignments: nil,
         alternative_audience_uri: nil,
+        identity_provider: nil,
         method_options: nil
       )
         headers = {}
@@ -636,6 +658,7 @@ module StytchB2B
         request[:saml_connection_implicit_role_assignments] = saml_connection_implicit_role_assignments unless saml_connection_implicit_role_assignments.nil?
         request[:saml_group_implicit_role_assignments] = saml_group_implicit_role_assignments unless saml_group_implicit_role_assignments.nil?
         request[:alternative_audience_uri] = alternative_audience_uri unless alternative_audience_uri.nil?
+        request[:identity_provider] = identity_provider unless identity_provider.nil?
 
         put_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}", request, headers)
       end
