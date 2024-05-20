@@ -76,6 +76,9 @@ module StytchB2B
     # oidc_connections::
     #   The list of [OIDC Connections](https://stytch.com/docs/b2b/api/oidc-connection-object) owned by this organization.
     #   The type of this field is list of +OIDCConnection+ (+object+).
+    # external_connections::
+    #   (no documentation yet)
+    #   The type of this field is list of +Connection+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
@@ -307,7 +310,7 @@ module StytchB2B
       #   A human-readable display name for the connection.
       #   The type of this field is nilable +String+.
       # identity_provider::
-      #   (no documentation yet)
+      #   The identity provider of this connection. For OIDC, the accepted values are `generic`, `okta`, and `microsoft-entra`. For SAML, the accepted values are `generic`, `okta`, `microsoft-entra`, and `google-workspace`.
       #   The type of this field is nilable +CreateConnectionRequestIdentityProvider+ (string enum).
       #
       # == Returns:
@@ -391,7 +394,7 @@ module StytchB2B
       #   The location of the IdP's JSON Web Key Set, used to verify credentials issued by the IdP. This will be provided by the IdP.
       #   The type of this field is nilable +String+.
       # identity_provider::
-      #   (no documentation yet)
+      #   The identity provider of this connection. For OIDC, the accepted values are `generic`, `okta`, and `microsoft-entra`. For SAML, the accepted values are `generic`, `okta`, `microsoft-entra`, and `google-workspace`.
       #   The type of this field is nilable +UpdateConnectionRequestIdentityProvider+ (string enum).
       #
       # == Returns:
@@ -535,7 +538,7 @@ module StytchB2B
       #   A human-readable display name for the connection.
       #   The type of this field is nilable +String+.
       # identity_provider::
-      #   (no documentation yet)
+      #   The identity provider of this connection. For OIDC, the accepted values are `generic`, `okta`, and `microsoft-entra`. For SAML, the accepted values are `generic`, `okta`, `microsoft-entra`, and `google-workspace`.
       #   The type of this field is nilable +CreateConnectionRequestIdentityProvider+ (string enum).
       #
       # == Returns:
@@ -613,7 +616,7 @@ module StytchB2B
       #   An alternative URL to use for the Audience Restriction. This value can be used when you wish to migrate an existing SAML integration to Stytch with zero downtime.
       #   The type of this field is nilable +String+.
       # identity_provider::
-      #   (no documentation yet)
+      #   The identity provider of this connection. For OIDC, the accepted values are `generic`, `okta`, and `microsoft-entra`. For SAML, the accepted values are `generic`, `okta`, `microsoft-entra`, and `google-workspace`.
       #   The type of this field is nilable +UpdateConnectionRequestIdentityProvider+ (string enum).
       #
       # == Returns:
