@@ -11,15 +11,15 @@ require_relative 'request_helper'
 module StytchB2B
   class SCIM
     include Stytch::RequestHelper
-    attr_reader :connections
+    attr_reader :connection
 
     def initialize(connection)
       @connection = connection
 
-      @connections = StytchB2B::SCIM::Connections.new(@connection)
+      @connection = StytchB2B::SCIM::Connection.new(@connection)
     end
 
-    class Connections
+    class Connection
       class UpdateRequestOptions
         # Optional authorization object.
         # Pass in an active Stytch Member session token or session JWT and the request
@@ -173,7 +173,7 @@ module StytchB2B
       #   The type of this field is nilable +String+.
       # identity_provider::
       #   (no documentation yet)
-      #   The type of this field is nilable +UpdateRequestIdp+ (string enum).
+      #   The type of this field is nilable +UpdateRequestIdentityProvider+ (string enum).
       # scim_group_implicit_role_assignments::
       #   (no documentation yet)
       #   The type of this field is nilable list of +SCIMGroupImplicitRoleAssignments+.
@@ -191,7 +191,7 @@ module StytchB2B
       #   The type of this field is nilable +SCIMConnection+ (+object+).
       #
       # == Method Options:
-      # This method supports an optional +StytchB2B::SCIM::Connections::UpdateRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SCIM::Connection::UpdateRequestOptions+ object which will modify the headers sent in the HTTP request.
       def update(
         organization_id:,
         connection_id:,
@@ -207,7 +207,7 @@ module StytchB2B
         request[:identity_provider] = identity_provider unless identity_provider.nil?
         request[:scim_group_implicit_role_assignments] = scim_group_implicit_role_assignments unless scim_group_implicit_role_assignments.nil?
 
-        put_request("/v1/b2b/scim/#{organization_id}/connections/#{connection_id}", request, headers)
+        put_request("/v1/b2b/scim/#{organization_id}/connection/#{connection_id}", request, headers)
       end
 
       # Deletes a SCIM Connection. /%}
@@ -233,7 +233,7 @@ module StytchB2B
       #   The type of this field is +Integer+.
       #
       # == Method Options:
-      # This method supports an optional +StytchB2B::SCIM::Connections::DeleteRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SCIM::Connection::DeleteRequestOptions+ object which will modify the headers sent in the HTTP request.
       def delete(
         organization_id:,
         connection_id:,
@@ -241,7 +241,7 @@ module StytchB2B
       )
         headers = {}
         headers = headers.merge(method_options.to_headers) unless method_options.nil?
-        delete_request("/v1/b2b/scim/#{organization_id}/connections/#{connection_id}", headers)
+        delete_request("/v1/b2b/scim/#{organization_id}/connection/#{connection_id}", headers)
       end
 
       # Start a SCIM token rotation. /%}
@@ -267,7 +267,7 @@ module StytchB2B
       #   The type of this field is nilable +SCIMConnectionWithNextToken+ (+object+).
       #
       # == Method Options:
-      # This method supports an optional +StytchB2B::SCIM::Connections::RotateStartRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SCIM::Connection::RotateStartRequestOptions+ object which will modify the headers sent in the HTTP request.
       def rotate_start(
         organization_id:,
         connection_id:,
@@ -277,7 +277,7 @@ module StytchB2B
         headers = headers.merge(method_options.to_headers) unless method_options.nil?
         request = {}
 
-        post_request("/v1/b2b/scim/#{organization_id}/connections/#{connection_id}/rotate/start", request, headers)
+        post_request("/v1/b2b/scim/#{organization_id}/connection/#{connection_id}/rotate/start", request, headers)
       end
 
       # Completes a SCIM token rotation. This will complete the current token rotation process and update the active token to be the new token supplied in the [start SCIM token rotation](https://stytch.com/docs/b2b/api/scim-rotate-token-start) response. /%}
@@ -303,7 +303,7 @@ module StytchB2B
       #   The type of this field is nilable +SCIMConnection+ (+object+).
       #
       # == Method Options:
-      # This method supports an optional +StytchB2B::SCIM::Connections::RotateCompleteRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SCIM::Connection::RotateCompleteRequestOptions+ object which will modify the headers sent in the HTTP request.
       def rotate_complete(
         organization_id:,
         connection_id:,
@@ -313,7 +313,7 @@ module StytchB2B
         headers = headers.merge(method_options.to_headers) unless method_options.nil?
         request = {}
 
-        post_request("/v1/b2b/scim/#{organization_id}/connections/#{connection_id}/rotate/complete", request, headers)
+        post_request("/v1/b2b/scim/#{organization_id}/connection/#{connection_id}/rotate/complete", request, headers)
       end
 
       # Cancel a SCIM token rotation. This will cancel the current token rotation process, keeping the original token active. /%}
@@ -339,7 +339,7 @@ module StytchB2B
       #   The type of this field is nilable +SCIMConnection+ (+object+).
       #
       # == Method Options:
-      # This method supports an optional +StytchB2B::SCIM::Connections::RotateCancelRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SCIM::Connection::RotateCancelRequestOptions+ object which will modify the headers sent in the HTTP request.
       def rotate_cancel(
         organization_id:,
         connection_id:,
@@ -349,7 +349,7 @@ module StytchB2B
         headers = headers.merge(method_options.to_headers) unless method_options.nil?
         request = {}
 
-        post_request("/v1/b2b/scim/#{organization_id}/connections/#{connection_id}/rotate/cancel", request, headers)
+        post_request("/v1/b2b/scim/#{organization_id}/connection/#{connection_id}/rotate/cancel", request, headers)
       end
 
       # Create a new SCIM Connection. /%}
@@ -363,7 +363,7 @@ module StytchB2B
       #   The type of this field is nilable +String+.
       # identity_provider::
       #   (no documentation yet)
-      #   The type of this field is nilable +CreateRequestIdp+ (string enum).
+      #   The type of this field is nilable +CreateRequestIdentityProvider+ (string enum).
       #
       # == Returns:
       # An object with the following fields:
@@ -378,7 +378,7 @@ module StytchB2B
       #   The type of this field is nilable +SCIMConnectionWithToken+ (+object+).
       #
       # == Method Options:
-      # This method supports an optional +StytchB2B::SCIM::Connections::CreateRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SCIM::Connection::CreateRequestOptions+ object which will modify the headers sent in the HTTP request.
       def create(
         organization_id:,
         display_name: nil,
@@ -391,7 +391,7 @@ module StytchB2B
         request[:display_name] = display_name unless display_name.nil?
         request[:identity_provider] = identity_provider unless identity_provider.nil?
 
-        post_request("/v1/b2b/scim/#{organization_id}/connections", request, headers)
+        post_request("/v1/b2b/scim/#{organization_id}/connection", request, headers)
       end
 
       # Get SCIM Connections. /%}
@@ -406,15 +406,15 @@ module StytchB2B
       # request_id::
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
       #   The type of this field is +String+.
-      # connections::
-      #   (no documentation yet)
-      #   The type of this field is list of +SCIMConnection+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
+      # connection::
+      #   (no documentation yet)
+      #   The type of this field is nilable +SCIMConnection+ (+object+).
       #
       # == Method Options:
-      # This method supports an optional +StytchB2B::SCIM::Connections::GetRequestOptions+ object which will modify the headers sent in the HTTP request.
+      # This method supports an optional +StytchB2B::SCIM::Connection::GetRequestOptions+ object which will modify the headers sent in the HTTP request.
       def get(
         organization_id:,
         method_options: nil
@@ -422,7 +422,7 @@ module StytchB2B
         headers = {}
         headers = headers.merge(method_options.to_headers) unless method_options.nil?
         query_params = {}
-        request = request_with_query_params("/v1/b2b/scim/#{organization_id}/connections", query_params)
+        request = request_with_query_params("/v1/b2b/scim/#{organization_id}/connection", query_params)
         get_request(request, headers)
       end
     end
