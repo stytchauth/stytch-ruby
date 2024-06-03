@@ -49,4 +49,11 @@ module Stytch
       super(msg)
     end
   end
+
+  class M2MPermissionError < StandardError
+    def initialize(has_scopes, missing_scope)
+      msg = "Missing required scope #{missing_scope} for M2M request with scopes #{has_scopes}"
+      super(msg)
+    end
+  end
 end

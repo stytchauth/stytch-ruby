@@ -118,13 +118,35 @@ module Stytch
 
       resp = marshal_jwt_into_response(decoded_jwt)
 
-      unless required_scopes.nil?
-        for scope in required_scopes
-          raise TokenMissingScopeError, scope unless resp['scopes'].include?(scope)
-        end
-      end
+      perform_authorization_check(resp['scopes'], required_scopes) unless required_scopes.nil?
 
       resp
+    end
+
+    # Performs an authorization check against an M2M client and a set of required
+    # scopes. If the check fails, a PermissionError will be raised.
+    def perform_authorization_check(
+      has_scopes:,
+      required_scopes:
+    )
+      client_scopes = Hash.new { |hash, key| hash[key] = Set.new }
+      has_scopes.each do |scope|
+        action = scope
+        resource = '*'
+        action, resource = scope.split(':') if scope.include?(':')
+        client_scopes[action].add(resource)
+      end
+
+      required_scopes.each do |required_scope|
+        required_action = required_scope
+        required_resource = '*'
+        required_action, required_resource = required_scope.split(':') if required_scope.include?(':')
+        raise M2MPermissionError.new(has_scopes, required_scope) unless client_scopes.key?(required_action)
+
+        resources = client_scopes[required_action]
+        # The client can either have a wildcard resource or the specific resource
+        raise PermissionError.new(has_scopes, required_scope) unless resources.include?('*') || resources.include?(required_resource)
+      end
     end
 
     # Parse a M2M token and verify the signature locally (without calling /authenticate in the API)
