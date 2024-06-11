@@ -96,6 +96,10 @@ module Stytch
     # max_token_age::
     #   The maximum possible lifetime in seconds for the token to be valid.
     #   The type of this field is nilable +Integer+.
+    # scope_authorization_func::
+    #   A function to check if the token has the required scopes. This defaults to a function that assumes
+    #   scopes are either direct string matches or written in the form "action:resource". See the
+    #   documentation for +perform_authorization_check+ for more information.
     # == Returns:
     # +nil+ if the token could not be validated, or an object with the following fields:
     # scopes::
@@ -107,7 +111,12 @@ module Stytch
     # custom_claims::
     #   A map of custom claims present in the token.
     #   The type of this field is +object+.
-    def authenticate_token(access_token:, required_scopes: nil, max_token_age: nil)
+    def authenticate_token(
+      access_token:,
+      required_scopes: nil,
+      max_token_age: nil,
+      scope_authorization_func: method(:perform_authorization_check)
+    )
       # Intentionally allow this to re-raise if authentication fails
       decoded_jwt = authenticate_token_local(access_token)
 
@@ -119,12 +128,48 @@ module Stytch
       resp = marshal_jwt_into_response(decoded_jwt)
 
       unless required_scopes.nil?
-        for scope in required_scopes
-          raise TokenMissingScopeError, scope unless resp['scopes'].include?(scope)
-        end
+        is_authorized = scope_authorization_func.call(
+          has_scopes: resp['scopes'],
+          required_scopes: required_scopes
+        )
+        raise M2MPermissionError.new(resp['scopes'], required_scopes) unless is_authorized
       end
 
       resp
+    end
+
+    # Performs an authorization check against an M2M client and a set of required
+    # scopes. Returns true if the client has all the required scopes, false otherwise.
+    # A scope can match if the client has a wildcard resource or the specific resource.
+    # This function assumes that scopes are of the form "action:resource" or just
+    # "specific_scope". It is _also_ possible to represent scopes as "resource:action",
+    # but it is ultimately up to the developer to ensure consistency in the scopes format.
+    # Note that a scope of "*" will only match another literal "*" because wildcards are
+    # *not* supported in the prefix piece of a scope.
+    def perform_authorization_check(
+      has_scopes:,
+      required_scopes:
+    )
+      client_scopes = Hash.new { |hash, key| hash[key] = Set.new }
+      has_scopes.each do |scope|
+        action = scope
+        resource = '-'
+        action, resource = scope.split(':') if scope.include?(':')
+        client_scopes[action].add(resource)
+      end
+
+      required_scopes.each do |required_scope|
+        required_action = required_scope
+        required_resource = '-'
+        required_action, required_resource = required_scope.split(':') if required_scope.include?(':')
+        return false unless client_scopes.key?(required_action)
+
+        resources = client_scopes[required_action]
+        # The client can either have a wildcard resource or the specific resource
+        return false unless resources.include?('*') || resources.include?(required_resource)
+      end
+
+      true
     end
 
     # Parse a M2M token and verify the signature locally (without calling /authenticate in the API)

@@ -103,7 +103,7 @@ RSpec.describe Stytch::Sessions do
       'sub' => 'user-live-fde03dd1-fff7-4b3c-9b31-ead3fbc224de',
       'iat' => now.to_time.to_i,
       'nbf' => now.to_time.to_i,
-      'exp' => now.to_time.to_i + 5 * 60,  # five minutes
+      'exp' => now.to_time.to_i + 5 * 60, # five minutes
       'iss' => 'stytch.com/' + project_id,
       'aud' => [project_id]
     }
