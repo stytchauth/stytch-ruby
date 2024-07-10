@@ -25,6 +25,9 @@ Or install it yourself as:
 You can find your API credentials in the [Stytch Dashboard](https://stytch.com/dashboard/api-keys).
 
 This client library supports all Stytch's live products:
+
+### B2C
+
   - [x] [Email Magic Links](https://stytch.com/docs/api/send-by-email)
   - [x] [Embeddable Magic Links](https://stytch.com/docs/guides/magic-links/embeddable-magic-links/api)
   - [x] [OAuth logins](https://stytch.com/docs/guides/oauth/idp-overview)
@@ -37,7 +40,18 @@ This client library supports all Stytch's live products:
   - [x] [Crypto wallets](https://stytch.com/docs/guides/web3/api)
   - [x] [Passwords](https://stytch.com/docs/guides/passwords/api)
 
-### Example usage
+### B2B
+
+- [x] [Organizations](https://stytch.com/docs/b2b/api/organization-object)
+- [x] [Members](https://stytch.com/docs/b2b/api/member-object)
+- [x] [Email Magic Links](https://stytch.com/docs/b2b/api/send-login-signup-email)
+- [x] [OAuth logins](https://stytch.com/docs/b2b/api/oauth-google-start)
+- [x] [Session Management](https://stytch.com/docs/b2b/api/session-object)
+- [x] [Single-Sign On](https://stytch.com/docs/b2b/api/sso-authenticate-start)
+- [x] [Discovery](https://stytch.com/docs/b2b/api/discovered-organization-object)
+- [x] [Passwords](https://stytch.com/docs/b2b/api/passwords-authenticate)
+
+### Example B2C usage
 Create an API client:
 ```ruby
 client = Stytch::Client.new(
@@ -60,6 +74,41 @@ client.magic_links.authenticate(
     token: "SeiGwdj5lKkrEVgcEY3QNJXt6srxS3IK2Nwkar6mXD4="
 )
 ```
+
+### Example B2B usage
+
+Create an API client:
+```ruby
+require 'stytch'
+
+client = StytchB2B::Client.new(
+  project_id: "project-test-uuid",
+  secret: "secret-test-uuid"
+)
+```
+
+Create an organization
+
+```ruby
+resp = client.organizations.create(
+  organization_name: 'Example Org Inc.',
+  organization_slug: 'example-org'
+)
+
+puts resp
+```
+
+Log the first user into the organization
+
+```ruby
+resp = client.magic_links.email.login_or_signup(
+  organization_id: 'organization-test-07971b06-ac8b-4cdb-9c15-63b17e653931',
+  email_address: 'sandbox@stytch.com'
+)
+
+puts resp
+```
+
 
 ## Handling Errors
 
