@@ -178,7 +178,7 @@ module StytchB2B
         @connection = connection
       end
 
-      # Update a SCIM Connection.
+      # Update a SCIM Connection. /%}
       #
       # == Parameters:
       # organization_id::
@@ -229,7 +229,7 @@ module StytchB2B
         put_request("/v1/b2b/scim/#{organization_id}/connection/#{connection_id}", request, headers)
       end
 
-      # Deletes a SCIM Connection.
+      # Deletes a SCIM Connection. /%}
       #
       # == Parameters:
       # organization_id::
@@ -263,7 +263,7 @@ module StytchB2B
         delete_request("/v1/b2b/scim/#{organization_id}/connection/#{connection_id}", headers)
       end
 
-      # Start a SCIM token rotation.
+      # Start a SCIM token rotation. /%}
       #
       # == Parameters:
       # organization_id::
@@ -299,7 +299,7 @@ module StytchB2B
         post_request("/v1/b2b/scim/#{organization_id}/connection/#{connection_id}/rotate/start", request, headers)
       end
 
-      # Completes a SCIM token rotation. This will complete the current token rotation process and update the active token to be the new token supplied in the [start SCIM token rotation](https://stytch.com/docs/b2b/api/scim-rotate-token-start) response.
+      # Completes a SCIM token rotation. This will complete the current token rotation process and update the active token to be the new token supplied in the [start SCIM token rotation](https://stytch.com/docs/b2b/api/scim-rotate-token-start) response. /%}
       #
       # == Parameters:
       # organization_id::
@@ -335,7 +335,7 @@ module StytchB2B
         post_request("/v1/b2b/scim/#{organization_id}/connection/#{connection_id}/rotate/complete", request, headers)
       end
 
-      # Cancel a SCIM token rotation. This will cancel the current token rotation process, keeping the original token active.
+      # Cancel a SCIM token rotation. This will cancel the current token rotation process, keeping the original token active. /%}
       #
       # == Parameters:
       # organization_id::
@@ -418,7 +418,7 @@ module StytchB2B
         get_request(request, headers)
       end
 
-      # Create a new SCIM Connection.
+      # Create a new SCIM Connection. /%}
       #
       # == Parameters:
       # organization_id::
@@ -460,7 +460,7 @@ module StytchB2B
         post_request("/v1/b2b/scim/#{organization_id}/connection", request, headers)
       end
 
-      # Get SCIM Connections.
+      # Get SCIM Connections. /%}
       #
       # == Parameters:
       # organization_id::

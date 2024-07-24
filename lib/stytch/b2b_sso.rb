@@ -58,7 +58,7 @@ module StytchB2B
       @saml = StytchB2B::SSO::SAML.new(@connection)
     end
 
-    # Get all SSO Connections owned by the organization.
+    # Get all SSO Connections owned by the organization. /%}
     #
     # == Parameters:
     # organization_id::
@@ -96,7 +96,7 @@ module StytchB2B
       get_request(request, headers)
     end
 
-    # Delete an existing SSO connection.
+    # Delete an existing SSO connection. /%}
     #
     # == Parameters:
     # organization_id::
@@ -300,7 +300,7 @@ module StytchB2B
         @connection = connection
       end
 
-      # Create a new OIDC Connection.
+      # Create a new OIDC Connection. /%}
       #
       # == Parameters:
       # organization_id::
@@ -360,6 +360,7 @@ module StytchB2B
       # * `token_url`
       # * `userinfo_url`
       # * `jwks_url`
+      #  /%}
       #
       # == Parameters:
       # organization_id::
@@ -527,7 +528,7 @@ module StytchB2B
         @connection = connection
       end
 
-      # Create a new SAML Connection.
+      # Create a new SAML Connection. /%}
       #
       # == Parameters:
       # organization_id::
@@ -576,6 +577,7 @@ module StytchB2B
       # * `attribute_mapping`
       # * `idp_entity_id`
       # * `x509_certificate`
+      #  /%}
       #
       # == Parameters:
       # organization_id::
@@ -668,6 +670,7 @@ module StytchB2B
       # * `idp_entity_id`
       # * `x509_certificate`
       # * `attribute_mapping` (must be supplied using [Update SAML Connection](update-saml-connection))
+      #  /%}
       #
       # == Parameters:
       # organization_id::
@@ -712,6 +715,7 @@ module StytchB2B
       # Delete a SAML verification certificate.
       #
       # You may need to do this when rotating certificates from your IdP, since Stytch allows a maximum of 5 certificates per connection. There must always be at least one certificate per active connection.
+      #  /%}
       #
       # == Parameters:
       # organization_id::
