@@ -115,6 +115,25 @@ module StytchB2B
         end
       end
 
+      class GetGroupsRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
       class CreateRequestOptions
         # Optional authorization object.
         # Pass in an active Stytch Member session token or session JWT and the request
@@ -159,7 +178,7 @@ module StytchB2B
         @connection = connection
       end
 
-      # Update a SCIM Connection. /%}
+      # Update a SCIM Connection.
       #
       # == Parameters:
       # organization_id::
@@ -210,7 +229,7 @@ module StytchB2B
         put_request("/v1/b2b/scim/#{organization_id}/connection/#{connection_id}", request, headers)
       end
 
-      # Deletes a SCIM Connection. /%}
+      # Deletes a SCIM Connection.
       #
       # == Parameters:
       # organization_id::
@@ -244,7 +263,7 @@ module StytchB2B
         delete_request("/v1/b2b/scim/#{organization_id}/connection/#{connection_id}", headers)
       end
 
-      # Start a SCIM token rotation. /%}
+      # Start a SCIM token rotation.
       #
       # == Parameters:
       # organization_id::
@@ -280,7 +299,7 @@ module StytchB2B
         post_request("/v1/b2b/scim/#{organization_id}/connection/#{connection_id}/rotate/start", request, headers)
       end
 
-      # Completes a SCIM token rotation. This will complete the current token rotation process and update the active token to be the new token supplied in the [start SCIM token rotation](https://stytch.com/docs/b2b/api/scim-rotate-token-start) response. /%}
+      # Completes a SCIM token rotation. This will complete the current token rotation process and update the active token to be the new token supplied in the [start SCIM token rotation](https://stytch.com/docs/b2b/api/scim-rotate-token-start) response.
       #
       # == Parameters:
       # organization_id::
@@ -316,7 +335,7 @@ module StytchB2B
         post_request("/v1/b2b/scim/#{organization_id}/connection/#{connection_id}/rotate/complete", request, headers)
       end
 
-      # Cancel a SCIM token rotation. This will cancel the current token rotation process, keeping the original token active. /%}
+      # Cancel a SCIM token rotation. This will cancel the current token rotation process, keeping the original token active.
       #
       # == Parameters:
       # organization_id::
@@ -352,7 +371,54 @@ module StytchB2B
         post_request("/v1/b2b/scim/#{organization_id}/connection/#{connection_id}/rotate/cancel", request, headers)
       end
 
-      # Create a new SCIM Connection. /%}
+      # Gets a paginated list of all SCIM Groups associated with a given Connection.
+      #
+      # == Parameters:
+      # organization_id::
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+      #   The type of this field is +String+.
+      # connection_id::
+      #   The ID of the SCIM connection.
+      #   The type of this field is +String+.
+      # cursor::
+      #   The `cursor` field allows you to paginate through your results. Each result array is limited to 1000 results. If your query returns more than 1000 results, you will need to paginate the responses using the `cursor`. If you receive a response that includes a non-null `next_cursor` in the `results_metadata` object, repeat the search call with the `next_cursor` value set to the `cursor` field to retrieve the next page of results. Continue to make search calls until the `next_cursor` in the response is null.
+      #   The type of this field is nilable +String+.
+      # limit::
+      #   The number of search results to return per page. The default limit is 100. A maximum of 1000 results can be returned by a single search request. If the total size of your result set is greater than one page size, you must paginate the response. See the `cursor` field.
+      #   The type of this field is nilable +Integer+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # scim_groups::
+      #   A list of SCIM Connection Groups belonging to the connection.
+      #   The type of this field is list of +SCIMGroup+ (+object+).
+      # status_code::
+      #   (no documentation yet)
+      #   The type of this field is +Integer+.
+      # next_cursor::
+      #   The `next_cursor` string is returned when your search result contains more than one page of results. This value is passed into your next search call in the `cursor` field.
+      #   The type of this field is nilable +String+.
+      #
+      # == Method Options:
+      # This method supports an optional +StytchB2B::SCIM::Connection::GetGroupsRequestOptions+ object which will modify the headers sent in the HTTP request.
+      def get_groups(
+        organization_id:,
+        connection_id:,
+        cursor: nil,
+        limit: nil,
+        method_options: nil
+      )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        query_params = {
+          cursor: cursor,
+          limit: limit
+        }
+        request = request_with_query_params("/v1/b2b/scim/#{organization_id}/connection/#{connection_id}", query_params)
+        get_request(request, headers)
+      end
+
+      # Create a new SCIM Connection.
       #
       # == Parameters:
       # organization_id::
@@ -394,7 +460,7 @@ module StytchB2B
         post_request("/v1/b2b/scim/#{organization_id}/connection", request, headers)
       end
 
-      # Get SCIM Connections. /%}
+      # Get SCIM Connections.
       #
       # == Parameters:
       # organization_id::

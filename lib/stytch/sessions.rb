@@ -203,13 +203,16 @@ module Stytch
     # max_token_age_seconds seconds ago, then just verify locally and don't call the API
     # To force remote validation for all tokens, set max_token_age_seconds to 0 or call authenticate()
     # If max_token_age_seconds is not supplied 300 seconds will be used as the default.
+    # If clock_tolerance_seconds is not supplied 0 seconds will be used as the default.
     def authenticate_jwt(
       session_jwt,
       max_token_age_seconds: nil,
       session_duration_minutes: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      clock_tolerance_seconds: nil
     )
       max_token_age_seconds = 300 if max_token_age_seconds.nil?
+      clock_tolerance_seconds = 0 if clock_tolerance_seconds.nil?
 
       if max_token_age_seconds == 0
         return authenticate(
@@ -219,7 +222,11 @@ module Stytch
         )
       end
 
-      session = authenticate_jwt_local(session_jwt, max_token_age_seconds: max_token_age_seconds)
+      session = authenticate_jwt_local(
+        session_jwt,
+        max_token_age_seconds: max_token_age_seconds,
+        clock_tolerance_seconds: clock_tolerance_seconds
+      )
       return session unless session.nil?
 
       authenticate(
@@ -241,13 +248,15 @@ module Stytch
     # function to get the JWK
     # This method never authenticates a JWT directly with the API
     # If max_token_age_seconds is not supplied 300 seconds will be used as the default.
-    def authenticate_jwt_local(session_jwt, max_token_age_seconds: nil)
+    # If clock_tolerance_seconds is not supplied 0 seconds will be used as the default.
+    def authenticate_jwt_local(session_jwt, max_token_age_seconds: nil, clock_tolerance_seconds: nil)
       max_token_age_seconds = 300 if max_token_age_seconds.nil?
+      clock_tolerance_seconds = 0 if clock_tolerance_seconds.nil?
 
       issuer = 'stytch.com/' + @project_id
       begin
         decoded_token = JWT.decode session_jwt, nil, true,
-                                   { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'] }
+                                   { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'], nbf_leeway: clock_tolerance_seconds }
 
         session = decoded_token[0]
         iat_time = Time.at(session['iat']).to_datetime

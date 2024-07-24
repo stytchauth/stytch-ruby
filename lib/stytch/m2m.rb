@@ -13,12 +13,13 @@ module Stytch
     include Stytch::RequestHelper
     attr_reader :clients
 
-    def initialize(connection, project_id)
+    def initialize(connection, project_id, is_b2b_client)
       @connection = connection
 
       @clients = Stytch::M2M::Clients.new(@connection)
       @project_id = project_id
       @cache_last_update = 0
+      @is_b2b_client = is_b2b_client
       @jwks_loader = lambda do |options|
         @cached_keys = nil if options[:invalidate] && @cache_last_update < Time.now.to_i - 300
         @cached_keys ||= begin
@@ -37,9 +38,11 @@ module Stytch
     def get_jwks(
       project_id:
     )
+      headers = {}
       query_params = {}
-      request = request_with_query_params("/v1/sessions/jwks/#{project_id}", query_params)
-      get_request(request)
+      path = @is_b2b_client ? "/v1/b2b/sessions/jwks/#{project_id}" : "/v1/sessions/jwks/#{project_id}"
+      request = request_with_query_params(path, query_params)
+      get_request(request, headers)
     end
     # ENDMANUAL(M2M::get_jwks)
 
@@ -100,6 +103,9 @@ module Stytch
     #   A function to check if the token has the required scopes. This defaults to a function that assumes
     #   scopes are either direct string matches or written in the form "action:resource". See the
     #   documentation for +perform_authorization_check+ for more information.
+    # clock_tolerance_seconds:
+    #   The tolerance to use during verification of the nbf claim. This can help with clock drift issues.
+    #   The type of this field is nilable +Integer+.
     # == Returns:
     # +nil+ if the token could not be validated, or an object with the following fields:
     # scopes::
@@ -115,10 +121,11 @@ module Stytch
       access_token:,
       required_scopes: nil,
       max_token_age: nil,
-      scope_authorization_func: method(:perform_authorization_check)
+      scope_authorization_func: method(:perform_authorization_check),
+      clock_tolerance_seconds: nil
     )
       # Intentionally allow this to re-raise if authentication fails
-      decoded_jwt = authenticate_token_local(access_token)
+      decoded_jwt = authenticate_token_local(access_token, clock_tolerance_seconds: clock_tolerance_seconds)
 
       iat_time = Time.at(decoded_jwt['iat']).to_datetime
 
@@ -173,11 +180,13 @@ module Stytch
     end
 
     # Parse a M2M token and verify the signature locally (without calling /authenticate in the API)
-    def authenticate_token_local(jwt)
+    # If clock_tolerance_seconds is not supplied 0 seconds will be used as the default.
+    def authenticate_token_local(jwt, clock_tolerance_seconds: nil)
+      clock_tolerance_seconds = 0 if clock_tolerance_seconds.nil?
       issuer = 'stytch.com/' + @project_id
       begin
         decoded_token = JWT.decode jwt, nil, true,
-                                   { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'] }
+                                   { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'], nbf_leeway: clock_tolerance_seconds }
         decoded_token[0]
       rescue JWT::InvalidIssuerError
         raise JWTInvalidIssuerError

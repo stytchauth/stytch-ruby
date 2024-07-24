@@ -13,6 +13,25 @@ require_relative 'request_helper'
 
 module StytchB2B
   class Sessions
+    class RevokeRequestOptions
+      # Optional authorization object.
+      # Pass in an active Stytch Member session token or session JWT and the request
+      # will be run using that member's permissions.
+      attr_accessor :authorization
+
+      def initialize(
+        authorization: nil
+      )
+        @authorization = authorization
+      end
+
+      def to_headers
+        headers = {}
+        headers.merge!(@authorization.to_headers) if authorization
+        headers
+      end
+    end
+
     include Stytch::RequestHelper
 
     def initialize(connection, project_id, policy_cache)
@@ -70,7 +89,7 @@ module StytchB2B
 
     # Authenticates a Session and updates its lifetime by the specified `session_duration_minutes`. If the `session_duration_minutes` is not specified, a Session will not be extended. This endpoint requires either a `session_jwt` or `session_token` be included in the request. It will return an error if both are present.
     #
-    # You may provide a JWT that needs to be refreshed and is expired according to its `exp` claim. A new JWT will be returned if both the signature and the underlying Session are still valid. See our [How to use Stytch Session JWTs](https://stytch.com/docs/b2b/guides/sessions/using-jwts) guide for more information.
+    # You may provide a JWT that needs to be refreshed and is expired according to its `exp` claim. A new JWT will be returned if both the signature and the underlying Session are still valid. See our [How to use Stytch Session JWTs](https://stytch.com/docs/b2b/guides/sessions/resources/using-jwts) guide for more information.
     #
     # If an `authorization_check` object is passed in, this method will also check if the Member is authorized to perform the given action on the given Resource in the specified Organization. A Member is authorized if their Member Session contains a Role, assigned [explicitly or implicitly](https://stytch.com/docs/b2b/guides/rbac/role-assignment), with adequate permissions.
     # In addition, the `organization_id` passed in the authorization check must match the Member's Organization.
@@ -189,13 +208,18 @@ module StytchB2B
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
+    #
+    # == Method Options:
+    # This method supports an optional +StytchB2B::Sessions::RevokeRequestOptions+ object which will modify the headers sent in the HTTP request.
     def revoke(
       member_session_id: nil,
       session_token: nil,
       session_jwt: nil,
-      member_id: nil
+      member_id: nil,
+      method_options: nil
     )
       headers = {}
+      headers = headers.merge(method_options.to_headers) unless method_options.nil?
       request = {}
       request[:member_session_id] = member_session_id unless member_session_id.nil?
       request[:session_token] = session_token unless session_token.nil?
@@ -397,7 +421,7 @@ module StytchB2B
     #
     # If you're using your own JWT validation library, many have built-in support for JWKS rotation, and you'll just need to supply this API endpoint. If not, your application should decide which JWKS to use for validation by inspecting the `kid` value.
     #
-    # See our [How to use Stytch Session JWTs](https://stytch.com/docs/b2b/guides/sessions/using-jwts) guide for more information.
+    # See our [How to use Stytch Session JWTs](https://stytch.com/docs/b2b/guides/sessions/resources/using-jwts) guide for more information.
     #
     # == Parameters:
     # project_id::
@@ -436,14 +460,17 @@ module StytchB2B
     # Note that the 'user_id' field of the returned session is DEPRECATED: Use member_id instead
     # This field will be removed in a future MAJOR release.
     # If max_token_age_seconds is not supplied 300 seconds will be used as the default.
+    # If clock_tolerance_seconds is not supplied 0 seconds will be used as the default.
     def authenticate_jwt(
       session_jwt,
       max_token_age_seconds: nil,
       session_duration_minutes: nil,
       session_custom_claims: nil,
-      authorization_check: nil
+      authorization_check: nil,
+      clock_tolerance_seconds: nil
     )
       max_token_age_seconds = 300 if max_token_age_seconds.nil?
+      clock_tolerance_seconds = 0 if clock_tolerance_seconds.nil?
 
       if max_token_age_seconds == 0
         return authenticate(
@@ -454,7 +481,7 @@ module StytchB2B
         )
       end
 
-      decoded_jwt = authenticate_jwt_local(session_jwt, max_token_age_seconds: max_token_age_seconds, authorization_check: authorization_check)
+      decoded_jwt = authenticate_jwt_local(session_jwt, max_token_age_seconds: max_token_age_seconds, authorization_check: authorization_check, clock_tolerance_seconds: clock_tolerance_seconds)
       return decoded_jwt unless decoded_jwt.nil?
 
       authenticate(
@@ -478,13 +505,15 @@ module StytchB2B
     # function to get the JWK
     # This method never authenticates a JWT directly with the API
     # If max_token_age_seconds is not supplied 300 seconds will be used as the default.
-    def authenticate_jwt_local(session_jwt, max_token_age_seconds: nil, authorization_check: nil)
+    # If clock_tolerance_seconds is not supplied 0 seconds will be used as the default.
+    def authenticate_jwt_local(session_jwt, max_token_age_seconds: nil, authorization_check: nil, clock_tolerance_seconds: nil)
       max_token_age_seconds = 300 if max_token_age_seconds.nil?
+      clock_tolerance_seconds = 0 if clock_tolerance_seconds.nil?
 
       issuer = 'stytch.com/' + @project_id
       begin
         decoded_token = JWT.decode session_jwt, nil, true,
-                                   { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'] }
+                                   { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'], nbf_leeway: clock_tolerance_seconds }
 
         session = decoded_token[0]
         iat_time = Time.at(session['iat']).to_datetime

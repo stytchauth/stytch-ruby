@@ -22,11 +22,12 @@ module Stytch
       @api_host   = api_host(env, project_id)
       @project_id = project_id
       @secret     = secret
+      @is_b2b_client = false
 
       create_connection(&block)
 
       @crypto_wallets = Stytch::CryptoWallets.new(@connection)
-      @m2m = Stytch::M2M.new(@connection, @project_id)
+      @m2m = Stytch::M2M.new(@connection, @project_id, @is_b2b_client)
       @magic_links = Stytch::MagicLinks.new(@connection)
       @oauth = Stytch::OAuth.new(@connection)
       @otps = Stytch::OTPs.new(@connection)

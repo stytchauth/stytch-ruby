@@ -26,6 +26,7 @@ module StytchB2B
       @api_host   = api_host(env, project_id)
       @project_id = project_id
       @secret     = secret
+      @is_b2b_client = true
 
       create_connection(&block)
 
@@ -33,7 +34,7 @@ module StytchB2B
       @policy_cache = StytchB2B::PolicyCache.new(rbac_client: rbac)
 
       @discovery = StytchB2B::Discovery.new(@connection)
-      @m2m = Stytch::M2M.new(@connection, @project_id)
+      @m2m = Stytch::M2M.new(@connection, @project_id, @is_b2b_client)
       @magic_links = StytchB2B::MagicLinks.new(@connection)
       @oauth = StytchB2B::OAuth.new(@connection)
       @otps = StytchB2B::OTPs.new(@connection)
