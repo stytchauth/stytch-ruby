@@ -229,7 +229,6 @@ module StytchB2B
     # Updates an Organization specified by `organization_id`. An Organization must always have at least one auth setting set to either `RESTRICTED` or `ALL_ALLOWED` in order to provision new Members.
     #
     # *See the [Organization authentication settings](https://stytch.com/docs/b2b/api/org-auth-settings) resource to learn more about fields like `email_jit_provisioning`, `email_invites`, `sso_jit_provisioning`, etc., and their behaviors.
-    #  /%}
     #
     # == Parameters:
     # organization_id::
@@ -418,7 +417,7 @@ module StytchB2B
       put_request("/v1/b2b/organizations/#{organization_id}", request, headers)
     end
 
-    # Deletes an Organization specified by `organization_id`. All Members of the Organization will also be deleted. /%}
+    # Deletes an Organization specified by `organization_id`. All Members of the Organization will also be deleted.
     #
     # == Parameters:
     # organization_id::
@@ -680,7 +679,6 @@ module StytchB2B
       end
 
       # Updates a Member specified by `organization_id` and `member_id`.
-      #  /%}
       #
       # == Parameters:
       # organization_id::
@@ -803,7 +801,7 @@ module StytchB2B
         put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", request, headers)
       end
 
-      # Deletes a Member specified by `organization_id` and `member_id`. /%}
+      # Deletes a Member specified by `organization_id` and `member_id`.
       #
       # == Parameters:
       # organization_id::
@@ -837,7 +835,7 @@ module StytchB2B
         delete_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", headers)
       end
 
-      # Reactivates a deleted Member's status and its associated email status (if applicable) to active, specified by `organization_id` and `member_id`. /%}
+      # Reactivates a deleted Member's status and its associated email status (if applicable) to active, specified by `organization_id` and `member_id`.
       #
       # == Parameters:
       # organization_id::
@@ -886,7 +884,6 @@ module StytchB2B
       # Existing Member Sessions that include a phone number authentication factor will not be revoked if the phone number is deleted, and MFA will not be enforced until the Member logs in again.
       # If you wish to enforce MFA immediately after a phone number is deleted, you can do so by prompting the Member to enter a new phone number
       # and calling the [OTP SMS send](https://stytch.com/docs/b2b/api/otp-sms-send) endpoint, then calling the [OTP SMS Authenticate](https://stytch.com/docs/b2b/api/authenticate-otp-sms) endpoint.
-      #  /%}
       #
       # == Parameters:
       # organization_id::
@@ -931,7 +928,6 @@ module StytchB2B
       # To mint a new registration for a Member, you must first call this endpoint to delete the existing registration.
       #
       # Existing Member Sessions that include the TOTP authentication factor will not be revoked if the registration is deleted, and MFA will not be enforced until the Member logs in again.
-      #  /%}
       #
       # == Parameters:
       # organization_id::
@@ -974,7 +970,6 @@ module StytchB2B
       # Search for Members within specified Organizations. An array with at least one `organization_id` is required. Submitting an empty `query` returns all non-deleted Members within the specified Organizations.
       #
       # *All fuzzy search filters require a minimum of three characters.
-      #  /%}
       #
       # == Parameters:
       # organization_ids::
@@ -1029,7 +1024,7 @@ module StytchB2B
         post_request('/v1/b2b/organizations/members/search', request, headers)
       end
 
-      # Delete a Member's password. /%}
+      # Delete a Member's password.
       #
       # == Parameters:
       # organization_id::
@@ -1170,7 +1165,7 @@ module StytchB2B
         post_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/unlink_retired_email", request, headers)
       end
 
-      # Creates a Member. An `organization_id` and `email_address` are required. /%}
+      # Creates a Member. An `organization_id` and `email_address` are required.
       #
       # == Parameters:
       # organization_id::
