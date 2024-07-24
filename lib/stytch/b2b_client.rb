@@ -45,7 +45,7 @@ module StytchB2B
       @recovery_codes = StytchB2B::RecoveryCodes.new(@connection)
       @scim = StytchB2B::SCIM.new(@connection)
       @sso = StytchB2B::SSO.new(@connection)
-      @sessions = StytchB2B::Sessions.new(@connection, @project_id, @is_b2b_client, @policy_cache)
+      @sessions = StytchB2B::Sessions.new(@connection, @project_id, @policy_cache)
       @totps = StytchB2B::TOTPs.new(@connection)
     end
 

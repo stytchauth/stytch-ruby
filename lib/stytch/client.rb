@@ -33,7 +33,7 @@ module Stytch
       @otps = Stytch::OTPs.new(@connection)
       @passwords = Stytch::Passwords.new(@connection)
       @project = Stytch::Project.new(@connection)
-      @sessions = Stytch::Sessions.new(@connection, @project_id, @is_b2b_client)
+      @sessions = Stytch::Sessions.new(@connection, @project_id)
       @totps = Stytch::TOTPs.new(@connection)
       @users = Stytch::Users.new(@connection)
       @webauthn = Stytch::WebAuthn.new(@connection)

@@ -3,7 +3,7 @@
 RSpec.describe Stytch::Sessions do
   it 'correctly decodes a JWT' do
     project_id = 'project-test-00000000-0000-0000-0000-000000000000'
-    sessions = Stytch::Sessions.new(nil, project_id, false) # the methods we're calling don't require a connection
+    sessions = Stytch::Sessions.new(nil, project_id) # the methods we're calling don't require a connection
 
     kid = 'jwk-test-00000000-0000-0000-0000-000000000000'
     headers = { kid: kid }
@@ -52,7 +52,7 @@ RSpec.describe Stytch::Sessions do
 
   it 'marshals JWT into session (new format)' do
     project_id = 'project-test-00000000-0000-0000-0000-000000000000'
-    sessions = Stytch::Sessions.new(nil, project_id, false) # the methods we're calling don't require a connection
+    sessions = Stytch::Sessions.new(nil, project_id) # the methods we're calling don't require a connection
 
     now = Time.utc(2022, 5, 3, 18, 51, 41)
     claims = jwt_claims(project_id, now)
@@ -64,7 +64,7 @@ RSpec.describe Stytch::Sessions do
 
   it 'marshals JWT into session (old format)' do
     project_id = 'project-test-00000000-0000-0000-0000-000000000000'
-    sessions = Stytch::Sessions.new(nil, project_id, false) # the methods we're calling don't require a connection
+    sessions = Stytch::Sessions.new(nil, project_id) # the methods we're calling don't require a connection
 
     now = Time.utc(2022, 5, 3, 18, 51, 41)
     claims = jwt_claims(project_id, now)
