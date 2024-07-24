@@ -461,14 +461,17 @@ module StytchB2B
     # Note that the 'user_id' field of the returned session is DEPRECATED: Use member_id instead
     # This field will be removed in a future MAJOR release.
     # If max_token_age_seconds is not supplied 300 seconds will be used as the default.
+    # If clock_tolerance_seconds is not supplied 0 seconds will be used as the default.
     def authenticate_jwt(
       session_jwt,
       max_token_age_seconds: nil,
       session_duration_minutes: nil,
       session_custom_claims: nil,
-      authorization_check: nil
+      authorization_check: nil,
+      clock_tolerance_seconds: nil
     )
       max_token_age_seconds = 300 if max_token_age_seconds.nil?
+      clock_tolerance_seconds = 0 if clock_tolerance_seconds.nil?
 
       if max_token_age_seconds == 0
         return authenticate(
@@ -479,7 +482,7 @@ module StytchB2B
         )
       end
 
-      decoded_jwt = authenticate_jwt_local(session_jwt, max_token_age_seconds: max_token_age_seconds, authorization_check: authorization_check)
+      decoded_jwt = authenticate_jwt_local(session_jwt, max_token_age_seconds: max_token_age_seconds, authorization_check: authorization_check, clock_tolerance_seconds: clock_tolerance_seconds)
       return decoded_jwt unless decoded_jwt.nil?
 
       authenticate(
@@ -503,13 +506,15 @@ module StytchB2B
     # function to get the JWK
     # This method never authenticates a JWT directly with the API
     # If max_token_age_seconds is not supplied 300 seconds will be used as the default.
-    def authenticate_jwt_local(session_jwt, max_token_age_seconds: nil, authorization_check: nil)
+    # If clock_tolerance_seconds is not supplied 0 seconds will be used as the default.
+    def authenticate_jwt_local(session_jwt, max_token_age_seconds: nil, authorization_check: nil, clock_tolerance_seconds: nil)
       max_token_age_seconds = 300 if max_token_age_seconds.nil?
+      clock_tolerance_seconds = 0 if clock_tolerance_seconds.nil?
 
       issuer = 'stytch.com/' + @project_id
       begin
         decoded_token = JWT.decode session_jwt, nil, true,
-                                   { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'] }
+                                   { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'], nbf_leeway: clock_tolerance_seconds }
 
         session = decoded_token[0]
         iat_time = Time.at(session['iat']).to_datetime
