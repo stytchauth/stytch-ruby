@@ -13,12 +13,13 @@ module Stytch
     include Stytch::RequestHelper
     attr_reader :clients
 
-    def initialize(connection, project_id)
+    def initialize(connection, project_id, is_b2b_client)
       @connection = connection
 
       @clients = Stytch::M2M::Clients.new(@connection)
       @project_id = project_id
       @cache_last_update = 0
+      @is_b2b_client = is_b2b_client
       @jwks_loader = lambda do |options|
         @cached_keys = nil if options[:invalidate] && @cache_last_update < Time.now.to_i - 300
         @cached_keys ||= begin
@@ -37,9 +38,11 @@ module Stytch
     def get_jwks(
       project_id:
     )
+      headers = {}
       query_params = {}
-      request = request_with_query_params("/v1/sessions/jwks/#{project_id}", query_params)
-      get_request(request)
+      path = @is_b2b_client ? "/v1/b2b/sessions/jwks/#{project_id}" : "/v1/sessions/jwks/#{project_id}"
+      request = request_with_query_params(path, query_params)
+      get_request(request, headers)
     end
     # ENDMANUAL(M2M::get_jwks)
 

@@ -13,14 +13,34 @@ require_relative 'request_helper'
 
 module StytchB2B
   class Sessions
+    class RevokeRequestOptions
+      # Optional authorization object.
+      # Pass in an active Stytch Member session token or session JWT and the request
+      # will be run using that member's permissions.
+      attr_accessor :authorization
+
+      def initialize(
+        authorization: nil
+      )
+        @authorization = authorization
+      end
+
+      def to_headers
+        headers = {}
+        headers.merge!(@authorization.to_headers) if authorization
+        headers
+      end
+    end
+
     include Stytch::RequestHelper
 
-    def initialize(connection, project_id, policy_cache)
+    def initialize(connection, project_id, is_b2b_client, policy_cache)
       @connection = connection
 
       @policy_cache = policy_cache
       @project_id = project_id
       @cache_last_update = 0
+      @is_b2b_client = is_b2b_client
       @jwks_loader = lambda do |options|
         @cached_keys = nil if options[:invalidate] && @cache_last_update < Time.now.to_i - 300
         @cached_keys ||= begin
@@ -70,7 +90,7 @@ module StytchB2B
 
     # Authenticates a Session and updates its lifetime by the specified `session_duration_minutes`. If the `session_duration_minutes` is not specified, a Session will not be extended. This endpoint requires either a `session_jwt` or `session_token` be included in the request. It will return an error if both are present.
     #
-    # You may provide a JWT that needs to be refreshed and is expired according to its `exp` claim. A new JWT will be returned if both the signature and the underlying Session are still valid. See our [How to use Stytch Session JWTs](https://stytch.com/docs/b2b/guides/sessions/using-jwts) guide for more information.
+    # You may provide a JWT that needs to be refreshed and is expired according to its `exp` claim. A new JWT will be returned if both the signature and the underlying Session are still valid. See our [How to use Stytch Session JWTs](https://stytch.com/docs/b2b/guides/sessions/resources/using-jwts) guide for more information.
     #
     # If an `authorization_check` object is passed in, this method will also check if the Member is authorized to perform the given action on the given Resource in the specified Organization. A Member is authorized if their Member Session contains a Role, assigned [explicitly or implicitly](https://stytch.com/docs/b2b/guides/rbac/role-assignment), with adequate permissions.
     # In addition, the `organization_id` passed in the authorization check must match the Member's Organization.
@@ -189,13 +209,18 @@ module StytchB2B
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
+    #
+    # == Method Options:
+    # This method supports an optional +StytchB2B::Sessions::RevokeRequestOptions+ object which will modify the headers sent in the HTTP request.
     def revoke(
       member_session_id: nil,
       session_token: nil,
       session_jwt: nil,
-      member_id: nil
+      member_id: nil,
+      method_options: nil
     )
       headers = {}
+      headers = headers.merge(method_options.to_headers) unless method_options.nil?
       request = {}
       request[:member_session_id] = member_session_id unless member_session_id.nil?
       request[:session_token] = session_token unless session_token.nil?
@@ -397,7 +422,7 @@ module StytchB2B
     #
     # If you're using your own JWT validation library, many have built-in support for JWKS rotation, and you'll just need to supply this API endpoint. If not, your application should decide which JWKS to use for validation by inspecting the `kid` value.
     #
-    # See our [How to use Stytch Session JWTs](https://stytch.com/docs/b2b/guides/sessions/using-jwts) guide for more information.
+    # See our [How to use Stytch Session JWTs](https://stytch.com/docs/b2b/guides/sessions/resources/using-jwts) guide for more information.
     #
     # == Parameters:
     # project_id::

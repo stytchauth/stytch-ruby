@@ -34,7 +34,7 @@ module StytchB2B
     #
     # == Parameters:
     # password::
-    #   The password to authenticate.
+    #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
     #   The type of this field is +String+.
     # email_address::
     #   The email address of the Member.
@@ -88,6 +88,8 @@ module StytchB2B
     end
 
     # Adds an existing password to a member's email that doesn't have a password yet. We support migrating members from passwords stored with bcrypt, scrypt, argon2, MD-5, SHA-1, and PBKDF2. This endpoint has a rate limit of 100 requests per second.
+    #
+    # The member's email will be marked as verified when you use this endpoint.
     #
     # == Parameters:
     # email_address::
@@ -219,7 +221,7 @@ module StytchB2B
     #   The email address of the Member.
     #   The type of this field is +String+.
     # password::
-    #   The password to authenticate.
+    #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
     #   The type of this field is +String+.
     # session_token::
     #   A secret token for a given Stytch Session.
@@ -427,12 +429,14 @@ module StytchB2B
       #
       # If a valid `session_token` or `session_jwt` is passed in, the Member will not be required to complete an MFA step.
       #
+      # Note that a successful password reset by email will revoke all active sessions for the `member_id`.
+      #
       # == Parameters:
       # password_reset_token::
       #   The password reset token to authenticate.
       #   The type of this field is +String+.
       # password::
-      #   The password to reset.
+      #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
       #   The type of this field is +String+.
       # session_token::
       #   Reuse an existing session instead of creating a new one. If you provide a `session_token`, Stytch will update the session.
@@ -557,12 +561,14 @@ module StytchB2B
 
       # Reset the Member's password using their existing session. The endpoint will error if the session does not contain an authentication factor that has been issued within the last 5 minutes. Either `session_token` or `session_jwt` should be provided.
       #
+      # Note that a successful password reset via an existing session will revoke all active sessions for the `member_id`, except for the one used during the reset flow.
+      #
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
       #   The type of this field is +String+.
       # password::
-      #   The password to authenticate.
+      #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
       #   The type of this field is +String+.
       # session_token::
       #   A secret token for a given Stytch Session.
@@ -677,15 +683,17 @@ module StytchB2B
       #
       # If a valid `session_token` or `session_jwt` is passed in, the Member will not be required to complete an MFA step.
       #
+      # Note that a successful password reset via an existing password will revoke all active sessions for the `member_id`.
+      #
       # == Parameters:
       # email_address::
       #   The email address of the Member.
       #   The type of this field is +String+.
       # existing_password::
-      #   The member's current password that they supplied.
+      #   The Member's current password that they supplied.
       #   The type of this field is +String+.
       # new_password::
-      #   The member's elected new password.
+      #   The Member's elected new password.
       #   The type of this field is +String+.
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.

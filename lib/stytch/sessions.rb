@@ -15,11 +15,12 @@ module Stytch
   class Sessions
     include Stytch::RequestHelper
 
-    def initialize(connection, project_id)
+    def initialize(connection, project_id, is_b2b_client)
       @connection = connection
 
       @project_id = project_id
       @cache_last_update = 0
+      @is_b2b_client = is_b2b_client
       @jwks_loader = lambda do |options|
         @cached_keys = nil if options[:invalidate] && @cache_last_update < Time.now.to_i - 300
         @cached_keys ||= begin

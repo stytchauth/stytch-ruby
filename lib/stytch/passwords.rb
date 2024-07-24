@@ -34,7 +34,7 @@ module Stytch
     #   The email address of the end user.
     #   The type of this field is +String+.
     # password::
-    #   The password of the user
+    #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
     #   The type of this field is +String+.
     # session_duration_minutes::
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
@@ -127,7 +127,7 @@ module Stytch
     #   The email address of the end user.
     #   The type of this field is +String+.
     # password::
-    #   The password of the user
+    #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
     #   The type of this field is +String+.
     # session_token::
     #   The `session_token` associated with a User's existing Session.
@@ -214,7 +214,7 @@ module Stytch
     #
     # == Parameters:
     # password::
-    #   The password of the user
+    #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
     #   The type of this field is +String+.
     # email::
     #   The email address of the end user.
@@ -456,7 +456,7 @@ module Stytch
       #       See examples and read more about redirect URLs [here](https://stytch.com/docs/guides/dashboard/redirect-urls).
       #   The type of this field is +String+.
       # password::
-      #   The password of the user
+      #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
       #   The type of this field is +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
@@ -651,7 +651,7 @@ module Stytch
       #
       # == Parameters:
       # password::
-      #   The password of the user
+      #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
       #   The type of this field is +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
