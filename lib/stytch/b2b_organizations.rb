@@ -631,6 +631,25 @@ module StytchB2B
         end
       end
 
+      class UnlinkRetiredEmailRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
       class CreateRequestOptions
         # Optional authorization object.
         # Pass in an active Stytch Member session token or session JWT and the request
@@ -1076,6 +1095,74 @@ module StytchB2B
         query_params = {}
         request = request_with_query_params("/v1/b2b/organizations/members/dangerously_get/#{member_id}", query_params)
         get_request(request, headers)
+      end
+
+      # Unlinks a retired email address from a Member specified by their `organization_id` and `member_id`. The email address
+      # to be retired can be identified in the request body by either its `email_id`, its `email_address`, or both. If using
+      # both identifiers they must refer to the same email.
+      #
+      # A previously active email address can be marked as retired in one of two ways:
+      #
+      # - It's replaced with a new primary email address during an explicit Member update.
+      # - A new email address is surfaced by an OAuth, SAML or OIDC provider. In this case the new email address becomes the
+      #   Member's primary email address and the old primary email address is retired.
+      #
+      # A retired email address cannot be used by other Members in the same Organization. However, unlinking retired email
+      # addresses allows then to be subsequently re-used by other Organization Members. Retired email addresses can be viewed
+      # on the [Member object](https://stytch.com/docs/b2b/api/member-object).
+      #  %}
+      #
+      # == Parameters:
+      # organization_id::
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+      #   The type of this field is +String+.
+      # member_id::
+      #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
+      #   The type of this field is +String+.
+      # email_id::
+      #   The globally unique UUID of a Member's email.
+      #   The type of this field is nilable +String+.
+      # email_address::
+      #   The email address of the Member.
+      #   The type of this field is nilable +String+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # member_id::
+      #   Globally unique UUID that identifies a specific Member.
+      #   The type of this field is +String+.
+      # organization_id::
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+      #   The type of this field is +String+.
+      # member::
+      #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
+      #   The type of this field is +Member+ (+object+).
+      # organization::
+      #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
+      #   The type of this field is +Organization+ (+object+).
+      # status_code::
+      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+      #   The type of this field is +Integer+.
+      #
+      # == Method Options:
+      # This method supports an optional +StytchB2B::Organizations::Members::UnlinkRetiredEmailRequestOptions+ object which will modify the headers sent in the HTTP request.
+      def unlink_retired_email(
+        organization_id:,
+        member_id:,
+        email_id: nil,
+        email_address: nil,
+        method_options: nil
+      )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        request = {}
+        request[:email_id] = email_id unless email_id.nil?
+        request[:email_address] = email_address unless email_address.nil?
+
+        post_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/unlink_retired_email", request, headers)
       end
 
       # Creates a Member. An `organization_id` and `email_address` are required.
