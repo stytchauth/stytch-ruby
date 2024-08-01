@@ -16,7 +16,12 @@ module Stytch
       @connection = connection
     end
 
-    # Initiate the authentication of a crypto wallet. After calling this endpoint, the user will need to sign a message containing only the returned `challenge` field.
+    # Initiate the authentication of a crypto wallet. After calling this endpoint, the user will need to sign a message containing the returned `challenge` field.
+    #
+    # For Ethereum crypto wallets, you can optionally use the Sign In With Ethereum (SIWE) protocol for the message by passing in the `siwe_params`. The only required fields are `domain` and `uri`.
+    # If the crypto wallet detects that the domain in the message does not match the website's domain, it will display a warning to the user.
+    #
+    # If not using the SIWE protocol, the message will simply consist of the project name and a random string.
     #
     # == Parameters:
     # crypto_wallet_type::
@@ -34,6 +39,9 @@ module Stytch
     # session_jwt::
     #   The `session_jwt` associated with a User's existing Session.
     #   The type of this field is nilable +String+.
+    # siwe_params::
+    #   The parameters for a Sign In With Ethereum (SIWE) message. May only be passed if the `crypto_wallet_type` is `ethereum`.
+    #   The type of this field is nilable +SIWEParams+ (+object+).
     #
     # == Returns:
     # An object with the following fields:
@@ -57,7 +65,8 @@ module Stytch
       crypto_wallet_address:,
       user_id: nil,
       session_token: nil,
-      session_jwt: nil
+      session_jwt: nil,
+      siwe_params: nil
     )
       headers = {}
       request = {
@@ -67,6 +76,7 @@ module Stytch
       request[:user_id] = user_id unless user_id.nil?
       request[:session_token] = session_token unless session_token.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
+      request[:siwe_params] = siwe_params unless siwe_params.nil?
 
       post_request('/v1/crypto_wallets/authenticate/start', request, headers)
     end
@@ -132,6 +142,9 @@ module Stytch
     #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
+    # siwe_params::
+    #   The parameters of the Sign In With Ethereum (SIWE) message that was signed.
+    #   The type of this field is nilable +SIWEParamsResponse+ (+object+).
     def authenticate(
       crypto_wallet_type:,
       crypto_wallet_address:,
