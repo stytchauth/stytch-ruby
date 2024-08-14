@@ -150,6 +150,17 @@ module StytchB2B
     #   The list's accepted values are: `sms_otp` and `totp`.
     #
     #   The type of this field is nilable list of +String+.
+    # oauth_tenant_jit_provisioning::
+    #   The authentication setting that controls how a new Member can JIT provision into an organization by tenant. The accepted values are:
+    #
+    #   `RESTRICTED` – only new Members with tenants in `allowed_oauth_tenants` can JIT provision via tenant.
+    #
+    #   `NOT_ALLOWED` – disable JIT provisioning by OAuth Tenant.
+    #
+    #   The type of this field is nilable +String+.
+    # allowed_oauth_tenants::
+    #   A map of allowed OAuth tenants. If this field is not passed in, the Organization will not allow JIT provisioning by OAuth Tenant. Allowed keys are "slack" and "hubspot".
+    #   The type of this field is nilable +object+.
     #
     # == Returns:
     # An object with the following fields:
@@ -176,7 +187,9 @@ module StytchB2B
       mfa_policy: nil,
       rbac_email_implicit_role_assignments: nil,
       mfa_methods: nil,
-      allowed_mfa_methods: nil
+      allowed_mfa_methods: nil,
+      oauth_tenant_jit_provisioning: nil,
+      allowed_oauth_tenants: nil
     )
       headers = {}
       request = {
@@ -195,6 +208,8 @@ module StytchB2B
       request[:rbac_email_implicit_role_assignments] = rbac_email_implicit_role_assignments unless rbac_email_implicit_role_assignments.nil?
       request[:mfa_methods] = mfa_methods unless mfa_methods.nil?
       request[:allowed_mfa_methods] = allowed_mfa_methods unless allowed_mfa_methods.nil?
+      request[:oauth_tenant_jit_provisioning] = oauth_tenant_jit_provisioning unless oauth_tenant_jit_provisioning.nil?
+      request[:allowed_oauth_tenants] = allowed_oauth_tenants unless allowed_oauth_tenants.nil?
 
       post_request('/v1/b2b/organizations', request, headers)
     end
@@ -359,6 +374,21 @@ module StytchB2B
     #
     # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.allowed-mfa-methods` action on the `stytch.organization` Resource.
     #   The type of this field is nilable list of +String+.
+    # oauth_tenant_jit_provisioning::
+    #   The authentication setting that controls how a new Member can JIT provision into an organization by tenant. The accepted values are:
+    #
+    #   `RESTRICTED` – only new Members with tenants in `allowed_oauth_tenants` can JIT provision via tenant.
+    #
+    #   `NOT_ALLOWED` – disable JIT provisioning by OAuth Tenant.
+    #
+    #
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.oauth-tenant-jit-provisioning` action on the `stytch.organization` Resource.
+    #   The type of this field is nilable +String+.
+    # allowed_oauth_tenants::
+    #   A map of allowed OAuth tenants. If this field is not passed in, the Organization will not allow JIT provisioning by OAuth Tenant. Allowed keys are "slack" and "hubspot".
+    #
+    # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.allowed-oauth-tenants` action on the `stytch.organization` Resource.
+    #   The type of this field is nilable +object+.
     #
     # == Returns:
     # An object with the following fields:
@@ -392,6 +422,8 @@ module StytchB2B
       rbac_email_implicit_role_assignments: nil,
       mfa_methods: nil,
       allowed_mfa_methods: nil,
+      oauth_tenant_jit_provisioning: nil,
+      allowed_oauth_tenants: nil,
       method_options: nil
     )
       headers = {}
@@ -413,6 +445,8 @@ module StytchB2B
       request[:rbac_email_implicit_role_assignments] = rbac_email_implicit_role_assignments unless rbac_email_implicit_role_assignments.nil?
       request[:mfa_methods] = mfa_methods unless mfa_methods.nil?
       request[:allowed_mfa_methods] = allowed_mfa_methods unless allowed_mfa_methods.nil?
+      request[:oauth_tenant_jit_provisioning] = oauth_tenant_jit_provisioning unless oauth_tenant_jit_provisioning.nil?
+      request[:allowed_oauth_tenants] = allowed_oauth_tenants unless allowed_oauth_tenants.nil?
 
       put_request("/v1/b2b/organizations/#{organization_id}", request, headers)
     end

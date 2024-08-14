@@ -194,7 +194,7 @@ module StytchB2B
       #   (no documentation yet)
       #   The type of this field is nilable +UpdateRequestIdentityProvider+ (string enum).
       # scim_group_implicit_role_assignments::
-      #   An array of SCIM group implicit role assignments. Each object in the array must contain a `group` and a `role_id`.
+      #   An array of SCIM group implicit role assignments. Each object in the array must contain a `group_id` and a `role_id`.
       #   The type of this field is nilable list of +SCIMGroupImplicitRoleAssignments+.
       #
       # == Returns:
@@ -460,7 +460,7 @@ module StytchB2B
         post_request("/v1/b2b/scim/#{organization_id}/connection", request, headers)
       end
 
-      # Get SCIM Connections.
+      # Get SCIM Connection.
       #
       # == Parameters:
       # organization_id::
