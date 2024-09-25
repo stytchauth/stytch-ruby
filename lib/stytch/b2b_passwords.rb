@@ -99,7 +99,7 @@ module StytchB2B
     #   The password hash. For a Scrypt or PBKDF2 hash, the hash needs to be a base64 encoded string.
     #   The type of this field is +String+.
     # hash_type::
-    #   The password hash used. Currently `bcrypt`, `scrypt`, `argon2i`, `argon2id`, `md_5`, `sha_1`, and `pbkdf_2` are supported.
+    #   The password hash used. Currently `bcrypt`, `scrypt`, `argon_2i`, `argon2_id`, `md_5`, `sha_1`, and `pbkdf_2` are supported.
     #   The type of this field is +MigrateRequestHashType+ (string enum).
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
@@ -207,7 +207,7 @@ module StytchB2B
     #
     # If you have breach detection during authentication enabled in your [password strength policy](https://stytch.com/docs/b2b/guides/passwords/strength-policies) and the member's credentials have appeared in the HaveIBeenPwned dataset, this endpoint will return a `member_reset_password` error even if the member enters a correct password. We force a password reset in this case to ensure that the member is the legitimate owner of the email address and not a malicious actor abusing the compromised credentials.
     #
-    # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
+    # If the is required to complete MFA to log in to the, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
     # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
     # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
     #
@@ -248,7 +248,7 @@ module StytchB2B
     #   Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     # locale::
-    #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+    #   If the needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
     #
     # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
     #
@@ -419,7 +419,7 @@ module StytchB2B
         post_request('/v1/b2b/passwords/email/reset/start', request, headers)
       end
 
-      # Reset the member's password and authenticate them. This endpoint checks that the password reset token is valid, hasn’t expired, or already been used.
+      # Reset the's password and authenticate them. This endpoint checks that the password reset token is valid, hasn’t expired, or already been used.
       #
       # The provided password needs to meet our password strength requirements, which can be checked in advance with the password strength endpoint. If the token and password are accepted, the password is securely stored for future authentication and the user is authenticated.
       #
@@ -470,7 +470,7 @@ module StytchB2B
       #   Total custom claims size cannot exceed four kilobytes.
       #   The type of this field is nilable +object+.
       # locale::
-      #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+      #   If the needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
       #
       # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
@@ -550,6 +550,21 @@ module StytchB2B
 
         post_request('/v1/b2b/passwords/email/reset', request, headers)
       end
+
+      def delete(
+        email_address:,
+        organization_id: nil,
+        member_id: nil
+      )
+        headers = {}
+        request = {
+          email_address: email_address
+        }
+        request[:organization_id] = organization_id unless organization_id.nil?
+        request[:member_id] = member_id unless member_id.nil?
+
+        post_request('/v1/b2b/passwords/email/delete', request, headers)
+      end
     end
 
     class Sessions
@@ -559,7 +574,7 @@ module StytchB2B
         @connection = connection
       end
 
-      # Reset the Member's password using their existing session. The endpoint will error if the session does not contain an authentication factor that has been issued within the last 5 minutes. Either `session_token` or `session_jwt` should be provided.
+      # Reset the's password using their existing session. The endpoint will error if the session does not contain an authentication factor that has been issued within the last 5 minutes. Either `session_token` or `session_jwt` should be provided.
       #
       # Note that a successful password reset via an existing session will revoke all active sessions for the `member_id`, except for the one used during the reset flow.
       #
@@ -669,7 +684,7 @@ module StytchB2B
         @connection = connection
       end
 
-      # Reset the member’s password using their existing password.
+      # Reset the’s password using their existing password.
       #
       # This endpoint adapts to your Project's password strength configuration.
       # If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid
@@ -723,7 +738,7 @@ module StytchB2B
       #   Total custom claims size cannot exceed four kilobytes.
       #   The type of this field is nilable +object+.
       # locale::
-      #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+      #   If the needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
       #
       # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
