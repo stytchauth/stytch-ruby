@@ -16,7 +16,7 @@ module StytchB2B
       @connection = connection
     end
 
-    # Allows a Member to complete an MFA flow by consuming a recovery code. This consumes the recovery code and returns a session token that can be used to authenticate the Member.
+    # Allows a to complete an MFA flow by consuming a recovery code. This consumes the recovery code and returns a session token that can be used to authenticate the Member.
     #
     # == Parameters:
     # organization_id::
@@ -110,7 +110,7 @@ module StytchB2B
       post_request('/v1/b2b/recovery_codes/recover', request, headers)
     end
 
-    # Returns a Member's full set of active recovery codes.
+    # Returns a's full set of active recovery codes.
     #
     # == Parameters:
     # organization_id::
@@ -150,7 +150,7 @@ module StytchB2B
       get_request(request, headers)
     end
 
-    # Rotate a Member's recovery codes. This invalidates all existing recovery codes and generates a new set of recovery codes.
+    # Rotate a's recovery codes. This invalidates all existing recovery codes and generates a new set of recovery codes.
     #
     # == Parameters:
     # organization_id::
