@@ -49,13 +49,14 @@ module StytchB2B
     end
 
     include Stytch::RequestHelper
-    attr_reader :oidc, :saml
+    attr_reader :oidc, :saml, :external
 
     def initialize(connection)
       @connection = connection
 
       @oidc = StytchB2B::SSO::OIDC.new(@connection)
       @saml = StytchB2B::SSO::SAML.new(@connection)
+      @external = StytchB2B::SSO::External.new(@connection)
     end
 
     # Get all SSO Connections owned by the organization.
@@ -395,6 +396,12 @@ module StytchB2B
       # identity_provider::
       #   The identity provider of this connection. For OIDC, the accepted values are `generic`, `okta`, and `microsoft-entra`. For SAML, the accepted values are `generic`, `okta`, `microsoft-entra`, and `google-workspace`.
       #   The type of this field is nilable +UpdateConnectionRequestIdentityProvider+ (string enum).
+      # custom_scopes::
+      #   (no documentation yet)
+      #   The type of this field is nilable +String+.
+      # attribute_mapping::
+      #   (no documentation yet)
+      #   The type of this field is nilable +object+.
       #
       # == Returns:
       # An object with the following fields:
@@ -425,6 +432,8 @@ module StytchB2B
         userinfo_url: nil,
         jwks_url: nil,
         identity_provider: nil,
+        custom_scopes: nil,
+        attribute_mapping: nil,
         method_options: nil
       )
         headers = {}
@@ -439,6 +448,8 @@ module StytchB2B
         request[:userinfo_url] = userinfo_url unless userinfo_url.nil?
         request[:jwks_url] = jwks_url unless jwks_url.nil?
         request[:identity_provider] = identity_provider unless identity_provider.nil?
+        request[:custom_scopes] = custom_scopes unless custom_scopes.nil?
+        request[:attribute_mapping] = attribute_mapping unless attribute_mapping.nil?
 
         put_request("/v1/b2b/sso/oidc/#{organization_id}/connections/#{connection_id}", request, headers)
       end
@@ -747,6 +758,92 @@ module StytchB2B
         headers = {}
         headers = headers.merge(method_options.to_headers) unless method_options.nil?
         delete_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}/verification_certificates/#{certificate_id}", headers)
+      end
+    end
+
+    class External
+      class CreateConnectionRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class UpdateConnectionRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      include Stytch::RequestHelper
+
+      def initialize(connection)
+        @connection = connection
+      end
+
+      def create_connection(
+        organization_id:,
+        external_organization_id:,
+        external_connection_id:,
+        display_name: nil,
+        connection_implicit_role_assignments: nil,
+        group_implicit_role_assignments: nil,
+        method_options: nil
+      )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        request = {
+          external_organization_id: external_organization_id,
+          external_connection_id: external_connection_id
+        }
+        request[:display_name] = display_name unless display_name.nil?
+        request[:connection_implicit_role_assignments] = connection_implicit_role_assignments unless connection_implicit_role_assignments.nil?
+        request[:group_implicit_role_assignments] = group_implicit_role_assignments unless group_implicit_role_assignments.nil?
+
+        post_request("/v1/b2b/sso/external/#{organization_id}", request, headers)
+      end
+
+      def update_connection(
+        organization_id:,
+        connection_id:,
+        display_name: nil,
+        external_connection_implicit_role_assignments: nil,
+        external_group_implicit_role_assignments: nil,
+        method_options: nil
+      )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        request = {}
+        request[:display_name] = display_name unless display_name.nil?
+        request[:external_connection_implicit_role_assignments] = external_connection_implicit_role_assignments unless external_connection_implicit_role_assignments.nil?
+        request[:external_group_implicit_role_assignments] = external_group_implicit_role_assignments unless external_group_implicit_role_assignments.nil?
+
+        put_request("/v1/b2b/sso/external/#{organization_id}/connections/#{connection_id}", request, headers)
       end
     end
   end
