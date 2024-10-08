@@ -395,6 +395,12 @@ module StytchB2B
       # identity_provider::
       #   The identity provider of this connection. For OIDC, the accepted values are `generic`, `okta`, and `microsoft-entra`. For SAML, the accepted values are `generic`, `okta`, `microsoft-entra`, and `google-workspace`.
       #   The type of this field is nilable +UpdateConnectionRequestIdentityProvider+ (string enum).
+      # custom_scopes::
+      #   Include a space-separated list of custom scopes that you'd like to include. Note that this list must be URL encoded, e.g. the spaces must be expressed as %20.
+      #   The type of this field is nilable +String+.
+      # attribute_mapping::
+      #   An object that represents the attributes used to identify a Member. This object will map the IdP-defined User attributes to Stytch-specific values, which will appear on the member's Trusted Metadata.
+      #   The type of this field is nilable +object+.
       #
       # == Returns:
       # An object with the following fields:
@@ -425,6 +431,8 @@ module StytchB2B
         userinfo_url: nil,
         jwks_url: nil,
         identity_provider: nil,
+        custom_scopes: nil,
+        attribute_mapping: nil,
         method_options: nil
       )
         headers = {}
@@ -439,6 +447,8 @@ module StytchB2B
         request[:userinfo_url] = userinfo_url unless userinfo_url.nil?
         request[:jwks_url] = jwks_url unless jwks_url.nil?
         request[:identity_provider] = identity_provider unless identity_provider.nil?
+        request[:custom_scopes] = custom_scopes unless custom_scopes.nil?
+        request[:attribute_mapping] = attribute_mapping unless attribute_mapping.nil?
 
         put_request("/v1/b2b/sso/oidc/#{organization_id}/connections/#{connection_id}", request, headers)
       end
@@ -611,7 +621,7 @@ module StytchB2B
       #          `attribute_mapping`. Make sure that your IdP is configured to correctly send the group information.
       #   The type of this field is nilable list of +SAMLGroupImplicitRoleAssignment+.
       # alternative_audience_uri::
-      #   An alternative URL to use for the Audience Restriction. This value can be used when you wish to migrate an existing SAML integration to Stytch with zero downtime.
+      #   An alternative URL to use for the Audience Restriction. This value can be used when you wish to migrate an existing SAML integration to Stytch with zero downtime. Read our [SSO migration guide](https://stytch.com/docs/b2b/guides/migrations/additional-migration-considerations) for more info.
       #   The type of this field is nilable +String+.
       # identity_provider::
       #   The identity provider of this connection. For OIDC, the accepted values are `generic`, `okta`, and `microsoft-entra`. For SAML, the accepted values are `generic`, `okta`, `microsoft-entra`, and `google-workspace`.
