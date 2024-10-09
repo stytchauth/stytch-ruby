@@ -1131,6 +1131,19 @@ module StytchB2B
         get_request(request, headers)
       end
 
+      def oidc_providers(
+        organization_id:,
+        member_id:,
+        include_refresh_token: nil
+      )
+        headers = {}
+        query_params = {
+          include_refresh_token: include_refresh_token
+        }
+        request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/oidc_providers", query_params)
+        get_request(request, headers)
+      end
+
       # Unlinks a retired email address from a specified by their `organization_id` and `member_id`. The email address
       # to be retired can be identified in the request body by either its `email_id`, its `email_address`, or both. If using
       # both identifiers they must refer to the same email.
