@@ -1104,6 +1104,9 @@ module StytchB2B
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
       #   The type of this field is +String+.
+      # include_deleted::
+      #   Whether to include deleted Members in the response. Defaults to false.
+      #   The type of this field is nilable +Boolean+.
       #
       # == Returns:
       # An object with the following fields:
@@ -1123,10 +1126,13 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def dangerously_get(
-        member_id:
+        member_id:,
+        include_deleted: nil
       )
         headers = {}
-        query_params = {}
+        query_params = {
+          include_deleted: include_deleted
+        }
         request = request_with_query_params("/v1/b2b/organizations/members/dangerously_get/#{member_id}", query_params)
         get_request(request, headers)
       end
