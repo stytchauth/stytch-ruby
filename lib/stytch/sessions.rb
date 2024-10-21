@@ -160,7 +160,7 @@ module Stytch
     #
     # == Parameters:
     # session_token::
-    #   The `session_token` associated with a User's existing Session.
+    #   The authorization token Stytch will pass in to the external userinfo endpoint.
     #   The type of this field is +String+.
     # session_duration_minutes::
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,

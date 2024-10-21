@@ -49,13 +49,14 @@ module StytchB2B
     end
 
     include Stytch::RequestHelper
-    attr_reader :oidc, :saml
+    attr_reader :oidc, :saml, :external
 
     def initialize(connection)
       @connection = connection
 
       @oidc = StytchB2B::SSO::OIDC.new(@connection)
       @saml = StytchB2B::SSO::SAML.new(@connection)
+      @external = StytchB2B::SSO::External.new(@connection)
     end
 
     # Get all SSO Connections owned by the organization.
@@ -77,7 +78,7 @@ module StytchB2B
     #   The list of [OIDC Connections](https://stytch.com/docs/b2b/api/oidc-connection-object) owned by this organization.
     #   The type of this field is list of +OIDCConnection+ (+object+).
     # external_connections::
-    #   (no documentation yet)
+    #   The list of [External Connections](https://stytch.com/docs/b2b/api/external-connection-object) owned by this organization.
     #   The type of this field is list of +Connection+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
@@ -103,7 +104,7 @@ module StytchB2B
     #   The organization ID that the SSO connection belongs to.
     #   The type of this field is +String+.
     # connection_id::
-    #   The ID of the SSO connection. Both SAML and OIDC connection IDs can be provided.
+    #   The ID of the SSO connection. SAML, OIDC, and External connection IDs can be provided.
     #   The type of this field is +String+.
     #
     # == Returns:
@@ -136,7 +137,7 @@ module StytchB2B
     # If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration.
     # To link this authentication event to an existing Stytch session, include either the `session_token` or `session_jwt` param.
     #
-    # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
+    # If the is required to complete MFA to log in to the, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
     # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp),
     # or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete the MFA step and acquire a full member session.
     # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
@@ -175,7 +176,7 @@ module StytchB2B
     #   Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     # locale::
-    #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+    #   If the needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
     #
     # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
     #
@@ -395,6 +396,12 @@ module StytchB2B
       # identity_provider::
       #   The identity provider of this connection. For OIDC, the accepted values are `generic`, `okta`, and `microsoft-entra`. For SAML, the accepted values are `generic`, `okta`, `microsoft-entra`, and `google-workspace`.
       #   The type of this field is nilable +UpdateConnectionRequestIdentityProvider+ (string enum).
+      # custom_scopes::
+      #   Include a space-separated list of custom scopes that you'd like to include. Note that this list must be URL encoded, e.g. the spaces must be expressed as %20.
+      #   The type of this field is nilable +String+.
+      # attribute_mapping::
+      #   An object that represents the attributes used to identify a Member. This object will map the IdP-defined User attributes to Stytch-specific values, which will appear on the member's Trusted Metadata.
+      #   The type of this field is nilable +object+.
       #
       # == Returns:
       # An object with the following fields:
@@ -425,6 +432,8 @@ module StytchB2B
         userinfo_url: nil,
         jwks_url: nil,
         identity_provider: nil,
+        custom_scopes: nil,
+        attribute_mapping: nil,
         method_options: nil
       )
         headers = {}
@@ -439,6 +448,8 @@ module StytchB2B
         request[:userinfo_url] = userinfo_url unless userinfo_url.nil?
         request[:jwks_url] = jwks_url unless jwks_url.nil?
         request[:identity_provider] = identity_provider unless identity_provider.nil?
+        request[:custom_scopes] = custom_scopes unless custom_scopes.nil?
+        request[:attribute_mapping] = attribute_mapping unless attribute_mapping.nil?
 
         put_request("/v1/b2b/sso/oidc/#{organization_id}/connections/#{connection_id}", request, headers)
       end
@@ -606,12 +617,11 @@ module StytchB2B
       #   Defines the names of the SAML groups
       #  that grant specific role assignments. For each group-Role pair, if a Member logs in with this SAML connection and
       #  belongs to the specified SAML group, they will be granted the associated Role. See the
-      #  [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment.
-      #          Before adding any group implicit role assignments, you must add a "groups" key to your SAML connection's
+      #  [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment. Before adding any group implicit role assignments, you must add a "groups" key to your SAML connection's
       #          `attribute_mapping`. Make sure that your IdP is configured to correctly send the group information.
       #   The type of this field is nilable list of +SAMLGroupImplicitRoleAssignment+.
       # alternative_audience_uri::
-      #   An alternative URL to use for the Audience Restriction. This value can be used when you wish to migrate an existing SAML integration to Stytch with zero downtime.
+      #   An alternative URL to use for the Audience Restriction. This value can be used when you wish to migrate an existing SAML integration to Stytch with zero downtime. Read our [SSO migration guide](https://stytch.com/docs/b2b/guides/migrations/additional-migration-considerations) for more info.
       #   The type of this field is nilable +String+.
       # identity_provider::
       #   The identity provider of this connection. For OIDC, the accepted values are `generic`, `okta`, and `microsoft-entra`. For SAML, the accepted values are `generic`, `okta`, `microsoft-entra`, and `google-workspace`.
@@ -747,6 +757,166 @@ module StytchB2B
         headers = {}
         headers = headers.merge(method_options.to_headers) unless method_options.nil?
         delete_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}/verification_certificates/#{certificate_id}", headers)
+      end
+    end
+
+    class External
+      class CreateConnectionRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class UpdateConnectionRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      include Stytch::RequestHelper
+
+      def initialize(connection)
+        @connection = connection
+      end
+
+      # Create a new External SSO Connection.
+      #
+      # == Parameters:
+      # organization_id::
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+      #   The type of this field is +String+.
+      # external_organization_id::
+      #   Globally unique UUID that identifies a different Organization within your Project.
+      #   The type of this field is +String+.
+      # external_connection_id::
+      #   Globally unique UUID that identifies a specific SSO connection configured for a different Organization in your Project.
+      #   The type of this field is +String+.
+      # display_name::
+      #   A human-readable display name for the connection.
+      #   The type of this field is nilable +String+.
+      # connection_implicit_role_assignments::
+      #   (no documentation yet)
+      #   The type of this field is nilable list of +SAMLConnectionImplicitRoleAssignment+.
+      # group_implicit_role_assignments::
+      #   (no documentation yet)
+      #   The type of this field is nilable list of +SAMLGroupImplicitRoleAssignment+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # status_code::
+      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+      #   The type of this field is +Integer+.
+      # connection::
+      #   The `External Connection` object affected by this API call. See the [External Connection Object](https://stytch.com/docs/b2b/api/external-connection-object) for complete response field details.
+      #   The type of this field is nilable +Connection+ (+object+).
+      #
+      # == Method Options:
+      # This method supports an optional +StytchB2B::SSO::External::CreateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
+      def create_connection(
+        organization_id:,
+        external_organization_id:,
+        external_connection_id:,
+        display_name: nil,
+        connection_implicit_role_assignments: nil,
+        group_implicit_role_assignments: nil,
+        method_options: nil
+      )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        request = {
+          external_organization_id: external_organization_id,
+          external_connection_id: external_connection_id
+        }
+        request[:display_name] = display_name unless display_name.nil?
+        request[:connection_implicit_role_assignments] = connection_implicit_role_assignments unless connection_implicit_role_assignments.nil?
+        request[:group_implicit_role_assignments] = group_implicit_role_assignments unless group_implicit_role_assignments.nil?
+
+        post_request("/v1/b2b/sso/external/#{organization_id}", request, headers)
+      end
+
+      # Updates an existing External SSO connection.
+      #
+      # == Parameters:
+      # organization_id::
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+      #   The type of this field is +String+.
+      # connection_id::
+      #   Globally unique UUID that identifies a specific External SSO Connection.
+      #   The type of this field is +String+.
+      # display_name::
+      #   A human-readable display name for the connection.
+      #   The type of this field is nilable +String+.
+      # external_connection_implicit_role_assignments::
+      #   All Members who log in with this External connection will implicitly receive the specified Roles. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment. Implicit role assignments are not supported for External connections if the underlying SSO connection is an OIDC connection.
+      #   The type of this field is nilable list of +ConnectionImplicitRoleAssignment+.
+      # external_group_implicit_role_assignments::
+      #   Defines the names of the groups
+      #  that grant specific role assignments. For each group-Role pair, if a Member logs in with this external connection and
+      #  belongs to the specified group, they will be granted the associated Role. See the
+      #  [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment) for more information about role assignment. Before adding any group implicit role assignments to an external connection, you must add a "groups" key to the underlying SAML connection's
+      #          `attribute_mapping`. Make sure that the SAML connection IdP is configured to correctly send the group information. Implicit role assignments are not supported
+      #          for External connections if the underlying SSO connection is an OIDC connection.
+      #   The type of this field is nilable list of +GroupImplicitRoleAssignment+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # status_code::
+      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+      #   The type of this field is +Integer+.
+      # connection::
+      #   The `External Connection` object affected by this API call. See the [External Connection Object](https://stytch.com/docs/b2b/api/external-connection-object) for complete response field details.
+      #   The type of this field is nilable +Connection+ (+object+).
+      #
+      # == Method Options:
+      # This method supports an optional +StytchB2B::SSO::External::UpdateConnectionRequestOptions+ object which will modify the headers sent in the HTTP request.
+      def update_connection(
+        organization_id:,
+        connection_id:,
+        display_name: nil,
+        external_connection_implicit_role_assignments: nil,
+        external_group_implicit_role_assignments: nil,
+        method_options: nil
+      )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        request = {}
+        request[:display_name] = display_name unless display_name.nil?
+        request[:external_connection_implicit_role_assignments] = external_connection_implicit_role_assignments unless external_connection_implicit_role_assignments.nil?
+        request[:external_group_implicit_role_assignments] = external_group_implicit_role_assignments unless external_group_implicit_role_assignments.nil?
+
+        put_request("/v1/b2b/sso/external/#{organization_id}/connections/#{connection_id}", request, headers)
       end
     end
   end

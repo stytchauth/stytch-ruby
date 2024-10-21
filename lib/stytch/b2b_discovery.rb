@@ -32,11 +32,15 @@ module StytchB2B
       #
       # This endpoint can be used to accept invites and create new members via domain matching.
       #
-      # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`.
+      # If the is required to complete MFA to log in to the, the returned value of `member_authenticated` will be `false`.
       # The `intermediate_session_token` will not be consumed and instead will be returned in the response.
       # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
       # The `intermediate_session_token` can also be used with the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to join a different Organization or create a new one.
       # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
+      #
+      # If the Member is logging in via an OAuth provider that does not fully verify the email, the returned value of `member_authenticated` will be `false`.
+      # The `intermediate_session_token` will not be consumed and instead will be returned in the response.
+      # The `primary_required` field details the authentication flow the Member must perform in order to [complete a step-up authentication](https://stytch.com/docs/b2b/guides/oauth/auth-flows) into the organization. The `intermediate_session_token` must be passed into that authentication flow.
       #
       # == Parameters:
       # intermediate_session_token::
@@ -64,7 +68,7 @@ module StytchB2B
       #   Total custom claims size cannot exceed four kilobytes.
       #   The type of this field is nilable +object+.
       # locale::
-      #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+      #   If the needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
       #
       # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
@@ -110,7 +114,7 @@ module StytchB2B
       #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
       #   The type of this field is nilable +MfaRequired+ (+object+).
       # primary_required::
-      #   (no documentation yet)
+      #   Information about the primary authentication requirements of the Organization.
       #   The type of this field is nilable +PrimaryRequired+ (+object+).
       def exchange(
         intermediate_session_token:,
@@ -139,14 +143,14 @@ module StytchB2B
         @connection = connection
       end
 
-      # If an end user does not want to join any already-existing Organization, or has no possible Organizations to join, this endpoint can be used to create a new
+      # If an end user does not want to join any already-existing, or has no possible Organizations to join, this endpoint can be used to create a new
       # [Organization](https://stytch.com/docs/b2b/api/organization-object) and [Member](https://stytch.com/docs/b2b/api/member-object).
       #
       # This operation consumes the Intermediate Session.
       #
       # This endpoint will also create an initial Member Session for the newly created Member.
       #
-      # The Member created by this endpoint will automatically be granted the `stytch_admin` Role. See the
+      # The created by this endpoint will automatically be granted the `stytch_admin` Role. See the
       # [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/stytch-default) for more details on this Role.
       #
       # If the new Organization is created with a `mfa_policy` of `REQUIRED_FOR_ALL`, the newly created Member will need to complete an MFA step to log in to the Organization.
@@ -311,7 +315,7 @@ module StytchB2B
       #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
       #   The type of this field is nilable +MfaRequired+ (+object+).
       # primary_required::
-      #   (no documentation yet)
+      #   Information about the primary authentication requirements of the Organization.
       #   The type of this field is nilable +PrimaryRequired+ (+object+).
       def create(
         intermediate_session_token:,

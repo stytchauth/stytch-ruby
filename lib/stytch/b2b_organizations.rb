@@ -57,7 +57,7 @@ module StytchB2B
       @members = StytchB2B::Organizations::Members.new(@connection)
     end
 
-    # Creates an Organization. An `organization_name` and a unique `organization_slug` are required.
+    # Creates an. An `organization_name` and a unique `organization_slug` are required.
     #
     # By default, `email_invites` and `sso_jit_provisioning` will be set to `ALL_ALLOWED`, and `mfa_policy` will be set to `OPTIONAL` if no Organization authentication settings are explicitly defined in the request.
     #
@@ -214,7 +214,7 @@ module StytchB2B
       post_request('/v1/b2b/organizations', request, headers)
     end
 
-    # Returns an Organization specified by `organization_id`.
+    # Returns an specified by `organization_id`.
     #
     # == Parameters:
     # organization_id::
@@ -241,7 +241,7 @@ module StytchB2B
       get_request(request, headers)
     end
 
-    # Updates an Organization specified by `organization_id`. An Organization must always have at least one auth setting set to either `RESTRICTED` or `ALL_ALLOWED` in order to provision new Members.
+    # Updates an specified by `organization_id`. An Organization must always have at least one auth setting set to either `RESTRICTED` or `ALL_ALLOWED` in order to provision new Members.
     #
     # *See the [Organization authentication settings](https://stytch.com/docs/b2b/api/org-auth-settings) resource to learn more about fields like `email_jit_provisioning`, `email_invites`, `sso_jit_provisioning`, etc., and their behaviors.
     #
@@ -451,7 +451,7 @@ module StytchB2B
       put_request("/v1/b2b/organizations/#{organization_id}", request, headers)
     end
 
-    # Deletes an Organization specified by `organization_id`. All Members of the Organization will also be deleted.
+    # Deletes an specified by `organization_id`. All Members of the Organization will also be deleted.
     #
     # == Parameters:
     # organization_id::
@@ -712,7 +712,7 @@ module StytchB2B
         @oauth_providers = StytchB2B::Organizations::Members::OAuthProviders.new(@connection)
       end
 
-      # Updates a Member specified by `organization_id` and `member_id`.
+      # Updates a specified by `organization_id` and `member_id`.
       #
       # == Parameters:
       # organization_id::
@@ -835,7 +835,7 @@ module StytchB2B
         put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", request, headers)
       end
 
-      # Deletes a Member specified by `organization_id` and `member_id`.
+      # Deletes a specified by `organization_id` and `member_id`.
       #
       # == Parameters:
       # organization_id::
@@ -869,7 +869,7 @@ module StytchB2B
         delete_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", headers)
       end
 
-      # Reactivates a deleted Member's status and its associated email status (if applicable) to active, specified by `organization_id` and `member_id`.
+      # Reactivates a deleted's status and its associated email status (if applicable) to active, specified by `organization_id` and `member_id`. This endpoint will only work for Members with at least one verified email where their `email_address_verified` is `true`.
       #
       # == Parameters:
       # organization_id::
@@ -911,7 +911,7 @@ module StytchB2B
         put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/reactivate", request, headers)
       end
 
-      # Delete a Member's MFA phone number.
+      # Delete a's MFA phone number.
       #
       # To change a Member's phone number, you must first call this endpoint to delete the existing phone number.
       #
@@ -1058,7 +1058,7 @@ module StytchB2B
         post_request('/v1/b2b/organizations/members/search', request, headers)
       end
 
-      # Delete a Member's password.
+      # Delete a's password.
       #
       # == Parameters:
       # organization_id::
@@ -1104,6 +1104,9 @@ module StytchB2B
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
       #   The type of this field is +String+.
+      # include_deleted::
+      #   Whether to include deleted Members in the response. Defaults to false.
+      #   The type of this field is nilable +Boolean+.
       #
       # == Returns:
       # An object with the following fields:
@@ -1123,15 +1126,57 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def dangerously_get(
-        member_id:
+        member_id:,
+        include_deleted: nil
       )
         headers = {}
-        query_params = {}
+        query_params = {
+          include_deleted: include_deleted
+        }
         request = request_with_query_params("/v1/b2b/organizations/members/dangerously_get/#{member_id}", query_params)
         get_request(request, headers)
       end
 
-      # Unlinks a retired email address from a Member specified by their `organization_id` and `member_id`. The email address
+      # Retrieve the saved OIDC access tokens and ID tokens for a member. After a successful OIDC login, Stytch will save the
+      # issued access token and ID token from the identity provider. If a refresh token has been issued, Stytch will refresh the
+      # access token automatically.
+      #
+      # == Parameters:
+      # organization_id::
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+      #   The type of this field is +String+.
+      # member_id::
+      #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
+      #   The type of this field is +String+.
+      # include_refresh_token::
+      #   Whether to return the refresh token Stytch has stored for the OAuth Provider. Defaults to false. **Important:** If your application exchanges the refresh token, Stytch may not be able to automatically refresh access tokens in the future.
+      #   The type of this field is nilable +Boolean+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # registrations::
+      #   A list of tokens the member is registered with.
+      #   The type of this field is list of +OIDCProviderInfo+ (+object+).
+      # status_code::
+      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+      #   The type of this field is +Integer+.
+      def oidc_providers(
+        organization_id:,
+        member_id:,
+        include_refresh_token: nil
+      )
+        headers = {}
+        query_params = {
+          include_refresh_token: include_refresh_token
+        }
+        request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/oidc_providers", query_params)
+        get_request(request, headers)
+      end
+
+      # Unlinks a retired email address from a specified by their `organization_id` and `member_id`. The email address
       # to be retired can be identified in the request body by either its `email_id`, its `email_address`, or both. If using
       # both identifiers they must refer to the same email.
       #
@@ -1199,7 +1244,7 @@ module StytchB2B
         post_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/unlink_retired_email", request, headers)
       end
 
-      # Creates a Member. An `organization_id` and `email_address` are required.
+      # Creates a. An `organization_id` and `email_address` are required.
       #
       # == Parameters:
       # organization_id::
