@@ -41,6 +41,15 @@ module Stytch
     #   If true, the `public_key_credential_creation_options` returned will be optimized for Passkeys with `residentKey` set to `"required"` and `userVerification` set to `"preferred"`.
     #
     #   The type of this field is nilable +Boolean+.
+    # override_id::
+    #   (no documentation yet)
+    #   The type of this field is nilable +String+.
+    # override_name::
+    #   (no documentation yet)
+    #   The type of this field is nilable +String+.
+    # override_display_name::
+    #   (no documentation yet)
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -61,7 +70,10 @@ module Stytch
       domain:,
       user_agent: nil,
       authenticator_type: nil,
-      return_passkey_credential_options: nil
+      return_passkey_credential_options: nil,
+      override_id: nil,
+      override_name: nil,
+      override_display_name: nil
     )
       headers = {}
       request = {
@@ -71,6 +83,9 @@ module Stytch
       request[:user_agent] = user_agent unless user_agent.nil?
       request[:authenticator_type] = authenticator_type unless authenticator_type.nil?
       request[:return_passkey_credential_options] = return_passkey_credential_options unless return_passkey_credential_options.nil?
+      request[:override_id] = override_id unless override_id.nil?
+      request[:override_name] = override_name unless override_name.nil?
+      request[:override_display_name] = override_display_name unless override_display_name.nil?
 
       post_request('/v1/webauthn/register/start', request, headers)
     end
