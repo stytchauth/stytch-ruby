@@ -1501,6 +1501,96 @@ module StytchB2B
           request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/oauth_providers/microsoft", query_params)
           get_request(request, headers)
         end
+
+        # Retrieve the saved Slack access token and ID token for a member. After a successful OAuth login, Stytch will save the
+        # issued access token and ID token from the identity provider.
+        #
+        # == Parameters:
+        # organization_id::
+        #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+        #   The type of this field is +String+.
+        # member_id::
+        #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
+        #   The type of this field is +String+.
+        #
+        # == Returns:
+        # An object with the following fields:
+        # request_id::
+        #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+        #   The type of this field is +String+.
+        # provider_type::
+        #   Denotes the OAuth identity provider that the user has authenticated with, e.g. Google, Microsoft, GitHub etc.
+        #   The type of this field is +String+.
+        # registrations::
+        #   A list of tokens the member is registered with.
+        #   The type of this field is list of +SlackProviderInfo+ (+object+).
+        # status_code::
+        #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+        #   The type of this field is +Integer+.
+        def slack(
+          organization_id:,
+          member_id:
+        )
+          headers = {}
+          query_params = {}
+          request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/oauth_providers/slack", query_params)
+          get_request(request, headers)
+        end
+
+        # Retrieve the saved Hubspot access token and ID token for a member. After a successful OAuth login, Stytch will save the
+        # issued access token and ID token from the identity provider. If a refresh token has been issued, Stytch will refresh the
+        # access token automatically.
+        #
+        # == Parameters:
+        # organization_id::
+        #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+        #   The type of this field is +String+.
+        # member_id::
+        #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
+        #   The type of this field is +String+.
+        # include_refresh_token::
+        #   Whether to return the refresh token Stytch has stored for the OAuth Provider. Defaults to false. **Important:** If your application exchanges the refresh token, Stytch may not be able to automatically refresh access tokens in the future.
+        #   The type of this field is nilable +Boolean+.
+        #
+        # == Returns:
+        # An object with the following fields:
+        # request_id::
+        #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+        #   The type of this field is +String+.
+        # provider_type::
+        #   Denotes the OAuth identity provider that the user has authenticated with, e.g. Google, Microsoft, GitHub etc.
+        #   The type of this field is +String+.
+        # registrations::
+        #   A list of tokens the member is registered with.
+        #   The type of this field is list of +HubspOTPRoviderInfo+ (+object+).
+        # status_code::
+        #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+        #   The type of this field is +Integer+.
+        def hubspot(
+          organization_id:,
+          member_id:,
+          include_refresh_token: nil
+        )
+          headers = {}
+          query_params = {
+            include_refresh_token: include_refresh_token
+          }
+          request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/oauth_providers/hubspot", query_params)
+          get_request(request, headers)
+        end
+
+        def github(
+          organization_id:,
+          member_id:,
+          include_refresh_token: nil
+        )
+          headers = {}
+          query_params = {
+            include_refresh_token: include_refresh_token
+          }
+          request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/oauth_providers/github", query_params)
+          get_request(request, headers)
+        end
       end
     end
   end

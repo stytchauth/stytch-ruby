@@ -218,6 +218,9 @@ module StytchB2B
       # provider_tenant_id::
       #   (no documentation yet)
       #   The type of this field is +String+.
+      # provider_tenant_ids::
+      #   (no documentation yet)
+      #   The type of this field is list of +String+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
