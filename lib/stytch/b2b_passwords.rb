@@ -11,7 +11,7 @@ require_relative 'request_helper'
 module StytchB2B
   class Passwords
     include Stytch::RequestHelper
-    attr_reader :email, :sessions, :existing_password
+    attr_reader :email, :sessions, :existing_password, :discovery
 
     def initialize(connection)
       @connection = connection
@@ -19,6 +19,7 @@ module StytchB2B
       @email = StytchB2B::Passwords::Email.new(@connection)
       @sessions = StytchB2B::Passwords::Sessions.new(@connection)
       @existing_password = StytchB2B::Passwords::ExistingPassword.new(@connection)
+      @discovery = StytchB2B::Passwords::Discovery.new(@connection)
     end
 
     # This API allows you to check whether the user’s provided password is valid, and to provide feedback to the user on how to increase the strength of their password.
@@ -327,6 +328,25 @@ module StytchB2B
     end
 
     class Email
+      class RequireResetRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
       include Stytch::RequestHelper
 
       def initialize(connection)
@@ -551,19 +571,21 @@ module StytchB2B
         post_request('/v1/b2b/passwords/email/reset', request, headers)
       end
 
-      def delete(
+      def require_reset(
         email_address:,
         organization_id: nil,
-        member_id: nil
+        member_id: nil,
+        method_options: nil
       )
         headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
         request = {
           email_address: email_address
         }
         request[:organization_id] = organization_id unless organization_id.nil?
         request[:member_id] = member_id unless member_id.nil?
 
-        post_request('/v1/b2b/passwords/email/delete', request, headers)
+        post_request('/v1/b2b/passwords/email/require_reset', request, headers)
       end
     end
 
@@ -808,6 +830,78 @@ module StytchB2B
         request[:locale] = locale unless locale.nil?
 
         post_request('/v1/b2b/passwords/existing_password/reset', request, headers)
+      end
+    end
+
+    class Discovery
+      include Stytch::RequestHelper
+      attr_reader :email
+
+      def initialize(connection)
+        @connection = connection
+
+        @email = StytchB2B::Passwords::Discovery::Email.new(@connection)
+      end
+
+      def authenticate(
+        email_address:,
+        password:
+      )
+        headers = {}
+        request = {
+          email_address: email_address,
+          password: password
+        }
+
+        post_request('/v1/b2b/passwords/discovery/authenticate', request, headers)
+      end
+
+      class Email
+        include Stytch::RequestHelper
+
+        def initialize(connection)
+          @connection = connection
+        end
+
+        def reset_start(
+          email_address:,
+          reset_password_redirect_url: nil,
+          discovery_redirect_url: nil,
+          reset_password_template_id: nil,
+          reset_password_expiration_minutes: nil,
+          pkce_code_challenge: nil,
+          locale: nil
+        )
+          headers = {}
+          request = {
+            email_address: email_address
+          }
+          request[:reset_password_redirect_url] = reset_password_redirect_url unless reset_password_redirect_url.nil?
+          request[:discovery_redirect_url] = discovery_redirect_url unless discovery_redirect_url.nil?
+          request[:reset_password_template_id] = reset_password_template_id unless reset_password_template_id.nil?
+          request[:reset_password_expiration_minutes] = reset_password_expiration_minutes unless reset_password_expiration_minutes.nil?
+          request[:pkce_code_challenge] = pkce_code_challenge unless pkce_code_challenge.nil?
+          request[:locale] = locale unless locale.nil?
+
+          post_request('/v1/b2b/passwords/discovery/email/reset/start', request, headers)
+        end
+
+        def reset(
+          password_reset_token:,
+          password:,
+          pkce_code_verifier: nil,
+          locale: nil
+        )
+          headers = {}
+          request = {
+            password_reset_token: password_reset_token,
+            password: password
+          }
+          request[:pkce_code_verifier] = pkce_code_verifier unless pkce_code_verifier.nil?
+          request[:locale] = locale unless locale.nil?
+
+          post_request('/v1/b2b/passwords/discovery/email/reset', request, headers)
+        end
       end
     end
   end

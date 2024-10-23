@@ -276,7 +276,7 @@ module StytchB2B
       #
       #   The type of this field is nilable +String+.
       # allowed_oauth_tenants::
-      #   A map of allowed OAuth tenants. If this field is not passed in, the Organization will not allow JIT provisioning by OAuth Tenant. Allowed keys are "slack" and "hubspot".
+      #   A map of allowed OAuth tenants. If this field is not passed in, the Organization will not allow JIT provisioning by OAuth Tenant. Allowed keys are "slack", "hubspot", and "github".
       #   The type of this field is nilable +object+.
       #
       # == Returns:
