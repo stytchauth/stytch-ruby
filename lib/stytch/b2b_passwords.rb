@@ -11,7 +11,7 @@ require_relative 'request_helper'
 module StytchB2B
   class Passwords
     include Stytch::RequestHelper
-    attr_reader :email, :sessions, :existing_password
+    attr_reader :email, :sessions, :existing_password, :discovery
 
     def initialize(connection)
       @connection = connection
@@ -19,6 +19,7 @@ module StytchB2B
       @email = StytchB2B::Passwords::Email.new(@connection)
       @sessions = StytchB2B::Passwords::Sessions.new(@connection)
       @existing_password = StytchB2B::Passwords::ExistingPassword.new(@connection)
+      @discovery = StytchB2B::Passwords::Discovery.new(@connection)
     end
 
     # This API allows you to check whether the user’s provided password is valid, and to provide feedback to the user on how to increase the strength of their password.
@@ -327,6 +328,25 @@ module StytchB2B
     end
 
     class Email
+      class RequireResetRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
       include Stytch::RequestHelper
 
       def initialize(connection)
@@ -551,19 +571,51 @@ module StytchB2B
         post_request('/v1/b2b/passwords/email/reset', request, headers)
       end
 
-      def delete(
+      # Require a password be reset by the associated email address. This endpoint is only functional for cross-org password use cases.
+      #
+      # == Parameters:
+      # email_address::
+      #   The email address of the Member to start the email reset process for.
+      #   The type of this field is +String+.
+      # organization_id::
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+      #   The type of this field is nilable +String+.
+      # member_id::
+      #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
+      #   The type of this field is nilable +String+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # member::
+      #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
+      #   The type of this field is +Member+ (+object+).
+      # organization::
+      #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
+      #   The type of this field is +Organization+ (+object+).
+      # status_code::
+      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+      #   The type of this field is +Integer+.
+      # member_id::
+      #   Globally unique UUID that identifies a specific Member.
+      #   The type of this field is nilable +String+.
+      #
+      # == Method Options:
+      # This method supports an optional +StytchB2B::Passwords::Email::RequireResetRequestOptions+ object which will modify the headers sent in the HTTP request.
+      def require_reset(
         email_address:,
         organization_id: nil,
-        member_id: nil
+        member_id: nil,
+        method_options: nil
       )
         headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
         request = {
           email_address: email_address
         }
         request[:organization_id] = organization_id unless organization_id.nil?
         request[:member_id] = member_id unless member_id.nil?
 
-        post_request('/v1/b2b/passwords/email/delete', request, headers)
+        post_request('/v1/b2b/passwords/email/require_reset', request, headers)
       end
     end
 
@@ -808,6 +860,200 @@ module StytchB2B
         request[:locale] = locale unless locale.nil?
 
         post_request('/v1/b2b/passwords/existing_password/reset', request, headers)
+      end
+    end
+
+    class Discovery
+      include Stytch::RequestHelper
+      attr_reader :email
+
+      def initialize(connection)
+        @connection = connection
+
+        @email = StytchB2B::Passwords::Discovery::Email.new(@connection)
+      end
+
+      # Authenticate an email/password combination in the discovery flow. This authenticate flow is only valid for cross-org passwords use cases, and is not tied to a specific organization.
+      #
+      # If you have breach detection during authentication enabled in your [password strength policy](https://stytch.com/docs/b2b/guides/passwords/strength-policies) and the member's credentials have appeared in the HaveIBeenPwned dataset, this endpoint will return a `member_reset_password` error even if the member enters a correct password. We force a password reset in this case to ensure that the member is the legitimate owner of the email address and not a malicious actor abusing the compromised credentials.
+      #
+      # If successful, this endpoint will create a new intermediate session and return a list of discovered organizations that can be session exchanged into.
+      #
+      # == Parameters:
+      # email_address::
+      #   The email address of the Member.
+      #   The type of this field is +String+.
+      # password::
+      #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+      #   The type of this field is +String+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # email_address::
+      #   The email address.
+      #   The type of this field is +String+.
+      # intermediate_session_token::
+      #   The returned Intermediate Session Token contains a password factor associated with the Member. If this value is non-empty, the member must complete an MFA step to finish logging in to the Organization. The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp), or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete an MFA flow and log in to the Organization. Password factors are not transferable between Organizations, so the intermediate session token is not valid for use with discovery endpoints.
+      #   The type of this field is +String+.
+      # discovered_organizations::
+      #   An array of `discovered_organization` objects tied to the `intermediate_session_token`, `session_token`, or `session_jwt`. See the [Discovered Organization Object](https://stytch.com/docs/b2b/api/discovered-organization-object) for complete details.
+      #
+      #   Note that Organizations will only appear here under any of the following conditions:
+      #   1. The end user is already a Member of the Organization.
+      #   2. The end user is invited to the Organization.
+      #   3. The end user can join the Organization because:
+      #
+      #       a) The Organization allows JIT provisioning.
+      #
+      #       b) The Organizations' allowed domains list contains the Member's email domain.
+      #
+      #       c) The Organization has at least one other Member with a verified email address with the same domain as the end user (to prevent phishing attacks).
+      #   The type of this field is list of +DiscoveredOrganization+ (+object+).
+      # status_code::
+      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+      #   The type of this field is +Integer+.
+      def authenticate(
+        email_address:,
+        password:
+      )
+        headers = {}
+        request = {
+          email_address: email_address,
+          password: password
+        }
+
+        post_request('/v1/b2b/passwords/discovery/authenticate', request, headers)
+      end
+
+      class Email
+        include Stytch::RequestHelper
+
+        def initialize(connection)
+          @connection = connection
+        end
+
+        # Initiates a password reset for the email address provided, when cross-org passwords are enabled. This will trigger an email to be sent to the address, containing a magic link that will allow them to set a new password and authenticate.
+        #
+        # This endpoint adapts to your Project's password strength configuration.
+        # If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid
+        # if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), your passwords are
+        # considered valid if they meet the requirements that you've set with Stytch.
+        # You may update your password strength configuration in the [stytch dashboard](https://stytch.com/dashboard/password-strength-config).
+        #
+        # == Parameters:
+        # email_address::
+        #   The email address of the Member to start the email reset process for.
+        #   The type of this field is +String+.
+        # reset_password_redirect_url::
+        #   The URL that the Member clicks from the reset password link. This URL should be an endpoint in the backend server that verifies the request by querying
+        #   Stytch's authenticate endpoint and finishes the reset password flow. If this value is not passed, the default `reset_password_redirect_url` that you set in your Dashboard is used.
+        #   If you have not set a default `reset_password_redirect_url`, an error is returned.
+        #   The type of this field is nilable +String+.
+        # discovery_redirect_url::
+        #   The URL that the end user clicks from the discovery Magic Link. This URL should be an endpoint in the backend server that
+        #   verifies the request by querying Stytch's discovery authenticate endpoint and continues the flow. If this value is not passed, the default
+        #   discovery redirect URL that you set in your Dashboard is used. If you have not set a default discovery redirect URL, an error is returned.
+        #   The type of this field is nilable +String+.
+        # reset_password_template_id::
+        #   Use a custom template for reset password emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic Links - Reset Password.
+        #   The type of this field is nilable +String+.
+        # reset_password_expiration_minutes::
+        #   Sets a time limit after which the email link to reset the member's password will no longer be valid.
+        #   The type of this field is nilable +Integer+.
+        # pkce_code_challenge::
+        #   (no documentation yet)
+        #   The type of this field is nilable +String+.
+        # locale::
+        #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+        #
+        # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
+        #
+        # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
+        #
+        #   The type of this field is nilable +String+.
+        #
+        # == Returns:
+        # An object with the following fields:
+        # request_id::
+        #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+        #   The type of this field is +String+.
+        # status_code::
+        #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+        #   The type of this field is +Integer+.
+        def reset_start(
+          email_address:,
+          reset_password_redirect_url: nil,
+          discovery_redirect_url: nil,
+          reset_password_template_id: nil,
+          reset_password_expiration_minutes: nil,
+          pkce_code_challenge: nil,
+          locale: nil
+        )
+          headers = {}
+          request = {
+            email_address: email_address
+          }
+          request[:reset_password_redirect_url] = reset_password_redirect_url unless reset_password_redirect_url.nil?
+          request[:discovery_redirect_url] = discovery_redirect_url unless discovery_redirect_url.nil?
+          request[:reset_password_template_id] = reset_password_template_id unless reset_password_template_id.nil?
+          request[:reset_password_expiration_minutes] = reset_password_expiration_minutes unless reset_password_expiration_minutes.nil?
+          request[:pkce_code_challenge] = pkce_code_challenge unless pkce_code_challenge.nil?
+          request[:locale] = locale unless locale.nil?
+
+          post_request('/v1/b2b/passwords/discovery/email/reset/start', request, headers)
+        end
+
+        # Reset the password associated with an email and start an intermediate session. This endpoint checks that the password reset token is valid, hasn’t expired, or already been used.
+        #
+        # The provided password needs to meet the project's password strength requirements, which can be checked in advance with the password strength endpoint. If the token and password are accepted, the password is securely stored for future authentication and the user is authenticated.
+        #
+        # Resetting a password will start an intermediate session and return a list of discovered organizations the session can be exchanged into.
+        #
+        # == Parameters:
+        # password_reset_token::
+        #   The password reset token to authenticate.
+        #   The type of this field is +String+.
+        # password::
+        #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+        #   The type of this field is +String+.
+        # pkce_code_verifier::
+        #   (no documentation yet)
+        #   The type of this field is nilable +String+.
+        #
+        # == Returns:
+        # An object with the following fields:
+        # request_id::
+        #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+        #   The type of this field is +String+.
+        # intermediate_session_token::
+        #   The returned Intermediate Session Token contains a password factor associated with the Member. If this value is non-empty, the member must complete an MFA step to finish logging in to the Organization. The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp), or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete an MFA flow and log in to the Organization. Password factors are not transferable between Organizations, so the intermediate session token is not valid for use with discovery endpoints.
+        #   The type of this field is +String+.
+        # email_address::
+        #   (no documentation yet)
+        #   The type of this field is +String+.
+        # discovered_organizations::
+        #   (no documentation yet)
+        #   The type of this field is list of +DiscoveredOrganization+ (+object+).
+        # status_code::
+        #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+        #   The type of this field is +Integer+.
+        def reset(
+          password_reset_token:,
+          password:,
+          pkce_code_verifier: nil
+        )
+          headers = {}
+          request = {
+            password_reset_token: password_reset_token,
+            password: password
+          }
+          request[:pkce_code_verifier] = pkce_code_verifier unless pkce_code_verifier.nil?
+
+          post_request('/v1/b2b/passwords/discovery/email/reset', request, headers)
+        end
       end
     end
   end

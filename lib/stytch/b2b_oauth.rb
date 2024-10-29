@@ -165,7 +165,8 @@ module StytchB2B
         @connection = connection
       end
 
-      # Authenticates the Discovery token and exchanges it for an Intermediate Session Token. Intermediate Session Tokens can be used for various Discovery login flows and are valid for 10 minutes.
+      # Authenticates the Discovery token and exchanges it for an Intermediate
+      # Session Token. Intermediate Session Tokens can be used for various Discovery login flows and are valid for 10 minutes.
       #
       # == Parameters:
       # discovery_oauth_token::
@@ -213,11 +214,14 @@ module StytchB2B
       #       c) The Organization has at least one other Member with a verified email address with the same domain as the end user (to prevent phishing attacks).
       #   The type of this field is list of +DiscoveredOrganization+ (+object+).
       # provider_type::
-      #   (no documentation yet)
+      #   Denotes the OAuth identity provider that the user has authenticated with, e.g. Google, Microsoft, GitHub etc.
       #   The type of this field is +String+.
       # provider_tenant_id::
-      #   (no documentation yet)
+      #   The tenant ID returned by the OAuth provider. This is typically used to identify an organization or group within the provider's domain. For example, in HubSpot this is a Hub ID, in Slack this is the Workspace ID, and in GitHub this is an organization ID. This field will only be populated if exactly one tenant ID is returned from a successful OAuth authentication and developers should prefer `provider_tenant_ids` over this since it accounts for the possibility of an OAuth provider yielding multiple tenant IDs.
       #   The type of this field is +String+.
+      # provider_tenant_ids::
+      #   All tenant IDs returned by the OAuth provider. These is typically used to identify organizations or groups within the provider's domain. For example, in HubSpot this is a Hub ID, in Slack this is the Workspace ID, and in GitHub this is an organization ID. Some OAuth providers do not return tenant IDs, some providers are guaranteed to return one, and some may return multiple. This field will always be populated if at least one tenant ID was returned from the OAuth provider and developers should prefer this field over `provider_tenant_id`.
+      #   The type of this field is list of +String+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
