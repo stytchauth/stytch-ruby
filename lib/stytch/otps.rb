@@ -485,10 +485,10 @@ module Stytch
       #   The `session_jwt` associated with a User's existing Session.
       #   The type of this field is nilable +String+.
       # login_template_id::
-      #   Use a custom template for login emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic links - Login.
+      #   Use a custom template for login emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for OTP - Login.
       #   The type of this field is nilable +String+.
       # signup_template_id::
-      #   Use a custom template for sign-up emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic links - Sign-up.
+      #   Use a custom template for sign-up emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for OTP - Sign-up.
       #   The type of this field is nilable +String+.
       #
       # == Returns:

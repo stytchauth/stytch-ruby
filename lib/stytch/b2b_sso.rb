@@ -311,7 +311,9 @@ module StytchB2B
       #   A human-readable display name for the connection.
       #   The type of this field is nilable +String+.
       # identity_provider::
-      #   The identity provider of this connection. For OIDC, the accepted values are `generic`, `okta`, and `microsoft-entra`. For SAML, the accepted values are `generic`, `okta`, `microsoft-entra`, and `google-workspace`.
+      #   Name of the IdP. Enum with possible values: `classlink`, `cyberark`, `duo`, `google-workspace`, `jumpcloud`, `keycloak`, `miniorange`, `microsoft-entra`, `okta`, `onelogin`, `pingfederate`, `rippling`, `salesforce`, `shibboleth`, or `generic`.
+      #
+      # Specifying a known provider allows Stytch to handle any provider-specific logic.
       #   The type of this field is nilable +CreateConnectionRequestIdentityProvider+ (string enum).
       #
       # == Returns:
@@ -394,7 +396,9 @@ module StytchB2B
       #   The location of the IdP's JSON Web Key Set, used to verify credentials issued by the IdP. This will be provided by the IdP.
       #   The type of this field is nilable +String+.
       # identity_provider::
-      #   The identity provider of this connection. For OIDC, the accepted values are `generic`, `okta`, and `microsoft-entra`. For SAML, the accepted values are `generic`, `okta`, `microsoft-entra`, and `google-workspace`.
+      #   Name of the IdP. Enum with possible values: `classlink`, `cyberark`, `duo`, `google-workspace`, `jumpcloud`, `keycloak`, `miniorange`, `microsoft-entra`, `okta`, `onelogin`, `pingfederate`, `rippling`, `salesforce`, `shibboleth`, or `generic`.
+      #
+      # Specifying a known provider allows Stytch to handle any provider-specific logic.
       #   The type of this field is nilable +UpdateConnectionRequestIdentityProvider+ (string enum).
       # custom_scopes::
       #   Include a space-separated list of custom scopes that you'd like to include. Note that this list must be URL encoded, e.g. the spaces must be expressed as %20.
@@ -548,7 +552,9 @@ module StytchB2B
       #   A human-readable display name for the connection.
       #   The type of this field is nilable +String+.
       # identity_provider::
-      #   The identity provider of this connection. For OIDC, the accepted values are `generic`, `okta`, and `microsoft-entra`. For SAML, the accepted values are `generic`, `okta`, `microsoft-entra`, and `google-workspace`.
+      #   Name of the IdP. Enum with possible values: `classlink`, `cyberark`, `duo`, `google-workspace`, `jumpcloud`, `keycloak`, `miniorange`, `microsoft-entra`, `okta`, `onelogin`, `pingfederate`, `rippling`, `salesforce`, `shibboleth`, or `generic`.
+      #
+      # Specifying a known provider allows Stytch to handle any provider-specific logic.
       #   The type of this field is nilable +CreateConnectionRequestIdentityProvider+ (string enum).
       #
       # == Returns:
@@ -624,7 +630,9 @@ module StytchB2B
       #   An alternative URL to use for the Audience Restriction. This value can be used when you wish to migrate an existing SAML integration to Stytch with zero downtime. Read our [SSO migration guide](https://stytch.com/docs/b2b/guides/migrations/additional-migration-considerations) for more info.
       #   The type of this field is nilable +String+.
       # identity_provider::
-      #   The identity provider of this connection. For OIDC, the accepted values are `generic`, `okta`, and `microsoft-entra`. For SAML, the accepted values are `generic`, `okta`, `microsoft-entra`, and `google-workspace`.
+      #   Name of the IdP. Enum with possible values: `classlink`, `cyberark`, `duo`, `google-workspace`, `jumpcloud`, `keycloak`, `miniorange`, `microsoft-entra`, `okta`, `onelogin`, `pingfederate`, `rippling`, `salesforce`, `shibboleth`, or `generic`.
+      #
+      # Specifying a known provider allows Stytch to handle any provider-specific logic.
       #   The type of this field is nilable +UpdateConnectionRequestIdentityProvider+ (string enum).
       #
       # == Returns:
