@@ -163,12 +163,6 @@ module StytchB2B
       # intermediate_session_token::
       #   The Intermediate Session Token. This token does not necessarily belong to a specific instance of a Member, but represents a bag of factors that may be converted to a member session. The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp), or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete an MFA flow and log in to the Organization. It can also be used with the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) to join a specific Organization that allows the factors represented by the intermediate session token; or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to create a new Organization and Member.
       #   The type of this field is +String+.
-      # organization_name::
-      #   The name of the Organization. If the name is not specified, a default name will be created based on the email used to initiate the discovery flow. If the email domain is a common email provider such as gmail.com, or if the email is a .edu email, the organization name will be generated based on the name portion of the email. Otherwise, the organization name will be generated based on the email domain.
-      #   The type of this field is +String+.
-      # organization_slug::
-      #   The unique URL slug of the Organization. A minimum of two characters is required. The slug only accepts alphanumeric characters and the following reserved characters: `-` `.` `_` `~`. If the slug is not specified, a default slug will be created based on the email used to initiate the discovery flow. If the email domain is a common email provider such as gmail.com, or if the email is a .edu email, the organization slug will be generated based on the name portion of the email. Otherwise, the organization slug will be generated based on the email domain.
-      #   The type of this field is +String+.
       # session_duration_minutes::
       #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
       #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
@@ -187,6 +181,12 @@ module StytchB2B
       #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
       #   Total custom claims size cannot exceed four kilobytes.
       #   The type of this field is nilable +object+.
+      # organization_name::
+      #   The name of the Organization. If the name is not specified, a default name will be created based on the email used to initiate the discovery flow. If the email domain is a common email provider such as gmail.com, or if the email is a .edu email, the organization name will be generated based on the name portion of the email. Otherwise, the organization name will be generated based on the email domain.
+      #   The type of this field is nilable +String+.
+      # organization_slug::
+      #   The unique URL slug of the Organization. A minimum of two characters is required. The slug only accepts alphanumeric characters and the following reserved characters: `-` `.` `_` `~`. If the slug is not specified, a default slug will be created based on the email used to initiate the discovery flow. If the email domain is a common email provider such as gmail.com, or if the email is a .edu email, the organization slug will be generated based on the name portion of the email. Otherwise, the organization slug will be generated based on the email domain.
+      #   The type of this field is nilable +String+.
       # organization_logo_url::
       #   The image URL of the Organization logo.
       #   The type of this field is nilable +String+.
@@ -319,10 +319,10 @@ module StytchB2B
       #   The type of this field is nilable +PrimaryRequired+ (+object+).
       def create(
         intermediate_session_token:,
-        organization_name:,
-        organization_slug:,
         session_duration_minutes: nil,
         session_custom_claims: nil,
+        organization_name: nil,
+        organization_slug: nil,
         organization_logo_url: nil,
         trusted_metadata: nil,
         sso_jit_provisioning: nil,
@@ -340,12 +340,12 @@ module StytchB2B
       )
         headers = {}
         request = {
-          intermediate_session_token: intermediate_session_token,
-          organization_name: organization_name,
-          organization_slug: organization_slug
+          intermediate_session_token: intermediate_session_token
         }
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+        request[:organization_name] = organization_name unless organization_name.nil?
+        request[:organization_slug] = organization_slug unless organization_slug.nil?
         request[:organization_logo_url] = organization_logo_url unless organization_logo_url.nil?
         request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
         request[:sso_jit_provisioning] = sso_jit_provisioning unless sso_jit_provisioning.nil?
