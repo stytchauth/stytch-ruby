@@ -75,6 +75,7 @@ module Stytch
     #   The type of the returned access token. Today, this value will always be equal to "bearer"
     #   The type of this field is +String+.
     def token(client_id:, client_secret:, scopes: nil)
+      headers = {}
       request = {
         grant_type: 'client_credentials',
         client_id: client_id,
@@ -82,7 +83,7 @@ module Stytch
       }
       request[:scope] = scopes.join(' ') unless scopes.nil?
 
-      JSON.parse(post_request("/v1/public/#{@project_id}/oauth2/token", request), { symbolize_names: true })
+      JSON.parse(post_request("/v1/public/#{@project_id}/oauth2/token", request, headers), { symbolize_names: true })
     end
     # ENDMANUAL(M2M::token)
 
