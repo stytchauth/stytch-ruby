@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'crypto_wallets'
+require_relative 'fraud'
 require_relative 'm2m'
 require_relative 'magic_links'
 require_relative 'oauth'
@@ -16,17 +17,19 @@ module Stytch
   class Client
     ENVIRONMENTS = %i[live test].freeze
 
-    attr_reader :crypto_wallets, :m2m, :magic_links, :oauth, :otps, :passwords, :project, :sessions, :totps, :users, :webauthn
+    attr_reader :crypto_wallets, :fraud, :m2m, :magic_links, :oauth, :otps, :passwords, :project, :sessions, :totps, :users, :webauthn
 
-    def initialize(project_id:, secret:, env: nil, &block)
-      @api_host   = api_host(env, project_id)
+    def initialize(project_id:, secret:, env: nil, fraud_env: nil, &block)
+      @api_host = api_host(env, project_id)
+      @fraud_api_host = fraud_api_host(fraud_env)
       @project_id = project_id
-      @secret     = secret
+      @secret = secret
       @is_b2b_client = false
 
       create_connection(&block)
 
       @crypto_wallets = Stytch::CryptoWallets.new(@connection)
+      @fraud = Stytch::Fraud.new(@fraud_connection)
       @m2m = Stytch::M2M.new(@connection, @project_id, @is_b2b_client)
       @magic_links = Stytch::MagicLinks.new(@connection)
       @oauth = Stytch::OAuth.new(@connection)
@@ -59,11 +62,25 @@ module Stytch
       end
     end
 
+    def fraud_api_host(fraud_env)
+      case fraud_env
+      when %r{\Ahttps?://}
+        # If this is a string that looks like a URL, assume it's an internal development URL.
+        fraud_env
+      else
+        'https://telemetry.stytch.com'
+      end
+    end
+
     def create_connection
       @connection = Faraday.new(url: @api_host) do |builder|
         block_given? ? yield(builder) : build_default_connection(builder)
       end
+      @fraud_connection = Faraday.new(url: @fraud_api_host) do |builder|
+        block_given? ? yield(builder) : build_default_connection(builder)
+      end
       @connection.set_basic_auth(@project_id, @secret)
+      @fraud_connection.set_basic_auth(@project_id, @secret)
     end
 
     def build_default_connection(builder)
