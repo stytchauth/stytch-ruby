@@ -453,7 +453,7 @@ module Stytch
       #
       #       In the redirect URL, the `stytch_token_type` will be `login` or `reset_password`.
       #
-      #       See examples and read more about redirect URLs [here](https://stytch.com/docs/guides/dashboard/redirect-urls).
+      #       See examples and read more about redirect URLs [here](/workspace-management/redirect-urls).
       #   The type of this field is +String+.
       # password::
       #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.

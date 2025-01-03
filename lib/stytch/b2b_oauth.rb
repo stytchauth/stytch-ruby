@@ -108,7 +108,7 @@ module StytchB2B
     #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
     #   The type of this field is +Organization+ (+object+).
     # reset_sessions::
-    #   (no documentation yet)
+    #   This field is deprecated.
     #   The type of this field is +Boolean+.
     # member_authenticated::
     #   Indicates whether the Member is fully authenticated. If false, the Member needs to complete an MFA step to log in to the Organization.
