@@ -92,8 +92,7 @@ module StytchB2B
     #   The email or device involved in the authentication.
     #   The type of this field is +String+.
     # reset_sessions::
-    #   Indicates if all Sessions linked to the Member need to be reset. You should check this field if you aren't using
-    #     Stytch's Session product. If you are using Stytch's Session product, we revoke the Member’s other Sessions for you.
+    #   This field is deprecated.
     #   The type of this field is +Boolean+.
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.

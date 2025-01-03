@@ -210,8 +210,7 @@ module StytchB2B
     #   The JSON Web Token (JWT) for a given Stytch Session.
     #   The type of this field is +String+.
     # reset_session::
-    #   Indicates if all Sessions linked to the Member need to be reset. You should check this field if you aren't using
-    #     Stytch's Session product. If you are using Stytch's Session product, we revoke the Member’s other Sessions for you.
+    #   This field is deprecated.
     #   The type of this field is +Boolean+.
     # organization::
     #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
