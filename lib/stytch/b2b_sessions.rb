@@ -341,7 +341,7 @@ module StytchB2B
       post_request('/v1/b2b/sessions/exchange', request, headers)
     end
 
-    # Migrate a session from an external OIDC compliant endpoint. Stytch will call the external UserInfo endpoint defined in your Stytch Project settings in the [Dashboard](/dashboard), and then perform a lookup using the `session_token`. If the response contains a valid email address, Stytch will attempt to match that email address with an existing in your and create a Stytch Session. You will need to create the member before using this endpoint.
+    # Migrate a session from an external OIDC compliant endpoint. Stytch will call the external UserInfo endpoint defined in your Stytch Project settings in the [Dashboard](https://stytch.com/docs/dashboard), and then perform a lookup using the `session_token`. If the response contains a valid email address, Stytch will attempt to match that email address with an existing in your and create a Stytch Session. You will need to create the member before using this endpoint.
     #
     # == Parameters:
     # session_token::
