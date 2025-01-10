@@ -146,6 +146,12 @@ module StytchB2B
     #   by SSO connection or SSO group. Defaults to `false` - that is, existing Member Sessions that contain SSO
     #   authentication factors with the affected SSO connection IDs will be revoked.
     #   The type of this field is nilable +Boolean+.
+    # mfa_phone_number::
+    #   (no documentation yet)
+    #   The type of this field is nilable +String+.
+    # set_phone_number_verified::
+    #   (no documentation yet)
+    #   The type of this field is nilable +Boolean+.
     #
     # == Returns:
     # An object with the following fields:
@@ -181,7 +187,9 @@ module StytchB2B
       trusted_metadata: nil,
       untrusted_metadata: nil,
       roles: nil,
-      preserve_existing_sessions: nil
+      preserve_existing_sessions: nil,
+      mfa_phone_number: nil,
+      set_phone_number_verified: nil
     )
       headers = {}
       request = {
@@ -200,6 +208,8 @@ module StytchB2B
       request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
       request[:roles] = roles unless roles.nil?
       request[:preserve_existing_sessions] = preserve_existing_sessions unless preserve_existing_sessions.nil?
+      request[:mfa_phone_number] = mfa_phone_number unless mfa_phone_number.nil?
+      request[:set_phone_number_verified] = set_phone_number_verified unless set_phone_number_verified.nil?
 
       post_request('/v1/b2b/passwords/migrate', request, headers)
     end
