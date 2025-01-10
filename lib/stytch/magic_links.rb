@@ -118,10 +118,12 @@ module Stytch
       post_request('/v1/magic_links/authenticate', request, headers)
     end
 
-    # Create an embeddable Magic Link token for a User. Access to this endpoint is restricted. To enable it, please send us a note at support@stytch.com.
+    # Create an Embeddable Magic Link token for a User. Access to this endpoint is restricted. To enable it, please send us a note at support@stytch.com.
     #
     # ### Next steps
     # Send the returned `token` value to the end user in a link which directs to your application. When the end user follows your link, collect the token, and call [Authenticate Magic Link](https://stytch.com/docs/api/authenticate-magic-link) to complete authentication.
+    #
+    # **Note:** Authenticating an Embeddable Magic Link token will **not** result in any of the Stytch User's factors (email address or phone number) being marked as verified, as Stytch cannot confirm where the user received the token.
     #
     # == Parameters:
     # user_id::
