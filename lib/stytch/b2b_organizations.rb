@@ -120,7 +120,7 @@ module StytchB2B
     #   The type of this field is nilable +String+.
     # allowed_auth_methods::
     #   An array of allowed authentication methods. This list is enforced when `auth_methods` is set to `RESTRICTED`.
-    #   The list's accepted values are: `sso`, `magic_link`, `password`, `google_oauth`, and `microsoft_oauth`.
+    #   The list's accepted values are: `sso`, `magic_link`, `email_otp`, `password`, `google_oauth`, `microsoft_oauth`, `slack_oauth`, `github_oauth`, and `hubspot_oauth`.
     #
     #   The type of this field is nilable list of +String+.
     # mfa_policy::
@@ -334,7 +334,7 @@ module StytchB2B
     #   The type of this field is nilable +String+.
     # allowed_auth_methods::
     #   An array of allowed authentication methods. This list is enforced when `auth_methods` is set to `RESTRICTED`.
-    #   The list's accepted values are: `sso`, `magic_link`, `password`, `google_oauth`, and `microsoft_oauth`.
+    #   The list's accepted values are: `sso`, `magic_link`, `email_otp`, `password`, `google_oauth`, `microsoft_oauth`, `slack_oauth`, `github_oauth`, and `hubspot_oauth`.
     #
     #
     # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.allowed-auth-methods` action on the `stytch.organization` Resource.

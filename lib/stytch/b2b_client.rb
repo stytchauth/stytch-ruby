@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'b2b_discovery'
+require_relative 'b2b_impersonation'
 require_relative 'b2b_magic_links'
 require_relative 'b2b_oauth'
 require_relative 'b2b_organizations'
@@ -21,7 +22,7 @@ module StytchB2B
   class Client
     ENVIRONMENTS = %i[live test].freeze
 
-    attr_reader :discovery, :fraud, :m2m, :magic_links, :oauth, :otps, :organizations, :passwords, :project, :rbac, :recovery_codes, :scim, :sso, :sessions, :totps
+    attr_reader :discovery, :fraud, :impersonation, :m2m, :magic_links, :oauth, :otps, :organizations, :passwords, :project, :rbac, :recovery_codes, :scim, :sso, :sessions, :totps
 
     def initialize(project_id:, secret:, env: nil, fraud_env: nil, &block)
       @api_host = api_host(env, project_id)
@@ -37,6 +38,7 @@ module StytchB2B
 
       @discovery = StytchB2B::Discovery.new(@connection)
       @fraud = Stytch::Fraud.new(@fraud_connection)
+      @impersonation = StytchB2B::Impersonation.new(@connection)
       @m2m = Stytch::M2M.new(@connection, @project_id, @is_b2b_client)
       @magic_links = StytchB2B::MagicLinks.new(@connection)
       @oauth = StytchB2B::OAuth.new(@connection)
