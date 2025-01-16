@@ -16,12 +16,58 @@ module StytchB2B
       @connection = connection
     end
 
+    # Authenticate an impersonation token to impersonate a. This endpoint requires an impersonation token that is not expired or previously used.
+    # A Stytch session will be created for the impersonated member with a 60 minute duration. Impersonated sessions cannot be extended.
+    #
+    # == Parameters:
+    # impersonation_token::
+    #   The User Impersonation token to authenticate.
+    #   The type of this field is +String+.
+    #
+    # == Returns:
+    # An object with the following fields:
+    # request_id::
+    #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+    #   The type of this field is +String+.
+    # member_id::
+    #   Globally unique UUID that identifies a specific Member.
+    #   The type of this field is +String+.
+    # organization_id::
+    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+    #   The type of this field is +String+.
+    # member::
+    #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
+    #   The type of this field is +Member+ (+object+).
+    # session_token::
+    #   A secret token for a given Stytch Session.
+    #   The type of this field is +String+.
+    # session_jwt::
+    #   The JSON Web Token (JWT) for a given Stytch Session.
+    #   The type of this field is +String+.
+    # organization::
+    #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
+    #   The type of this field is +Organization+ (+object+).
+    # intermediate_session_token::
+    #   Successfully authenticating an impersonation token will never result in an intermediate session. If the token is valid, a full session will be created.
+    #   The type of this field is +String+.
+    # member_authenticated::
+    #   The member will always be fully authenticated if an impersonation token is successfully authenticated.
+    #   The type of this field is +Boolean+.
+    # status_code::
+    #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+    #   The type of this field is +Integer+.
+    # member_session::
+    #   The [Session object](https://stytch.com/docs/b2b/api/session-object) for the impersonated Member.
+    #   The type of this field is nilable +MemberSession+ (+object+).
+    # mfa_required::
+    #   MFA will not be required when authenticating impersonation tokens.
+    #   The type of this field is nilable +MfaRequired+ (+object+).
     def authenticate(
-      token:
+      impersonation_token:
     )
       headers = {}
       request = {
-        token: token
+        impersonation_token: impersonation_token
       }
 
       post_request('/v1/b2b/impersonation/authenticate', request, headers)
