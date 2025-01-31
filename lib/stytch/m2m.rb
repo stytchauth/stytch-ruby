@@ -83,7 +83,7 @@ module Stytch
       }
       request[:scope] = scopes.join(' ') unless scopes.nil?
 
-      JSON.parse(post_request("/v1/public/#{@project_id}/oauth2/token", request, headers), { symbolize_names: true })
+      post_request("/v1/public/#{@project_id}/oauth2/token", request, headers)
     end
     # ENDMANUAL(M2M::token)
 
