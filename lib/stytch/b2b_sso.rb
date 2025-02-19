@@ -633,6 +633,9 @@ module StytchB2B
       #
       # Specifying a known provider allows Stytch to handle any provider-specific logic.
       #   The type of this field is nilable +UpdateConnectionRequestIdentityProvider+ (string enum).
+      # signing_private_key::
+      #   A PKCS1 format RSA private key used for signing SAML requests. Only PKCS1 format (starting with "-----BEGIN RSA PRIVATE KEY-----") is supported. When provided, Stytch will generate a new x509 certificate from this key and return it in the signing_certificates array.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -660,6 +663,7 @@ module StytchB2B
         saml_group_implicit_role_assignments: nil,
         alternative_audience_uri: nil,
         identity_provider: nil,
+        signing_private_key: nil,
         method_options: nil
       )
         headers = {}
@@ -674,6 +678,7 @@ module StytchB2B
         request[:saml_group_implicit_role_assignments] = saml_group_implicit_role_assignments unless saml_group_implicit_role_assignments.nil?
         request[:alternative_audience_uri] = alternative_audience_uri unless alternative_audience_uri.nil?
         request[:identity_provider] = identity_provider unless identity_provider.nil?
+        request[:signing_private_key] = signing_private_key unless signing_private_key.nil?
 
         put_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}", request, headers)
       end
