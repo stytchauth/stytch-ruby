@@ -67,6 +67,9 @@ module StytchB2B
     # organization_name::
     #   The name of the Organization. Must be between 1 and 128 characters in length.
     #   The type of this field is +String+.
+    # claimed_email_domains::
+    #   (no documentation yet)
+    #   The type of this field is list of +String+.
     # organization_slug::
     #   The unique URL slug of the Organization. The slug only accepts alphanumeric characters and the following reserved characters: `-` `.` `_` `~`. Must be between 2 and 128 characters in length.
     #   The type of this field is nilable +String+.
@@ -175,6 +178,7 @@ module StytchB2B
     #   The type of this field is +Integer+.
     def create(
       organization_name:,
+      claimed_email_domains:,
       organization_slug: nil,
       organization_logo_url: nil,
       trusted_metadata: nil,
@@ -193,7 +197,8 @@ module StytchB2B
     )
       headers = {}
       request = {
-        organization_name: organization_name
+        organization_name: organization_name,
+        claimed_email_domains: claimed_email_domains
       }
       request[:organization_slug] = organization_slug unless organization_slug.nil?
       request[:organization_logo_url] = organization_logo_url unless organization_logo_url.nil?
@@ -389,6 +394,9 @@ module StytchB2B
     #
     # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.allowed-oauth-tenants` action on the `stytch.organization` Resource.
     #   The type of this field is nilable +object+.
+    # claimed_email_domains::
+    #   (no documentation yet)
+    #   The type of this field is nilable list of +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -424,6 +432,7 @@ module StytchB2B
       allowed_mfa_methods: nil,
       oauth_tenant_jit_provisioning: nil,
       allowed_oauth_tenants: nil,
+      claimed_email_domains: nil,
       method_options: nil
     )
       headers = {}
@@ -447,6 +456,7 @@ module StytchB2B
       request[:allowed_mfa_methods] = allowed_mfa_methods unless allowed_mfa_methods.nil?
       request[:oauth_tenant_jit_provisioning] = oauth_tenant_jit_provisioning unless oauth_tenant_jit_provisioning.nil?
       request[:allowed_oauth_tenants] = allowed_oauth_tenants unless allowed_oauth_tenants.nil?
+      request[:claimed_email_domains] = claimed_email_domains unless claimed_email_domains.nil?
 
       put_request("/v1/b2b/organizations/#{organization_id}", request, headers)
     end
