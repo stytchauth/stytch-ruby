@@ -596,18 +596,18 @@ module StytchB2B
       #
       # == Returns:
       # An object with the following fields:
-      # member::
-      #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
-      #   The type of this field is +Member+ (+object+).
-      # organization::
-      #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
-      #   The type of this field is +Organization+ (+object+).
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member.
       #   The type of this field is nilable +String+.
+      # member::
+      #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
+      #   The type of this field is nilable +Member+ (+object+).
+      # organization::
+      #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
+      #   The type of this field is nilable +Organization+ (+object+).
       #
       # == Method Options:
       # This method supports an optional +StytchB2B::Passwords::Email::RequireResetRequestOptions+ object which will modify the headers sent in the HTTP request.

@@ -161,6 +161,9 @@ module StytchB2B
     # allowed_oauth_tenants::
     #   A map of allowed OAuth tenants. If this field is not passed in, the Organization will not allow JIT provisioning by OAuth Tenant. Allowed keys are "slack", "hubspot", and "github".
     #   The type of this field is nilable +object+.
+    # claimed_email_domains::
+    #   A list of email domains that are claimed by the Organization.
+    #   The type of this field is nilable list of +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -189,7 +192,8 @@ module StytchB2B
       mfa_methods: nil,
       allowed_mfa_methods: nil,
       oauth_tenant_jit_provisioning: nil,
-      allowed_oauth_tenants: nil
+      allowed_oauth_tenants: nil,
+      claimed_email_domains: nil
     )
       headers = {}
       request = {
@@ -210,6 +214,7 @@ module StytchB2B
       request[:allowed_mfa_methods] = allowed_mfa_methods unless allowed_mfa_methods.nil?
       request[:oauth_tenant_jit_provisioning] = oauth_tenant_jit_provisioning unless oauth_tenant_jit_provisioning.nil?
       request[:allowed_oauth_tenants] = allowed_oauth_tenants unless allowed_oauth_tenants.nil?
+      request[:claimed_email_domains] = claimed_email_domains unless claimed_email_domains.nil?
 
       post_request('/v1/b2b/organizations', request, headers)
     end
@@ -389,6 +394,9 @@ module StytchB2B
     #
     # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.allowed-oauth-tenants` action on the `stytch.organization` Resource.
     #   The type of this field is nilable +object+.
+    # claimed_email_domains::
+    #   A list of email domains that are claimed by the Organization.
+    #   The type of this field is nilable list of +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -424,6 +432,7 @@ module StytchB2B
       allowed_mfa_methods: nil,
       oauth_tenant_jit_provisioning: nil,
       allowed_oauth_tenants: nil,
+      claimed_email_domains: nil,
       method_options: nil
     )
       headers = {}
@@ -447,6 +456,7 @@ module StytchB2B
       request[:allowed_mfa_methods] = allowed_mfa_methods unless allowed_mfa_methods.nil?
       request[:oauth_tenant_jit_provisioning] = oauth_tenant_jit_provisioning unless oauth_tenant_jit_provisioning.nil?
       request[:allowed_oauth_tenants] = allowed_oauth_tenants unless allowed_oauth_tenants.nil?
+      request[:claimed_email_domains] = claimed_email_domains unless claimed_email_domains.nil?
 
       put_request("/v1/b2b/organizations/#{organization_id}", request, headers)
     end
