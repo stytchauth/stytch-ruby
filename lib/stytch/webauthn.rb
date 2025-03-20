@@ -334,5 +334,18 @@ module Stytch
 
       put_request("/v1/webauthn/#{webauthn_registration_id}", request, headers)
     end
+
+    def credentials(
+      user_id:,
+      domain:
+    )
+      headers = {}
+      query_params = {
+        user_id: user_id,
+        domain: domain
+      }
+      request = request_with_query_params('/v1/webauthn/credentials', query_params)
+      get_request(request, headers)
+    end
   end
 end
