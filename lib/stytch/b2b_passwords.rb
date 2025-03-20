@@ -406,6 +406,9 @@ module StytchB2B
       # reset_password_template_id::
       #   Use a custom template for reset password emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic Links - Reset Password.
       #   The type of this field is nilable +String+.
+      # verify_email_template_id::
+      #   (no documentation yet)
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -432,7 +435,8 @@ module StytchB2B
         code_challenge: nil,
         login_redirect_url: nil,
         locale: nil,
-        reset_password_template_id: nil
+        reset_password_template_id: nil,
+        verify_email_template_id: nil
       )
         headers = {}
         request = {
@@ -445,6 +449,7 @@ module StytchB2B
         request[:login_redirect_url] = login_redirect_url unless login_redirect_url.nil?
         request[:locale] = locale unless locale.nil?
         request[:reset_password_template_id] = reset_password_template_id unless reset_password_template_id.nil?
+        request[:verify_email_template_id] = verify_email_template_id unless verify_email_template_id.nil?
 
         post_request('/v1/b2b/passwords/email/reset/start', request, headers)
       end
@@ -984,6 +989,9 @@ module StytchB2B
         # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
         #
         #   The type of this field is nilable +String+.
+        # verify_email_template_id::
+        #   (no documentation yet)
+        #   The type of this field is nilable +String+.
         #
         # == Returns:
         # An object with the following fields:
@@ -1000,7 +1008,8 @@ module StytchB2B
           reset_password_template_id: nil,
           reset_password_expiration_minutes: nil,
           pkce_code_challenge: nil,
-          locale: nil
+          locale: nil,
+          verify_email_template_id: nil
         )
           headers = {}
           request = {
@@ -1012,6 +1021,7 @@ module StytchB2B
           request[:reset_password_expiration_minutes] = reset_password_expiration_minutes unless reset_password_expiration_minutes.nil?
           request[:pkce_code_challenge] = pkce_code_challenge unless pkce_code_challenge.nil?
           request[:locale] = locale unless locale.nil?
+          request[:verify_email_template_id] = verify_email_template_id unless verify_email_template_id.nil?
 
           post_request('/v1/b2b/passwords/discovery/email/reset/start', request, headers)
         end
