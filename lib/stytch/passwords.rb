@@ -300,6 +300,13 @@ module Stytch
     # name::
     #   The name of the user. Each field in the name object is optional.
     #   The type of this field is nilable +Name+ (+object+).
+    # phone_number::
+    #   The phone number of the user. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX).
+    #   The type of this field is nilable +String+.
+    # set_phone_number_verified::
+    #   Whether to set the user's phone number as verified. This is a dangerous field. This flag should only be set if you can attest that
+    #    the user owns the phone number in question. Access to this field is restricted. To enable it, please send us a note at support@stytch.com.
+    #   The type of this field is nilable +Boolean+.
     #
     # == Returns:
     # An object with the following fields:
@@ -333,7 +340,9 @@ module Stytch
       trusted_metadata: nil,
       untrusted_metadata: nil,
       set_email_verified: nil,
-      name: nil
+      name: nil,
+      phone_number: nil,
+      set_phone_number_verified: nil
     )
       headers = {}
       request = {
@@ -350,6 +359,8 @@ module Stytch
       request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
       request[:set_email_verified] = set_email_verified unless set_email_verified.nil?
       request[:name] = name unless name.nil?
+      request[:phone_number] = phone_number unless phone_number.nil?
+      request[:set_phone_number_verified] = set_phone_number_verified unless set_phone_number_verified.nil?
 
       post_request('/v1/passwords/migrate', request, headers)
     end
