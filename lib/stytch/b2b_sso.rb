@@ -636,6 +636,12 @@ module StytchB2B
       # signing_private_key::
       #   A PKCS1 format RSA private key used for signing SAML requests. Only PKCS1 format (starting with "-----BEGIN RSA PRIVATE KEY-----") is supported. When provided, Stytch will generate a new x509 certificate from this key and return it in the signing_certificates array.
       #   The type of this field is nilable +String+.
+      # nameid_format::
+      #   The NameID format the SAML Connection expects to use. Defaults to `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`.
+      #   The type of this field is nilable +String+.
+      # alternative_acs_url::
+      #   An alternative URL to use for the `AssertionConsumerServiceURL` in SP initiated SAML AuthNRequests. This value can be used when you wish to migrate an existing SAML integration to Stytch with zero downtime. Note that you will be responsible for proxying requests sent to the Alternative ACS URL to Stytch. Read our [SSO migration guide](https://stytch.com/docs/b2b/guides/migrations/additional-migration-considerations) for more info.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -664,6 +670,8 @@ module StytchB2B
         alternative_audience_uri: nil,
         identity_provider: nil,
         signing_private_key: nil,
+        nameid_format: nil,
+        alternative_acs_url: nil,
         method_options: nil
       )
         headers = {}
@@ -679,6 +687,8 @@ module StytchB2B
         request[:alternative_audience_uri] = alternative_audience_uri unless alternative_audience_uri.nil?
         request[:identity_provider] = identity_provider unless identity_provider.nil?
         request[:signing_private_key] = signing_private_key unless signing_private_key.nil?
+        request[:nameid_format] = nameid_format unless nameid_format.nil?
+        request[:alternative_acs_url] = alternative_acs_url unless alternative_acs_url.nil?
 
         put_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}", request, headers)
       end
