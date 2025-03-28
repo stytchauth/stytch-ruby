@@ -335,6 +335,24 @@ module Stytch
       put_request("/v1/webauthn/#{webauthn_registration_id}", request, headers)
     end
 
+    # List the public key credentials of the WebAuthn Registrations or Passkeys registered to a specific User.
+    #
+    # == Parameters:
+    # user_id::
+    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to.
+    #   The type of this field is +String+.
+    # domain::
+    #   The domain for Passkeys or WebAuthn. Defaults to `window.location.hostname`.
+    #   The type of this field is +String+.
+    #
+    # == Returns:
+    # An object with the following fields:
+    # credentials::
+    #   A list of WebAuthn credential objects.
+    #   The type of this field is list of +WebAuthnCredential+ (+object+).
+    # status_code::
+    #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+    #   The type of this field is +Integer+.
     def credentials(
       user_id:,
       domain:
