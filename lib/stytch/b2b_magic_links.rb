@@ -184,7 +184,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
       #   The type of this field is +String+.
       # email_address::
       #   The email address of the Member.
@@ -268,9 +268,13 @@ module StytchB2B
       #
       # The magic link invite will be valid for 1 week.
       #
+      # ## Revoke an invite
+      #
+      # To revoke an existing invite, use the [Delete Member](https://stytch.com/docs/b2b/api/delete-member) endpoint. This will both delete the invited Member from the target Organization and revoke all existing invite emails.
+      #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
       #   The type of this field is +String+.
       # email_address::
       #   The email address of the Member.

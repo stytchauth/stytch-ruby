@@ -127,7 +127,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The unique ID of a specific User.
+    #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
     #   The type of this field is +String+.
     # expiration_minutes::
     #   Set the expiration for the Magic Link `token` in minutes. By default, it expires in 1 hour. The minimum expiration is 5 minutes and the maximum is 7 days (10080 mins).
@@ -206,7 +206,7 @@ module Stytch
       #   A base64url encoded SHA256 hash of a one time secret used to validate that the request starts and ends on the same device.
       #   The type of this field is nilable +String+.
       # user_id::
-      #   The unique ID of a specific User.
+      #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
       #   The type of this field is nilable +String+.
       # session_token::
       #   The `session_token` of the user to associate the email with.
