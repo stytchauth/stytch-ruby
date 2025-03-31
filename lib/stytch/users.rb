@@ -94,7 +94,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The unique ID of a specific User.
+    #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
     #   The type of this field is +String+.
     #
     # == Returns:
@@ -211,7 +211,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The unique ID of a specific User.
+    #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
     #   The type of this field is +String+.
     # name::
     #   The name of the user. Each field in the name object is optional.
@@ -276,7 +276,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The unique ID of a specific User.
+    #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
     #   The type of this field is +String+.
     # email_address::
     #   The email address to exchange to.
@@ -316,7 +316,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The unique ID of a specific User.
+    #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
     #   The type of this field is +String+.
     #
     # == Returns:

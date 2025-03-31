@@ -37,7 +37,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` to get active Sessions for.
+    #   The `user_id` to get active Sessions for. You may use an external_id here if one is set for the user.
     #   The type of this field is +String+.
     #
     # == Returns:
