@@ -26,7 +26,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to.
+    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to. You may use an external_id here if one is set for the user.
     #   The type of this field is +String+.
     # domain::
     #   The domain for Passkeys or WebAuthn. Defaults to `window.location.hostname`.
@@ -96,7 +96,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to.
+    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to. You may use an external_id here if one is set for the user.
     #   The type of this field is +String+.
     # public_key_credential::
     #   The response of the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential).
@@ -187,7 +187,7 @@ module Stytch
     #   The domain for Passkeys or WebAuthn. Defaults to `window.location.hostname`.
     #   The type of this field is +String+.
     # user_id::
-    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to.
+    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to. You may use an external_id here if one is set for the user.
     #   The type of this field is nilable +String+.
     # return_passkey_credential_options::
     #   If true, the `public_key_credential_creation_options` returned will be optimized for Passkeys with `userVerification` set to `"preferred"`.
@@ -350,19 +350,19 @@ module Stytch
     # credentials::
     #   A list of WebAuthn credential objects.
     #   The type of this field is list of +WebAuthnCredential+ (+object+).
+    # request_id::
+    #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+    #   The type of this field is +String+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
-    def credentials(
+    def list_credentials(
       user_id:,
       domain:
     )
       headers = {}
-      query_params = {
-        user_id: user_id,
-        domain: domain
-      }
-      request = request_with_query_params('/v1/webauthn/credentials', query_params)
+      query_params = {}
+      request = request_with_query_params("/v1/webauthn/credentials/#{user_id}/#{domain}", query_params)
       get_request(request, headers)
     end
   end

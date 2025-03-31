@@ -161,7 +161,7 @@ module Stytch
       #
       #   The type of this field is nilable +SendRequestLocale+ (string enum).
       # user_id::
-      #   The unique ID of a specific User.
+      #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
       #   The type of this field is nilable +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
@@ -324,7 +324,7 @@ module Stytch
       #
       #   The type of this field is nilable +SendRequestLocale+ (string enum).
       # user_id::
-      #   The unique ID of a specific User.
+      #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
       #   The type of this field is nilable +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
@@ -476,7 +476,7 @@ module Stytch
       #
       #   The type of this field is nilable +SendRequestLocale+ (string enum).
       # user_id::
-      #   The unique ID of a specific User.
+      #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
       #   The type of this field is nilable +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
