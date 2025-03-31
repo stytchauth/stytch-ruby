@@ -103,7 +103,7 @@ module StytchB2B
     #   The password hash used. Currently `bcrypt`, `scrypt`, `argon_2i`, `argon2_id`, `md_5`, `sha_1`, and `pbkdf_2` are supported.
     #   The type of this field is +MigrateRequestHashType+ (string enum).
     # organization_id::
-    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
     #   The type of this field is +String+.
     # md_5_config::
     #   Optional parameters for MD-5 hash types.
@@ -226,7 +226,7 @@ module StytchB2B
     #
     # == Parameters:
     # organization_id::
-    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
     #   The type of this field is +String+.
     # email_address::
     #   The email address of the Member.
@@ -373,7 +373,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
       #   The type of this field is +String+.
       # email_address::
       #   The email address of the Member to start the email reset process for.
@@ -593,10 +593,10 @@ module StytchB2B
       #   The email address of the Member to start the email reset process for.
       #   The type of this field is +String+.
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
       #   The type of this field is nilable +String+.
       # member_id::
-      #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
+      #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
       #   The type of this field is nilable +String+.
       #
       # == Returns:
@@ -647,7 +647,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
       #   The type of this field is +String+.
       # password::
       #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
@@ -778,7 +778,7 @@ module StytchB2B
       #   The Member's elected new password.
       #   The type of this field is +String+.
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
       #   The type of this field is +String+.
       # session_token::
       #   A secret token for a given Stytch Session.
