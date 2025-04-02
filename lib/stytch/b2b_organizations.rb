@@ -792,6 +792,9 @@ module StytchB2B
       #
       # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.info.email` action on the `stytch.member` Resource. Members cannot update their own email address.
       #   The type of this field is nilable +String+.
+      # external_id::
+      #   An identifier that can be used in API calls wherever a member_id is expected. This is a string consisting of alphanumeric, `.`, `_`, or `-` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -826,6 +829,7 @@ module StytchB2B
         preserve_existing_sessions: nil,
         default_mfa_method: nil,
         email_address: nil,
+        external_id: nil,
         method_options: nil
       )
         headers = {}
@@ -841,6 +845,7 @@ module StytchB2B
         request[:preserve_existing_sessions] = preserve_existing_sessions unless preserve_existing_sessions.nil?
         request[:default_mfa_method] = default_mfa_method unless default_mfa_method.nil?
         request[:email_address] = email_address unless email_address.nil?
+        request[:external_id] = external_id unless external_id.nil?
 
         put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", request, headers)
       end
