@@ -147,6 +147,9 @@ module Stytch
     # untrusted_metadata::
     #   The `untrusted_metadata` field contains an arbitrary JSON object of application-specific data. Untrusted metadata can be edited by end users directly via the SDK, and **cannot be used to store critical information.** See the [Metadata](https://stytch.com/docs/api/metadata) reference for complete field behavior details.
     #   The type of this field is nilable +object+.
+    # external_id::
+    #   (no documentation yet)
+    #   The type of this field is nilable +String+.
     def get(
       user_id:
     )
@@ -225,6 +228,9 @@ module Stytch
     # untrusted_metadata::
     #   The `untrusted_metadata` field contains an arbitrary JSON object of application-specific data. Untrusted metadata can be edited by end users directly via the SDK, and **cannot be used to store critical information.** See the [Metadata](https://stytch.com/docs/api/metadata) reference for complete field behavior details.
     #   The type of this field is nilable +object+.
+    # external_id::
+    #   An identifier that can be used in API calls wherever a user_id is expected. This is a string consisting of alphanumeric, `.`, `_`, or `-` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -254,7 +260,8 @@ module Stytch
       name: nil,
       attributes: nil,
       trusted_metadata: nil,
-      untrusted_metadata: nil
+      untrusted_metadata: nil,
+      external_id: nil
     )
       headers = {}
       request = {}
@@ -262,6 +269,7 @@ module Stytch
       request[:attributes] = attributes unless attributes.nil?
       request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
       request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
+      request[:external_id] = external_id unless external_id.nil?
 
       put_request("/v1/users/#{user_id}", request, headers)
     end
