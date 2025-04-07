@@ -152,6 +152,9 @@ module StytchB2B
     # set_phone_number_verified::
     #   (no documentation yet)
     #   The type of this field is nilable +Boolean+.
+    # external_id::
+    #   If a new member is created, this will set an identifier that can be used in API calls wherever a member_id is expected. This is a string consisting of alphanumeric, `.`, `_`, or `-` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project. Note that if a member already exists, this field will be ignored.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -189,7 +192,8 @@ module StytchB2B
       roles: nil,
       preserve_existing_sessions: nil,
       mfa_phone_number: nil,
-      set_phone_number_verified: nil
+      set_phone_number_verified: nil,
+      external_id: nil
     )
       headers = {}
       request = {
@@ -210,6 +214,7 @@ module StytchB2B
       request[:preserve_existing_sessions] = preserve_existing_sessions unless preserve_existing_sessions.nil?
       request[:mfa_phone_number] = mfa_phone_number unless mfa_phone_number.nil?
       request[:set_phone_number_verified] = set_phone_number_verified unless set_phone_number_verified.nil?
+      request[:external_id] = external_id unless external_id.nil?
 
       post_request('/v1/b2b/passwords/migrate', request, headers)
     end
@@ -404,10 +409,11 @@ module StytchB2B
       #
       #   The type of this field is nilable +ResetStartRequestLocale+ (string enum).
       # reset_password_template_id::
-      #   Use a custom template for reset password emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic Links - Reset Password.
+      #   Use a custom template for reset password emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Passwords - Reset Password.
       #   The type of this field is nilable +String+.
       # verify_email_template_id::
-      #   (no documentation yet)
+      #   Use a custom template for verification emails sent during password reset flows. This template will be used the first time a user sets a password via a
+      #   password reset flow. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Passwords - Email Verification.
       #   The type of this field is nilable +String+.
       #
       # == Returns:
@@ -973,7 +979,7 @@ module StytchB2B
         #   discovery redirect URL that you set in your Dashboard is used. If you have not set a default discovery redirect URL, an error is returned.
         #   The type of this field is nilable +String+.
         # reset_password_template_id::
-        #   Use a custom template for reset password emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic Links - Reset Password.
+        #   Use a custom template for reset password emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Passwords - Reset Password.
         #   The type of this field is nilable +String+.
         # reset_password_expiration_minutes::
         #   Sets a time limit after which the email link to reset the member's password will no longer be valid.
@@ -990,7 +996,8 @@ module StytchB2B
         #
         #   The type of this field is nilable +String+.
         # verify_email_template_id::
-        #   (no documentation yet)
+        #   Use a custom template for verification emails sent during password reset flows. This template will be used the first time a user sets a password via a
+        #   password reset flow. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Passwords - Email Verification.
         #   The type of this field is nilable +String+.
         #
         # == Returns:
