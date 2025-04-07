@@ -307,6 +307,9 @@ module Stytch
     #   Whether to set the user's phone number as verified. This is a dangerous field. This flag should only be set if you can attest that
     #    the user owns the phone number in question. Access to this field is restricted. To enable it, please send us a note at support@stytch.com.
     #   The type of this field is nilable +Boolean+.
+    # external_id::
+    #   If a new user is created, this will set an identifier that can be used in API calls wherever a user_id is expected. This is a string consisting of alphanumeric, `.`, `_`, or `-` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project. Note that if a user already exists, this field will be ignored.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -342,7 +345,8 @@ module Stytch
       set_email_verified: nil,
       name: nil,
       phone_number: nil,
-      set_phone_number_verified: nil
+      set_phone_number_verified: nil,
+      external_id: nil
     )
       headers = {}
       request = {
@@ -361,6 +365,7 @@ module Stytch
       request[:name] = name unless name.nil?
       request[:phone_number] = phone_number unless phone_number.nil?
       request[:set_phone_number_verified] = set_phone_number_verified unless set_phone_number_verified.nil?
+      request[:external_id] = external_id unless external_id.nil?
 
       post_request('/v1/passwords/migrate', request, headers)
     end

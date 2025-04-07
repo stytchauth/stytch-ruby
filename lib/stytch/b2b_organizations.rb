@@ -1295,6 +1295,9 @@ module StytchB2B
       #   Roles to explicitly assign to this Member. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment)
       #    for more information about role assignment.
       #   The type of this field is nilable list of +String+.
+      # external_id::
+      #   An identifier that can be used in API calls wherever a member_id is expected. This is a string consisting of alphanumeric, `.`, `_`, or `-` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -1327,6 +1330,7 @@ module StytchB2B
         mfa_phone_number: nil,
         mfa_enrolled: nil,
         roles: nil,
+        external_id: nil,
         method_options: nil
       )
         headers = {}
@@ -1342,6 +1346,7 @@ module StytchB2B
         request[:mfa_phone_number] = mfa_phone_number unless mfa_phone_number.nil?
         request[:mfa_enrolled] = mfa_enrolled unless mfa_enrolled.nil?
         request[:roles] = roles unless roles.nil?
+        request[:external_id] = external_id unless external_id.nil?
 
         post_request("/v1/b2b/organizations/#{organization_id}/members", request, headers)
       end

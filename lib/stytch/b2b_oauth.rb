@@ -222,6 +222,9 @@ module StytchB2B
       # provider_tenant_ids::
       #   All tenant IDs returned by the OAuth provider. These is typically used to identify organizations or groups within the provider's domain. For example, in HubSpot this is a Hub ID, in Slack this is the Workspace ID, and in GitHub this is an organization ID. Some OAuth providers do not return tenant IDs, some providers are guaranteed to return one, and some may return multiple. This field will always be populated if at least one tenant ID was returned from the OAuth provider and developers should prefer this field over `provider_tenant_id`.
       #   The type of this field is list of +String+.
+      # full_name::
+      #   The full name of the authenticated end user, if available.
+      #   The type of this field is +String+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
