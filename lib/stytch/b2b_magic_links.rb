@@ -213,11 +213,17 @@ module StytchB2B
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
-      # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
+      # Currently supported languages are English (`"en"`), Spanish (`"es"`), French (`"fr"`) and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
       #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
       #   The type of this field is nilable +LoginOrSignupRequestLocale+ (string enum).
+      # login_expiration_minutes::
+      #   The expiration time, in minutes, for a login Email Magic Link. If not authenticated within this time frame, the email will need to be resent. Defaults to 60 (1 hour) with a minimum of 5 and a maximum of 10080 (1 week).
+      #   The type of this field is nilable +Integer+.
+      # signup_expiration_minutes::
+      #   The expiration time, in minutes, for a signup Email Magic Link. If not authenticated within this time frame, the email will need to be resent. Defaults to 60 (1 hour) with a minimum of 5 and a maximum of 10080 (1 week).
+      #   The type of this field is nilable +Integer+.
       #
       # == Returns:
       # An object with the following fields:
@@ -247,7 +253,9 @@ module StytchB2B
         pkce_code_challenge: nil,
         login_template_id: nil,
         signup_template_id: nil,
-        locale: nil
+        locale: nil,
+        login_expiration_minutes: nil,
+        signup_expiration_minutes: nil
       )
         headers = {}
         request = {
@@ -260,6 +268,8 @@ module StytchB2B
         request[:login_template_id] = login_template_id unless login_template_id.nil?
         request[:signup_template_id] = signup_template_id unless signup_template_id.nil?
         request[:locale] = locale unless locale.nil?
+        request[:login_expiration_minutes] = login_expiration_minutes unless login_expiration_minutes.nil?
+        request[:signup_expiration_minutes] = signup_expiration_minutes unless signup_expiration_minutes.nil?
 
         post_request('/v1/b2b/magic_links/email/login_or_signup', request, headers)
       end
@@ -305,7 +315,7 @@ module StytchB2B
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
-      # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
+      # Currently supported languages are English (`"en"`), Spanish (`"es"`), French (`"fr"`) and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
       #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
@@ -314,6 +324,9 @@ module StytchB2B
       #   Roles to explicitly assign to this Member. See the [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/role-assignment)
       #    for more information about role assignment.
       #   The type of this field is nilable list of +String+.
+      # invite_expiration_minutes::
+      #   The expiration time, in minutes, for an invite email. If not accepted within this time frame, the invite will need to be resent. Defaults to 10080 (1 week) with a minimum of 5 and a maximum of 10080.
+      #   The type of this field is nilable +Integer+.
       #
       # == Returns:
       # An object with the following fields:
@@ -346,6 +359,7 @@ module StytchB2B
         invite_template_id: nil,
         locale: nil,
         roles: nil,
+        invite_expiration_minutes: nil,
         method_options: nil
       )
         headers = {}
@@ -362,6 +376,7 @@ module StytchB2B
         request[:invite_template_id] = invite_template_id unless invite_template_id.nil?
         request[:locale] = locale unless locale.nil?
         request[:roles] = roles unless roles.nil?
+        request[:invite_expiration_minutes] = invite_expiration_minutes unless invite_expiration_minutes.nil?
 
         post_request('/v1/b2b/magic_links/email/invite', request, headers)
       end
@@ -394,11 +409,14 @@ module StytchB2B
         # locale::
         #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
         #
-        # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
+        # Currently supported languages are English (`"en"`), Spanish (`"es"`), French (`"fr"`) and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
         #
         # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
         #
         #   The type of this field is nilable +SendRequestLocale+ (string enum).
+        # discovery_expiration_minutes::
+        #   The expiration time, in minutes, for an discovery magic link email. If not accepted within this time frame, the email will need to be resent. Defaults to 60 (1 hour) with a minimum of 5 and a maximum of 10080 (1 week).
+        #   The type of this field is nilable +Integer+.
         #
         # == Returns:
         # An object with the following fields:
@@ -413,7 +431,8 @@ module StytchB2B
           discovery_redirect_url: nil,
           pkce_code_challenge: nil,
           login_template_id: nil,
-          locale: nil
+          locale: nil,
+          discovery_expiration_minutes: nil
         )
           headers = {}
           request = {
@@ -423,6 +442,7 @@ module StytchB2B
           request[:pkce_code_challenge] = pkce_code_challenge unless pkce_code_challenge.nil?
           request[:login_template_id] = login_template_id unless login_template_id.nil?
           request[:locale] = locale unless locale.nil?
+          request[:discovery_expiration_minutes] = discovery_expiration_minutes unless discovery_expiration_minutes.nil?
 
           post_request('/v1/b2b/magic_links/email/discovery/send', request, headers)
         end

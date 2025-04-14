@@ -60,7 +60,7 @@ module StytchB2B
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
-      # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
+      # Currently supported languages are English (`"en"`), Spanish (`"es"`), French (`"fr"`) and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
       #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
@@ -269,11 +269,17 @@ module StytchB2B
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
-      # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
+      # Currently supported languages are English (`"en"`), Spanish (`"es"`), French (`"fr"`) and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
       #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
       #   The type of this field is nilable +LoginOrSignupRequestLocale+ (string enum).
+      # login_expiration_minutes::
+      #   The expiration time, in minutes, for a login OTP email to a Member. If not authenticated within this time frame, the OTP will need to be resent. Defaults to 10 with a minimum of 2 and a maximum of 15.
+      #   The type of this field is nilable +Integer+.
+      # signup_expiration_minutes::
+      #   The expiration time, in minutes, for a signup OTP email to a Member. If not authenticated within this time frame, the OTP will need to be resent. Defaults to 10 with a minimum of 2 and a maximum of 15.
+      #   The type of this field is nilable +Integer+.
       #
       # == Returns:
       # An object with the following fields:
@@ -300,7 +306,9 @@ module StytchB2B
         email_address:,
         login_template_id: nil,
         signup_template_id: nil,
-        locale: nil
+        locale: nil,
+        login_expiration_minutes: nil,
+        signup_expiration_minutes: nil
       )
         headers = {}
         request = {
@@ -310,6 +318,8 @@ module StytchB2B
         request[:login_template_id] = login_template_id unless login_template_id.nil?
         request[:signup_template_id] = signup_template_id unless signup_template_id.nil?
         request[:locale] = locale unless locale.nil?
+        request[:login_expiration_minutes] = login_expiration_minutes unless login_expiration_minutes.nil?
+        request[:signup_expiration_minutes] = signup_expiration_minutes unless signup_expiration_minutes.nil?
 
         post_request('/v1/b2b/otps/email/login_or_signup', request, headers)
       end
@@ -366,7 +376,7 @@ module StytchB2B
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
-      # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
+      # Currently supported languages are English (`"en"`), Spanish (`"es"`), French (`"fr"`) and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
       #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
@@ -459,11 +469,14 @@ module StytchB2B
         # locale::
         #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
         #
-        # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
+        # Currently supported languages are English (`"en"`), Spanish (`"es"`), French (`"fr"`) and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
         #
         # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
         #
         #   The type of this field is nilable +SendRequestLocale+ (string enum).
+        # discovery_expiration_minutes::
+        #   The expiration time, in minutes, for a discovery OTP email. If not accepted within this time frame, the OTP will need to be resent. Defaults to 10 with a minimum of 2 and a maximum of 15.
+        #   The type of this field is nilable +Integer+.
         #
         # == Returns:
         # An object with the following fields:
@@ -476,7 +489,8 @@ module StytchB2B
         def send(
           email_address:,
           login_template_id: nil,
-          locale: nil
+          locale: nil,
+          discovery_expiration_minutes: nil
         )
           headers = {}
           request = {
@@ -484,6 +498,7 @@ module StytchB2B
           }
           request[:login_template_id] = login_template_id unless login_template_id.nil?
           request[:locale] = locale unless locale.nil?
+          request[:discovery_expiration_minutes] = discovery_expiration_minutes unless discovery_expiration_minutes.nil?
 
           post_request('/v1/b2b/otps/email/discovery/send', request, headers)
         end
