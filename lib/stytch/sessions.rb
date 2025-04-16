@@ -220,6 +220,21 @@ module Stytch
       post_request('/v1/sessions/migrate', request, headers)
     end
 
+    def exchange_access_token(
+      access_token:,
+      session_duration_minutes: nil,
+      session_custom_claims: nil
+    )
+      headers = {}
+      request = {
+        access_token: access_token
+      }
+      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+
+      post_request('/v1/sessions/exchange_access_token', request, headers)
+    end
+
     # Get the JSON Web Key Set (JWKS) for a project.
     #
     # JWKS are rotated every ~6 months. Upon rotation, new JWTs will be signed using the new key, and both keys will be returned by this endpoint for a period of 1 month.

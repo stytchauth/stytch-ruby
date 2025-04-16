@@ -642,6 +642,9 @@ module StytchB2B
       # alternative_acs_url::
       #   An alternative URL to use for the `AssertionConsumerServiceURL` in SP initiated SAML AuthNRequests. This value can be used when you wish to migrate an existing SAML integration to Stytch with zero downtime. Note that you will be responsible for proxying requests sent to the Alternative ACS URL to Stytch. Read our [SSO migration guide](https://stytch.com/docs/b2b/guides/migrations/additional-migration-considerations) for more info.
       #   The type of this field is nilable +String+.
+      # idp_initiated_auth_disabled::
+      #   Determines whether IDP initiated auth is allowed for a given SAML connection. Defaults to false (IDP Initiated Auth is enabled).
+      #   The type of this field is nilable +Boolean+.
       #
       # == Returns:
       # An object with the following fields:
@@ -672,6 +675,7 @@ module StytchB2B
         signing_private_key: nil,
         nameid_format: nil,
         alternative_acs_url: nil,
+        idp_initiated_auth_disabled: nil,
         method_options: nil
       )
         headers = {}
@@ -689,6 +693,7 @@ module StytchB2B
         request[:signing_private_key] = signing_private_key unless signing_private_key.nil?
         request[:nameid_format] = nameid_format unless nameid_format.nil?
         request[:alternative_acs_url] = alternative_acs_url unless alternative_acs_url.nil?
+        request[:idp_initiated_auth_disabled] = idp_initiated_auth_disabled unless idp_initiated_auth_disabled.nil?
 
         put_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}", request, headers)
       end
