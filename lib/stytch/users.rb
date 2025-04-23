@@ -26,7 +26,7 @@ module Stytch
     #   The name of the user. Each field in the name object is optional.
     #   The type of this field is nilable +Name+ (+object+).
     # attributes::
-    #   Provided attributes help with fraud detection.
+    #   (no documentation yet)
     #   The type of this field is nilable +Attributes+ (+object+).
     # phone_number::
     #   The phone number to use for one-time passcodes. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX). You may use +10000000000 to test this endpoint, see [Testing](https://stytch.com/docs/home#resources_testing) for more detail.

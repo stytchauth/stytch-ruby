@@ -795,6 +795,9 @@ module StytchB2B
       # external_id::
       #   An identifier that can be used in API calls wherever a member_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project.
       #   The type of this field is nilable +String+.
+      # unlink_email::
+      #   If `unlink_email` is `true` and an `email_address` is provided, the Member's previous email will be deleted instead of retired. Defaults to `false`.
+      #   The type of this field is nilable +Boolean+.
       #
       # == Returns:
       # An object with the following fields:
@@ -830,6 +833,7 @@ module StytchB2B
         default_mfa_method: nil,
         email_address: nil,
         external_id: nil,
+        unlink_email: nil,
         method_options: nil
       )
         headers = {}
@@ -846,6 +850,7 @@ module StytchB2B
         request[:default_mfa_method] = default_mfa_method unless default_mfa_method.nil?
         request[:email_address] = email_address unless email_address.nil?
         request[:external_id] = external_id unless external_id.nil?
+        request[:unlink_email] = unlink_email unless unlink_email.nil?
 
         put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", request, headers)
       end
