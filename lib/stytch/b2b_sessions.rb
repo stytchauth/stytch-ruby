@@ -582,10 +582,13 @@ module StytchB2B
       max_token_age_seconds = 300 if max_token_age_seconds.nil?
       clock_tolerance_seconds = 0 if clock_tolerance_seconds.nil?
 
-      issuer = 'stytch.com/' + @project_id
+      default_issuer = 'stytch.com/' + @project_id
+      base_url_issuer = @connection.api_host
+      valid_issuers = [default_issuer, base_url_issuer]
+      
       begin
         decoded_token = JWT.decode session_jwt, nil, true,
-                                   { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'], nbf_leeway: clock_tolerance_seconds }
+                                { jwks: @jwks_loader, iss: valid_issuers, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'], nbf_leeway: clock_tolerance_seconds }
 
         session = decoded_token[0]
         iat_time = Time.at(session['iat']).to_datetime
