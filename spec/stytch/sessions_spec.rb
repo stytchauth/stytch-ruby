@@ -3,7 +3,7 @@
 # Simple connection class for testing
 class TestConnection
   attr_reader :api_host
-  
+
   def initialize(api_host = 'https://test.stytch.com')
     @api_host = api_host
   end
@@ -65,7 +65,7 @@ RSpec.describe Stytch::Sessions do
   it 'correctly decodes a JWT with custom issuer' do
     project_id = 'project-test-00000000-0000-0000-0000-000000000000'
     custom_api_host = 'https://api.custom-domain.com'
-    
+
     # Use the TestConnection class with custom api_host
     connection = TestConnection.new(custom_api_host)
     sessions = Stytch::Sessions.new(connection, project_id)
@@ -117,7 +117,7 @@ RSpec.describe Stytch::Sessions do
 
   it 'marshals JWT into session (new format)' do
     project_id = 'project-test-00000000-0000-0000-0000-000000000000'
-    
+
     # Use the TestConnection class with default api_host
     connection = TestConnection.new
     sessions = Stytch::Sessions.new(connection, project_id)
@@ -132,7 +132,7 @@ RSpec.describe Stytch::Sessions do
 
   it 'marshals JWT into session (old format)' do
     project_id = 'project-test-00000000-0000-0000-0000-000000000000'
-    
+
     # Use the TestConnection class with default api_host
     connection = TestConnection.new
     sessions = Stytch::Sessions.new(connection, project_id)
