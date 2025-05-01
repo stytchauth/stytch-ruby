@@ -184,13 +184,10 @@ module Stytch
     # If clock_tolerance_seconds is not supplied 0 seconds will be used as the default.
     def authenticate_token_local(jwt, clock_tolerance_seconds: nil)
       clock_tolerance_seconds = 0 if clock_tolerance_seconds.nil?
-      default_issuer = 'stytch.com/' + @project_id
-      base_url_issuer = @connection.api_host
-      valid_issuers = [default_issuer, base_url_issuer]
-
+      issuer = 'stytch.com/' + @project_id
       begin
         decoded_token = JWT.decode jwt, nil, true,
-                                   { jwks: @jwks_loader, iss: valid_issuers, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'], nbf_leeway: clock_tolerance_seconds }
+                                   { jwks: @jwks_loader, iss: issuer, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'], nbf_leeway: clock_tolerance_seconds }
         decoded_token[0]
       rescue JWT::InvalidIssuerError
         raise JWTInvalidIssuerError
