@@ -45,7 +45,7 @@ module Stytch
     #   The `untrusted_metadata` field contains an arbitrary JSON object of application-specific data. Untrusted metadata can be edited by end users directly via the SDK, and **cannot be used to store critical information.** See the [Metadata](https://stytch.com/docs/api/metadata) reference for complete field behavior details.
     #   The type of this field is nilable +object+.
     # external_id::
-    #   An identifier that can be used in API calls wherever a user_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project.
+    #   An identifier that can be used in API calls wherever a user_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters.
     #   The type of this field is nilable +String+.
     #
     # == Returns:
@@ -99,7 +99,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
+    #   The unique ID of a specific User. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     #
     # == Returns:
@@ -134,6 +134,9 @@ module Stytch
     # biometric_registrations::
     #   An array that contains a list of all biometric registrations for a given User in the Stytch API.
     #   The type of this field is list of +BiometricRegistration+ (+object+).
+    # is_locked::
+    #   (no documentation yet)
+    #   The type of this field is +Boolean+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
@@ -153,6 +156,12 @@ module Stytch
     #   The `untrusted_metadata` field contains an arbitrary JSON object of application-specific data. Untrusted metadata can be edited by end users directly via the SDK, and **cannot be used to store critical information.** See the [Metadata](https://stytch.com/docs/api/metadata) reference for complete field behavior details.
     #   The type of this field is nilable +object+.
     # external_id::
+    #   (no documentation yet)
+    #   The type of this field is nilable +String+.
+    # lock_created_at::
+    #   (no documentation yet)
+    #   The type of this field is nilable +String+.
+    # lock_expires_at::
     #   (no documentation yet)
     #   The type of this field is nilable +String+.
     def get(
@@ -219,13 +228,13 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
+    #   The unique ID of a specific User. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     # name::
     #   The name of the user. Each field in the name object is optional.
     #   The type of this field is nilable +Name+ (+object+).
     # attributes::
-    #   Provided attributes help with fraud detection.
+    #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
     #   The type of this field is nilable +Attributes+ (+object+).
     # trusted_metadata::
     #   The `trusted_metadata` field contains an arbitrary JSON object of application-specific data. See the [Metadata](https://stytch.com/docs/api/metadata) reference for complete field behavior details.
@@ -234,7 +243,7 @@ module Stytch
     #   The `untrusted_metadata` field contains an arbitrary JSON object of application-specific data. Untrusted metadata can be edited by end users directly via the SDK, and **cannot be used to store critical information.** See the [Metadata](https://stytch.com/docs/api/metadata) reference for complete field behavior details.
     #   The type of this field is nilable +object+.
     # external_id::
-    #   An identifier that can be used in API calls wherever a user_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project.
+    #   An identifier that can be used in API calls wherever a user_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters.
     #   The type of this field is nilable +String+.
     #
     # == Returns:
@@ -289,7 +298,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
+    #   The unique ID of a specific User. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     # email_address::
     #   The email address to exchange to.
@@ -329,7 +338,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
+    #   The unique ID of a specific User. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     #
     # == Returns:
@@ -572,6 +581,25 @@ module Stytch
     )
       headers = {}
       delete_request("/v1/users/oauth/#{oauth_user_registration_id}", headers)
+    end
+
+    def connected_apps(
+      user_id:
+    )
+      headers = {}
+      query_params = {}
+      request = request_with_query_params("/v1/users/#{user_id}/connected_apps", query_params)
+      get_request(request, headers)
+    end
+
+    def revoke(
+      user_id:,
+      connected_app_id:
+    )
+      headers = {}
+      request = {}
+
+      post_request("/v1/users/#{user_id}/connected_apps/#{connected_app_id}/revoke", request, headers)
     end
   end
 end

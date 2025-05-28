@@ -48,6 +48,44 @@ module StytchB2B
       end
     end
 
+    class ConnectedAppsRequestOptions
+      # Optional authorization object.
+      # Pass in an active Stytch Member session token or session JWT and the request
+      # will be run using that member's permissions.
+      attr_accessor :authorization
+
+      def initialize(
+        authorization: nil
+      )
+        @authorization = authorization
+      end
+
+      def to_headers
+        headers = {}
+        headers.merge!(@authorization.to_headers) if authorization
+        headers
+      end
+    end
+
+    class GetConnectedAppRequestOptions
+      # Optional authorization object.
+      # Pass in an active Stytch Member session token or session JWT and the request
+      # will be run using that member's permissions.
+      attr_accessor :authorization
+
+      def initialize(
+        authorization: nil
+      )
+        @authorization = authorization
+      end
+
+      def to_headers
+        headers = {}
+        headers.merge!(@authorization.to_headers) if authorization
+        headers
+      end
+    end
+
     include Stytch::RequestHelper
     attr_reader :members
 
@@ -164,6 +202,18 @@ module StytchB2B
     # claimed_email_domains::
     #   A list of email domains that are claimed by the Organization.
     #   The type of this field is nilable list of +String+.
+    # first_party_connected_apps_allowed_type::
+    #   (no documentation yet)
+    #   The type of this field is nilable +CreateRequestFirstPartyConnectedAppsAllowedType+ (string enum).
+    # allowed_first_party_connected_apps::
+    #   (no documentation yet)
+    #   The type of this field is nilable list of +String+.
+    # third_party_connected_apps_allowed_type::
+    #   (no documentation yet)
+    #   The type of this field is nilable +CreateRequestThirdPartyConnectedAppsAllowedType+ (string enum).
+    # allowed_third_party_connected_apps::
+    #   (no documentation yet)
+    #   The type of this field is nilable list of +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -193,7 +243,11 @@ module StytchB2B
       allowed_mfa_methods: nil,
       oauth_tenant_jit_provisioning: nil,
       allowed_oauth_tenants: nil,
-      claimed_email_domains: nil
+      claimed_email_domains: nil,
+      first_party_connected_apps_allowed_type: nil,
+      allowed_first_party_connected_apps: nil,
+      third_party_connected_apps_allowed_type: nil,
+      allowed_third_party_connected_apps: nil
     )
       headers = {}
       request = {
@@ -215,6 +269,10 @@ module StytchB2B
       request[:oauth_tenant_jit_provisioning] = oauth_tenant_jit_provisioning unless oauth_tenant_jit_provisioning.nil?
       request[:allowed_oauth_tenants] = allowed_oauth_tenants unless allowed_oauth_tenants.nil?
       request[:claimed_email_domains] = claimed_email_domains unless claimed_email_domains.nil?
+      request[:first_party_connected_apps_allowed_type] = first_party_connected_apps_allowed_type unless first_party_connected_apps_allowed_type.nil?
+      request[:allowed_first_party_connected_apps] = allowed_first_party_connected_apps unless allowed_first_party_connected_apps.nil?
+      request[:third_party_connected_apps_allowed_type] = third_party_connected_apps_allowed_type unless third_party_connected_apps_allowed_type.nil?
+      request[:allowed_third_party_connected_apps] = allowed_third_party_connected_apps unless allowed_third_party_connected_apps.nil?
 
       post_request('/v1/b2b/organizations', request, headers)
     end
@@ -397,6 +455,18 @@ module StytchB2B
     # claimed_email_domains::
     #   A list of email domains that are claimed by the Organization.
     #   The type of this field is nilable list of +String+.
+    # first_party_connected_apps_allowed_type::
+    #   (no documentation yet)
+    #   The type of this field is nilable +UpdateRequestFirstPartyConnectedAppsAllowedType+ (string enum).
+    # allowed_first_party_connected_apps::
+    #   (no documentation yet)
+    #   The type of this field is nilable list of +String+.
+    # third_party_connected_apps_allowed_type::
+    #   (no documentation yet)
+    #   The type of this field is nilable +UpdateRequestThirdPartyConnectedAppsAllowedType+ (string enum).
+    # allowed_third_party_connected_apps::
+    #   (no documentation yet)
+    #   The type of this field is nilable list of +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -433,6 +503,10 @@ module StytchB2B
       oauth_tenant_jit_provisioning: nil,
       allowed_oauth_tenants: nil,
       claimed_email_domains: nil,
+      first_party_connected_apps_allowed_type: nil,
+      allowed_first_party_connected_apps: nil,
+      third_party_connected_apps_allowed_type: nil,
+      allowed_third_party_connected_apps: nil,
       method_options: nil
     )
       headers = {}
@@ -457,6 +531,10 @@ module StytchB2B
       request[:oauth_tenant_jit_provisioning] = oauth_tenant_jit_provisioning unless oauth_tenant_jit_provisioning.nil?
       request[:allowed_oauth_tenants] = allowed_oauth_tenants unless allowed_oauth_tenants.nil?
       request[:claimed_email_domains] = claimed_email_domains unless claimed_email_domains.nil?
+      request[:first_party_connected_apps_allowed_type] = first_party_connected_apps_allowed_type unless first_party_connected_apps_allowed_type.nil?
+      request[:allowed_first_party_connected_apps] = allowed_first_party_connected_apps unless allowed_first_party_connected_apps.nil?
+      request[:third_party_connected_apps_allowed_type] = third_party_connected_apps_allowed_type unless third_party_connected_apps_allowed_type.nil?
+      request[:allowed_third_party_connected_apps] = allowed_third_party_connected_apps unless allowed_third_party_connected_apps.nil?
 
       put_request("/v1/b2b/organizations/#{organization_id}", request, headers)
     end
@@ -538,6 +616,29 @@ module StytchB2B
       headers = {}
       query_params = {}
       request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/metrics", query_params)
+      get_request(request, headers)
+    end
+
+    def connected_apps(
+      organization_id:,
+      method_options: nil
+    )
+      headers = {}
+      headers = headers.merge(method_options.to_headers) unless method_options.nil?
+      query_params = {}
+      request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/connected_apps", query_params)
+      get_request(request, headers)
+    end
+
+    def get_connected_app(
+      organization_id:,
+      connected_app_id:,
+      method_options: nil
+    )
+      headers = {}
+      headers = headers.merge(method_options.to_headers) unless method_options.nil?
+      query_params = {}
+      request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/connected_apps/#{connected_app_id}", query_params)
       get_request(request, headers)
     end
 
@@ -694,6 +795,25 @@ module StytchB2B
         end
       end
 
+      class GetConnectedAppsRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
       class CreateRequestOptions
         # Optional authorization object.
         # Pass in an active Stytch Member session token or session JWT and the request
@@ -714,12 +834,13 @@ module StytchB2B
       end
 
       include Stytch::RequestHelper
-      attr_reader :oauth_providers
+      attr_reader :oauth_providers, :connected_apps
 
       def initialize(connection)
         @connection = connection
 
         @oauth_providers = StytchB2B::Organizations::Members::OAuthProviders.new(@connection)
+        @connected_apps = StytchB2B::Organizations::Members::ConnectedApps.new(@connection)
       end
 
       # Updates a specified by `organization_id` and `member_id`.
@@ -1264,6 +1385,18 @@ module StytchB2B
         post_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/unlink_retired_email", request, headers)
       end
 
+      def get_connected_apps(
+        organization_id:,
+        member_id:,
+        method_options: nil
+      )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        query_params = {}
+        request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/connected_apps", query_params)
+        get_request(request, headers)
+      end
+
       # Creates a. An `organization_id` and `email_address` are required.
       #
       # == Parameters:
@@ -1644,6 +1777,46 @@ module StytchB2B
           }
           request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/oauth_providers/github", query_params)
           get_request(request, headers)
+        end
+      end
+
+      class ConnectedApps
+        class RevokeRequestOptions
+          # Optional authorization object.
+          # Pass in an active Stytch Member session token or session JWT and the request
+          # will be run using that member's permissions.
+          attr_accessor :authorization
+
+          def initialize(
+            authorization: nil
+          )
+            @authorization = authorization
+          end
+
+          def to_headers
+            headers = {}
+            headers.merge!(@authorization.to_headers) if authorization
+            headers
+          end
+        end
+
+        include Stytch::RequestHelper
+
+        def initialize(connection)
+          @connection = connection
+        end
+
+        def revoke(
+          organization_id:,
+          member_id:,
+          connected_app_id:,
+          method_options: nil
+        )
+          headers = {}
+          headers = headers.merge(method_options.to_headers) unless method_options.nil?
+          request = {}
+
+          post_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/connected_apps/#{connected_app_id}/revoke", request, headers)
         end
       end
     end

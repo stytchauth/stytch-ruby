@@ -30,7 +30,7 @@ module Stytch
     #       In the redirect URL, the `stytch_token_type` will be `magic_link`. See [here](https://stytch.com/docs/workspace-management/redirect-urls) for more detail.
     #   The type of this field is +String+.
     # attributes::
-    #   Provided attributes help with fraud detection.
+    #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
     #   The type of this field is nilable +Attributes+ (+object+).
     # options::
     #   Specify optional security settings.
@@ -90,7 +90,7 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
     def authenticate(
@@ -127,13 +127,13 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
+    #   The unique ID of a specific User. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     # expiration_minutes::
     #   Set the expiration for the Magic Link `token` in minutes. By default, it expires in 1 hour. The minimum expiration is 5 minutes and the maximum is 7 days (10080 mins).
     #   The type of this field is nilable +Integer+.
     # attributes::
-    #   Provided attributes help with fraud detection.
+    #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
     #   The type of this field is nilable +Attributes+ (+object+).
     #
     # == Returns:
@@ -188,7 +188,7 @@ module Stytch
       #   Use a custom template for login emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic links - Login.
       #   The type of this field is nilable +String+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # login_magic_link_url::
       #   The URL the end user clicks from the login Email Magic Link. This should be a URL that your app receives and parses and subsequently send an API request to authenticate the Magic Link and log in the User. If this value is not passed, the default login redirect URL that you set in your Dashboard is used. If you have not set a default login redirect URL, an error is returned.
@@ -206,7 +206,7 @@ module Stytch
       #   A base64url encoded SHA256 hash of a one time secret used to validate that the request starts and ends on the same device.
       #   The type of this field is nilable +String+.
       # user_id::
-      #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
+      #   The unique ID of a specific User. You may use an `external_id` here if one is set for the user.
       #   The type of this field is nilable +String+.
       # session_token::
       #   The `session_token` of the user to associate the email with.
@@ -303,7 +303,7 @@ module Stytch
       #   Use a custom template for sign-up emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic links - Sign-up.
       #   The type of this field is nilable +String+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # create_user_as_pending::
       #   Flag for whether or not to save a user as pending vs active in Stytch. Defaults to false.
@@ -385,7 +385,7 @@ module Stytch
       #   Use a custom template for invite emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic links - Invite.
       #   The type of this field is nilable +String+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # name::
       #   The name of the user. Each field in the name object is optional.

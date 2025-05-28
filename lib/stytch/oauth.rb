@@ -29,7 +29,7 @@ module Stytch
     #   The OAuth provider's name.
     #   The type of this field is +String+.
     # user_id::
-    #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
+    #   The unique ID of a specific User. You may use an `external_id` here if one is set for the user.
     #   The type of this field is nilable +String+.
     # session_token::
     #   The `session_token` associated with a User's existing Session.
@@ -142,7 +142,7 @@ module Stytch
     # user_session::
     #   A `Session` object. For backwards compatibility reasons, the session from an OAuth authenticate call is labeled as `user_session`, but is otherwise just a standard stytch `Session` object.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
     def authenticate(

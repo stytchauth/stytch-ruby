@@ -37,7 +37,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` to get active Sessions for. You may use an external_id here if one is set for the user.
+    #   The `user_id` to get active Sessions for. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     #
     # == Returns:
@@ -46,7 +46,7 @@ module Stytch
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
     #   The type of this field is +String+.
     # sessions::
-    #   An array of Session objects.
+    #   An array of [Session objects](https://stytch.com/docs/api/session-object).
     #   The type of this field is list of +Session+ (+object+).
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
@@ -90,7 +90,7 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is +Session+ (+object+).
     # session_token::
@@ -202,7 +202,7 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
     def migrate(
@@ -269,7 +269,7 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
     def exchange_access_token(
