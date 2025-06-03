@@ -35,7 +35,7 @@ module StytchB2B
     #
     # == Parameters:
     # password::
-    #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+    #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
     #   The type of this field is +String+.
     # email_address::
     #   The email address of the Member.
@@ -237,7 +237,7 @@ module StytchB2B
     #   The email address of the Member.
     #   The type of this field is +String+.
     # password::
-    #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+    #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
     #   The type of this field is +String+.
     # session_token::
     #   A secret token for a given Stytch Session.
@@ -477,7 +477,7 @@ module StytchB2B
       #   The password reset token to authenticate.
       #   The type of this field is +String+.
       # password::
-      #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+      #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
       #   The type of this field is +String+.
       # session_token::
       #   Reuse an existing session instead of creating a new one. If you provide a `session_token`, Stytch will update the session.
@@ -656,7 +656,7 @@ module StytchB2B
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
       #   The type of this field is +String+.
       # password::
-      #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+      #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
       #   The type of this field is +String+.
       # session_token::
       #   A secret token for a given Stytch Session.
@@ -905,7 +905,7 @@ module StytchB2B
       #   The email address of the Member.
       #   The type of this field is +String+.
       # password::
-      #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+      #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
       #   The type of this field is +String+.
       #
       # == Returns:
@@ -1044,7 +1044,7 @@ module StytchB2B
         #   The password reset token to authenticate.
         #   The type of this field is +String+.
         # password::
-        #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+        #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
         #   The type of this field is +String+.
         # pkce_code_verifier::
         #   (no documentation yet)

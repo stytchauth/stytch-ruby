@@ -26,13 +26,13 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to. You may use an external_id here if one is set for the user.
+    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     # domain::
     #   The domain for Passkeys or WebAuthn. Defaults to `window.location.hostname`.
     #   The type of this field is +String+.
     # user_agent::
-    #   The user agent of the User.
+    #   The user agent of the client.
     #   The type of this field is nilable +String+.
     # authenticator_type::
     #   The requested authenticator type of the Passkey or WebAuthn device. The two valid values are platform and cross-platform. If no value passed, we assume both values are allowed.
@@ -96,7 +96,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to. You may use an external_id here if one is set for the user.
+    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     # public_key_credential::
     #   The response of the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential).
@@ -150,7 +150,7 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
     def register(
@@ -187,7 +187,7 @@ module Stytch
     #   The domain for Passkeys or WebAuthn. Defaults to `window.location.hostname`.
     #   The type of this field is +String+.
     # user_id::
-    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to. You may use an external_id here if one is set for the user.
+    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to. You may use an `external_id` here if one is set for the user.
     #   The type of this field is nilable +String+.
     # return_passkey_credential_options::
     #   If true, the `public_key_credential_creation_options` returned will be optimized for Passkeys with `userVerification` set to `"preferred"`.
@@ -280,7 +280,7 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
     def authenticate(

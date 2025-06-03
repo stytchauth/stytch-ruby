@@ -31,7 +31,7 @@ module Stytch
     #   The code to authenticate.
     #   The type of this field is +String+.
     # attributes::
-    #   Provided attributes help with fraud detection.
+    #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
     #   The type of this field is nilable +Attributes+ (+object+).
     # options::
     #   Specify optional security settings.
@@ -88,7 +88,7 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
     def authenticate(
@@ -150,7 +150,7 @@ module Stytch
       #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
@@ -161,7 +161,7 @@ module Stytch
       #
       #   The type of this field is nilable +SendRequestLocale+ (string enum).
       # user_id::
-      #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
+      #   The unique ID of a specific User. You may use an `external_id` here if one is set for the user.
       #   The type of this field is nilable +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
@@ -228,7 +228,7 @@ module Stytch
       #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # create_user_as_pending::
       #   Flag for whether or not to save a user as pending vs active in Stytch. Defaults to false.
@@ -313,7 +313,7 @@ module Stytch
       #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
@@ -324,7 +324,7 @@ module Stytch
       #
       #   The type of this field is nilable +SendRequestLocale+ (string enum).
       # user_id::
-      #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
+      #   The unique ID of a specific User. You may use an `external_id` here if one is set for the user.
       #   The type of this field is nilable +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
@@ -387,7 +387,7 @@ module Stytch
       #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # create_user_as_pending::
       #   Flag for whether or not to save a user as pending vs active in Stytch. Defaults to false.
@@ -465,7 +465,7 @@ module Stytch
       #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
@@ -476,7 +476,7 @@ module Stytch
       #
       #   The type of this field is nilable +SendRequestLocale+ (string enum).
       # user_id::
-      #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
+      #   The unique ID of a specific User. You may use an `external_id` here if one is set for the user.
       #   The type of this field is nilable +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
@@ -546,7 +546,7 @@ module Stytch
       #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # create_user_as_pending::
       #   Flag for whether or not to save a user as pending vs active in Stytch. Defaults to false.
