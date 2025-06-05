@@ -27,20 +27,21 @@ module StytchB2B
         @connection = connection
       end
 
-      # Exchange an Intermediate Session for a fully realized [Member Session](https://stytch.com/docs/b2b/api/session-object) in a desired [Organization](https://stytch.com/docs/b2b/api/organization-object).
-      # This operation consumes the Intermediate Session.
+      # Exchange an Intermediate Session for a fully realized [Member Session](https://stytch.com/docs/b2b/api/session-object) for the [Organization](https://stytch.com/docs/b2b/api/organization-object) that the user wishes to log into.
       #
-      # This endpoint can be used to accept invites and create new members via domain matching.
+      # This endpoint can be used to accept invites and into a new Organization on the basis of the user's email domain or OAuth tenant.
       #
-      # If the is required to complete MFA to log in to the, the returned value of `member_authenticated` will be `false`.
-      # The `intermediate_session_token` will not be consumed and instead will be returned in the response.
-      # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
-      # The `intermediate_session_token` can also be used with the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to join a different Organization or create a new one.
-      # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
+      # If the user **has** already satisfied the authentication requirements of the Organization they are trying to exchange into and logged in with a method that verifies their email address, this API will return `member_authenticated: true` and a `session_token` and `session_jwt`.
       #
-      # If the Member is logging in via an OAuth provider that does not fully verify the email, the returned value of `member_authenticated` will be `false`.
-      # The `intermediate_session_token` will not be consumed and instead will be returned in the response.
-      # The `primary_required` field details the authentication flow the Member must perform in order to [complete a step-up authentication](https://stytch.com/docs/b2b/guides/oauth/auth-flows) into the organization. The `intermediate_session_token` must be passed into that authentication flow.
+      # If the user **has not** satisfied the primary or secondary authentication requirements of the Organization they are attempting to exchange into or is JIT Provisioning but did not log in via a method that provides email verification, this API will return `member_authenticated: false` and an `intermediate_session_token`.
+      #
+      # If `primary_required` is returned, prompt the user to fulfill the Organization's auth requirements using the options returned in `primary_required.allowed_auth_methods`.
+      #
+      # If `primary_required` is null and `mfa_required` is set, check `mfa_required.member_options` to determine if the Member has SMS OTP or TOTP set up for MFA and prompt accordingly. If the Member has SMS OTP, check `mfa_required.secondary_auth_initiated` to see if the OTP has already been sent.
+      #
+      # Include the `intermediate_session_token` returned above when calling the `authenticate()` method that the user needed to perform. Once the user has completed the authentication requirements they were missing, they will be granted a full `session_token` and `session_jwt` to indicate they have successfully logged into the Organization.
+      #
+      # The `intermediate_session_token` can also be used with the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to create a new Organization instead of joining an existing one.
       #
       # == Parameters:
       # intermediate_session_token::
@@ -143,21 +144,21 @@ module StytchB2B
         @connection = connection
       end
 
-      # If an end user does not want to join any already-existing, or has no possible Organizations to join, this endpoint can be used to create a new
-      # [Organization](https://stytch.com/docs/b2b/api/organization-object) and [Member](https://stytch.com/docs/b2b/api/member-object).
+      # This endpoint allows you to exchange the `intermediate_session_token` returned when the user successfully completes a authentication flow to create a new
+      # [Organization](https://stytch.com/docs/b2b/api/organization-object) and [Member](https://stytch.com/docs/b2b/api/member-object) and log the user in. If the user wants to log into an existing Organization, use the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) instead.
       #
-      # This operation consumes the Intermediate Session.
+      # Stytch **requires that users verify their email address** prior to creating a new Organization in order to prevent Account Takeover (ATO) attacks and phishing.
       #
-      # This endpoint will also create an initial Member Session for the newly created Member.
+      # If the user authenticated using a method that **does not** provide real-time email verification (returning password auth, Github/Slack/Hubspot OAuth) this API will return `member_authenticated: false` and an `intermediate_session_token` to indicate that the user must perform additional authentication via one of the options listed in `primary_required.allowed_auth_methods` to finish logging in.
       #
-      # The created by this endpoint will automatically be granted the `stytch_admin` Role. See the
+      # If you specified an `mfa_policy: REQUIRED_FOR_ALL` in the request, this API will return `member_authenticated: false`, an `intermediate_session_token`, and `mfa_required` in order to indicate that you must prompt the user to enroll in MFA.
+      #
+      # Include the `intermediate_session_token` when calling the `authenticate()` method that the user needed to perform to verify their email or enroll in MFA. Once the user has completed the authentication requirements they were missing, they will be granted a full `session_token` and `session_jwt` and be successfully logged in.
+      #
+      # If the user logged in with a method that **does** provide real-time email verification (Email Magic Links, Email OTP, Google/Microsoft OAuth, initial email verification when creating a new password) this API will return `member_authenticated: true` and a `session_jwt` and `session_token` to indicate that the user has successfully logged in.
+      #
+      # The Member created by this endpoint will automatically be granted the `stytch_admin` Role. See the
       # [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/stytch-default) for more details on this Role.
-      #
-      # If the new Organization is created with a `mfa_policy` of `REQUIRED_FOR_ALL`, the newly created Member will need to complete an MFA step to log in to the Organization.
-      # The `intermediate_session_token` will not be consumed and instead will be returned in the response.
-      # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
-      # The `intermediate_session_token` can also be used with the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to join a different Organization or create a new one.
-      # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
       #
       # == Parameters:
       # intermediate_session_token::

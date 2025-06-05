@@ -20,7 +20,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` of an active user the TOTP registration should be tied to. You may use an external_id here if one is set for the user.
+    #   The `user_id` of an active user the TOTP registration should be tied to. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     # expiration_minutes::
     #   The expiration for the TOTP instance. If the newly created TOTP is not authenticated within this time frame the TOTP will be unusable. Defaults to 1440 (1 day) with a minimum of 5 and a maximum of 1440.
@@ -69,7 +69,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` of an active user the TOTP registration should be tied to. You may use an external_id here if one is set for the user.
+    #   The `user_id` of an active user the TOTP registration should be tied to. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     # totp_code::
     #   The TOTP code to authenticate. The TOTP code should consist of 6 digits.
@@ -123,7 +123,7 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
     def authenticate(
@@ -151,7 +151,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` of an active user the TOTP registration should be tied to. You may use an external_id here if one is set for the user.
+    #   The `user_id` of an active user the TOTP registration should be tied to. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     #
     # == Returns:
@@ -183,7 +183,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` of an active user the TOTP registration should be tied to. You may use an external_id here if one is set for the user.
+    #   The `user_id` of an active user the TOTP registration should be tied to. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     # recovery_code::
     #   The recovery code to authenticate.
@@ -237,7 +237,7 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
     def recover(
