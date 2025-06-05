@@ -34,7 +34,7 @@ module Stytch
     #   The email address of the end user.
     #   The type of this field is +String+.
     # password::
-    #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+    #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
     #   The type of this field is +String+.
     # session_duration_minutes::
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
@@ -88,7 +88,7 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
     def create(
@@ -127,7 +127,7 @@ module Stytch
     #   The email address of the end user.
     #   The type of this field is +String+.
     # password::
-    #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+    #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
     #   The type of this field is +String+.
     # session_token::
     #   The `session_token` associated with a User's existing Session.
@@ -175,7 +175,7 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
     def authenticate(
@@ -214,7 +214,7 @@ module Stytch
     #
     # == Parameters:
     # password::
-    #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+    #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
     #   The type of this field is +String+.
     # email::
     #   The email address of the end user.
@@ -308,7 +308,7 @@ module Stytch
     #    the user owns the phone number in question. Access to this field is restricted. To enable it, please send us a note at support@stytch.com.
     #   The type of this field is nilable +Boolean+.
     # external_id::
-    #   If a new user is created, this will set an identifier that can be used in API calls wherever a user_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project. Note that if a user already exists, this field will be ignored.
+    #   If a new user is created, this will set an identifier that can be used in API calls wherever a user_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters.
     #   The type of this field is nilable +String+.
     #
     # == Returns:
@@ -398,7 +398,7 @@ module Stytch
       #   A base64url encoded SHA256 hash of a one time secret used to validate that the request starts and ends on the same device.
       #   The type of this field is nilable +String+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # login_redirect_url::
       #   The URL Stytch redirects to after the OAuth flow is completed for a user that already exists. This URL should be a route in your application which will run `oauth.authenticate` (see below) and finish the login.
@@ -472,7 +472,7 @@ module Stytch
       #       See examples and read more about redirect URLs [here](https://stytch.com/docs/workspace-management/redirect-urls).
       #   The type of this field is +String+.
       # password::
-      #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+      #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
       #   The type of this field is +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
@@ -500,7 +500,7 @@ module Stytch
       #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
       #   The type of this field is nilable +object+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # options::
       #   Specify optional security settings.
@@ -529,7 +529,7 @@ module Stytch
       # session::
       #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
       #
-      #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+      #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
       #
       #   The type of this field is nilable +Session+ (+object+).
       def reset(
@@ -627,7 +627,7 @@ module Stytch
       # session::
       #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
       #
-      #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+      #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
       #
       #   The type of this field is nilable +Session+ (+object+).
       def reset(
@@ -667,7 +667,7 @@ module Stytch
       #
       # == Parameters:
       # password::
-      #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+      #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
       #   The type of this field is +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
@@ -715,7 +715,7 @@ module Stytch
       # session::
       #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
       #
-      #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+      #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
       #
       #   The type of this field is nilable +Session+ (+object+).
       def reset(
