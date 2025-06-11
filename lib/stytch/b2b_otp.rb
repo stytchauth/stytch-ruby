@@ -405,9 +405,6 @@ module StytchB2B
       # session_jwt::
       #   The JSON Web Token (JWT) for a given Stytch Session.
       #   The type of this field is +String+.
-      # member_session::
-      #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
-      #   The type of this field is +MemberSession+ (+object+).
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
       #   The type of this field is +Organization+ (+object+).
@@ -420,9 +417,15 @@ module StytchB2B
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
+      # member_session::
+      #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
+      #   The type of this field is nilable +MemberSession+ (+object+).
       # mfa_required::
       #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
       #   The type of this field is nilable +MfaRequired+ (+object+).
+      # primary_required::
+      #   (no documentation yet)
+      #   The type of this field is nilable +PrimaryRequired+ (+object+).
       def authenticate(
         organization_id:,
         email_address:,

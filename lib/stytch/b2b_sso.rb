@@ -230,6 +230,9 @@ module StytchB2B
     # mfa_required::
     #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
     #   The type of this field is nilable +MfaRequired+ (+object+).
+    # primary_required::
+    #   (no documentation yet)
+    #   The type of this field is nilable +PrimaryRequired+ (+object+).
     def authenticate(
       sso_token:,
       pkce_code_verifier: nil,

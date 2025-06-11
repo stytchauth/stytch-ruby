@@ -293,9 +293,6 @@ module StytchB2B
     # member_id::
     #   Globally unique UUID that identifies a specific Member.
     #   The type of this field is +String+.
-    # member_session::
-    #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
-    #   The type of this field is +MemberSession+ (+object+).
     # session_token::
     #   A secret token for a given Stytch Session.
     #   The type of this field is +String+.
@@ -317,6 +314,9 @@ module StytchB2B
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
+    # member_session::
+    #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
+    #   The type of this field is nilable +MemberSession+ (+object+).
     # mfa_required::
     #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
     #   The type of this field is nilable +MfaRequired+ (+object+).
@@ -347,7 +347,9 @@ module StytchB2B
     # Use this endpoint to exchange a Connected Apps Access Token back into a Member Session for the underlying Member.
     # This session can be used with the Stytch SDKs and APIs.
     #
-    # The Access Token must contain the `full_access` scope and must not be more than 5 minutes old. Access Tokens may only be exchanged a single time.
+    # The Access Token must contain the `full_access` scope (only available to First Party clients) and must not be more than 5 minutes old. Access Tokens may only be exchanged a single time.
+    #
+    # The Member Session returned will be the same Member Session that was active in your application (the authorizing party) during the initial authorization flow.
     #
     # Because the Member previously completed MFA and satisfied all Organization authentication requirements at the time of the original Access Token issuance, this endpoint will never return an `intermediate_session_token` or require MFA.
     #
