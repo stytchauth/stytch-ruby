@@ -392,7 +392,7 @@ module StytchB2B
       #   If you have not set a default `reset_password_redirect_url`, an error is returned.
       #   The type of this field is nilable +String+.
       # reset_password_expiration_minutes::
-      #   Sets a time limit after which the email link to reset the member's password will no longer be valid.
+      #   Sets a time limit after which the email link to reset the member's password will no longer be valid. The minimum allowed expiration is 5 minutes and the maximum is 10080 minutes (7 days). By default, the expiration is 30 minutes.
       #   The type of this field is nilable +Integer+.
       # code_challenge::
       #   A base64url encoded SHA256 hash of a one time secret used to validate that the request starts and ends on the same device.
@@ -991,7 +991,7 @@ module StytchB2B
         #   Use a custom template for reset password emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Passwords - Reset Password.
         #   The type of this field is nilable +String+.
         # reset_password_expiration_minutes::
-        #   Sets a time limit after which the email link to reset the member's password will no longer be valid.
+        #   Sets a time limit after which the email link to reset the member's password will no longer be valid. The minimum allowed expiration is 5 minutes and the maximum is 10080 minutes (7 days). By default, the expiration is 30 minutes.
         #   The type of this field is nilable +Integer+.
         # pkce_code_challenge::
         #   (no documentation yet)

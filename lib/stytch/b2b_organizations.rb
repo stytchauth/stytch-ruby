@@ -203,16 +203,30 @@ module StytchB2B
     #   A list of email domains that are claimed by the Organization.
     #   The type of this field is nilable list of +String+.
     # first_party_connected_apps_allowed_type::
-    #   (no documentation yet)
+    #   The authentication setting that sets the Organization's policy towards first party Connected Apps. The accepted values are:
+    #
+    #   `ALL_ALLOWED` – any first party Connected App in the Project is permitted for use by Members.
+    #
+    #   `RESTRICTED` – only first party Connected Apps with IDs in `allowed_first_party_connected_apps` can be used by Members.
+    #
+    #   `NOT_ALLOWED` – no first party Connected Apps are permitted.
+    #
     #   The type of this field is nilable +CreateRequestFirstPartyConnectedAppsAllowedType+ (string enum).
     # allowed_first_party_connected_apps::
-    #   (no documentation yet)
+    #   An array of first party Connected App IDs that are allowed for the Organization. Only used when the Organization's `first_party_connected_apps_allowed_type` is `RESTRICTED`.
     #   The type of this field is nilable list of +String+.
     # third_party_connected_apps_allowed_type::
-    #   (no documentation yet)
+    #   The authentication setting that sets the Organization's policy towards third party Connected Apps. The accepted values are:
+    #
+    #   `ALL_ALLOWED` – any third party Connected App in the Project is permitted for use by Members.
+    #
+    #   `RESTRICTED` – only third party Connected Apps with IDs in `allowed_first_party_connected_apps` can be used by Members.
+    #
+    #   `NOT_ALLOWED` – no third party Connected Apps are permitted.
+    #
     #   The type of this field is nilable +CreateRequestThirdPartyConnectedAppsAllowedType+ (string enum).
     # allowed_third_party_connected_apps::
-    #   (no documentation yet)
+    #   An array of third party Connected App IDs that are allowed for the Organization. Only used when the Organization's `third_party_connected_apps_allowed_type` is `RESTRICTED`.
     #   The type of this field is nilable list of +String+.
     #
     # == Returns:
@@ -456,16 +470,30 @@ module StytchB2B
     #   A list of email domains that are claimed by the Organization.
     #   The type of this field is nilable list of +String+.
     # first_party_connected_apps_allowed_type::
-    #   (no documentation yet)
+    #   The authentication setting that sets the Organization's policy towards first party Connected Apps. The accepted values are:
+    #
+    #   `ALL_ALLOWED` – any first party Connected App in the Project is permitted for use by Members.
+    #
+    #   `RESTRICTED` – only first party Connected Apps with IDs in `allowed_first_party_connected_apps` can be used by Members.
+    #
+    #   `NOT_ALLOWED` – no first party Connected Apps are permitted.
+    #
     #   The type of this field is nilable +UpdateRequestFirstPartyConnectedAppsAllowedType+ (string enum).
     # allowed_first_party_connected_apps::
-    #   (no documentation yet)
+    #   An array of first party Connected App IDs that are allowed for the Organization. Only used when the Organization's `first_party_connected_apps_allowed_type` is `RESTRICTED`.
     #   The type of this field is nilable list of +String+.
     # third_party_connected_apps_allowed_type::
-    #   (no documentation yet)
+    #   The authentication setting that sets the Organization's policy towards third party Connected Apps. The accepted values are:
+    #
+    #   `ALL_ALLOWED` – any third party Connected App in the Project is permitted for use by Members.
+    #
+    #   `RESTRICTED` – only third party Connected Apps with IDs in `allowed_first_party_connected_apps` can be used by Members.
+    #
+    #   `NOT_ALLOWED` – no third party Connected Apps are permitted.
+    #
     #   The type of this field is nilable +UpdateRequestThirdPartyConnectedAppsAllowedType+ (string enum).
     # allowed_third_party_connected_apps::
-    #   (no documentation yet)
+    #   An array of third party Connected App IDs that are allowed for the Organization. Only used when the Organization's `third_party_connected_apps_allowed_type` is `RESTRICTED`.
     #   The type of this field is nilable list of +String+.
     #
     # == Returns:
