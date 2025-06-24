@@ -1543,7 +1543,7 @@ module StytchB2B
       #   Identifies the Member as a break glass user - someone who has permissions to authenticate into an Organization by bypassing the Organization's settings. A break glass account is typically used for emergency purposes to gain access outside of normal authentication procedures. Refer to the [Organization object](organization-object) and its `auth_methods` and `allowed_auth_methods` fields for more details.
       #   The type of this field is nilable +Boolean+.
       # mfa_phone_number::
-      #   The Member's phone number. A Member may only have one phone number.
+      #   The Member's phone number. A Member may only have one phone number. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX).
       #   The type of this field is nilable +String+.
       # mfa_enrolled::
       #   Sets whether the Member is enrolled in MFA. If true, the Member must complete an MFA step whenever they wish to log in to their Organization. If false, the Member only needs to complete an MFA step if the Organization's MFA policy is set to `REQUIRED_FOR_ALL`.

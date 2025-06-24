@@ -279,6 +279,32 @@ module StytchB2B
       # allowed_oauth_tenants::
       #   A map of allowed OAuth tenants. If this field is not passed in, the Organization will not allow JIT provisioning by OAuth Tenant. Allowed keys are "slack", "hubspot", and "github".
       #   The type of this field is nilable +object+.
+      # first_party_connected_apps_allowed_type::
+      #   The authentication setting that sets the Organization's policy towards first party Connected Apps. The accepted values are:
+      #
+      #   `ALL_ALLOWED` – any first party Connected App in the Project is permitted for use by Members.
+      #
+      #   `RESTRICTED` – only first party Connected Apps with IDs in `allowed_first_party_connected_apps` can be used by Members.
+      #
+      #   `NOT_ALLOWED` – no first party Connected Apps are permitted.
+      #
+      #   The type of this field is nilable +CreateRequestFirstPartyConnectedAppsAllowedType+ (string enum).
+      # allowed_first_party_connected_apps::
+      #   An array of first party Connected App IDs that are allowed for the Organization. Only used when the Organization's `first_party_connected_apps_allowed_type` is `RESTRICTED`.
+      #   The type of this field is nilable list of +String+.
+      # third_party_connected_apps_allowed_type::
+      #   The authentication setting that sets the Organization's policy towards third party Connected Apps. The accepted values are:
+      #
+      #   `ALL_ALLOWED` – any third party Connected App in the Project is permitted for use by Members.
+      #
+      #   `RESTRICTED` – only third party Connected Apps with IDs in `allowed_first_party_connected_apps` can be used by Members.
+      #
+      #   `NOT_ALLOWED` – no third party Connected Apps are permitted.
+      #
+      #   The type of this field is nilable +CreateRequestThirdPartyConnectedAppsAllowedType+ (string enum).
+      # allowed_third_party_connected_apps::
+      #   An array of third party Connected App IDs that are allowed for the Organization. Only used when the Organization's `third_party_connected_apps_allowed_type` is `RESTRICTED`.
+      #   The type of this field is nilable list of +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -337,7 +363,11 @@ module StytchB2B
         mfa_methods: nil,
         allowed_mfa_methods: nil,
         oauth_tenant_jit_provisioning: nil,
-        allowed_oauth_tenants: nil
+        allowed_oauth_tenants: nil,
+        first_party_connected_apps_allowed_type: nil,
+        allowed_first_party_connected_apps: nil,
+        third_party_connected_apps_allowed_type: nil,
+        allowed_third_party_connected_apps: nil
       )
         headers = {}
         request = {
@@ -361,6 +391,10 @@ module StytchB2B
         request[:allowed_mfa_methods] = allowed_mfa_methods unless allowed_mfa_methods.nil?
         request[:oauth_tenant_jit_provisioning] = oauth_tenant_jit_provisioning unless oauth_tenant_jit_provisioning.nil?
         request[:allowed_oauth_tenants] = allowed_oauth_tenants unless allowed_oauth_tenants.nil?
+        request[:first_party_connected_apps_allowed_type] = first_party_connected_apps_allowed_type unless first_party_connected_apps_allowed_type.nil?
+        request[:allowed_first_party_connected_apps] = allowed_first_party_connected_apps unless allowed_first_party_connected_apps.nil?
+        request[:third_party_connected_apps_allowed_type] = third_party_connected_apps_allowed_type unless third_party_connected_apps_allowed_type.nil?
+        request[:allowed_third_party_connected_apps] = allowed_third_party_connected_apps unless allowed_third_party_connected_apps.nil?
 
         post_request('/v1/b2b/discovery/organizations/create', request, headers)
       end
