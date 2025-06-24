@@ -88,9 +88,13 @@ module StytchB2B
       post_request('/v1/b2b/passwords/strength_check', request, headers)
     end
 
-    # Adds an existing password to a member's email that doesn't have a password yet. We support migrating members from passwords stored with bcrypt, scrypt, argon2, MD-5, SHA-1, and PBKDF2. This endpoint has a rate limit of 100 requests per second.
+    # Adds an existing password to a Member's email that doesn't have a password yet.
     #
-    # The member's email will be marked as verified when you use this endpoint. If you are using **cross-organization passwords**, call this method separately for each `organization_id` associated with the given `email_address` to ensure the email is verified across all of their organizations.
+    # We support migrating members from passwords stored with bcrypt, scrypt, argon2, MD-5, SHA-1, and PBKDF2. This endpoint has a rate limit of 100 requests per second.
+    #
+    # The Member's email will be marked as verified when you use this endpoint.
+    #
+    # If you are using **cross-organization passwords**, i.e. allowing an end user to share the same password across all of their Organizations, call this method separately for each `organization_id` associated with the given `email_address` to ensure the password is set across all of their Organizations.
     #
     # == Parameters:
     # email_address::
@@ -147,10 +151,11 @@ module StytchB2B
     #   authentication factors with the affected SSO connection IDs will be revoked.
     #   The type of this field is nilable +Boolean+.
     # mfa_phone_number::
-    #   (no documentation yet)
+    #   The Member's phone number. A Member may only have one phone number. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX).
     #   The type of this field is nilable +String+.
     # set_phone_number_verified::
-    #   (no documentation yet)
+    #   Whether to set the user's phone number as verified. This is a dangerous field. This flag should only be set if you can attest that
+    #    the user owns the phone number in question.
     #   The type of this field is nilable +Boolean+.
     # external_id::
     #   If a new member is created, this will set an identifier that can be used in API calls wherever a member_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project. Note that if a member already exists, this field will be ignored.
