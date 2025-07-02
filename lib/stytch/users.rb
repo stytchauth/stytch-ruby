@@ -19,6 +19,9 @@ module Stytch
     # Add a User to Stytch. A `user_id` is returned in the response that can then be used to perform other operations within Stytch. An `email` or a `phone_number` is required.
     #
     # == Parameters:
+    # roles::
+    #   (no documentation yet)
+    #   The type of this field is list of +String+.
     # email::
     #   The email address of the end user.
     #   The type of this field is nilable +String+.
@@ -72,6 +75,7 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def create(
+      roles:,
       email: nil,
       name: nil,
       attributes: nil,
@@ -82,7 +86,9 @@ module Stytch
       external_id: nil
     )
       headers = {}
-      request = {}
+      request = {
+        roles: roles
+      }
       request[:email] = email unless email.nil?
       request[:name] = name unless name.nil?
       request[:attributes] = attributes unless attributes.nil?
@@ -137,6 +143,9 @@ module Stytch
     # is_locked::
     #   (no documentation yet)
     #   The type of this field is +Boolean+.
+    # roles::
+    #   (no documentation yet)
+    #   The type of this field is list of +String+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
@@ -245,6 +254,9 @@ module Stytch
     # external_id::
     #   An identifier that can be used in API calls wherever a user_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters.
     #   The type of this field is nilable +String+.
+    # roles::
+    #   (no documentation yet)
+    #   The type of this field is nilable list of +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -275,7 +287,8 @@ module Stytch
       attributes: nil,
       trusted_metadata: nil,
       untrusted_metadata: nil,
-      external_id: nil
+      external_id: nil,
+      roles: nil
     )
       headers = {}
       request = {}
@@ -284,6 +297,7 @@ module Stytch
       request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
       request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
       request[:external_id] = external_id unless external_id.nil?
+      request[:roles] = roles unless roles.nil?
 
       put_request("/v1/users/#{user_id}", request, headers)
     end

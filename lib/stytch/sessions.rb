@@ -326,6 +326,27 @@ module Stytch
       get_request(request, headers)
     end
 
+    def attest(
+      profile_id:,
+      token:,
+      session_duration_minutes: nil,
+      session_custom_claims: nil,
+      session_token: nil,
+      session_jwt: nil
+    )
+      headers = {}
+      request = {
+        profile_id: profile_id,
+        token: token
+      }
+      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:session_token] = session_token unless session_token.nil?
+      request[:session_jwt] = session_jwt unless session_jwt.nil?
+
+      post_request('/v1/sessions/attest', request, headers)
+    end
+
     # MANUAL(Sessions::authenticate_jwt)(SERVICE_METHOD)
     # ADDIMPORT: require 'jwt'
     # ADDIMPORT: require 'json/jwt'

@@ -417,7 +417,33 @@ module StytchB2B
       post_request('/v1/b2b/sessions/exchange_access_token', request, headers)
     end
 
-    # Migrate a session from an external OIDC compliant endpoint. Stytch will call the external UserInfo endpoint defined in your Stytch Project settings in the [Dashboard](https://stytch.com/docs/dashboard), and then perform a lookup using the `session_token`. If the response contains a valid email address, Stytch will attempt to match that email address with an existing in your and create a Stytch Session. You will need to create the member before using this endpoint.
+    def attest(
+      organization_id:,
+      profile_id:,
+      token:,
+      session_duration_minutes: nil,
+      session_custom_claims: nil,
+      session_token: nil,
+      session_jwt: nil
+    )
+      headers = {}
+      request = {
+        organization_id: organization_id,
+        profile_id: profile_id,
+        token: token
+      }
+      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:session_token] = session_token unless session_token.nil?
+      request[:session_jwt] = session_jwt unless session_jwt.nil?
+
+      post_request('/v1/b2b/sessions/attest', request, headers)
+    end
+
+    # Migrate a session from an external OIDC compliant endpoint.
+    # Stytch will call the external UserInfo endpoint defined in your Stytch Project settings in the [Dashboard](https://stytch.com/docs/dashboard), and then perform a lookup using the `session_token`. <!-- FIXME more specific dashboard link-->
+    # If the response contains a valid email address, Stytch will attempt to match that email address with an existing in your and create a Stytch Session.
+    # You will need to create the member before using this endpoint.
     #
     # == Parameters:
     # session_token::
