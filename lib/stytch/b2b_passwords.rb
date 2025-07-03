@@ -24,10 +24,13 @@ module StytchB2B
 
     # This API allows you to check whether the user’s provided password is valid, and to provide feedback to the user on how to increase the strength of their password.
     #
-    # This endpoint adapts to your Project's password strength configuration. If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), your passwords are considered valid if they meet the requirements that you've set with Stytch. You may update your password strength configuration in the [stytch dashboard](https://stytch.com/dashboard/password-strength-config).
+    # This endpoint adapts to your Project's password strength configuration.
+    # If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid if the strength score is >= 3.
+    # If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), your passwords are considered valid if they meet the requirements that you've set with Stytch.
+    # You may update your password strength configuration on the [Passwords Policy page](https://stytch.com/dashboard/password-strength-config) in the Stytch Dashboard.
     #
     # ## Password feedback
-    # The zxcvbn_feedback and luds_feedback objects contains relevant fields for you to relay feedback to users that failed to create a strong enough password.
+    # The `zxcvbn_feedback` and `luds_feedback` objects contains relevant fields for you to relay feedback to users that failed to create a strong enough password.
     #
     # If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the feedback object will contain warning and suggestions for any password that does not meet the [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy) strength requirements. You can return these strings directly to the user to help them craft a strong password.
     #
@@ -382,7 +385,7 @@ module StytchB2B
       # If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid
       # if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), your passwords are
       # considered valid if they meet the requirements that you've set with Stytch.
-      # You may update your password strength configuration in the [stytch dashboard](https://stytch.com/dashboard/password-strength-config).
+      # You may update your password strength configuration on the [Passwords Policy page](https://stytch.com/dashboard/password-strength-config) in the Stytch Dashboard.
       #
       # == Parameters:
       # organization_id::
@@ -774,7 +777,7 @@ module StytchB2B
       # If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid
       # if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), your passwords are
       # considered valid if they meet the requirements that you've set with Stytch.
-      # You may update your password strength configuration in the [stytch dashboard](https://stytch.com/dashboard/password-strength-config).
+      # You may update your password strength configuration on the [Passwords Policy page](https://stytch.com/dashboard/password-strength-config) in the Stytch Dashboard.
       #
       # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
       # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
@@ -976,7 +979,7 @@ module StytchB2B
         # If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid
         # if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), your passwords are
         # considered valid if they meet the requirements that you've set with Stytch.
-        # You may update your password strength configuration in the [stytch dashboard](https://stytch.com/dashboard/password-strength-config).
+        # You may update your password strength configuration on the [Passwords Policy page](https://stytch.com/dashboard/password-strength-config) in the Stytch Dashboard.
         #
         # == Parameters:
         # email_address::

@@ -50,6 +50,9 @@ module Stytch
     # override_display_name::
     #   (no documentation yet)
     #   The type of this field is nilable +String+.
+    # use_base64_url_encoding::
+    #   (no documentation yet)
+    #   The type of this field is nilable +Boolean+.
     #
     # == Returns:
     # An object with the following fields:
@@ -73,7 +76,8 @@ module Stytch
       return_passkey_credential_options: nil,
       override_id: nil,
       override_name: nil,
-      override_display_name: nil
+      override_display_name: nil,
+      use_base64_url_encoding: nil
     )
       headers = {}
       request = {
@@ -86,6 +90,7 @@ module Stytch
       request[:override_id] = override_id unless override_id.nil?
       request[:override_name] = override_name unless override_name.nil?
       request[:override_display_name] = override_display_name unless override_display_name.nil?
+      request[:use_base64_url_encoding] = use_base64_url_encoding unless use_base64_url_encoding.nil?
 
       post_request('/v1/webauthn/register/start', request, headers)
     end
