@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'connected_apps'
 require_relative 'crypto_wallets'
 require_relative 'fraud'
 require_relative 'impersonation'
@@ -18,7 +19,7 @@ module Stytch
   class Client
     ENVIRONMENTS = %i[live test].freeze
 
-    attr_reader :crypto_wallets, :fraud, :impersonation, :m2m, :magic_links, :oauth, :otps, :passwords, :project, :sessions, :totps, :users, :webauthn
+    attr_reader :connected_app, :crypto_wallets, :fraud, :impersonation, :m2m, :magic_links, :oauth, :otps, :passwords, :project, :sessions, :totps, :users, :webauthn
 
     def initialize(project_id:, secret:, env: nil, fraud_env: nil, &block)
       @api_host = api_host(env, project_id)
@@ -29,6 +30,7 @@ module Stytch
 
       create_connection(&block)
 
+      @connected_app = Stytch::ConnectedApp.new(@connection)
       @crypto_wallets = Stytch::CryptoWallets.new(@connection)
       @fraud = Stytch::Fraud.new(@fraud_connection)
       @impersonation = Stytch::Impersonation.new(@connection)
