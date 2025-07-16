@@ -91,7 +91,7 @@ module StytchB2B
     #
     # You may provide a JWT that needs to be refreshed and is expired according to its `exp` claim. A new JWT will be returned if both the signature and the underlying Session are still valid. See our [How to use Stytch Session JWTs](https://stytch.com/docs/b2b/guides/sessions/resources/using-jwts) guide for more information.
     #
-    # If an `authorization_check` object is passed in, this method will also check if the Member is authorized to perform the given action on the given Resource in the specified. A is authorized if their Member Session contains a Role, assigned [explicitly or implicitly](https://stytch.com/docs/b2b/guides/rbac/role-assignment), with adequate permissions.
+    # If an `authorization_check` object is passed in, this method will also check if the Member is authorized to perform the given action on the given Resource in the specified Organization. A Member is authorized if their Member Session contains a Role, assigned [explicitly or implicitly](https://stytch.com/docs/b2b/guides/rbac/role-assignment), with adequate permissions.
     # In addition, the `organization_id` passed in the authorization check must match the Member's Organization.
     #
     # If the Member is not authorized to perform the specified action on the specified Resource, or if the
@@ -229,9 +229,9 @@ module StytchB2B
       post_request('/v1/b2b/sessions/revoke', request, headers)
     end
 
-    # Use this endpoint to exchange a's existing session for another session in a different. This can be used to accept an invite, but not to create a new member via domain matching.
+    # Use this endpoint to exchange a Member's existing session for another session in a different Organization. This can be used to accept an invite, but not to create a new member via domain matching.
     #
-    # To create a new member via email domain, use the [Exchange Intermediate Session](https://stytch.com/docs/b2b/api/exchange-intermediate-session) flow instead.
+    # To create a new member via email domain JIT Provisioning, use the [Exchange Intermediate Session](https://stytch.com/docs/b2b/api/exchange-intermediate-session) flow instead.
     #
     # If the user **has** already satisfied the authentication requirements of the Organization they are trying to switch into, this API will return `member_authenticated: true` and a `session_token` and `session_jwt`.
     #
@@ -275,7 +275,7 @@ module StytchB2B
     #   Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     # locale::
-    #   If the needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+    #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
     #
     # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
     #
@@ -505,7 +505,7 @@ module StytchB2B
 
     # Migrate a session from an external OIDC compliant endpoint.
     # Stytch will call the external UserInfo endpoint defined in your Stytch Project settings in the [Dashboard](https://stytch.com/docs/dashboard), and then perform a lookup using the `session_token`. <!-- FIXME more specific dashboard link-->
-    # If the response contains a valid email address, Stytch will attempt to match that email address with an existing in your and create a Stytch Session.
+    # If the response contains a valid email address, Stytch will attempt to match that email address with an existing Member in your Organization and create a Stytch Session.
     # You will need to create the member before using this endpoint.
     #
     # == Parameters:

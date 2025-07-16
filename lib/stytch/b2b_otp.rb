@@ -27,7 +27,7 @@ module StytchB2B
         @connection = connection
       end
 
-      # Send a One-Time Passcode (OTP) to a's phone number.
+      # Send a One-Time Passcode (OTP) to a Member's phone number.
       #
       # If the Member already has a phone number, the `mfa_phone_number` field is not needed; the endpoint will send an OTP to the number associated with the Member.
       # If the Member does not have a phone number, the endpoint will send an OTP to the `mfa_phone_number` provided and link the `mfa_phone_number` with the Member.
@@ -45,7 +45,7 @@ module StytchB2B
       #
       # Even when international SMS is enabled, we do not support sending SMS to countries on our [Unsupported countries list](https://stytch.com/docs/guides/passcodes/unsupported-countries).
       #
-      # __Note:__ SMS to phone numbers outside of the US and Canada is disabled by default for customers who did not use SMS prior to October 2023. If you're interested in sending international SMS, please reach out to [support@stytch.com](mailto:support@stytch.com?subject=Enable%20international%20SMS).
+      # __Note:__ SMS to phone numbers outside of the US and Canada is disabled by default for customers who did not use SMS prior to October 2023. If you're interested in sending international SMS, please add those countries to your Project's allowlist via [the API](https://stytch.com/docs/workspace-management/pwa/country-code-allowlist-object), and [add credit card details](https://stytch.com/docs/dashboard/settings/billing) to your account.
       #
       # == Parameters:
       # organization_id::
@@ -128,7 +128,7 @@ module StytchB2B
       # such as [email magic link authenticate](https://stytch.com/docs/b2b/api/authenticate-magic-link),
       # or upon successful calls to discovery authenticate methods, such as [email magic link discovery authenticate](https://stytch.com/docs/b2b/api/authenticate-discovery-magic-link).
       #
-      # If the's MFA policy is `REQUIRED_FOR_ALL`, a successful OTP authentication will change the's `mfa_enrolled` status to `true` if it is not already `true`.
+      # If the Organization's MFA policy is `REQUIRED_FOR_ALL`, a successful OTP authentication will change the Member's `mfa_enrolled` status to `true` if it is not already `true`.
       # If the Organization's MFA policy is `OPTIONAL`, the Member's MFA enrollment can be toggled by passing in a value for the `set_mfa_enrollment` field.
       # The Member's MFA enrollment can also be toggled through the [Update Member](https://stytch.com/docs/b2b/api/update-member) endpoint.
       #
@@ -324,11 +324,11 @@ module StytchB2B
         post_request('/v1/b2b/otps/email/login_or_signup', request, headers)
       end
 
-      # Authenticate a with a one-time passcode (OTP). This endpoint requires an OTP that is not expired or previously used.
+      # Authenticate a Member with a one-time passcode (OTP). This endpoint requires an OTP that is not expired or previously used.
       # OTPs have a default expiry of 10 minutes. If the Member’s status is `pending` or `invited`, they will be updated to `active`.
       # Provide the `session_duration_minutes` parameter to set the lifetime of the session. If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration.
       #
-      # If the Member is required to complete MFA to log in to the, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
+      # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
       # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp),
       # or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete the MFA step and acquire a full member session.
       # The `intermediate_session_token` can also be used with the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to join a different Organization or create a new one.

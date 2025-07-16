@@ -95,7 +95,7 @@ module StytchB2B
       @members = StytchB2B::Organizations::Members.new(@connection)
     end
 
-    # Creates an. An `organization_name` and a unique `organization_slug` are required.
+    # Creates an Organization. An `organization_name` and a unique `organization_slug` are required.
     #
     # By default, `email_invites` and `sso_jit_provisioning` will be set to `ALL_ALLOWED`, and `mfa_policy` will be set to `OPTIONAL` if no Organization authentication settings are explicitly defined in the request.
     #
@@ -291,7 +291,7 @@ module StytchB2B
       post_request('/v1/b2b/organizations', request, headers)
     end
 
-    # Returns an specified by `organization_id`.
+    # Returns an Organization specified by `organization_id`.
     #
     # == Parameters:
     # organization_id::
@@ -318,7 +318,7 @@ module StytchB2B
       get_request(request, headers)
     end
 
-    # Updates an specified by `organization_id`. An Organization must always have at least one auth setting set to either `RESTRICTED` or `ALL_ALLOWED` in order to provision new Members.
+    # Updates an Organization specified by `organization_id`. An Organization must always have at least one auth setting set to either `RESTRICTED` or `ALL_ALLOWED` in order to provision new Members.
     #
     # *See the [Organization authentication settings](https://stytch.com/docs/b2b/api/org-auth-settings) resource to learn more about fields like `email_jit_provisioning`, `email_invites`, `sso_jit_provisioning`, etc., and their behaviors.
     #
@@ -567,7 +567,7 @@ module StytchB2B
       put_request("/v1/b2b/organizations/#{organization_id}", request, headers)
     end
 
-    # Deletes an specified by `organization_id`. All Members of the Organization will also be deleted.
+    # Deletes an Organization specified by `organization_id`. All Members of the Organization will also be deleted.
     #
     # == Parameters:
     # organization_id::
@@ -886,6 +886,25 @@ module StytchB2B
         end
       end
 
+      class StartEmailUpdateRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
       class GetConnectedAppsRequestOptions
         # Optional authorization object.
         # Pass in an active Stytch Member session token or session JWT and the request
@@ -934,7 +953,7 @@ module StytchB2B
         @connected_apps = StytchB2B::Organizations::Members::ConnectedApps.new(@connection)
       end
 
-      # Updates a specified by `organization_id` and `member_id`.
+      # Updates a Member specified by `organization_id` and `member_id`.
       #
       # == Parameters:
       # organization_id::
@@ -1067,7 +1086,7 @@ module StytchB2B
         put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", request, headers)
       end
 
-      # Deletes a specified by `organization_id` and `member_id`.
+      # Deletes a Member specified by `organization_id` and `member_id`.
       #
       # == Parameters:
       # organization_id::
@@ -1101,7 +1120,7 @@ module StytchB2B
         delete_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}", headers)
       end
 
-      # Reactivates a deleted's status and its associated email status (if applicable) to active, specified by `organization_id` and `member_id`. This endpoint will only work for Members with at least one verified email where their `email_address_verified` is `true`.
+      # Reactivates a deleted Member's status and its associated email status (if applicable) to active, specified by `organization_id` and `member_id`. This endpoint will only work for Members with at least one verified email where their `email_address_verified` is `true`.
       #
       # == Parameters:
       # organization_id::
@@ -1143,7 +1162,7 @@ module StytchB2B
         put_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/reactivate", request, headers)
       end
 
-      # Delete a's MFA phone number.
+      # Delete a Member's MFA phone number.
       #
       # To change a Member's phone number, you must first call this endpoint to delete the existing phone number.
       #
@@ -1290,7 +1309,9 @@ module StytchB2B
         post_request('/v1/b2b/organizations/members/search', request, headers)
       end
 
-      # Delete a's password.
+      # Delete a Member's password.
+      #
+      # This endpoint only works for Organization-scoped passwords. For cross-org password Projects, use [Require Password Reset By Email](https://stytch.com/docs/b2b/api/passwords-require-reset-by-email) instead.
       #
       # == Parameters:
       # organization_id::
@@ -1408,7 +1429,7 @@ module StytchB2B
         get_request(request, headers)
       end
 
-      # Unlinks a retired email address from a specified by their `organization_id` and `member_id`. The email address
+      # Unlinks a retired email address from a Member specified by their `organization_id` and `member_id`. The email address
       # to be retired can be identified in the request body by either its `email_id`, its `email_address`, or both. If using
       # both identifiers they must refer to the same email.
       #
@@ -1421,7 +1442,6 @@ module StytchB2B
       # A retired email address cannot be used by other Members in the same Organization. However, unlinking retired email
       # addresses allows them to be subsequently re-used by other Organization Members. Retired email addresses can be viewed
       # on the [Member object](https://stytch.com/docs/b2b/api/member-object).
-      #  %}
       #
       # == Parameters:
       # organization_id::
@@ -1476,6 +1496,86 @@ module StytchB2B
         post_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/unlink_retired_email", request, headers)
       end
 
+      # Starts a self-serve email update for a Member specified by their `organization_id` and `member_id`.
+      # To perform a self-serve update, members must be active and have an active, verified email address.
+      #
+      # The new email address must meet the following requirements:
+      #
+      # - Must not be in use by another member (retired emails count as used until they are [unlinked](https://stytch.com/docs/b2b/api/unlink-retired-member-email))
+      # - Must not be updating for another member (i.e. two members cannot attempt to update to the same email at once)
+      #
+      # The member will receive an Email Magic Link that expires in 5 minutes. If they do not verify their new email address in that timeframe, the email
+      # will be freed up for other members to use.
+      #
+      # == Parameters:
+      # organization_id::
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   The type of this field is +String+.
+      # member_id::
+      #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
+      #   The type of this field is +String+.
+      # email_address::
+      #   The email address of the Member.
+      #   The type of this field is +String+.
+      # login_redirect_url::
+      #   The URL that the Member clicks from the login Email Magic Link. This URL should be an endpoint in the backend server that
+      #   verifies the request by querying Stytch's authenticate endpoint and finishes the login. If this value is not passed, the default login
+      #   redirect URL that you set in your Dashboard is used. If you have not set a default login redirect URL, an error is returned.
+      #   The type of this field is nilable +String+.
+      # locale::
+      #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+      #
+      # Currently supported languages are English (`"en"`), Spanish (`"es"`), French (`"fr"`) and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
+      #
+      # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
+      #
+      #   The type of this field is nilable +StartEmailUpdateRequestLocale+ (string enum).
+      # login_template_id::
+      #   Use a custom template for login emails. By default, it will use your default email template. The template must be from Stytch's
+      # built-in customizations or a custom HTML email for Magic Links - Login.
+      #   The type of this field is nilable +String+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # member_id::
+      #   Globally unique UUID that identifies a specific Member.
+      #   The type of this field is +String+.
+      # member::
+      #   The [Member object](https://stytch.com/docs/b2b/api/member-object)
+      #   The type of this field is +Member+ (+object+).
+      # organization::
+      #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
+      #   The type of this field is +Organization+ (+object+).
+      # status_code::
+      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+      #   The type of this field is +Integer+.
+      #
+      # == Method Options:
+      # This method supports an optional +StytchB2B::Organizations::Members::StartEmailUpdateRequestOptions+ object which will modify the headers sent in the HTTP request.
+      def start_email_update(
+        organization_id:,
+        member_id:,
+        email_address:,
+        login_redirect_url: nil,
+        locale: nil,
+        login_template_id: nil,
+        method_options: nil
+      )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        request = {
+          email_address: email_address
+        }
+        request[:login_redirect_url] = login_redirect_url unless login_redirect_url.nil?
+        request[:locale] = locale unless locale.nil?
+        request[:login_template_id] = login_template_id unless login_template_id.nil?
+
+        post_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/start_email_update", request, headers)
+      end
+
       # Member Get Connected Apps retrieves a list of Connected Apps with which the Member has successfully completed an
       # authorization flow.
       # If the Member revokes a Connected App's access (e.g. via the Revoke Connected App endpoint) then the Connected App will
@@ -1516,7 +1616,7 @@ module StytchB2B
         get_request(request, headers)
       end
 
-      # Creates a. An `organization_id` and `email_address` are required.
+      # Creates a Member. An `organization_id` and `email_address` are required.
       #
       # == Parameters:
       # organization_id::
