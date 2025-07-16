@@ -608,6 +608,8 @@ module StytchB2B
 
       # Require a password be reset by the associated email address. This endpoint is only functional for cross-org password use cases.
       #
+      # If there are is only one active Member using the associated email address in the Project, the password will be deleted.
+      #
       # == Parameters:
       # email_address::
       #   The email address of the Member to start the email reset process for.

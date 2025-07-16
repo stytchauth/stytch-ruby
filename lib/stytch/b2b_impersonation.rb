@@ -23,7 +23,7 @@ module StytchB2B
     #
     # == Parameters:
     # impersonation_token::
-    #   The User Impersonation token to authenticate.
+    #   The Member Impersonation token to authenticate. Expires in 5 minutes by default.
     #   The type of this field is +String+.
     #
     # == Returns:
