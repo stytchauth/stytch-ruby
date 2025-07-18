@@ -96,7 +96,9 @@ module Stytch
         signup_expiration_minutes: nil,
         attributes: {},
         create_user_as_pending: false,
-        code_challenge: nil
+        code_challenge: nil,
+        login_template_id: nil,
+        signup_template_id: nil
       )
         request = {
           email: email,
@@ -109,6 +111,8 @@ module Stytch
         request[:signup_expiration_minutes] = signup_expiration_minutes unless signup_expiration_minutes.nil?
         request[:attributes] = attributes if attributes != {}
         request[:code_challenge] = code_challenge unless code_challenge.nil?
+        request[:login_template_id] = login_template_id unless login_template_id.nil?
+        request[:signup_template_id] = signup_template_id unless signup_template_id.nil?
 
         post_request("#{PATH}/login_or_create", request)
       end
