@@ -3,7 +3,7 @@
 require_relative 'errors'
 require_relative 'request_helper'
 
-module StytchB2B
+module Stytch
   class PolicyCache
     def initialize(rbac_client:)
       @rbac_client = rbac_client
