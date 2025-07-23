@@ -15,9 +15,10 @@ module Stytch
   class Sessions
     include Stytch::RequestHelper
 
-    def initialize(connection, project_id)
+    def initialize(connection, project_id, policy_cache)
       @connection = connection
 
+      @policy_cache = policy_cache
       @project_id = project_id
       @cache_last_update = 0
       @jwks_loader = lambda do |options|
@@ -81,6 +82,9 @@ module Stytch
     #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
+    # authorization_check::
+    #   (no documentation yet)
+    #   The type of this field is nilable +AuthorizationCheck+ (+object+).
     #
     # == Returns:
     # An object with the following fields:
@@ -105,11 +109,15 @@ module Stytch
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
+    # verdict::
+    #   (no documentation yet)
+    #   The type of this field is nilable +AuthorizationVerdict+ (+object+).
     def authenticate(
       session_token: nil,
       session_duration_minutes: nil,
       session_jwt: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      authorization_check: nil
     )
       headers = {}
       request = {}
@@ -117,6 +125,7 @@ module Stytch
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:authorization_check] = authorization_check unless authorization_check.nil?
 
       post_request('/v1/sessions/authenticate', request, headers)
     end
@@ -223,9 +232,7 @@ module Stytch
     # Use this endpoint to exchange a Connected Apps Access Token back into a Stytch Session for the underlying User.
     # This session can be used with the Stytch SDKs and APIs.
     #
-    # The Session returned will be the same Session that was active in your application (the authorizing party) during the initial authorization flow.
-    #
-    # The Access Token must contain the `full_access` scope (only available to First Party clients) and must not be more than 5 minutes old. Access Tokens may only be exchanged a single time.
+    # The Access Token must contain the `full_access` scope and must not be more than 5 minutes old. Access Tokens may only be exchanged a single time.
     #
     # == Parameters:
     # access_token::
@@ -291,13 +298,13 @@ module Stytch
 
     # Get the JSON Web Key Set (JWKS) for a project.
     #
-    # Within the JWKS, the JSON Web Keys are rotated every ~6 months. Upon rotation, new JWTs will be signed using the new key, and both keys will be returned by this endpoint for a period of 1 month.
+    # JWKS are rotated every ~6 months. Upon rotation, new JWTs will be signed using the new key, and both keys will be returned by this endpoint for a period of 1 month.
     #
-    # JWTs have a set lifetime of 5 minutes, so there will be a 5 minute period where some JWTs will be signed by the old keys, and some JWTs will be signed by the new keys. The correct key to use for validation is determined by matching the `kid` value of the JWT and key.
+    # JWTs have a set lifetime of 5 minutes, so there will be a 5 minute period where some JWTs will be signed by the old JWKS, and some JWTs will be signed by the new JWKS. The correct JWKS to use for validation is determined by matching the `kid` value of the JWT and JWKS.
     #
-    # If you're using one of our [backend SDKs](https://stytch.com/docs/b2b/sdks), the JSON Web Key (JWK) rotation will be handled for you.
+    # If you're using one of our [backend SDKs](https://stytch.com/docs/sdks), the JWKS rotation will be handled for you.
     #
-    # If you're using your own JWT validation library, many have built-in support for JWK rotation, and you'll just need to supply this API endpoint. If not, your application should decide which JWK to use for validation by inspecting the `kid` value.
+    # If you're using your own JWT validation library, many have built-in support for JWKS rotation, and you'll just need to supply this API endpoint. If not, your application should decide which JWKS to use for validation by inspecting the `kid` value.
     #
     # See our [How to use Stytch Session JWTs](https://stytch.com/docs/guides/sessions/using-jwts) guide for more information.
     #
@@ -326,64 +333,6 @@ module Stytch
       get_request(request, headers)
     end
 
-    # Exchange an auth token issued by a trusted identity provider for a Stytch session. You must first register a Trusted Auth Token profile in the Stytch dashboard [here](https://stytch.com/docs/dashboard/trusted-auth-tokens). If a session token or session JWT is provided, it will add the trusted auth token as an authentication factor to the existing session.
-    #
-    # == Parameters:
-    # profile_id::
-    #   The ID of the trusted auth token profile to use for attestation.
-    #   The type of this field is +String+.
-    # token::
-    #   The trusted auth token to authenticate.
-    #   The type of this field is +String+.
-    # session_duration_minutes::
-    #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
-    #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
-    #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-    #
-    #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-    #
-    #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-    #
-    #   If the `session_duration_minutes` parameter is not specified, a Stytch session will not be created.
-    #   The type of this field is nilable +Integer+.
-    # session_custom_claims::
-    #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
-    #
-    #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
-    #   The type of this field is nilable +object+.
-    # session_token::
-    #   The `session_token` for the session that you wish to add the trusted auth token authentication factor to.
-    #   The type of this field is nilable +String+.
-    # session_jwt::
-    #   The `session_jwt` for the session that you wish to add the trusted auth token authentication factor to.
-    #   The type of this field is nilable +String+.
-    #
-    # == Returns:
-    # An object with the following fields:
-    # request_id::
-    #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
-    #   The type of this field is +String+.
-    # user_id::
-    #   The unique ID of the affected User.
-    #   The type of this field is +String+.
-    # session_token::
-    #   A secret token for a given Stytch Session.
-    #   The type of this field is +String+.
-    # session_jwt::
-    #   The JSON Web Token (JWT) for a given Stytch Session.
-    #   The type of this field is +String+.
-    # user::
-    #   The `user` object affected by this API call. See the [Get user endpoint](https://stytch.com/docs/api/get-user) for complete response field details.
-    #   The type of this field is +User+ (+object+).
-    # status_code::
-    #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
-    #   The type of this field is +Integer+.
-    # session::
-    #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
-    #
-    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
-    #
-    #   The type of this field is nilable +Session+ (+object+).
     def attest(
       profile_id:,
       token:,
