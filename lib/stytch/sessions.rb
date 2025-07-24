@@ -15,10 +15,10 @@ module Stytch
   class Sessions
     include Stytch::RequestHelper
 
-    def initialize(connection, project_id, policy_cache)
+    def initialize(connection, project_id)
       @connection = connection
 
-      @policy_cache = policy_cache
+      @policy_cache = Stytch::PolicyCache.new
       @project_id = project_id
       @cache_last_update = 0
       @jwks_loader = lambda do |options|

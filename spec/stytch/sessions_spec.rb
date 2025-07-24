@@ -9,14 +9,6 @@ class TestConnection
   end
 end
 
-# Simple PolicyCache class for testing
-module Stytch
-  class PolicyCache
-    def initialize
-      # No-op for testing
-    end
-  end
-end
 
 RSpec.describe Stytch::Sessions do
   it 'correctly decodes a JWT' do
@@ -24,8 +16,7 @@ RSpec.describe Stytch::Sessions do
 
     # Use the TestConnection class with default api_host
     connection = TestConnection.new
-    policy_cache = Stytch::PolicyCache.new
-    sessions = Stytch::Sessions.new(connection, project_id, policy_cache)
+    sessions = Stytch::Sessions.new(connection, project_id)
 
     kid = 'jwk-test-00000000-0000-0000-0000-000000000000'
     headers = { kid: kid }
@@ -78,8 +69,7 @@ RSpec.describe Stytch::Sessions do
 
     # Use the TestConnection class with custom api_host
     connection = TestConnection.new(custom_api_host)
-    policy_cache = Stytch::PolicyCache.new
-    sessions = Stytch::Sessions.new(connection, project_id, policy_cache)
+    sessions = Stytch::Sessions.new(connection, project_id)
 
     kid = 'jwk-test-00000000-0000-0000-0000-000000000000'
     headers = { kid: kid }
@@ -131,8 +121,7 @@ RSpec.describe Stytch::Sessions do
 
     # Use the TestConnection class with default api_host
     connection = TestConnection.new
-    policy_cache = Stytch::PolicyCache.new
-    sessions = Stytch::Sessions.new(connection, project_id, policy_cache)
+    sessions = Stytch::Sessions.new(connection, project_id)
 
     now = Time.utc(2022, 5, 3, 18, 51, 41)
     claims = jwt_claims(project_id, now)
@@ -147,8 +136,7 @@ RSpec.describe Stytch::Sessions do
 
     # Use the TestConnection class with default api_host
     connection = TestConnection.new
-    policy_cache = Stytch::PolicyCache.new
-    sessions = Stytch::Sessions.new(connection, project_id, policy_cache)
+    sessions = Stytch::Sessions.new(connection, project_id)
 
     now = Time.utc(2022, 5, 3, 18, 51, 41)
     claims = jwt_claims(project_id, now)
