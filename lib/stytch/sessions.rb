@@ -10,6 +10,7 @@ require 'jwt'
 require 'json/jwt'
 require_relative 'errors'
 require_relative 'request_helper'
+require_relative 'rbac'
 
 module Stytch
   class Sessions
@@ -18,6 +19,8 @@ module Stytch
     def initialize(connection, project_id)
       @connection = connection
 
+      rbac = Stytch::RBAC.new(connection)
+      @policy_cache = Stytch::PolicyCache.new(rbac_client: rbac)
       @project_id = project_id
       @cache_last_update = 0
       @jwks_loader = lambda do |options|
@@ -81,6 +84,10 @@ module Stytch
     #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
+    # authorization_check::
+    #   If an `authorization_check` object is passed in, this endpoint will also check if the User is
+    #   authorized to perform the given action on the given Resource in the specified Organization. A User is authorized if
+    #   their User Session contains a Role assigned with adequate permissions.
     #
     # == Returns:
     # An object with the following fields:
@@ -105,11 +112,15 @@ module Stytch
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
+    # verdict::
+    #   (no documentation yet)
+    #   The type of this field is nilable +AuthorizationVerdict+ (+object+).
     def authenticate(
       session_token: nil,
       session_duration_minutes: nil,
       session_jwt: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      authorization_check: nil
     )
       headers = {}
       request = {}
@@ -117,6 +128,7 @@ module Stytch
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:authorization_check] = authorization_check unless authorization_check.nil?
 
       post_request('/v1/sessions/authenticate', request, headers)
     end
