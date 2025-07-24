@@ -10,6 +10,7 @@ require 'jwt'
 require 'json/jwt'
 require_relative 'errors'
 require_relative 'request_helper'
+require_relative 'rbac'
 
 module Stytch
   class Sessions
@@ -18,7 +19,8 @@ module Stytch
     def initialize(connection, project_id)
       @connection = connection
 
-      @policy_cache = Stytch::PolicyCache.new
+      rbac = Stytch::RBAC.new(connection)
+      @policy_cache = Stytch::PolicyCache.new(rbac_client: rbac)
       @project_id = project_id
       @cache_last_update = 0
       @jwks_loader = lambda do |options|
