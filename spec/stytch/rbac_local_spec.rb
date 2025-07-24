@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Stytch::PolicyCache do
-  let(:mock_rbac_client) { double('rbac_client') }
+  let(:mock_rbac_client) { instance_double('rbac_client') }
   let(:policy_cache) { described_class.new(rbac_client: mock_rbac_client) }
 
   let(:sample_policy) do
@@ -106,126 +106,112 @@ RSpec.describe Stytch::PolicyCache do
       }
     end
 
-    context 'when subject_org_id is provided' do
-      context 'and matches request organization_id' do
-        it 'passes tenancy check and proceeds with authorization' do
-          expect {
-            policy_cache.perform_authorization_check(
-              subject_roles: ['user'],
-              subject_org_id: 'org-123',
-              authorization_check: authorization_check
-            )
-          }.not_to raise_error
-        end
+    context 'when subject_org_id matches request organization_id' do
+      it 'passes tenancy check and proceeds with authorization' do
+        expect do
+          policy_cache.perform_authorization_check(
+            subject_roles: ['user'],
+            subject_org_id: 'org-123',
+            authorization_check: authorization_check
+          )
+        end.not_to raise_error
       end
+    end
 
-      context 'and does not match request organization_id' do
-        it 'raises TenancyError' do
-          expect {
-            policy_cache.perform_authorization_check(
-              subject_roles: ['user'],
-              subject_org_id: 'org-456',
-              authorization_check: authorization_check
-            )
-          }.to raise_error(Stytch::TenancyError)
-        end
+    context 'when subject_org_id does not match request organization_id' do
+      it 'raises TenancyError' do
+        expect do
+          policy_cache.perform_authorization_check(
+            subject_roles: ['user'],
+            subject_org_id: 'org-456',
+            authorization_check: authorization_check
+          )
+        end.to raise_error(Stytch::TenancyError)
       end
     end
 
     context 'when subject_org_id is nil' do
       it 'skips tenancy check and proceeds with authorization' do
-        expect {
+        expect do
           policy_cache.perform_authorization_check(
             subject_roles: ['user'],
             subject_org_id: nil,
             authorization_check: authorization_check
           )
-        }.not_to raise_error
+        end.not_to raise_error
       end
-
-
     end
 
     context 'when subject_org_id is not provided (uses default nil)' do
       it 'skips tenancy check and proceeds with authorization' do
-        expect {
+        expect do
           policy_cache.perform_authorization_check(
             subject_roles: ['user'],
             authorization_check: authorization_check
           )
-        }.not_to raise_error
+        end.not_to raise_error
       end
     end
 
-    context 'authorization checks' do
-      context 'when user has matching role and permission' do
-        it 'succeeds for wildcard action' do
-          expect {
-            policy_cache.perform_authorization_check(
-              subject_roles: ['admin'],
-              authorization_check: {
-                'action' => 'any_action',
-                'resource_id' => 'users',
-                'organization_id' => 'org-123'
-              }
-            )
-          }.not_to raise_error
-        end
+    it 'succeeds for wildcard action when user has admin role' do
+      expect do
+        policy_cache.perform_authorization_check(
+          subject_roles: ['admin'],
+          authorization_check: {
+            'action' => 'any_action',
+            'resource_id' => 'users',
+            'organization_id' => 'org-123'
+          }
+        )
+      end.not_to raise_error
+    end
 
-        it 'succeeds for specific action' do
-          expect {
-            policy_cache.perform_authorization_check(
-              subject_roles: ['user'],
-              authorization_check: {
-                'action' => 'read',
-                'resource_id' => 'users',
-                'organization_id' => 'org-123'
-              }
-            )
-          }.not_to raise_error
-        end
-      end
+    it 'succeeds for specific action when user has matching role and permission' do
+      expect do
+        policy_cache.perform_authorization_check(
+          subject_roles: ['user'],
+          authorization_check: {
+            'action' => 'read',
+            'resource_id' => 'users',
+            'organization_id' => 'org-123'
+          }
+        )
+      end.not_to raise_error
+    end
 
-      context 'when user has role but no matching permission' do
-        it 'raises PermissionError' do
-          expect {
-            policy_cache.perform_authorization_check(
-              subject_roles: ['user'],
-              authorization_check: {
-                'action' => 'write',
-                'resource_id' => 'users',
-                'organization_id' => 'org-123'
-              }
-            )
-          }.to raise_error(Stytch::PermissionError)
-        end
-      end
+    it 'raises PermissionError when user has role but no matching permission' do
+      expect do
+        policy_cache.perform_authorization_check(
+          subject_roles: ['user'],
+          authorization_check: {
+            'action' => 'write',
+            'resource_id' => 'users',
+            'organization_id' => 'org-123'
+          }
+        )
+      end.to raise_error(Stytch::PermissionError)
+    end
 
-      context 'when user has no matching role' do
-        it 'raises PermissionError' do
-          expect {
-            policy_cache.perform_authorization_check(
-              subject_roles: ['guest'],
-              authorization_check: authorization_check
-            )
-          }.to raise_error(Stytch::PermissionError)
-        end
-      end
+    it 'raises PermissionError when user has no matching role' do
+      expect do
+        policy_cache.perform_authorization_check(
+          subject_roles: ['guest'],
+          authorization_check: authorization_check
+        )
+      end.to raise_error(Stytch::PermissionError)
+    end
 
-      context 'when user has multiple roles' do
-        it 'succeeds if any role has permission' do
-          expect {
-            policy_cache.perform_authorization_check(
-              subject_roles: ['guest', 'user'],
-              authorization_check: {
-                'action' => 'write',
-                'resource_id' => 'posts',
-                'organization_id' => 'org-123'
-              }
-            )
-          }.not_to raise_error
-        end
-      end
+    it 'succeeds if any role has permission when user has multiple roles' do
+      expect do
+        policy_cache.perform_authorization_check(
+          subject_roles: %w[guest user],
+          authorization_check: {
+            'action' => 'write',
+            'resource_id' => 'posts',
+            'organization_id' => 'org-123'
+          }
+        )
+      end.not_to raise_error
     end
   end
 end
