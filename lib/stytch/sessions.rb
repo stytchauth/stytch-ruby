@@ -432,7 +432,8 @@ module Stytch
       max_token_age_seconds: nil,
       session_duration_minutes: nil,
       session_custom_claims: nil,
-      clock_tolerance_seconds: nil
+      clock_tolerance_seconds: nil,
+      authorization_check: nil
     )
       max_token_age_seconds = 300 if max_token_age_seconds.nil?
       clock_tolerance_seconds = 0 if clock_tolerance_seconds.nil?
@@ -441,28 +442,32 @@ module Stytch
         return authenticate(
           session_jwt: session_jwt,
           session_duration_minutes: session_duration_minutes,
-          session_custom_claims: session_custom_claims
+          session_custom_claims: session_custom_claims,
+          authorization_check: authorization_check
         )
       end
 
       session = authenticate_jwt_local(
         session_jwt,
         max_token_age_seconds: max_token_age_seconds,
-        clock_tolerance_seconds: clock_tolerance_seconds
+        clock_tolerance_seconds: clock_tolerance_seconds,
+        authorization_check: authorization_check
       )
       return session unless session.nil?
 
       authenticate(
         session_jwt: session_jwt,
         session_duration_minutes: session_duration_minutes,
-        session_custom_claims: session_custom_claims
+        session_custom_claims: session_custom_claims,
+        authorization_check: authorization_check
       )
     rescue StandardError
       # JWT could not be verified locally. Check with the Stytch API.
       authenticate(
         session_jwt: session_jwt,
         session_duration_minutes: session_duration_minutes,
-        session_custom_claims: session_custom_claims
+        session_custom_claims: session_custom_claims,
+        authorization_check: authorization_check
       )
     end
 
@@ -472,7 +477,7 @@ module Stytch
     # This method never authenticates a JWT directly with the API
     # If max_token_age_seconds is not supplied 300 seconds will be used as the default.
     # If clock_tolerance_seconds is not supplied 0 seconds will be used as the default.
-    def authenticate_jwt_local(session_jwt, max_token_age_seconds: nil, clock_tolerance_seconds: nil)
+    def authenticate_jwt_local(session_jwt, max_token_age_seconds: nil, clock_tolerance_seconds: nil, authorization_check: nil)
       max_token_age_seconds = 300 if max_token_age_seconds.nil?
       clock_tolerance_seconds = 0 if clock_tolerance_seconds.nil?
 
@@ -497,6 +502,15 @@ module Stytch
         raise JWTExpiredSignatureError
       rescue JWT::IncorrectAlgorithm
         raise JWTIncorrectAlgorithmError
+      end
+
+      # Do the auth check - intentionally don't rescue errors from here
+      if authorization_check && session['roles']
+        @policy_cache.perform_authorization_check(
+          subject_roles: session['roles'],
+          subject_org_id: nil,
+          authorization_check: authorization_check
+        )
       end
 
       session
