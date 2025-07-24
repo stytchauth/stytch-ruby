@@ -9,7 +9,6 @@ class TestConnection
   end
 end
 
-
 RSpec.describe Stytch::Sessions do
   it 'correctly decodes a JWT' do
     project_id = 'project-test-00000000-0000-0000-0000-000000000000'
