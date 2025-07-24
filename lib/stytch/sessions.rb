@@ -85,8 +85,9 @@ module Stytch
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     # authorization_check::
-    #   (no documentation yet)
-    #   The type of this field is nilable +AuthorizationCheck+ (+object+).
+    #   If an `authorization_check` object is passed in, this endpoint will also check if the User is
+    #   authorized to perform the given action on the given Resource in the specified Organization. A User is authorized if
+    #   their User Session contains a Role assigned with adequate permissions.
     #
     # == Returns:
     # An object with the following fields:
