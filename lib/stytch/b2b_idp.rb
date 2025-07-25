@@ -101,9 +101,7 @@ module StytchB2B
       data['client_secret'] = client_secret unless client_secret.nil?
 
       url = "/v1/public/#{@project_id}/oauth2/introspect"
-      res = post_request(url, data, headers)
-
-      jwt_response = res
+      jwt_response = post_request(url, data, headers)
       return nil unless jwt_response['active']
 
       custom_claims = res.reject { |k, _| @non_custom_claim_keys.include?(k) }
