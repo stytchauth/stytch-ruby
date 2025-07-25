@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
+# rubocop:disable RSpec/MultipleMemoizedHelpers
+
+require 'spec_helper'
+
 RSpec.describe StytchB2B::IDP do
   let(:connection) { instance_double('connection', url_prefix: 'https://test.stytch.com') }
   let(:project_id) { 'project-test-00000000-0000-0000-0000-000000000000' }
-  let(:policy_cache) { instance_double('policy_cache') }
+  let(:policy_cache) { instance_double('Stytch::PolicyCache') }
   let(:idp) { described_class.new(connection, project_id, policy_cache) }
 
   describe '#initialize' do
@@ -28,24 +32,19 @@ RSpec.describe StytchB2B::IDP do
     let(:client_id) { 'test_client_id' }
     let(:client_secret) { 'test_client_secret' }
     let(:token_type_hint) { 'access_token' }
-    let(:mock_response) do
+    let(:response) do
       {
         'active' => true,
         'sub' => 'user-123',
         'scope' => 'read write',
-        'aud' => 'test_audience',
-        'exp' => 1234567890,
-        'iat' => 1234567890,
-        'iss' => 'test_issuer',
-        'nbf' => 1234567890,
-        'token_type' => 'access_token',
-        'https://stytch.com/organization' => { 'organization_id' => 'org-123' },
-        'custom_field' => 'custom_value'
+        'https://stytch.com/organization' => {
+          'organization_id' => 'org-123'
+        }
       }
     end
 
     before do
-      allow(idp).to receive(:post_request).and_return(mock_response)
+      allow(idp).to receive(:post_request).and_return(response)
     end
 
     it 'calls the introspect endpoint with correct parameters' do
@@ -53,8 +52,8 @@ RSpec.describe StytchB2B::IDP do
       expected_data = {
         'token' => token,
         'client_id' => client_id,
-        'token_type_hint' => token_type_hint,
-        'client_secret' => client_secret
+        'client_secret' => client_secret,
+        'token_type_hint' => token_type_hint
       }
       expected_headers = {}
 
@@ -64,56 +63,86 @@ RSpec.describe StytchB2B::IDP do
         client_secret: client_secret,
         token_type_hint: token_type_hint
       )
-
       expect(idp).to have_received(:post_request).with(expected_url, expected_data, expected_headers)
     end
 
-    it 'returns nil when token is not active' do
-      inactive_response = mock_response.merge('active' => false)
-      allow(idp).to receive(:post_request).and_return(inactive_response)
+    context 'when token is not active' do
+      let(:response) { { 'active' => false } }
 
-      result = idp.introspect_token_network(
-        token: token,
-        client_id: client_id
-      )
-
-      expect(result).to be_nil
+      it 'returns nil when token is not active' do
+        result = idp.introspect_token_network(
+          token: token,
+          client_id: client_id
+        )
+        expect(result).to be_nil
+      end
     end
 
-    it 'returns token claims when token is active' do
-      result = idp.introspect_token_network(
-        token: token,
-        client_id: client_id
-      )
+    context 'when token is active' do
+      let(:response) do
+        {
+          'active' => true,
+          'sub' => 'user-123',
+          'scope' => 'read write',
+          'aud' => ['project-123'],
+          'exp' => 1_234_567_890,
+          'iat' => 1_234_567_890,
+          'iss' => 'stytch.com/project-123',
+          'nbf' => 1_234_567_890,
+          'token_type' => 'access_token',
+          'https://stytch.com/organization' => {
+            'organization_id' => 'org-123',
+            'slug' => 'test-org'
+          },
+          'custom_field' => 'custom_value'
+        }
+      end
 
-      expect(result).to include(
-        'subject' => 'user-123',
-        'scope' => 'read write',
-        'audience' => 'test_audience',
-        'expires_at' => 1234567890,
-        'issued_at' => 1234567890,
-        'issuer' => 'test_issuer',
-        'not_before' => 1234567890,
-        'token_type' => 'access_token',
-        'custom_claims' => { 'custom_field' => 'custom_value' },
-        'organization_claim' => { 'organization_id' => 'org-123' }
-      )
+      it 'returns token claims when token is active' do
+        result = idp.introspect_token_network(
+          token: token,
+          client_id: client_id
+        )
+        expect(result).to include(
+          'subject' => 'user-123',
+          'scope' => 'read write',
+          'audience' => ['project-123'],
+          'expires_at' => 1_234_567_890,
+          'issued_at' => 1_234_567_890,
+          'issuer' => 'stytch.com/project-123',
+          'not_before' => 1_234_567_890,
+          'token_type' => 'access_token',
+          'organization_claim' => {
+            'organization_id' => 'org-123',
+            'slug' => 'test-org'
+          }
+        )
+        expect(result['custom_claims']).to include('custom_field' => 'custom_value')
+      end
     end
 
     context 'with authorization_check' do
+      let(:response) do
+        {
+          'active' => true,
+          'sub' => 'user-123',
+          'scope' => 'read write',
+          'https://stytch.com/organization' => {
+            'organization_id' => 'org-123'
+          }
+        }
+      end
       let(:authorization_check) { { 'action' => 'read', 'resource_id' => 'users' } }
 
       it 'performs authorization check' do
         allow(policy_cache).to receive(:perform_authorization_check).and_return(nil)
-
         idp.introspect_token_network(
           token: token,
           client_id: client_id,
           authorization_check: authorization_check
         )
-
         expect(policy_cache).to have_received(:perform_authorization_check).with(
-          subject_roles: ['read', 'write'],
+          subject_roles: %w[read write],
           authorization_check: authorization_check,
           subject_org_id: 'org-123'
         )
@@ -122,49 +151,51 @@ RSpec.describe StytchB2B::IDP do
   end
 
   describe '#introspect_access_token_local' do
-    let(:access_token) { 'test_access_token' }
-    let(:kid) { 'jwk-test-00000000-0000-0000-0000-000000000000' }
-    let(:claims) do
+    let(:access_token) { 'test_jwt_token' }
+    let(:decoded_claims) do
       {
         'sub' => 'user-123',
         'scope' => 'read write',
-        'aud' => 'test_audience',
-        'exp' => 1234567890,
-        'iat' => 1234567890,
-        'iss' => 'stytch.com/' + project_id,
-        'nbf' => 1234567890,
-        'https://stytch.com/organization' => { 'organization_id' => 'org-123' },
+        'aud' => ['project-123'],
+        'exp' => 1_234_567_890,
+        'iat' => 1_234_567_890,
+        'iss' => 'stytch.com/project-123',
+        'nbf' => 1_234_567_890,
+        'https://stytch.com/organization' => {
+          'organization_id' => 'org-123',
+          'slug' => 'test-org'
+        },
         'custom_field' => 'custom_value'
       }
     end
 
     before do
       allow(idp).to receive(:get_jwks).and_return({ 'keys' => [] })
-      allow(JWT).to receive(:decode).and_return([claims])
+      allow(JWT).to receive(:decode).and_return([decoded_claims])
     end
 
     it 'decodes JWT and returns claims' do
       result = idp.introspect_access_token_local(access_token: access_token)
-
       expect(result).to include(
         'subject' => 'user-123',
         'scope' => 'read write',
-        'audience' => 'test_audience',
-        'expires_at' => 1234567890,
-        'issued_at' => 1234567890,
-        'issuer' => 'stytch.com/' + project_id,
-        'not_before' => 1234567890,
+        'audience' => ['project-123'],
+        'expires_at' => 1_234_567_890,
+        'issued_at' => 1_234_567_890,
+        'issuer' => 'stytch.com/project-123',
+        'not_before' => 1_234_567_890,
         'token_type' => 'access_token',
-        'custom_claims' => { 'custom_field' => 'custom_value' },
-        'organization_claim' => { 'organization_id' => 'org-123' }
+        'organization_claim' => {
+          'organization_id' => 'org-123',
+          'slug' => 'test-org'
+        }
       )
+      expect(result['custom_claims']).to include('custom_field' => 'custom_value')
     end
 
     it 'returns nil when JWT decoding fails' do
       allow(JWT).to receive(:decode).and_raise(JWT::DecodeError)
-
       result = idp.introspect_access_token_local(access_token: access_token)
-
       expect(result).to be_nil
     end
 
@@ -173,18 +204,18 @@ RSpec.describe StytchB2B::IDP do
 
       it 'performs authorization check' do
         allow(policy_cache).to receive(:perform_authorization_check).and_return(nil)
-
         idp.introspect_access_token_local(
           access_token: access_token,
           authorization_check: authorization_check
         )
-
         expect(policy_cache).to have_received(:perform_authorization_check).with(
-          subject_roles: ['read', 'write'],
+          subject_roles: %w[read write],
           authorization_check: authorization_check,
           subject_org_id: 'org-123'
         )
       end
     end
   end
-end 
+end
+
+# rubocop:enable RSpec/MultipleMemoizedHelpers

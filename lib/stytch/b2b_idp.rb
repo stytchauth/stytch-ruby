@@ -102,7 +102,7 @@ module StytchB2B
 
       url = "/v1/public/#{@project_id}/oauth2/introspect"
       res = post_request(url, data, headers)
-      
+
       jwt_response = res
       return nil unless jwt_response['active']
 
@@ -183,29 +183,57 @@ module StytchB2B
     )
       scope_claim = 'scope'
       organization_claim = 'https://stytch.com/organization'
-      
+
       # Create a JWKS loader similar to other classes in the codebase
       @cache_last_update = 0
       jwks_loader = lambda do |options|
         @cached_keys = nil if options[:invalidate] && @cache_last_update < Time.now.to_i - 300
-        @cached_keys ||= begin
+        if @cached_keys.nil?
+          @cached_keys = get_jwks(project_id: @project_id)
           @cache_last_update = Time.now.to_i
-          keys = []
-          get_jwks(project_id: @project_id)['keys'].each do |r|
-            keys << r
-          end
-          { keys: keys }
         end
+        @cached_keys
       end
 
-      default_issuer = 'stytch.com/' + @project_id
-      base_url_issuer = @connection.url_prefix
-      valid_issuers = [default_issuer, base_url_issuer]
-
       begin
-        decoded_token = JWT.decode access_token, nil, true,
-                                   { jwks: jwks_loader, iss: valid_issuers, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'] }
-        generic_claims = decoded_token[0]
+        decoded_jwt = JWT.decode(
+          access_token,
+          nil,
+          true,
+          {
+            algorithms: ['RS256'],
+            jwks: jwks_loader,
+            iss: "stytch.com/#{@project_id}",
+            aud: @project_id
+          }
+        )[0]
+
+        generic_claims = decoded_jwt
+        custom_claims = generic_claims.reject { |k, _| @non_custom_claim_keys.include?(k) }
+        organization_claim_data = generic_claims[organization_claim]
+        organization_id = organization_claim_data['organization_id']
+        scope = generic_claims[scope_claim]
+
+        if authorization_check
+          @policy_cache.perform_authorization_check(
+            subject_roles: scope.split,
+            authorization_check: authorization_check,
+            subject_org_id: organization_id
+          )
+        end
+
+        {
+          'subject' => generic_claims['sub'],
+          'scope' => generic_claims[scope_claim],
+          'audience' => generic_claims['aud'],
+          'expires_at' => generic_claims['exp'],
+          'issued_at' => generic_claims['iat'],
+          'issuer' => generic_claims['iss'],
+          'not_before' => generic_claims['nbf'],
+          'token_type' => 'access_token',
+          'custom_claims' => custom_claims,
+          'organization_claim' => organization_claim_data
+        }
       rescue JWT::InvalidIssuerError
         raise Stytch::JWTInvalidIssuerError
       rescue JWT::InvalidAudError
@@ -215,45 +243,23 @@ module StytchB2B
       rescue JWT::IncorrectAlgorithm
         raise Stytch::JWTIncorrectAlgorithmError
       rescue JWT::DecodeError
-        return nil
+        nil
       end
-
-      return nil if generic_claims.nil?
-
-      custom_claims = generic_claims.reject { |k, _| @non_custom_claim_keys.include?(k) }
-      scope = generic_claims[scope_claim]
-      org_claim = generic_claims[organization_claim]
-
-      if authorization_check
-        @policy_cache.perform_authorization_check(
-          subject_roles: scope.split,
-          authorization_check: authorization_check,
-          subject_org_id: org_claim['organization_id']
-        )
-      end
-
-      {
-        'subject' => generic_claims['sub'],
-        'scope' => scope,
-        'custom_claims' => custom_claims,
-        'audience' => generic_claims['aud'],
-        'expires_at' => generic_claims['exp'],
-        'issued_at' => generic_claims['iat'],
-        'issuer' => generic_claims['iss'],
-        'not_before' => generic_claims['nbf'],
-        'token_type' => 'access_token',
-        'organization_claim' => org_claim
-      }
     end
 
-    private
-
+    # Gets the JWKS for the project.
+    #
+    # == Parameters:
+    # project_id::
+    #   The ID of the project.
+    #   The type of this field is +String+.
+    #
+    # == Returns:
+    # The JWKS for the project.
+    #   The type of this field is +Hash+.
     def get_jwks(project_id:)
       headers = {}
-      query_params = {}
-      path = "/v1/b2b/sessions/jwks/#{project_id}"
-      request = request_with_query_params(path, query_params)
-      get_request(request, headers)
+      get_request("/v1/public/#{project_id}/oauth2/jwks", headers)
     end
   end
-end 
+end
