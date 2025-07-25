@@ -92,7 +92,7 @@ module StytchB2B
       token_type_hint: 'access_token',
       authorization_check: nil
     )
-      headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
+      headers = {}
       data = {
         'token' => token,
         'client_id' => client_id,

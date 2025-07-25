@@ -56,7 +56,7 @@ RSpec.describe StytchB2B::IDP do
         'token_type_hint' => token_type_hint,
         'client_secret' => client_secret
       }
-      expected_headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
+      expected_headers = {}
 
       idp.introspect_token_network(
         token: token,
