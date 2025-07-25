@@ -191,7 +191,7 @@ RSpec.describe Stytch::PolicyCache do
     let(:authorization_check) do
       {
         'action' => 'read',
-        'resource_id' => 'users',
+        'resource_id' => 'users'
       }
     end
 
@@ -201,7 +201,7 @@ RSpec.describe Stytch::PolicyCache do
           subject_roles: ['admin'],
           authorization_check: {
             'action' => 'any_action',
-            'resource_id' => 'users',
+            'resource_id' => 'users'
           }
         ) 
       end.not_to raise_error
@@ -213,7 +213,7 @@ RSpec.describe Stytch::PolicyCache do
           subject_roles: ['user'],
           authorization_check: {
             'action' => 'read',
-            'resource_id' => 'users',
+            'resource_id' => 'users'
           }
         )
       end.not_to raise_error
@@ -225,7 +225,7 @@ RSpec.describe Stytch::PolicyCache do
           subject_roles: ['user'],
           authorization_check: {
             'action' => 'write',
-            'resource_id' => 'users',
+            'resource_id' => 'users'
           }
         )
       end.to raise_error(Stytch::PermissionError)
@@ -246,7 +246,7 @@ RSpec.describe Stytch::PolicyCache do
           subject_roles: %w[guest user],
           authorization_check: {
             'action' => 'write',
-            'resource_id' => 'posts',
+            'resource_id' => 'posts'
           }
         )
       end.not_to raise_error
