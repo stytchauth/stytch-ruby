@@ -28,8 +28,8 @@ module Stytch
     # authorization_check is an object with keys 'action', 'resource_id', and 'organization_id'
     def perform_authorization_check(
       subject_roles:,
-      authorization_check:,
-      subject_org_id: nil
+      subject_org_id:,
+      authorization_check:
     )
       raise Stytch::TenancyError.new(subject_org_id, authorization_check['organization_id']) if subject_org_id != authorization_check['organization_id']
 
