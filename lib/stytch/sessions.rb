@@ -506,10 +506,9 @@ module Stytch
       end
 
       # Do the auth check - intentionally don't rescue errors from here
-      if authorization_check && session['roles']
-        @policy_cache.perform_authorization_check(
+      if authorization_check
+        @policy_cache.perform_consumer_authorization_check(
           subject_roles: session['roles'],
-          subject_org_id: nil,
           authorization_check: authorization_check
         )
       end
