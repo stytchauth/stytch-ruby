@@ -203,7 +203,7 @@ RSpec.describe Stytch::PolicyCache do
             'action' => 'any_action',
             'resource_id' => 'users'
           }
-        ) 
+        )
       end.not_to raise_error
     end
 
