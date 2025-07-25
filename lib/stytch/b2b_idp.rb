@@ -259,7 +259,9 @@ module StytchB2B
     #   The type of this field is +Hash+.
     def get_jwks(project_id:)
       headers = {}
-      get_request("/v1/public/#{project_id}/oauth2/jwks", headers)
+      query_params = {}
+      request = request_with_query_params("/v1/b2b/sessions/jwks/#{project_id}", query_params)
+      get_request(request, headers)
     end
   end
 end
