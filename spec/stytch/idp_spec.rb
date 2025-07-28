@@ -6,21 +6,6 @@ RSpec.describe Stytch::IDP do
   let(:project_id) { 'project-test-00000000-0000-0000-0000-000000000000' }
   let(:idp) { described_class.new(mock_connection, project_id, mock_policy_cache) }
 
-  let(:sample_jwt_response) do
-    {
-      'active' => true,
-      'sub' => 'user-test-123',
-      'scope' => 'read write',
-      'aud' => project_id,
-      'exp' => Time.now.to_i + 3600,
-      'iat' => Time.now.to_i,
-      'iss' => "stytch.com/#{project_id}",
-      'nbf' => Time.now.to_i,
-      'token_type' => 'access_token',
-      'custom_field' => 'custom_value'
-    }
-  end
-
   before do
     allow(mock_connection).to receive(:url_prefix).and_return('https://test.stytch.com')
     allow(mock_policy_cache).to receive(:perform_consumer_authorization_check)
@@ -40,20 +25,29 @@ RSpec.describe Stytch::IDP do
   end
 
   describe '#introspect_token_network' do
-    let(:token) { 'test_token' }
-    let(:client_id) { 'client_123' }
-    let(:client_secret) { 'secret_456' }
-
     before do
-      allow(idp).to receive(:post_request).and_return(sample_jwt_response)
+      allow(idp).to receive(:post_request).and_return(
+        {
+          'active' => true,
+          'sub' => 'user-test-123',
+          'scope' => 'read write',
+          'aud' => project_id,
+          'exp' => Time.now.to_i + 3600,
+          'iat' => Time.now.to_i,
+          'iss' => "stytch.com/#{project_id}",
+          'nbf' => Time.now.to_i,
+          'token_type' => 'access_token',
+          'custom_field' => 'custom_value'
+        }
+      )
     end
 
     context 'when token is active' do
       it 'returns token claims without authorization check' do
         result = idp.introspect_token_network(
-          token: token,
-          client_id: client_id,
-          client_secret: client_secret
+          token: 'test_token',
+          client_id: 'client_123',
+          client_secret: 'secret_456'
         )
 
         expect(result['subject']).to eq('user-test-123')
@@ -66,42 +60,42 @@ RSpec.describe Stytch::IDP do
       it 'performs authorization check when provided' do
         authorization_check = { 'action' => 'read', 'resource_id' => 'users' }
 
-        expect(mock_policy_cache).to receive(:perform_consumer_authorization_check)
-
         idp.introspect_token_network(
-          token: token,
-          client_id: client_id,
+          token: 'test_token',
+          client_id: 'client_123',
           authorization_check: authorization_check
         )
+
+        expect(mock_policy_cache).to have_received(:perform_consumer_authorization_check)
       end
 
       it 'includes client_secret in request when provided' do
-        expect(idp).to receive(:post_request)
-
         idp.introspect_token_network(
-          token: token,
-          client_id: client_id,
-          client_secret: client_secret
+          token: 'test_token',
+          client_id: 'client_123',
+          client_secret: 'secret_456'
         )
+
+        expect(idp).to have_received(:post_request)
       end
 
       it 'uses default token_type_hint when not provided' do
-        expect(idp).to receive(:post_request)
-
         idp.introspect_token_network(
-          token: token,
-          client_id: client_id
+          token: 'test_token',
+          client_id: 'client_123'
         )
+
+        expect(idp).to have_received(:post_request)
       end
 
       it 'uses custom token_type_hint when provided' do
-        expect(idp).to receive(:post_request)
-
         idp.introspect_token_network(
-          token: token,
-          client_id: client_id,
+          token: 'test_token',
+          client_id: 'client_123',
           token_type_hint: 'refresh_token'
         )
+
+        expect(idp).to have_received(:post_request)
       end
     end
 
@@ -112,8 +106,8 @@ RSpec.describe Stytch::IDP do
 
       it 'returns nil' do
         result = idp.introspect_token_network(
-          token: token,
-          client_id: client_id
+          token: 'test_token',
+          client_id: 'client_123'
         )
 
         expect(result).to be_nil
@@ -122,31 +116,26 @@ RSpec.describe Stytch::IDP do
   end
 
   describe '#introspect_access_token_local' do
-    let(:access_token) { 'valid_jwt_token' }
-    let(:decoded_claims) do
-      {
-        'sub' => 'user-test-123',
-        'scope' => 'read write',
-        'aud' => project_id,
-        'exp' => Time.now.to_i + 3600,
-        'iat' => Time.now.to_i,
-        'iss' => "stytch.com/#{project_id}",
-        'nbf' => Time.now.to_i,
-        'custom_field' => 'custom_value'
-      }
-    end
-
     before do
       allow(idp).to receive(:get_jwks).and_return({ 'keys' => [] })
     end
 
     context 'when JWT is valid' do
       before do
-        allow(JWT).to receive(:decode).and_return([decoded_claims])
+        allow(JWT).to receive(:decode).and_return([{
+                                                    'sub' => 'user-test-123',
+                                                    'scope' => 'read write',
+                                                    'aud' => project_id,
+                                                    'exp' => Time.now.to_i + 3600,
+                                                    'iat' => Time.now.to_i,
+                                                    'iss' => "stytch.com/#{project_id}",
+                                                    'nbf' => Time.now.to_i,
+                                                    'custom_field' => 'custom_value'
+                                                  }])
       end
 
       it 'returns token claims without authorization check' do
-        result = idp.introspect_access_token_local(access_token: access_token)
+        result = idp.introspect_access_token_local(access_token: 'valid_jwt_token')
 
         expect(result['subject']).to eq('user-test-123')
         expect(result['scope']).to eq('read write')
@@ -158,19 +147,19 @@ RSpec.describe Stytch::IDP do
       it 'performs authorization check when provided' do
         authorization_check = { 'action' => 'read', 'resource_id' => 'users' }
 
-        expect(mock_policy_cache).to receive(:perform_consumer_authorization_check)
-
         idp.introspect_access_token_local(
-          access_token: access_token,
+          access_token: 'valid_jwt_token',
           authorization_check: authorization_check
         )
+
+        expect(mock_policy_cache).to have_received(:perform_consumer_authorization_check)
       end
 
       it 'caches JWKS' do
         # The JWKS is loaded in a lambda, so we need to set up the mock to return something
         allow(idp).to receive(:get_jwks).and_return({ 'keys' => [] })
 
-        idp.introspect_access_token_local(access_token: access_token)
+        idp.introspect_access_token_local(access_token: 'valid_jwt_token')
       end
     end
 
@@ -180,7 +169,7 @@ RSpec.describe Stytch::IDP do
       end
 
       it 'returns nil' do
-        result = idp.introspect_access_token_local(access_token: access_token)
+        result = idp.introspect_access_token_local(access_token: 'invalid_jwt_token')
         expect(result).to be_nil
       end
     end
@@ -192,7 +181,7 @@ RSpec.describe Stytch::IDP do
 
       it 'raises JWTInvalidIssuerError' do
         expect do
-          idp.introspect_access_token_local(access_token: access_token)
+          idp.introspect_access_token_local(access_token: 'invalid_issuer_token')
         end.to raise_error(Stytch::JWTInvalidIssuerError)
       end
     end
@@ -204,7 +193,7 @@ RSpec.describe Stytch::IDP do
 
       it 'raises JWTInvalidAudienceError' do
         expect do
-          idp.introspect_access_token_local(access_token: access_token)
+          idp.introspect_access_token_local(access_token: 'invalid_audience_token')
         end.to raise_error(Stytch::JWTInvalidAudienceError)
       end
     end
@@ -216,7 +205,7 @@ RSpec.describe Stytch::IDP do
 
       it 'raises JWTExpiredSignatureError' do
         expect do
-          idp.introspect_access_token_local(access_token: access_token)
+          idp.introspect_access_token_local(access_token: 'expired_token')
         end.to raise_error(Stytch::JWTExpiredSignatureError)
       end
     end
@@ -228,24 +217,22 @@ RSpec.describe Stytch::IDP do
 
       it 'raises JWTIncorrectAlgorithmError' do
         expect do
-          idp.introspect_access_token_local(access_token: access_token)
+          idp.introspect_access_token_local(access_token: 'incorrect_algorithm_token')
         end.to raise_error(Stytch::JWTIncorrectAlgorithmError)
       end
     end
   end
 
   describe '#get_jwks' do
-    let(:jwks_response) { { 'keys' => %w[key1 key2] } }
-
     before do
-      allow(idp).to receive(:get_request).and_return(jwks_response)
+      allow(idp).to receive(:get_request).and_return({ 'keys' => %w[key1 key2] })
     end
 
     it 'fetches JWKS for the project' do
-      expect(idp).to receive(:get_request)
-
       result = idp.get_jwks(project_id: project_id)
-      expect(result).to eq(jwks_response)
+
+      expect(idp).to have_received(:get_request)
+      expect(result).to eq({ 'keys' => %w[key1 key2] })
     end
   end
 end
