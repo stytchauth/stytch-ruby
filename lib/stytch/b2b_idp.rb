@@ -101,13 +101,12 @@ module StytchB2B
       data['client_secret'] = client_secret unless client_secret.nil?
 
       url = "/v1/public/#{@project_id}/oauth2/introspect"
-      res = post_request(url, data, headers)
+      jwt_response = post_request(url, data, headers)
 
-      jwt_response = res
       return nil unless jwt_response['active']
 
-      custom_claims = res.reject { |k, _| @non_custom_claim_keys.include?(k) }
-      organization_claim = res['https://stytch.com/organization']
+      custom_claims = jwt_response.reject { |k, _| @non_custom_claim_keys.include?(k) }
+      organization_claim = jwt_response['https://stytch.com/organization']
       organization_id = organization_claim['organization_id']
       scope = jwt_response['scope']
 
