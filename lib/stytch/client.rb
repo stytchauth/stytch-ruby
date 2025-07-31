@@ -19,7 +19,7 @@ module Stytch
   class Client
     ENVIRONMENTS = %i[live test].freeze
 
-    attr_reader :connected_app, :crypto_wallets, :fraud, :impersonation, :m2m, :magic_links, :oauth, :otps, :passwords, :project, :sessions, :totps, :users, :webauthn
+    attr_reader :connected_app, :crypto_wallets, :fraud, :idp, :impersonation, :m2m, :magic_links, :oauth, :otps, :passwords, :project, :sessions, :totps, :users, :webauthn
 
     def initialize(project_id:, secret:, env: nil, fraud_env: nil, &block)
       @api_host = api_host(env, project_id)
@@ -30,9 +30,13 @@ module Stytch
 
       create_connection(&block)
 
+      rbac = StytchB2B::RBAC.new(@connection)
+      @policy_cache = Stytch::PolicyCache.new(rbac_client: rbac)
+
       @connected_app = Stytch::ConnectedApp.new(@connection)
       @crypto_wallets = Stytch::CryptoWallets.new(@connection)
       @fraud = Stytch::Fraud.new(@fraud_connection)
+      @idp = Stytch::IDP.new(@connection, @project_id, @policy_cache)
       @impersonation = Stytch::Impersonation.new(@connection)
       @m2m = Stytch::M2M.new(@connection, @project_id, @is_b2b_client)
       @magic_links = Stytch::MagicLinks.new(@connection)
