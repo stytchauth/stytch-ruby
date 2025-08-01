@@ -15,7 +15,8 @@ RSpec.describe Stytch::Sessions do
 
     # Use the TestConnection class with default api_host
     connection = TestConnection.new
-    sessions = Stytch::Sessions.new(connection, project_id)
+    policy_cache = Stytch::PolicyCache.new(rbac_client: Stytch::RBAC.new(connection))
+    sessions = Stytch::Sessions.new(connection, project_id, policy_cache)
 
     kid = 'jwk-test-00000000-0000-0000-0000-000000000000'
     headers = { kid: kid }
