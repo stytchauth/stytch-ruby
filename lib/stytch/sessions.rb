@@ -16,7 +16,7 @@ module Stytch
   class Sessions
     include Stytch::RequestHelper
 
-    def initialize(connection, project_id)
+    def initialize(connection, project_id, policy_cache)
       @connection = connection
 
       rbac = Stytch::RBAC.new(connection)
