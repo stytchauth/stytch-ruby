@@ -214,5 +214,11 @@ RSpec.describe Stytch::Client do
       user_id: users_create['user_id']
     )
     expect(users_delete['status_code']).to eq(200)
+
+    idp_introspect_access_token_local = b2c_client.idp.introspect_access_token_local(
+      access_token: 'invalid_jwt_token'
+    )
+    # The method returns nil for invalid tokens, which is expected behavior
+    expect(idp_introspect_access_token_local).to be_nil
   end
 end
