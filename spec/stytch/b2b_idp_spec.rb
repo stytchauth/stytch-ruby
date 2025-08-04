@@ -209,7 +209,7 @@ RSpec.describe StytchB2B::IDP do
     it 'correctly decodes JWT with custom domain issuer' do
       custom_domain_connection = instance_double('connection', url_prefix: 'https://api.custom-domain.com')
       custom_domain_idp = StytchB2B::IDP.new(custom_domain_connection, 'project-123', policy_cache)
-      
+
       custom_claims = {
         'sub' => 'user-123',
         'scope' => 'read write',
@@ -224,10 +224,10 @@ RSpec.describe StytchB2B::IDP do
         },
         'custom_field' => 'custom_value'
       }
-      
+
       allow(custom_domain_idp).to receive(:get_jwks).and_return({ 'keys' => [] })
       allow(JWT).to receive(:decode).and_return([custom_claims])
-      
+
       result = custom_domain_idp.introspect_access_token_local(access_token: access_token)
       expect(result).to include(
         'subject' => 'user-123',
