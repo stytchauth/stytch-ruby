@@ -3,6 +3,7 @@
 # rubocop:disable RSpec/MultipleMemoizedHelpers
 
 require 'spec_helper'
+require 'jwt'
 
 RSpec.describe StytchB2B::IDP do
   let(:connection) { instance_double('connection', url_prefix: 'https://test.stytch.com') }
@@ -48,7 +49,7 @@ RSpec.describe StytchB2B::IDP do
     end
 
     it 'calls the introspect endpoint with correct parameters' do
-      expected_url = "/v1/public/#{project_id}/oauth2/introspect"
+      expected_url = connection.url_prefix + '/v1/oauth2/introspect'
       expected_data = {
         'token' => token,
         'client_id' => client_id,
@@ -152,6 +153,7 @@ RSpec.describe StytchB2B::IDP do
 
   describe '#introspect_access_token_local' do
     let(:access_token) { 'test_jwt_token' }
+    let(:valid_token) { JWT.encode(decoded_claims, 'secret', 'HS256') }
     let(:decoded_claims) do
       {
         'sub' => 'user-123',
@@ -197,6 +199,51 @@ RSpec.describe StytchB2B::IDP do
       allow(JWT).to receive(:decode).and_raise(JWT::DecodeError)
       result = idp.introspect_access_token_local(access_token: access_token)
       expect(result).to be_nil
+    end
+
+    it 'returns not nil when JWT decoding succeeds' do
+      result = idp.introspect_access_token_local(access_token: valid_token)
+      expect(result).not_to be_nil
+    end
+
+    it 'correctly decodes JWT with custom domain issuer' do
+      custom_domain_connection = instance_double('connection', url_prefix: 'https://api.custom-domain.com')
+      custom_domain_idp = StytchB2B::IDP.new(custom_domain_connection, 'project-123', policy_cache)
+
+      custom_claims = {
+        'sub' => 'user-123',
+        'scope' => 'read write',
+        'aud' => ['project-123'],
+        'exp' => 1_234_567_890,
+        'iat' => 1_234_567_890,
+        'iss' => 'https://api.custom-domain.com', # Using custom domain as issuer
+        'nbf' => 1_234_567_890,
+        'https://stytch.com/organization' => {
+          'organization_id' => 'org-123',
+          'slug' => 'test-org'
+        },
+        'custom_field' => 'custom_value'
+      }
+
+      allow(custom_domain_idp).to receive(:get_jwks).and_return({ 'keys' => [] })
+      allow(JWT).to receive(:decode).and_return([custom_claims])
+
+      result = custom_domain_idp.introspect_access_token_local(access_token: access_token)
+      expect(result).to include(
+        'subject' => 'user-123',
+        'scope' => 'read write',
+        'audience' => ['project-123'],
+        'expires_at' => 1_234_567_890,
+        'issued_at' => 1_234_567_890,
+        'issuer' => 'https://api.custom-domain.com',
+        'not_before' => 1_234_567_890,
+        'token_type' => 'access_token',
+        'organization_claim' => {
+          'organization_id' => 'org-123',
+          'slug' => 'test-org'
+        }
+      )
+      expect(result['custom_claims']).to include('custom_field' => 'custom_value')
     end
 
     context 'with authorization_check' do

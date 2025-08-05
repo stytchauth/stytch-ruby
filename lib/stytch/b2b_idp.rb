@@ -100,7 +100,7 @@ module StytchB2B
       }
       data['client_secret'] = client_secret unless client_secret.nil?
 
-      url = "/v1/public/#{@project_id}/oauth2/introspect"
+      url = @connection.url_prefix + '/v1/oauth2/introspect'
       jwt_response = post_request(url, data, headers)
 
       return nil unless jwt_response['active']
@@ -202,7 +202,7 @@ module StytchB2B
           {
             algorithms: ['RS256'],
             jwks: jwks_loader,
-            iss: "stytch.com/#{@project_id}",
+            iss: ["stytch.com/#{@project_id}", @connection.url_prefix],
             aud: @project_id
           }
         )[0]
