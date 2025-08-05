@@ -27,7 +27,7 @@ module Stytch
     # subject_org_id does not match the authZ request organization_id.
     # authorization_check is an object with keys 'action', 'resource_id', and 'organization_id'
     def perform_authorization_check(
-      subject_roles:,
+      token_scopes:,
       subject_org_id:,
       authorization_check:
     )
@@ -35,17 +35,24 @@ module Stytch
 
       policy = get_policy
 
-      for role in policy['roles']
-        next unless subject_roles.include?(role['role_id'])
+      # Check if any of the token scopes match policy scopes
+      # and if those scopes grant permission for the requested action/resource
+      action = authorization_check['action']
+      resource_id = authorization_check['resource_id']
 
-        for permission in role['permissions']
+      # Check if any of the token scopes grant permission for this action/resource
+      for scope_obj in policy['scopes']
+        scope_name = scope_obj['scope']
+        next unless token_scopes.include?(scope_name)
+
+        # Check if this scope grants permission for the requested action/resource
+        for permission in scope_obj['permissions']
           actions = permission['actions']
           resource = permission['resource_id']
-          has_matching_action = actions.include?('*') || actions.include?(authorization_check['action'])
-          has_matching_resource = resource == authorization_check['resource_id']
+          has_matching_action = actions.include?('*') || actions.include?(action)
+          has_matching_resource = resource == resource_id
           if has_matching_action && has_matching_resource
-            # All good
-            return
+            return # Permission granted
           end
         end
       end
@@ -60,22 +67,29 @@ module Stytch
     # subject_org_id does not match the authZ request organization_id.
     # authorization_check is an object with keys 'action', 'resource_id', and 'organization_id'
     def perform_consumer_authorization_check(
-      subject_roles:,
+      token_scopes:,
       authorization_check:
     )
       policy = get_policy
 
-      for role in policy['roles']
-        next unless subject_roles.include?(role['role_id'])
+      # For consumer authorization, we check if any of the token scopes match policy scopes
+      # and if those scopes grant permission for the requested action/resource
+      action = authorization_check['action']
+      resource_id = authorization_check['resource_id']
 
-        for permission in role['permissions']
+      # Check if any of the token scopes grant permission for this action/resource
+      for scope_obj in policy['scopes']
+        scope_name = scope_obj['scope']
+        next unless token_scopes.include?(scope_name)
+
+        # Check if this scope grants permission for the requested action/resource
+        for permission in scope_obj['permissions']
           actions = permission['actions']
           resource = permission['resource_id']
-          has_matching_action = actions.include?('*') || actions.include?(authorization_check['action'])
-          has_matching_resource = resource == authorization_check['resource_id']
+          has_matching_action = actions.include?('*') || actions.include?(action)
+          has_matching_resource = resource == resource_id
           if has_matching_action && has_matching_resource
-            # All good
-            return
+            return # Permission granted
           end
         end
       end

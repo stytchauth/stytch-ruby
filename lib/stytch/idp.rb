@@ -107,7 +107,7 @@ module Stytch
 
       if authorization_check
         @policy_cache.perform_consumer_authorization_check(
-          subject_roles: scope.split,
+          token_scopes: scope.split,
           authorization_check: authorization_check
         )
       end
@@ -202,7 +202,7 @@ module Stytch
 
         if authorization_check
           @policy_cache.perform_consumer_authorization_check(
-            subject_roles: scope.split,
+            token_scopes: scope.split,
             authorization_check: authorization_check
           )
         end
