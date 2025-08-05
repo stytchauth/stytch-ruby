@@ -96,7 +96,7 @@ module Stytch
       }
       data['client_secret'] = client_secret unless client_secret.nil?
 
-      url = @connection.url_prefix + "/v1/oauth2/introspect"
+      url = @connection.url_prefix + '/v1/oauth2/introspect'
       res = post_request(url, data, headers)
 
       jwt_response = res

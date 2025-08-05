@@ -49,7 +49,7 @@ RSpec.describe StytchB2B::IDP do
     end
 
     it 'calls the introspect endpoint with correct parameters' do
-      expected_url = connection.url_prefix + "/v1/public/#{project_id}/oauth2/introspect"
+      expected_url = connection.url_prefix + '/v1/oauth2/introspect'
       expected_data = {
         'token' => token,
         'client_id' => client_id,
