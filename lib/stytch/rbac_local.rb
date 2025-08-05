@@ -56,8 +56,7 @@ module Stytch
 
     # Performs an authorization check against the project's policy and a set of scopes. If the
     # check succeeds, this method will return. If the check fails, a PermissionError
-    # will be raised. This is used for OAuth-style consumer authorization.
-    # authorization_check is an object with keys 'action' and 'resource_id'
+    # will be raised. This is used for role based authorization.
     def perform_consumer_authorization_check(
       subject_roles:,
       authorization_check:

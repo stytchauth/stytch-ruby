@@ -700,9 +700,9 @@ module StytchB2B
       end
 
       # Do the auth check - intentionally don't rescue errors from here
-      if authorization_check && session['scopes']
+      if authorization_check && session['roles']
         @policy_cache.perform_authorization_check(
-          subject_roles: session['scopes'],
+          subject_roles: session['roles'],
           subject_org_id: session['member_session']['organization_id'],
           authorization_check: authorization_check
         )
