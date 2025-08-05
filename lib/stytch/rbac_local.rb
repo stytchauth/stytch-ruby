@@ -27,7 +27,7 @@ module Stytch
     # subject_org_id does not match the authZ request organization_id.
     # authorization_check is an object with keys 'action', 'resource_id', and 'organization_id'
     def perform_authorization_check(
-      token_scopes:,
+      subject_roles:,
       subject_org_id:,
       authorization_check:
     )
@@ -35,22 +35,44 @@ module Stytch
 
       policy = get_policy
 
-      # Check if any of the token scopes match policy scopes
-      # and if those scopes grant permission for the requested action/resource
-      action = authorization_check['action']
-      resource_id = authorization_check['resource_id']
+      for role in policy['roles']
+        next unless subject_roles.include?(role['role_id'])
 
-      # Check if any of the token scopes grant permission for this action/resource
-      for scope_obj in policy['scopes']
-        scope_name = scope_obj['scope']
-        next unless token_scopes.include?(scope_name)
-
-        # Check if this scope grants permission for the requested action/resource
-        for permission in scope_obj['permissions']
+        for permission in role['permissions']
           actions = permission['actions']
           resource = permission['resource_id']
-          has_matching_action = actions.include?('*') || actions.include?(action)
-          has_matching_resource = resource == resource_id
+          has_matching_action = actions.include?('*') || actions.include?(authorization_check['action'])
+          has_matching_resource = resource == authorization_check['resource_id']
+          if has_matching_action && has_matching_resource
+            # All good
+            return
+          end
+        end
+      end
+
+      # If we get here, we didn't find a matching permission
+      raise Stytch::PermissionError, authorization_check
+    end
+
+    # Performs an authorization check against the project's policy and a set of scopes. If the
+    # check succeeds, this method will return. If the check fails, a PermissionError
+    # will be raised. This is used for OAuth-style consumer authorization.
+    # authorization_check is an object with keys 'action' and 'resource_id'
+    def perform_consumer_authorization_check(
+      subject_roles:,
+      authorization_check:
+    )
+      policy = get_policy
+
+      # For consumer authorization, we check roles without tenancy validation
+      for role in policy['roles']
+        next unless subject_roles.include?(role['role_id'])
+
+        for permission in role['permissions']
+          actions = permission['actions']
+          resource = permission['resource_id']
+          has_matching_action = actions.include?('*') || actions.include?(authorization_check['action'])
+          has_matching_resource = resource == authorization_check['resource_id']
           if has_matching_action && has_matching_resource
             return # Permission granted
           end
@@ -61,18 +83,17 @@ module Stytch
       raise Stytch::PermissionError, authorization_check
     end
 
-    # Performs an authorization check against the project's policy and a set of roles. If the
+    # Performs an authorization check against the project's policy and a set of scopes. If the
     # check succeeds, this method will return. If the check fails, a PermissionError
-    # will be raised. It's also possible for a TenancyError to be raised if the
-    # subject_org_id does not match the authZ request organization_id.
-    # authorization_check is an object with keys 'action', 'resource_id', and 'organization_id'
-    def perform_consumer_authorization_check(
+    # will be raised. This is used for OAuth-style scope-based authorization.
+    # authorization_check is an object with keys 'action' and 'resource_id'
+    def perform_scope_authorization_check(
       token_scopes:,
       authorization_check:
     )
       policy = get_policy
 
-      # For consumer authorization, we check if any of the token scopes match policy scopes
+      # For scope-based authorization, we check if any of the token scopes match policy scopes
       # and if those scopes grant permission for the requested action/resource
       action = authorization_check['action']
       resource_id = authorization_check['resource_id']

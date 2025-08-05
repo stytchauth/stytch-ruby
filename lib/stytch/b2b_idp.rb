@@ -112,7 +112,7 @@ module StytchB2B
 
       if authorization_check
         @policy_cache.perform_authorization_check(
-          token_scopes: scope.split,
+          subject_roles: scope.split,
           authorization_check: authorization_check,
           subject_org_id: organization_id
         )
@@ -215,7 +215,7 @@ module StytchB2B
 
         if authorization_check
           @policy_cache.perform_authorization_check(
-            token_scopes: scope.split,
+            subject_roles: scope.split,
             authorization_check: authorization_check,
             subject_org_id: organization_id
           )
