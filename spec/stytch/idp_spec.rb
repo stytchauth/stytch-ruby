@@ -8,7 +8,7 @@ RSpec.describe Stytch::IDP do
 
   before do
     allow(mock_connection).to receive(:url_prefix).and_return('https://test.stytch.com')
-    allow(mock_policy_cache).to receive(:perform_consumer_authorization_check)
+    allow(mock_policy_cache).to receive(:perform_scope_authorization_check)
   end
 
   describe '#initialize' do
@@ -66,7 +66,7 @@ RSpec.describe Stytch::IDP do
           authorization_check: authorization_check
         )
 
-        expect(mock_policy_cache).to have_received(:perform_consumer_authorization_check)
+        expect(mock_policy_cache).to have_received(:perform_scope_authorization_check)
       end
 
       it 'includes client_secret in request when provided' do
@@ -152,7 +152,7 @@ RSpec.describe Stytch::IDP do
           authorization_check: authorization_check
         )
 
-        expect(mock_policy_cache).to have_received(:perform_consumer_authorization_check)
+        expect(mock_policy_cache).to have_received(:perform_scope_authorization_check)
       end
 
       it 'caches JWKS' do

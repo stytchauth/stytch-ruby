@@ -106,8 +106,8 @@ module Stytch
       scope = jwt_response['scope']
 
       if authorization_check
-        @policy_cache.perform_consumer_authorization_check(
-          subject_roles: scope.split,
+        @policy_cache.perform_scope_authorization_check(
+          token_scopes: scope.split,
           authorization_check: authorization_check
         )
       end
@@ -201,8 +201,8 @@ module Stytch
         scope = generic_claims[scope_claim]
 
         if authorization_check
-          @policy_cache.perform_consumer_authorization_check(
-            subject_roles: scope.split,
+          @policy_cache.perform_scope_authorization_check(
+            token_scopes: scope.split,
             authorization_check: authorization_check
           )
         end
