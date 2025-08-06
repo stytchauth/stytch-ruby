@@ -54,7 +54,7 @@ module Stytch
       raise Stytch::PermissionError, authorization_check
     end
 
-    # Performs an authorization check against the project's policy and a set of scopes. If the
+    # Performs an authorization check against the project's policy and a set of roles. If the
     # check succeeds, this method will return. If the check fails, a PermissionError
     # will be raised. This is used for role based authorization.
     def perform_consumer_authorization_check(
