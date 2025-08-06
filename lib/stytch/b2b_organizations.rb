@@ -97,7 +97,7 @@ module StytchB2B
 
     # Creates an Organization. An `organization_name` and a unique `organization_slug` are required.
     #
-    # By default, `email_invites` and `sso_jit_provisioning` will be set to `ALL_ALLOWED`, and `mfa_policy` will be set to `OPTIONAL` if no Organization authentication settings are explicitly defined in the request.
+    # If no Organization authentication setting parameters are passed in, `email_invites` will default to `ALL_ALLOWED` so that the Organization has a way to add Members. Otherwise, `email_invites` will default to `NOT_ALLOWED`.
     #
     # *See the [Organization authentication settings](https://stytch.com/docs/b2b/api/org-auth-settings) resource to learn more about fields like `email_jit_provisioning`, `email_invites`, `sso_jit_provisioning`, etc., and their behaviors.
     #
@@ -117,7 +117,7 @@ module StytchB2B
     # sso_jit_provisioning::
     #   The authentication setting that controls the JIT provisioning of Members when authenticating via SSO. The accepted values are:
     #
-    #   `ALL_ALLOWED` – new Members will be automatically provisioned upon successful authentication via any of the Organization's `sso_active_connections`.
+    #   `ALL_ALLOWED` – the default setting, new Members will be automatically provisioned upon successful authentication via any of the Organization's `sso_active_connections`.
     #
     #   `RESTRICTED` – only new Members with SSO logins that comply with `sso_jit_provisioning_allowed_connections` can be provisioned upon authentication.
     #
@@ -135,7 +135,7 @@ module StytchB2B
     #
     #   `RESTRICTED` – only new Members with verified emails that comply with `email_allowed_domains` can be provisioned upon authentication via Email Magic Link or OAuth.
     #
-    #   `NOT_ALLOWED` – disable JIT provisioning via Email Magic Link and OAuth.
+    #   `NOT_ALLOWED` – the default setting, disables JIT provisioning via Email Magic Link and OAuth.
     #
     #   The type of this field is nilable +String+.
     # email_invites::
@@ -193,7 +193,7 @@ module StytchB2B
     #
     #   `RESTRICTED` – only new Members with tenants in `allowed_oauth_tenants` can JIT provision via tenant.
     #
-    #   `NOT_ALLOWED` – disable JIT provisioning by OAuth Tenant.
+    #   `NOT_ALLOWED` – the default setting, disables JIT provisioning by OAuth Tenant.
     #
     #   The type of this field is nilable +String+.
     # allowed_oauth_tenants::
@@ -205,7 +205,7 @@ module StytchB2B
     # first_party_connected_apps_allowed_type::
     #   The authentication setting that sets the Organization's policy towards first party Connected Apps. The accepted values are:
     #
-    #   `ALL_ALLOWED` – any first party Connected App in the Project is permitted for use by Members.
+    #   `ALL_ALLOWED` – the default setting, any first party Connected App in the Project is permitted for use by Members.
     #
     #   `RESTRICTED` – only first party Connected Apps with IDs in `allowed_first_party_connected_apps` can be used by Members.
     #
@@ -218,7 +218,7 @@ module StytchB2B
     # third_party_connected_apps_allowed_type::
     #   The authentication setting that sets the Organization's policy towards third party Connected Apps. The accepted values are:
     #
-    #   `ALL_ALLOWED` – any third party Connected App in the Project is permitted for use by Members.
+    #   `ALL_ALLOWED` – the default setting, any third party Connected App in the Project is permitted for use by Members.
     #
     #   `RESTRICTED` – only third party Connected Apps with IDs in `allowed_first_party_connected_apps` can be used by Members.
     #
@@ -354,7 +354,7 @@ module StytchB2B
     # sso_jit_provisioning::
     #   The authentication setting that controls the JIT provisioning of Members when authenticating via SSO. The accepted values are:
     #
-    #   `ALL_ALLOWED` – new Members will be automatically provisioned upon successful authentication via any of the Organization's `sso_active_connections`.
+    #   `ALL_ALLOWED` – the default setting, new Members will be automatically provisioned upon successful authentication via any of the Organization's `sso_active_connections`.
     #
     #   `RESTRICTED` – only new Members with SSO logins that comply with `sso_jit_provisioning_allowed_connections` can be provisioned upon authentication.
     #
@@ -382,7 +382,7 @@ module StytchB2B
     #
     #   `RESTRICTED` – only new Members with verified emails that comply with `email_allowed_domains` can be provisioned upon authentication via Email Magic Link or OAuth.
     #
-    #   `NOT_ALLOWED` – disable JIT provisioning via Email Magic Link and OAuth.
+    #   `NOT_ALLOWED` – the default setting, disables JIT provisioning via Email Magic Link and OAuth.
     #
     #
     # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.email-jit-provisioning` action on the `stytch.organization` Resource.
@@ -456,7 +456,7 @@ module StytchB2B
     #
     #   `RESTRICTED` – only new Members with tenants in `allowed_oauth_tenants` can JIT provision via tenant.
     #
-    #   `NOT_ALLOWED` – disable JIT provisioning by OAuth Tenant.
+    #   `NOT_ALLOWED` – the default setting, disables JIT provisioning by OAuth Tenant.
     #
     #
     # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.oauth-tenant-jit-provisioning` action on the `stytch.organization` Resource.
@@ -472,7 +472,7 @@ module StytchB2B
     # first_party_connected_apps_allowed_type::
     #   The authentication setting that sets the Organization's policy towards first party Connected Apps. The accepted values are:
     #
-    #   `ALL_ALLOWED` – any first party Connected App in the Project is permitted for use by Members.
+    #   `ALL_ALLOWED` – the default setting, any first party Connected App in the Project is permitted for use by Members.
     #
     #   `RESTRICTED` – only first party Connected Apps with IDs in `allowed_first_party_connected_apps` can be used by Members.
     #
@@ -485,7 +485,7 @@ module StytchB2B
     # third_party_connected_apps_allowed_type::
     #   The authentication setting that sets the Organization's policy towards third party Connected Apps. The accepted values are:
     #
-    #   `ALL_ALLOWED` – any third party Connected App in the Project is permitted for use by Members.
+    #   `ALL_ALLOWED` – the default setting, any third party Connected App in the Project is permitted for use by Members.
     #
     #   `RESTRICTED` – only third party Connected Apps with IDs in `allowed_first_party_connected_apps` can be used by Members.
     #
@@ -1507,6 +1507,8 @@ module StytchB2B
       # The member will receive an Email Magic Link that expires in 5 minutes. If they do not verify their new email address in that timeframe, the email
       # will be freed up for other members to use.
       #
+      # The Magic Link will redirect to your `login_redirect_url` (or the configured default if one isn't provided), and you should invoke the [Authenticate Magic Link](https://stytch.com/docs/b2b/api/authenticate-magic-link) endpoint as normal to complete the flow.
+      #
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
@@ -1515,7 +1517,7 @@ module StytchB2B
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
       #   The type of this field is +String+.
       # email_address::
-      #   The email address of the Member.
+      #   The new email address for the Member.
       #   The type of this field is +String+.
       # login_redirect_url::
       #   The URL that the Member clicks from the login Email Magic Link. This URL should be an endpoint in the backend server that
