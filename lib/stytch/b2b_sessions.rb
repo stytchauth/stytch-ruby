@@ -164,7 +164,7 @@ module StytchB2B
     #   The type of this field is +Integer+.
     # verdict::
     #   If an `authorization_check` is provided in the request and the check succeeds, this field will return
-    #   the complete list of Roles that gave the Member permission to perform the specified action on the specified Resource.
+    #   information about why the Member was granted permission.
     #   The type of this field is nilable +AuthorizationVerdict+ (+object+).
     def authenticate(
       session_token: nil,
@@ -417,7 +417,7 @@ module StytchB2B
       post_request('/v1/b2b/sessions/exchange_access_token', request, headers)
     end
 
-    # Exchange an auth token issued by a trusted identity provider for a Stytch session. You must first register a Trusted Auth Token profile in the Stytch dashboard [here](https://stytch.com/docs/dashboard/trusted-auth-tokens).  If a session token or session JWT is provided, it will add the trusted auth token as an authentication factor to the existing session.
+    # Exchange an auth token issued by a trusted identity provider for a Stytch session. You must first register a Trusted Auth Token profile in the Stytch dashboard [here](https://stytch.com/dashboard/trusted-auth-tokens).  If a session token or session JWT is provided, it will add the trusted auth token as an authentication factor to the existing session.
     #
     # == Parameters:
     # organization_id::
@@ -504,7 +504,7 @@ module StytchB2B
     end
 
     # Migrate a session from an external OIDC compliant endpoint.
-    # Stytch will call the external UserInfo endpoint defined in your Stytch Project settings in the [Dashboard](https://stytch.com/docs/dashboard), and then perform a lookup using the `session_token`. <!-- FIXME more specific dashboard link-->
+    # Stytch will call the external UserInfo endpoint defined in your Stytch Project settings in the [Dashboard](https://stytch.com/dashboard/migrations), and then perform a lookup using the `session_token`.
     # If the response contains a valid email address, Stytch will attempt to match that email address with an existing Member in your Organization and create a Stytch Session.
     # You will need to create the member before using this endpoint.
     #

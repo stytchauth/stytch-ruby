@@ -84,8 +84,11 @@ module Stytch
     #   The type of this field is nilable +object+.
     # authorization_check::
     #   If an `authorization_check` object is passed in, this endpoint will also check if the User is
-    #   authorized to perform the given action on the given Resource in the specified Organization. A User is authorized if
-    #   their User Session contains a Role assigned with adequate permissions.
+    #   authorized to perform the given action on the given Resource. A User is authorized if they are assigned a Role with adequate permissions.
+    #
+    #   If the User is not authorized to perform the specified action on the specified Resource, a 403 error will be thrown.
+    #   Otherwise, the response will contain a list of Roles that satisfied the authorization check.
+    #   The type of this field is nilable +AuthorizationCheck+ (+object+).
     #
     # == Returns:
     # An object with the following fields:
@@ -111,7 +114,8 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     # verdict::
-    #   (no documentation yet)
+    #   If an `authorization_check` is provided in the request and the check succeeds, this field will return
+    #   information about why the User was granted permission.
     #   The type of this field is nilable +AuthorizationVerdict+ (+object+).
     def authenticate(
       session_token: nil,
@@ -166,7 +170,7 @@ module Stytch
       post_request('/v1/sessions/revoke', request, headers)
     end
 
-    # Migrate a session from an external OIDC compliant endpoint. Stytch will call the external UserInfo endpoint defined in your Stytch Project settings in the [Dashboard](https://stytch.com/docs/dashboard), and then perform a lookup using the `session_token`. If the response contains a valid email address, Stytch will attempt to match that email address with an existing User and create a Stytch Session. You will need to create the user before using this endpoint.
+    # Migrate a session from an external OIDC compliant endpoint. Stytch will call the external UserInfo endpoint defined in your Stytch Project settings in the [Dashboard](https://stytch.com/dashboard), and then perform a lookup using the `session_token`. If the response contains a valid email address, Stytch will attempt to match that email address with an existing User and create a Stytch Session. You will need to create the user before using this endpoint.
     #
     # == Parameters:
     # session_token::
@@ -336,7 +340,7 @@ module Stytch
       get_request(request, headers)
     end
 
-    # Exchange an auth token issued by a trusted identity provider for a Stytch session. You must first register a Trusted Auth Token profile in the Stytch dashboard [here](https://stytch.com/docs/dashboard/trusted-auth-tokens). If a session token or session JWT is provided, it will add the trusted auth token as an authentication factor to the existing session.
+    # Exchange an auth token issued by a trusted identity provider for a Stytch session. You must first register a Trusted Auth Token profile in the Stytch dashboard [here](https://stytch.com/dashboard/trusted-auth-tokens). If a session token or session JWT is provided, it will add the trusted auth token as an authentication factor to the existing session.
     #
     # == Parameters:
     # profile_id::
