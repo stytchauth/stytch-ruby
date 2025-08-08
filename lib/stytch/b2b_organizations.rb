@@ -114,6 +114,9 @@ module StytchB2B
     # trusted_metadata::
     #   An arbitrary JSON object for storing application-specific data or identity-provider-specific data.
     #   The type of this field is nilable +object+.
+    # organization_external_id::
+    #   An identifier that can be used in API calls wherever a organization_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters. External IDs must be unique within a project, but may be reused across different projects in the same workspace.
+    #   The type of this field is nilable +String+.
     # sso_jit_provisioning::
     #   The authentication setting that controls the JIT provisioning of Members when authenticating via SSO. The accepted values are:
     #
@@ -245,6 +248,7 @@ module StytchB2B
       organization_slug: nil,
       organization_logo_url: nil,
       trusted_metadata: nil,
+      organization_external_id: nil,
       sso_jit_provisioning: nil,
       email_allowed_domains: nil,
       email_jit_provisioning: nil,
@@ -270,6 +274,7 @@ module StytchB2B
       request[:organization_slug] = organization_slug unless organization_slug.nil?
       request[:organization_logo_url] = organization_logo_url unless organization_logo_url.nil?
       request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
+      request[:organization_external_id] = organization_external_id unless organization_external_id.nil?
       request[:sso_jit_provisioning] = sso_jit_provisioning unless sso_jit_provisioning.nil?
       request[:email_allowed_domains] = email_allowed_domains unless email_allowed_domains.nil?
       request[:email_jit_provisioning] = email_jit_provisioning unless email_jit_provisioning.nil?
@@ -295,7 +300,7 @@ module StytchB2B
     #
     # == Parameters:
     # organization_id::
-    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
     #   The type of this field is +String+.
     #
     # == Returns:
@@ -324,7 +329,7 @@ module StytchB2B
     #
     # == Parameters:
     # organization_id::
-    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
     #   The type of this field is +String+.
     # organization_name::
     #   The name of the Organization. Must be between 1 and 128 characters in length.
@@ -346,6 +351,9 @@ module StytchB2B
     #           If a session header is passed into the request, this field may **not** be passed into the request. You cannot
     #           update trusted metadata when acting as a Member.
     #   The type of this field is nilable +object+.
+    # organization_external_id::
+    #   An identifier that can be used in API calls wherever a organization_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters. External IDs must be unique within a project, but may be reused across different projects in the same workspace.
+    #   The type of this field is nilable +String+.
     # sso_default_connection_id::
     #   The default connection used for SSO when there are multiple active connections.
     #
@@ -516,6 +524,7 @@ module StytchB2B
       organization_slug: nil,
       organization_logo_url: nil,
       trusted_metadata: nil,
+      organization_external_id: nil,
       sso_default_connection_id: nil,
       sso_jit_provisioning: nil,
       sso_jit_provisioning_allowed_connections: nil,
@@ -544,6 +553,7 @@ module StytchB2B
       request[:organization_slug] = organization_slug unless organization_slug.nil?
       request[:organization_logo_url] = organization_logo_url unless organization_logo_url.nil?
       request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
+      request[:organization_external_id] = organization_external_id unless organization_external_id.nil?
       request[:sso_default_connection_id] = sso_default_connection_id unless sso_default_connection_id.nil?
       request[:sso_jit_provisioning] = sso_jit_provisioning unless sso_jit_provisioning.nil?
       request[:sso_jit_provisioning_allowed_connections] = sso_jit_provisioning_allowed_connections unless sso_jit_provisioning_allowed_connections.nil?
@@ -571,7 +581,7 @@ module StytchB2B
     #
     # == Parameters:
     # organization_id::
-    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
     #   The type of this field is +String+.
     #
     # == Returns:
@@ -655,7 +665,7 @@ module StytchB2B
     #
     # == Parameters:
     # organization_id::
-    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
     #   The type of this field is +String+.
     #
     # == Returns:
@@ -689,7 +699,7 @@ module StytchB2B
     #
     # == Parameters:
     # organization_id::
-    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
     #   The type of this field is +String+.
     # connected_app_id::
     #   The ID of the Connected App.
@@ -957,7 +967,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -1090,7 +1100,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -1124,7 +1134,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -1172,7 +1182,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -1216,7 +1226,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -1315,7 +1325,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # member_password_id::
       #   Globally unique UUID that identifies a Member's password.
@@ -1396,7 +1406,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -1445,7 +1455,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -1511,7 +1521,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -1586,7 +1596,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -1622,7 +1632,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # email_address::
       #   The email address of the Member.
@@ -1714,7 +1724,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -1773,7 +1783,7 @@ module StytchB2B
         #
         # == Parameters:
         # organization_id::
-        #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+        #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
         #   The type of this field is +String+.
         # member_id::
         #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -1830,7 +1840,7 @@ module StytchB2B
         #
         # == Parameters:
         # organization_id::
-        #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+        #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
         #   The type of this field is +String+.
         # member_id::
         #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -1886,7 +1896,7 @@ module StytchB2B
         #
         # == Parameters:
         # organization_id::
-        #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+        #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
         #   The type of this field is +String+.
         # member_id::
         #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -1922,7 +1932,7 @@ module StytchB2B
         #
         # == Parameters:
         # organization_id::
-        #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+        #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
         #   The type of this field is +String+.
         # member_id::
         #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -1964,7 +1974,7 @@ module StytchB2B
         #
         # == Parameters:
         # organization_id::
-        #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+        #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
         #   The type of this field is +String+.
         # member_id::
         #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -2033,7 +2043,7 @@ module StytchB2B
         #
         # == Parameters:
         # organization_id::
-        #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+        #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
         #   The type of this field is +String+.
         # member_id::
         #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.

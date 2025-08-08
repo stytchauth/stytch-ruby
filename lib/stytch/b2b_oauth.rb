@@ -31,7 +31,7 @@ module StytchB2B
     # If the Member is logging in via an OAuth provider that does not fully verify the email, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
     # The `primary_required` field details the authentication flow the Member must perform in order to [complete a step-up authentication](https://stytch.com/docs/b2b/guides/oauth/auth-flows) into the organization. The `intermediate_session_token` must be passed into that authentication flow.
     #
-    # We’re actively accepting requests for new OAuth providers! Please [email us](mailto:support@stytch.com) or [post in our community](https://stytch.com/docs/b2b/resources) if you are looking for an OAuth provider that is not currently supported.
+    # We're actively accepting requests for new OAuth providers! Please [email us](mailto:support@stytch.com) or [post in our community](https://stytch.com/docs/b2b/resources) if you are looking for an OAuth provider that is not currently supported.
     #
     # == Parameters:
     # oauth_token::
