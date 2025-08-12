@@ -607,7 +607,10 @@ module StytchB2B
       delete_request("/v1/b2b/organizations/#{organization_id}", headers)
     end
 
-    # Search for Organizations. If you send a request with no body params, no filtering will be applied and the endpoint will return all Organizations. All fuzzy search filters require a minimum of three characters.
+    #
+    # **Warning**: This endpoint is not recommended for use in login flows. Scaling issues may occur, as search performance may vary from ~150 milliseconds to 9 seconds depending on query complexity and rate limits are set to 100 requests/second.
+    #
+    # Search across your Organizations. Returns an array of Organization objects.
     #
     # == Parameters:
     # cursor::
@@ -1262,9 +1265,12 @@ module StytchB2B
         delete_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/totp", headers)
       end
 
+      #
+      # **Warning**: This endpoint is not recommended for use in login flows. Scaling issues may occur, as search performance may vary from ~150 milliseconds to 9 seconds depending on query complexity and rate limits are set to 100 requests/second.
+      #
       # Search for Members within specified Organizations. An array with at least one `organization_id` is required. Submitting an empty `query` returns all non-deleted Members within the specified Organizations.
       #
-      # *All fuzzy search filters require a minimum of three characters.
+      # All fuzzy search filters require a minimum of three characters.
       #
       # == Parameters:
       # organization_ids::
