@@ -284,6 +284,9 @@ module StytchB2B
     # intermediate_session_token::
     #   Adds this primary authentication factor to the intermediate session token. If the resulting set of factors satisfies the organization's primary authentication requirements and MFA requirements, the intermediate session token will be consumed and converted to a member session. If not, the same intermediate session token will be returned.
     #   The type of this field is nilable +String+.
+    # telemetry_id::
+    #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -326,6 +329,9 @@ module StytchB2B
     # primary_required::
     #   Information about the primary authentication requirements of the Organization.
     #   The type of this field is nilable +PrimaryRequired+ (+object+).
+    # member_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
       organization_id:,
       email_address:,
@@ -335,7 +341,8 @@ module StytchB2B
       session_jwt: nil,
       session_custom_claims: nil,
       locale: nil,
-      intermediate_session_token: nil
+      intermediate_session_token: nil,
+      telemetry_id: nil
     )
       headers = {}
       request = {
@@ -349,6 +356,7 @@ module StytchB2B
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
       request[:locale] = locale unless locale.nil?
       request[:intermediate_session_token] = intermediate_session_token unless intermediate_session_token.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
       post_request('/v1/b2b/passwords/authenticate', request, headers)
     end
@@ -534,6 +542,9 @@ module StytchB2B
       # intermediate_session_token::
       #   Adds this primary authentication factor to the intermediate session token. If the resulting set of factors satisfies the organization's primary authentication requirements and MFA requirements, the intermediate session token will be consumed and converted to a member session. If not, the same intermediate session token will be returned.
       #   The type of this field is nilable +String+.
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -579,6 +590,9 @@ module StytchB2B
       # primary_required::
       #   Information about the primary authentication requirements of the Organization.
       #   The type of this field is nilable +PrimaryRequired+ (+object+).
+      # member_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def reset(
         password_reset_token:,
         password:,
@@ -588,7 +602,8 @@ module StytchB2B
         code_verifier: nil,
         session_custom_claims: nil,
         locale: nil,
-        intermediate_session_token: nil
+        intermediate_session_token: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -602,6 +617,7 @@ module StytchB2B
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:locale] = locale unless locale.nil?
         request[:intermediate_session_token] = intermediate_session_token unless intermediate_session_token.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/b2b/passwords/email/reset', request, headers)
       end
@@ -709,6 +725,9 @@ module StytchB2B
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
       #   The type of this field is nilable +ResetRequestLocale+ (string enum).
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -745,6 +764,9 @@ module StytchB2B
       # mfa_required::
       #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
       #   The type of this field is nilable +MfaRequired+ (+object+).
+      # member_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def reset(
         organization_id:,
         password:,
@@ -752,7 +774,8 @@ module StytchB2B
         session_jwt: nil,
         session_duration_minutes: nil,
         session_custom_claims: nil,
-        locale: nil
+        locale: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -764,6 +787,7 @@ module StytchB2B
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:locale] = locale unless locale.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/b2b/passwords/session/reset', request, headers)
       end
@@ -839,6 +863,9 @@ module StytchB2B
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
       #   The type of this field is nilable +ResetRequestLocale+ (string enum).
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -878,6 +905,9 @@ module StytchB2B
       # primary_required::
       #   Information about the primary authentication requirements of the Organization.
       #   The type of this field is nilable +PrimaryRequired+ (+object+).
+      # member_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def reset(
         email_address:,
         existing_password:,
@@ -887,7 +917,8 @@ module StytchB2B
         session_duration_minutes: nil,
         session_jwt: nil,
         session_custom_claims: nil,
-        locale: nil
+        locale: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -901,6 +932,7 @@ module StytchB2B
         request[:session_jwt] = session_jwt unless session_jwt.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:locale] = locale unless locale.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/b2b/passwords/existing_password/reset', request, headers)
       end

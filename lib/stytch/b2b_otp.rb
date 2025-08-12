@@ -184,6 +184,9 @@ module StytchB2B
       # set_default_mfa::
       #   (no documentation yet)
       #   The type of this field is nilable +Boolean+.
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -211,6 +214,9 @@ module StytchB2B
       # member_session::
       #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
       #   The type of this field is nilable +MemberSession+ (+object+).
+      # member_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def authenticate(
         organization_id:,
         member_id:,
@@ -221,7 +227,8 @@ module StytchB2B
         session_duration_minutes: nil,
         session_custom_claims: nil,
         set_mfa_enrollment: nil,
-        set_default_mfa: nil
+        set_default_mfa: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -236,6 +243,7 @@ module StytchB2B
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:set_mfa_enrollment] = set_mfa_enrollment unless set_mfa_enrollment.nil?
         request[:set_default_mfa] = set_default_mfa unless set_default_mfa.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/b2b/otps/sms/authenticate', request, headers)
       end
@@ -383,6 +391,9 @@ module StytchB2B
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
       #   The type of this field is nilable +AuthenticateRequestLocale+ (string enum).
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -428,6 +439,9 @@ module StytchB2B
       # primary_required::
       #   (no documentation yet)
       #   The type of this field is nilable +PrimaryRequired+ (+object+).
+      # member_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def authenticate(
         organization_id:,
         email_address:,
@@ -437,7 +451,8 @@ module StytchB2B
         intermediate_session_token: nil,
         session_duration_minutes: nil,
         session_custom_claims: nil,
-        locale: nil
+        locale: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -451,6 +466,7 @@ module StytchB2B
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:locale] = locale unless locale.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/b2b/otps/email/authenticate', request, headers)
       end

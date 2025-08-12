@@ -101,6 +101,9 @@ module Stytch
     # code_verifier::
     #   A base64url encoded one time secret used to validate that the request starts and ends on the same device.
     #   The type of this field is nilable +String+.
+    # telemetry_id::
+    #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -145,13 +148,17 @@ module Stytch
     #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
+    # user_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
       token:,
       session_token: nil,
       session_duration_minutes: nil,
       session_jwt: nil,
       session_custom_claims: nil,
-      code_verifier: nil
+      code_verifier: nil,
+      telemetry_id: nil
     )
       headers = {}
       request = {
@@ -162,6 +169,7 @@ module Stytch
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
       request[:code_verifier] = code_verifier unless code_verifier.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
       post_request('/v1/oauth/authenticate', request, headers)
     end

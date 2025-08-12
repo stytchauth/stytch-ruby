@@ -61,6 +61,9 @@ module Stytch
     # name::
     #   The name of the user. Each field in the name object is optional.
     #   The type of this field is nilable +Name+ (+object+).
+    # telemetry_id::
+    #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -91,6 +94,9 @@ module Stytch
     #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
+    # user_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def create(
       email:,
       password:,
@@ -98,7 +104,8 @@ module Stytch
       session_custom_claims: nil,
       trusted_metadata: nil,
       untrusted_metadata: nil,
-      name: nil
+      name: nil,
+      telemetry_id: nil
     )
       headers = {}
       request = {
@@ -110,6 +117,7 @@ module Stytch
       request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
       request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
       request[:name] = name unless name.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
       post_request('/v1/passwords', request, headers)
     end
@@ -151,6 +159,9 @@ module Stytch
     #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
+    # telemetry_id::
+    #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -178,13 +189,17 @@ module Stytch
     #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
+    # user_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
       email:,
       password:,
       session_token: nil,
       session_duration_minutes: nil,
       session_jwt: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      telemetry_id: nil
     )
       headers = {}
       request = {
@@ -195,6 +210,7 @@ module Stytch
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
       post_request('/v1/passwords/authenticate', request, headers)
     end
@@ -510,6 +526,9 @@ module Stytch
       # options::
       #   Specify optional security settings.
       #   The type of this field is nilable +Options+ (+object+).
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -537,6 +556,9 @@ module Stytch
       #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
       #
       #   The type of this field is nilable +Session+ (+object+).
+      # user_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def reset(
         token:,
         password:,
@@ -546,7 +568,8 @@ module Stytch
         code_verifier: nil,
         session_custom_claims: nil,
         attributes: nil,
-        options: nil
+        options: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -560,6 +583,7 @@ module Stytch
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:attributes] = attributes unless attributes.nil?
         request[:options] = options unless options.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/passwords/email/reset', request, headers)
       end
@@ -608,6 +632,9 @@ module Stytch
       #
       #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
       #   The type of this field is nilable +object+.
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -635,6 +662,9 @@ module Stytch
       #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
       #
       #   The type of this field is nilable +Session+ (+object+).
+      # user_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def reset(
         email:,
         existing_password:,
@@ -642,7 +672,8 @@ module Stytch
         session_token: nil,
         session_duration_minutes: nil,
         session_jwt: nil,
-        session_custom_claims: nil
+        session_custom_claims: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -654,6 +685,7 @@ module Stytch
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
         request[:session_jwt] = session_jwt unless session_jwt.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/passwords/existing_password/reset', request, headers)
       end
@@ -696,6 +728,9 @@ module Stytch
       #
       #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
       #   The type of this field is nilable +object+.
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -723,12 +758,16 @@ module Stytch
       #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
       #
       #   The type of this field is nilable +Session+ (+object+).
+      # user_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def reset(
         password:,
         session_token: nil,
         session_jwt: nil,
         session_duration_minutes: nil,
-        session_custom_claims: nil
+        session_custom_claims: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -738,6 +777,7 @@ module Stytch
         request[:session_jwt] = session_jwt unless session_jwt.nil?
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/passwords/session/reset', request, headers)
       end

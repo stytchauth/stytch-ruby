@@ -78,6 +78,9 @@ module StytchB2B
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
       #   The type of this field is nilable +ExchangeRequestLocale+ (string enum).
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -117,12 +120,16 @@ module StytchB2B
       # primary_required::
       #   Information about the primary authentication requirements of the Organization.
       #   The type of this field is nilable +PrimaryRequired+ (+object+).
+      # member_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def exchange(
         intermediate_session_token:,
         organization_id:,
         session_duration_minutes: nil,
         session_custom_claims: nil,
-        locale: nil
+        locale: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -132,6 +139,7 @@ module StytchB2B
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:locale] = locale unless locale.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/b2b/discovery/intermediate_sessions/exchange', request, headers)
       end
@@ -305,6 +313,9 @@ module StytchB2B
       # allowed_third_party_connected_apps::
       #   An array of third party Connected App IDs that are allowed for the Organization. Only used when the Organization's `third_party_connected_apps_allowed_type` is `RESTRICTED`.
       #   The type of this field is nilable list of +String+.
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -344,6 +355,9 @@ module StytchB2B
       # primary_required::
       #   Information about the primary authentication requirements of the Organization.
       #   The type of this field is nilable +PrimaryRequired+ (+object+).
+      # member_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def create(
         intermediate_session_token:,
         session_duration_minutes: nil,
@@ -367,7 +381,8 @@ module StytchB2B
         first_party_connected_apps_allowed_type: nil,
         allowed_first_party_connected_apps: nil,
         third_party_connected_apps_allowed_type: nil,
-        allowed_third_party_connected_apps: nil
+        allowed_third_party_connected_apps: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -395,6 +410,7 @@ module StytchB2B
         request[:allowed_first_party_connected_apps] = allowed_first_party_connected_apps unless allowed_first_party_connected_apps.nil?
         request[:third_party_connected_apps_allowed_type] = third_party_connected_apps_allowed_type unless third_party_connected_apps_allowed_type.nil?
         request[:allowed_third_party_connected_apps] = allowed_third_party_connected_apps unless allowed_third_party_connected_apps.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/b2b/discovery/organizations/create', request, headers)
       end
