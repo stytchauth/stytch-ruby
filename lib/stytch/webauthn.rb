@@ -158,6 +158,9 @@ module Stytch
     #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
+    # user_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def register(
       user_id:,
       public_key_credential:,
@@ -288,6 +291,9 @@ module Stytch
     #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
+    # user_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
       public_key_credential:,
       session_token: nil,

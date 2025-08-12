@@ -323,6 +323,9 @@ module StytchB2B
     # primary_required::
     #   Information about the primary authentication requirements of the Organization.
     #   The type of this field is nilable +PrimaryRequired+ (+object+).
+    # member_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def exchange(
       organization_id:,
       session_token: nil,
@@ -402,6 +405,9 @@ module StytchB2B
     # member_session::
     #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
     #   The type of this field is nilable +MemberSession+ (+object+).
+    # member_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def exchange_access_token(
       access_token:,
       session_duration_minutes: nil,
@@ -480,6 +486,9 @@ module StytchB2B
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
+    # member_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def attest(
       organization_id:,
       profile_id:,

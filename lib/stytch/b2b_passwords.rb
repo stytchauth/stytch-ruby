@@ -326,6 +326,9 @@ module StytchB2B
     # primary_required::
     #   Information about the primary authentication requirements of the Organization.
     #   The type of this field is nilable +PrimaryRequired+ (+object+).
+    # member_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
       organization_id:,
       email_address:,
@@ -579,6 +582,9 @@ module StytchB2B
       # primary_required::
       #   Information about the primary authentication requirements of the Organization.
       #   The type of this field is nilable +PrimaryRequired+ (+object+).
+      # member_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def reset(
         password_reset_token:,
         password:,
@@ -745,6 +751,9 @@ module StytchB2B
       # mfa_required::
       #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
       #   The type of this field is nilable +MfaRequired+ (+object+).
+      # member_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def reset(
         organization_id:,
         password:,
@@ -878,6 +887,9 @@ module StytchB2B
       # primary_required::
       #   Information about the primary authentication requirements of the Organization.
       #   The type of this field is nilable +PrimaryRequired+ (+object+).
+      # member_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def reset(
         email_address:,
         existing_password:,

@@ -233,6 +233,9 @@ module StytchB2B
     # primary_required::
     #   (no documentation yet)
     #   The type of this field is nilable +PrimaryRequired+ (+object+).
+    # member_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
       sso_token:,
       pkce_code_verifier: nil,

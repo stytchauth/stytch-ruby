@@ -145,6 +145,9 @@ module Stytch
     # siwe_params::
     #   The parameters of the Sign In With Ethereum (SIWE) message that was signed.
     #   The type of this field is nilable +SIWEParamsResponse+ (+object+).
+    # user_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
       crypto_wallet_type:,
       crypto_wallet_address:,

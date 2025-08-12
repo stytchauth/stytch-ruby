@@ -117,6 +117,9 @@ module StytchB2B
       # primary_required::
       #   Information about the primary authentication requirements of the Organization.
       #   The type of this field is nilable +PrimaryRequired+ (+object+).
+      # member_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def exchange(
         intermediate_session_token:,
         organization_id:,
@@ -344,6 +347,9 @@ module StytchB2B
       # primary_required::
       #   Information about the primary authentication requirements of the Organization.
       #   The type of this field is nilable +PrimaryRequired+ (+object+).
+      # member_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def create(
         intermediate_session_token:,
         session_duration_minutes: nil,
