@@ -28,7 +28,7 @@ module Stytch
   class Client
     ENVIRONMENTS = %i[live test].freeze
 
-    attr_reader :connected_app, :crypto_wallets, :fraud, :idp, :impersonation, :m2m, :magic_links, :oauth, :otps, :passwords, :project, :rbac, :sessions, :totps, :users, :webauthn, :idp
+    attr_reader :connected_app, :crypto_wallets, :fraud, :idp, :impersonation, :m2m, :magic_links, :oauth, :otps, :passwords, :project, :rbac, :sessions, :totps, :users, :webauthn
 
     def initialize(project_id:, secret:, env: nil, fraud_env: nil, &block)
       @api_host = api_host(env, project_id)
