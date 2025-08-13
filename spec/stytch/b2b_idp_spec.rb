@@ -24,7 +24,7 @@ RSpec.describe StytchB2B::IDP do
         'client_id', 'request_id', 'scope', 'status_code', 'token_type',
         'https://stytch.com/organization'
       ]
-      expect(idp.instance_variable_get(:@non_custom_claim_keys)).to eq(expected_keys)
+      expect(idp.send(:non_custom_claim_keys)).to eq(expected_keys)
     end
   end
 

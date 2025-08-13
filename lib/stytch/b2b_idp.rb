@@ -196,7 +196,7 @@ module StytchB2B
           true,
           {
             algorithms: ['RS256'],
-            jwks: jwks_loader,
+            jwks: @jwks_loader,
             iss: ["stytch.com/#{@project_id}", @connection.url_prefix],
             aud: @project_id
           }
