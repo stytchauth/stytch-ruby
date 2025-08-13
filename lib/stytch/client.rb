@@ -41,7 +41,6 @@ module Stytch
 
       rbac = Stytch::RBAC.new(@connection)
       @policy_cache = Stytch::PolicyCache.new(rbac_client: rbac)
-      @idp = Stytch::IDP.new(@connection, @project_id, @policy_cache)
 
       @connected_app = Stytch::ConnectedApp.new(@connection)
       @crypto_wallets = Stytch::CryptoWallets.new(@connection)

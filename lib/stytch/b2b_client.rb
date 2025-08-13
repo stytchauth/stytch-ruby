@@ -43,7 +43,6 @@ module StytchB2B
 
       rbac = StytchB2B::RBAC.new(@connection)
       @policy_cache = Stytch::PolicyCache.new(rbac_client: rbac)
-      @idp = StytchB2B::IDP.new(@connection, @project_id, @policy_cache)
 
       @connected_app = Stytch::ConnectedApp.new(@connection)
       @discovery = StytchB2B::Discovery.new(@connection)
