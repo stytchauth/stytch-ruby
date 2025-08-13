@@ -20,7 +20,7 @@ RSpec.describe Stytch::IDP do
 
     it 'sets up non_custom_claim_keys' do
       expected_keys = %w[aud exp iat iss jti nbf sub active client_id request_id scope status_code token_type]
-      expect(idp.instance_variable_get(:@non_custom_claim_keys)).to eq(expected_keys)
+      expect(idp.send(:non_custom_claim_keys)).to eq(expected_keys)
     end
   end
 
@@ -229,7 +229,7 @@ RSpec.describe Stytch::IDP do
     end
 
     it 'fetches JWKS for the project' do
-      result = idp.get_jwks(project_id: project_id)
+      result = idp.send(:get_jwks, project_id: project_id)
 
       expect(idp).to have_received(:get_request)
       expect(result).to eq({ 'keys' => %w[key1 key2] })
