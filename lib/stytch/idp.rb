@@ -14,9 +14,12 @@ require_relative 'request_helper'
 module Stytch
   class IDP
     include Stytch::RequestHelper
+    attr_reader :oauth
 
     def initialize(connection, project_id, policy_cache)
       @connection = connection
+
+      @oauth = Stytch::IDP::OAuth.new(@connection)
       @policy_cache = policy_cache
       @project_id = project_id
       @cache_last_update = 0
@@ -264,5 +267,211 @@ module Stytch
     end
 
     # ENDMANUAL(IDP::introspect_token_network)
+
+    class OAuth
+      include Stytch::RequestHelper
+
+      def initialize(connection)
+        @connection = connection
+      end
+
+      # Initiates a request for authorization of a Connected App to access a User's account.
+      #
+      # Call this endpoint using the query parameters from an OAuth Authorization request.
+      # This endpoint validates various fields (`scope`, `client_id`, `redirect_uri`, `prompt`, etc...) are correct and returns
+      # relevant information for rendering an OAuth Consent Screen.
+      #
+      # This endpoint returns:
+      # - A public representation of the Connected App requesting authorization
+      # - Whether _explicit_ user consent must be granted before proceeding with the authorization
+      # - A list of scopes the user has the ability to grant the Connected App
+      #
+      # Use this response to prompt the user for consent (if necessary) before calling the [Submit OAuth Authorization](https://stytch.com/docs/api/connected-apps-oauth-authorize) endpoint.
+      #
+      # Exactly one of the following must be provided to identify the user granting authorization:
+      # - `user_id`
+      # - `session_token`
+      # - `session_jwt`
+      #
+      # If a `session_token` or `session_jwt` is passed, the OAuth Authorization will be linked to the user's session for tracking purposes.
+      # One of these fields must be used if the Connected App intends to complete the [Exchange Access Token](https://stytch.com/docs/api/connected-app-access-token-exchange) flow.
+      #
+      # == Parameters:
+      # client_id::
+      #   The ID of the Connected App client.
+      #   The type of this field is +String+.
+      # redirect_uri::
+      #   The callback URI used to redirect the user after authentication. This is the same URI provided at the start of the OAuth flow.  This field is required when using the `authorization_code` grant.
+      #   The type of this field is +String+.
+      # response_type::
+      #   The OAuth 2.0 response type. For authorization code flows this value is `code`.
+      #   The type of this field is +String+.
+      # scopes::
+      #   An array of scopes requested by the client.
+      #   The type of this field is list of +String+.
+      # user_id::
+      #   The unique ID of a specific User. You may use an `external_id` here if one is set for the user.
+      #   The type of this field is nilable +String+.
+      # session_token::
+      #   The `session_token` associated with a User's existing Session.
+      #   The type of this field is nilable +String+.
+      # session_jwt::
+      #   The `session_jwt` associated with a User's existing Session.
+      #   The type of this field is nilable +String+.
+      # prompt::
+      #   Space separated list that specifies how the Authorization Server should prompt the user for reauthentication and consent. Only `consent` is supported today.
+      #   The type of this field is nilable +String+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # user_id::
+      #   The unique ID of the affected User.
+      #   The type of this field is +String+.
+      # user::
+      #   The `user` object affected by this API call. See the [Get user endpoint](https://stytch.com/docs/api/get-user) for complete response field details.
+      #   The type of this field is +User+ (+object+).
+      # client::
+      #   (no documentation yet)
+      #   The type of this field is +ConnectedAppPublic+ (+object+).
+      # consent_required::
+      #   Whether the user must provide explicit consent for the authorization request.
+      #   The type of this field is +Boolean+.
+      # scope_results::
+      #   Details about each requested scope.
+      #   The type of this field is list of +ScopeResult+ (+object+).
+      # status_code::
+      #   (no documentation yet)
+      #   The type of this field is +Integer+.
+      def authorize_start(
+        client_id:,
+        redirect_uri:,
+        response_type:,
+        scopes:,
+        user_id: nil,
+        session_token: nil,
+        session_jwt: nil,
+        prompt: nil
+      )
+        headers = {}
+        request = {
+          client_id: client_id,
+          redirect_uri: redirect_uri,
+          response_type: response_type,
+          scopes: scopes
+        }
+        request[:user_id] = user_id unless user_id.nil?
+        request[:session_token] = session_token unless session_token.nil?
+        request[:session_jwt] = session_jwt unless session_jwt.nil?
+        request[:prompt] = prompt unless prompt.nil?
+
+        post_request('/v1/idp/oauth/authorize/start', request, headers)
+      end
+
+      # Completes a request for authorization of a Connected App to access a User's account.
+      #
+      # Call this endpoint using the query parameters from an OAuth Authorization request, after previously validating those parameters using the
+      # [Preflight Check](https://stytch.com/docs/api/connected-apps-oauth-authorize-start) API.
+      # Note that this endpoint takes in a few additional parameters the preflight check does not- `state`, `nonce`, and `code_challenge`.
+      #
+      # If the authorization was successful, the `redirect_uri` will contain a valid `authorization_code` embedded as a query parameter.
+      # If the authorization was unsuccessful, the `redirect_uri` will contain an OAuth2.1 `error_code`.
+      # In both cases, redirect the user to the location for the response to be consumed by the Connected App.
+      #
+      # Exactly one of the following must be provided to identify the user granting authorization:
+      # - `user_id`
+      # - `session_token`
+      # - `session_jwt`
+      #
+      # If a `session_token` or `session_jwt` is passed, the OAuth Authorization will be linked to the user's session for tracking purposes.
+      # One of these fields must be used if the Connected App intends to complete the [Exchange Access Token](https://stytch.com/docs/api/connected-app-access-token-exchange) flow.
+      #
+      # == Parameters:
+      # consent_granted::
+      #   Indicates whether the user granted the requested scopes.
+      #   The type of this field is +Boolean+.
+      # scopes::
+      #   An array of scopes requested by the client.
+      #   The type of this field is list of +String+.
+      # client_id::
+      #   The ID of the Connected App client.
+      #   The type of this field is +String+.
+      # redirect_uri::
+      #   The callback URI used to redirect the user after authentication. This is the same URI provided at the start of the OAuth flow.  This field is required when using the `authorization_code` grant.
+      #   The type of this field is +String+.
+      # response_type::
+      #   The OAuth 2.0 response type. For authorization code flows this value is `code`.
+      #   The type of this field is +String+.
+      # user_id::
+      #   The unique ID of a specific User. You may use an `external_id` here if one is set for the user.
+      #   The type of this field is nilable +String+.
+      # session_token::
+      #   The `session_token` associated with a User's existing Session.
+      #   The type of this field is nilable +String+.
+      # session_jwt::
+      #   The `session_jwt` associated with a User's existing Session.
+      #   The type of this field is nilable +String+.
+      # prompt::
+      #   Space separated list that specifies how the Authorization Server should prompt the user for reauthentication and consent. Only `consent` is supported today.
+      #   The type of this field is nilable +String+.
+      # state::
+      #   An opaque value used to maintain state between the request and callback.
+      #   The type of this field is nilable +String+.
+      # nonce::
+      #   A string used to associate a client session with an ID token to mitigate replay attacks.
+      #   The type of this field is nilable +String+.
+      # code_challenge::
+      #   A base64url encoded challenge derived from the code verifier for PKCE flows.
+      #   The type of this field is nilable +String+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # redirect_uri::
+      #   The callback URI used to redirect the user after authentication. This is the same URI provided at the start of the OAuth flow.  This field is required when using the `authorization_code` grant.
+      #   The type of this field is +String+.
+      # status_code::
+      #   (no documentation yet)
+      #   The type of this field is +Integer+.
+      # authorization_code::
+      #   A one-time use code that can be exchanged for tokens.
+      #   The type of this field is nilable +String+.
+      def authorize(
+        consent_granted:,
+        scopes:,
+        client_id:,
+        redirect_uri:,
+        response_type:,
+        user_id: nil,
+        session_token: nil,
+        session_jwt: nil,
+        prompt: nil,
+        state: nil,
+        nonce: nil,
+        code_challenge: nil
+      )
+        headers = {}
+        request = {
+          consent_granted: consent_granted,
+          scopes: scopes,
+          client_id: client_id,
+          redirect_uri: redirect_uri,
+          response_type: response_type
+        }
+        request[:user_id] = user_id unless user_id.nil?
+        request[:session_token] = session_token unless session_token.nil?
+        request[:session_jwt] = session_jwt unless session_jwt.nil?
+        request[:prompt] = prompt unless prompt.nil?
+        request[:state] = state unless state.nil?
+        request[:nonce] = nonce unless nonce.nil?
+        request[:code_challenge] = code_challenge unless code_challenge.nil?
+
+        post_request('/v1/idp/oauth/authorize', request, headers)
+      end
+    end
   end
 end

@@ -30,7 +30,7 @@ module StytchB2B
   class Client
     ENVIRONMENTS = %i[live test].freeze
 
-    attr_reader :connected_app, :discovery, :fraud, :impersonation, :m2m, :magic_links, :oauth, :otps, :organizations, :passwords, :project, :rbac, :recovery_codes, :scim, :sso, :sessions, :totps, :idp
+    attr_reader :connected_app, :discovery, :fraud, :idp, :impersonation, :m2m, :magic_links, :oauth, :otps, :organizations, :passwords, :project, :rbac, :recovery_codes, :scim, :sso, :sessions, :totps, :idp
 
     def initialize(project_id:, secret:, env: nil, fraud_env: nil, &block)
       @api_host = api_host(env, project_id)
@@ -43,11 +43,11 @@ module StytchB2B
 
       rbac = StytchB2B::RBAC.new(@connection)
       @policy_cache = Stytch::PolicyCache.new(rbac_client: rbac)
-      @idp = StytchB2B::IDP.new(@connection, @project_id, @policy_cache)
 
       @connected_app = Stytch::ConnectedApp.new(@connection)
       @discovery = StytchB2B::Discovery.new(@connection)
       @fraud = Stytch::Fraud.new(@fraud_connection)
+      @idp = StytchB2B::IDP.new(@connection, @project_id, @policy_cache)
       @impersonation = StytchB2B::Impersonation.new(@connection)
       @m2m = Stytch::M2M.new(@connection, @project_id, @is_b2b_client)
       @magic_links = StytchB2B::MagicLinks.new(@connection)
