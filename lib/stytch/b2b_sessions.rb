@@ -436,15 +436,15 @@ module StytchB2B
     # Exchange an auth token issued by a trusted identity provider for a Stytch session. You must first register a Trusted Auth Token profile in the Stytch dashboard [here](https://stytch.com/dashboard/trusted-auth-tokens).  If a session token or session JWT is provided, it will add the trusted auth token as an authentication factor to the existing session.
     #
     # == Parameters:
-    # organization_id::
-    #   The organization ID that the session should be authenticated in.
-    #   The type of this field is +String+.
     # profile_id::
     #   The ID of the trusted auth token profile to use for attestation.
     #   The type of this field is +String+.
     # token::
     #   The trusted auth token to authenticate.
     #   The type of this field is +String+.
+    # organization_id::
+    #   The organization ID that the session should be authenticated in.
+    #   The type of this field is nilable +String+.
     # session_duration_minutes::
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
@@ -503,9 +503,9 @@ module StytchB2B
     #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
     #   The type of this field is nilable +DeviceInfo+ (+object+).
     def attest(
-      organization_id:,
       profile_id:,
       token:,
+      organization_id: nil,
       session_duration_minutes: nil,
       session_custom_claims: nil,
       session_token: nil,
@@ -514,10 +514,10 @@ module StytchB2B
     )
       headers = {}
       request = {
-        organization_id: organization_id,
         profile_id: profile_id,
         token: token
       }
+      request[:organization_id] = organization_id unless organization_id.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
       request[:session_token] = session_token unless session_token.nil?
