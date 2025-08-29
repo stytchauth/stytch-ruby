@@ -51,8 +51,8 @@ module StytchB2B
     #   The type of this field is +String+.
     # valid_password::
     #   Returns `true` if the password passes our password validation. We offer two validation options,
-    #   [zxcvbn](https://stytch.com/docs/passwords#strength-requirements) is the default option which offers a high level of sophistication.
-    #   We also offer [LUDS](https://stytch.com/docs/passwords#strength-requirements). If an email address is included in the call we also
+    #   [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy) is the default option which offers a high level of sophistication.
+    #   We also offer [LUDS](https://stytch.com/docs/b2b/guides/passwords/strength-policy). If an email address is included in the call we also
     #   require that the password hasn't been compromised using built-in breach detection powered by [HaveIBeenPwned](https://haveibeenpwned.com/)
     #   The type of this field is +Boolean+.
     # score::
@@ -73,10 +73,10 @@ module StytchB2B
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     # luds_feedback::
-    #   Feedback for how to improve the password's strength using [luds](https://stytch.com/docs/passwords#strength-requirements).
+    #   Feedback for how to improve the password's strength using [luds](https://stytch.com/docs/guides/passwords/strength-policy).
     #   The type of this field is nilable +LudsFeedback+ (+object+).
     # zxcvbn_feedback::
-    #   Feedback for how to improve the password's strength using [zxcvbn](https://stytch.com/docs/passwords#strength-requirements).
+    #   Feedback for how to improve the password's strength using [zxcvbn](https://stytch.com/docs/b2b/guides/passwords/strength-policy).
     #   The type of this field is nilable +ZxcvbnFeedback+ (+object+).
     def strength_check(
       password:,
@@ -91,6 +91,9 @@ module StytchB2B
       post_request('/v1/b2b/passwords/strength_check', request, headers)
     end
 
+    #
+    # **Warning:** This endpoint marks the Member's email address as verified. Do **not** use this endpoint unless the user has already verified their email address in your application.
+    #
     # Adds an existing password to a Member's email that doesn't have a password yet.
     #
     # We support migrating members from passwords stored with bcrypt, scrypt, argon2, MD-5, SHA-1, and PBKDF2. This endpoint has a rate limit of 100 requests per second.
@@ -161,7 +164,7 @@ module StytchB2B
     #    the user owns the phone number in question.
     #   The type of this field is nilable +Boolean+.
     # external_id::
-    #   If a new member is created, this will set an identifier that can be used in API calls wherever a member_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project. Note that if a member already exists, this field will be ignored.
+    #   If a new member is created, this will set an identifier that can be used in most API calls where a `member_id` is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project. Note that if a member already exists, this field will be ignored.
     #   The type of this field is nilable +String+.
     #
     # == Returns:
@@ -229,7 +232,7 @@ module StytchB2B
 
     # Authenticate a member with their email address and password. This endpoint verifies that the member has a password currently set, and that the entered password is correct.
     #
-    # If you have breach detection during authentication enabled in your [password strength policy](https://stytch.com/docs/b2b/guides/passwords/strength-policies) and the member's credentials have appeared in the HaveIBeenPwned dataset, this endpoint will return a `member_reset_password` error even if the member enters a correct password. We force a password reset in this case to ensure that the member is the legitimate owner of the email address and not a malicious actor abusing the compromised credentials.
+    # If you have breach detection during authentication enabled in your [password strength policy](https://stytch.com/docs/b2b/guides/passwords/strength-policy) and the member's credentials have appeared in the HaveIBeenPwned dataset, this endpoint will return a `member_reset_password` error even if the member enters a correct password. We force a password reset in this case to ensure that the member is the legitimate owner of the email address and not a malicious actor abusing the compromised credentials.
     #
     # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
     # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
@@ -950,7 +953,7 @@ module StytchB2B
 
       # Authenticate an email/password combination in the discovery flow. This authenticate flow is only valid for cross-org passwords use cases, and is not tied to a specific organization.
       #
-      # If you have breach detection during authentication enabled in your [password strength policy](https://stytch.com/docs/b2b/guides/passwords/strength-policies) and the member's credentials have appeared in the HaveIBeenPwned dataset, this endpoint will return a `member_reset_password` error even if the member enters a correct password. We force a password reset in this case to ensure that the member is the legitimate owner of the email address and not a malicious actor abusing the compromised credentials.
+      # If you have breach detection during authentication enabled in your [password strength policy](https://stytch.com/docs/b2b/guides/passwords/strength-policy) and the member's credentials have appeared in the HaveIBeenPwned dataset, this endpoint will return a `member_reset_password` error even if the member enters a correct password. We force a password reset in this case to ensure that the member is the legitimate owner of the email address and not a malicious actor abusing the compromised credentials.
       #
       # If successful, this endpoint will create a new intermediate session and return a list of discovered organizations that can be session exchanged into.
       #

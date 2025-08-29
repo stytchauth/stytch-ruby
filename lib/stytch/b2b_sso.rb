@@ -546,6 +546,25 @@ module StytchB2B
         end
       end
 
+      class DeleteEncryptionPrivateKeyRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
       include Stytch::RequestHelper
 
       def initialize(connection)
@@ -656,6 +675,9 @@ module StytchB2B
       # idp_initiated_auth_disabled::
       #   Determines whether IDP initiated auth is allowed for a given SAML connection. Defaults to false (IDP Initiated Auth is enabled).
       #   The type of this field is nilable +Boolean+.
+      # saml_encryption_private_key::
+      #   A PKCS1 format RSA private key used to decrypt encrypted SAML assertions. Only PKCS1 format (starting with "-----BEGIN RSA PRIVATE KEY-----") is supported.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -687,6 +709,7 @@ module StytchB2B
         nameid_format: nil,
         alternative_acs_url: nil,
         idp_initiated_auth_disabled: nil,
+        saml_encryption_private_key: nil,
         method_options: nil
       )
         headers = {}
@@ -705,6 +728,7 @@ module StytchB2B
         request[:nameid_format] = nameid_format unless nameid_format.nil?
         request[:alternative_acs_url] = alternative_acs_url unless alternative_acs_url.nil?
         request[:idp_initiated_auth_disabled] = idp_initiated_auth_disabled unless idp_initiated_auth_disabled.nil?
+        request[:saml_encryption_private_key] = saml_encryption_private_key unless saml_encryption_private_key.nil?
 
         put_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}", request, headers)
       end
@@ -795,6 +819,44 @@ module StytchB2B
         headers = {}
         headers = headers.merge(method_options.to_headers) unless method_options.nil?
         delete_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}/verification_certificates/#{certificate_id}", headers)
+      end
+
+      # Delete a SAML encryption private key.
+      #
+      # == Parameters:
+      # organization_id::
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
+      #   The type of this field is +String+.
+      # connection_id::
+      #   Globally unique UUID that identifies a specific SSO `connection_id` for a Member.
+      #   The type of this field is +String+.
+      # private_key_id::
+      #   The ID of the encryption private key to be deleted.
+      #   The type of this field is +String+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # private_key_id::
+      #   The ID of the encryption private key.
+      #   The type of this field is +String+.
+      # status_code::
+      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+      #   The type of this field is +Integer+.
+      #
+      # == Method Options:
+      # This method supports an optional +StytchB2B::SSO::SAML::DeleteEncryptionPrivateKeyRequestOptions+ object which will modify the headers sent in the HTTP request.
+      def delete_encryption_private_key(
+        organization_id:,
+        connection_id:,
+        private_key_id:,
+        method_options: nil
+      )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        delete_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}/encryption_private_keys/#{private_key_id}", headers)
       end
     end
 

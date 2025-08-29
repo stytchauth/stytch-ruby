@@ -440,10 +440,10 @@ module StytchB2B
     #   The ID of the trusted auth token profile to use for attestation.
     #   The type of this field is +String+.
     # token::
-    #   The trusted auth token to authenticate.
+    #   The trusted auth token to authenticate. The token must have an organization ID claim if JIT provisioning is enabled.
     #   The type of this field is +String+.
     # organization_id::
-    #   The organization ID that the session should be authenticated in.
+    #   The organization ID that the session should be authenticated in. Must be provided if the trusted auth token does not have an organization ID claim.
     #   The type of this field is nilable +String+.
     # session_duration_minutes::
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
