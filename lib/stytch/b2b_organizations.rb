@@ -993,7 +993,7 @@ module StytchB2B
       # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.info.untrusted-metadata` action on the `stytch.member` Resource. Alternatively, if the Member Session matches the Member associated with the `member_id` passed in the request, the authorization check will also allow a Member Session that has permission to perform the `update.info.untrusted-metadata` action on the `stytch.self` Resource.
       #   The type of this field is nilable +object+.
       # is_breakglass::
-      #   Identifies the Member as a break glass user - someone who has permissions to authenticate into an Organization by bypassing the Organization's settings. A break glass account is typically used for emergency purposes to gain access outside of normal authentication procedures. Refer to the [Organization object](organization-object) and its `auth_methods` and `allowed_auth_methods` fields for more details.
+      #   Identifies the Member as a break glass user - someone who has permissions to authenticate into an Organization by bypassing the Organization's settings. A break glass account is typically used for emergency purposes to gain access outside of normal authentication procedures. Refer to the [Organization object](https://stytch.com/docs/b2b/api/organization-object) and its `auth_methods` and `allowed_auth_methods` fields for more details.
       #
       # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.settings.is-breakglass` action on the `stytch.member` Resource.
       #   The type of this field is nilable +Boolean+.
@@ -1037,7 +1037,7 @@ module StytchB2B
       # If this field is provided and a session header is passed into the request, the Member Session must have permission to perform the `update.info.email` action on the `stytch.member` Resource. Members cannot update their own email address.
       #   The type of this field is nilable +String+.
       # external_id::
-      #   An identifier that can be used in API calls wherever a member_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project.
+      #   An identifier that can be used in most API calls where a `member_id` is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project.
       #   The type of this field is nilable +String+.
       # unlink_email::
       #   If `unlink_email` is `true` and an `email_address` is provided, the Member's previous email will be deleted instead of retired. Defaults to `false`.
@@ -1135,12 +1135,14 @@ module StytchB2B
 
       # Reactivates a deleted Member's status and its associated email status (if applicable) to active, specified by `organization_id` and `member_id`. This endpoint will only work for Members with at least one verified email where their `email_address_verified` is `true`.
       #
+      # Note that this endpoint does not accept an `external_id`. The Stytch `member_id` must be provided.
+      #
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # member_id::
-      #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
+      #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value.
       #   The type of this field is +String+.
       #
       # == Returns:
@@ -1292,7 +1294,7 @@ module StytchB2B
       #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
       #   The type of this field is +String+.
       # members::
-      #   An array of [Member objects](member-object).
+      #   An array of [Member objects](https://stytch.com/docs/b2b/api/member-object).
       #   The type of this field is list of +Member+ (+object+).
       # results_metadata::
       #   The search `results_metadata` object contains metadata relevant to your specific query like `total` and `next_cursor`.
@@ -1658,7 +1660,7 @@ module StytchB2B
       #   Flag for whether or not to save a Member as `pending` or `active` in Stytch. It defaults to false. If true, new Members will be created with status `pending` in Stytch's backend. Their status will remain `pending` and they will continue to receive signup email templates for every Email Magic Link until that Member authenticates and becomes `active`. If false, new Members will be created with status `active`.
       #   The type of this field is nilable +Boolean+.
       # is_breakglass::
-      #   Identifies the Member as a break glass user - someone who has permissions to authenticate into an Organization by bypassing the Organization's settings. A break glass account is typically used for emergency purposes to gain access outside of normal authentication procedures. Refer to the [Organization object](organization-object) and its `auth_methods` and `allowed_auth_methods` fields for more details.
+      #   Identifies the Member as a break glass user - someone who has permissions to authenticate into an Organization by bypassing the Organization's settings. A break glass account is typically used for emergency purposes to gain access outside of normal authentication procedures. Refer to the [Organization object](https://stytch.com/docs/b2b/api/organization-object) and its `auth_methods` and `allowed_auth_methods` fields for more details.
       #   The type of this field is nilable +Boolean+.
       # mfa_phone_number::
       #   The Member's phone number. A Member may only have one phone number. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX).
@@ -1671,7 +1673,7 @@ module StytchB2B
       #    for more information about role assignment.
       #   The type of this field is nilable list of +String+.
       # external_id::
-      #   An identifier that can be used in API calls wherever a member_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project.
+      #   An identifier that can be used in most API calls where a `member_id` is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project.
       #   The type of this field is nilable +String+.
       #
       # == Returns:

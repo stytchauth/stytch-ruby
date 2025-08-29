@@ -202,21 +202,18 @@ module Stytch
       # client_type::
       #   The type of Connected App. Supported values are `first_party`, `first_party_public`, `third_party`, and `third_party_public`.
       #   The type of this field is +CreateRequestClientType+ (string enum).
-      # redirect_urls::
-      #   Array of redirect URI values for use in OAuth Authorization flows.
-      #   The type of this field is list of +String+.
-      # full_access_allowed::
-      #   Valid for first party clients only. If `true`, an authorization token granted to this Client can be exchanged for a full Stytch session.
-      #   The type of this field is +Boolean+.
-      # post_logout_redirect_urls::
-      #   Array of redirect URI values for use in OIDC Logout flows.
-      #   The type of this field is list of +String+.
       # client_name::
       #   A human-readable name for the client.
       #   The type of this field is nilable +String+.
       # client_description::
       #   A human-readable description for the client.
       #   The type of this field is nilable +String+.
+      # redirect_urls::
+      #   Array of redirect URI values for use in OAuth Authorization flows.
+      #   The type of this field is nilable list of +String+.
+      # full_access_allowed::
+      #   Valid for first party clients only. If `true`, an authorization token granted to this Client can be exchanged for a full Stytch session.
+      #   The type of this field is nilable +Boolean+.
       # access_token_expiry_minutes::
       #   The number of minutes before the access token expires. The default is 60 minutes.
       #   The type of this field is nilable +Integer+.
@@ -226,6 +223,9 @@ module Stytch
       # access_token_template_content::
       #   The content of the access token custom claims template. The template must be a valid JSON object.
       #   The type of this field is nilable +String+.
+      # post_logout_redirect_urls::
+      #   Array of redirect URI values for use in OIDC Logout flows.
+      #   The type of this field is nilable list of +String+.
       # logo_url::
       #   The logo URL of the Connected App, if any.
       #   The type of this field is nilable +String+.
@@ -246,29 +246,29 @@ module Stytch
       #   The type of this field is +Integer+.
       def create(
         client_type:,
-        redirect_urls:,
-        full_access_allowed:,
-        post_logout_redirect_urls:,
         client_name: nil,
         client_description: nil,
+        redirect_urls: nil,
+        full_access_allowed: nil,
         access_token_expiry_minutes: nil,
         access_token_custom_audience: nil,
         access_token_template_content: nil,
+        post_logout_redirect_urls: nil,
         logo_url: nil,
         bypass_consent_for_offline_access: nil
       )
         headers = {}
         request = {
-          client_type: client_type,
-          redirect_urls: redirect_urls,
-          full_access_allowed: full_access_allowed,
-          post_logout_redirect_urls: post_logout_redirect_urls
+          client_type: client_type
         }
         request[:client_name] = client_name unless client_name.nil?
         request[:client_description] = client_description unless client_description.nil?
+        request[:redirect_urls] = redirect_urls unless redirect_urls.nil?
+        request[:full_access_allowed] = full_access_allowed unless full_access_allowed.nil?
         request[:access_token_expiry_minutes] = access_token_expiry_minutes unless access_token_expiry_minutes.nil?
         request[:access_token_custom_audience] = access_token_custom_audience unless access_token_custom_audience.nil?
         request[:access_token_template_content] = access_token_template_content unless access_token_template_content.nil?
+        request[:post_logout_redirect_urls] = post_logout_redirect_urls unless post_logout_redirect_urls.nil?
         request[:logo_url] = logo_url unless logo_url.nil?
         request[:bypass_consent_for_offline_access] = bypass_consent_for_offline_access unless bypass_consent_for_offline_access.nil?
 

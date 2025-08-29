@@ -242,7 +242,7 @@ module Stytch
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
     #   The type of this field is +String+.
     # valid_password::
-    #   Returns `true` if the password passes our password validation. We offer two validation options, [zxcvbn](https://stytch.com/docs/passwords#strength-requirements) is the default option which offers a high level of sophistication. We also offer [LUDS](https://stytch.com/docs/passwords#strength-requirements). If an email address is included in the call we also require that the password hasn't been compromised using built-in breach detection powered by [HaveIBeenPwned](https://haveibeenpwned.com/).
+    #   Returns `true` if the password passes our password validation. We offer two validation options, [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy) is the default option which offers a high level of sophistication. We also offer [LUDS](https://stytch.com/docs/guides/passwords/strength-policy). If an email address is included in the call we also require that the password hasn't been compromised using built-in breach detection powered by [HaveIBeenPwned](https://haveibeenpwned.com/).
     #   The type of this field is +Boolean+.
     # score::
     #   The score of the password determined by [zxcvbn](https://github.com/dropbox/zxcvbn). Values will be between 1 and 4, a 3 or greater is required to pass validation.
