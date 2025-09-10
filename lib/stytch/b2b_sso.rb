@@ -678,6 +678,9 @@ module StytchB2B
       # saml_encryption_private_key::
       #   A PKCS1 format RSA private key used to decrypt encrypted SAML assertions. Only PKCS1 format (starting with "-----BEGIN RSA PRIVATE KEY-----") is supported.
       #   The type of this field is nilable +String+.
+      # allow_gateway_callback::
+      #   (no documentation yet)
+      #   The type of this field is nilable +Boolean+.
       #
       # == Returns:
       # An object with the following fields:
@@ -710,6 +713,7 @@ module StytchB2B
         alternative_acs_url: nil,
         idp_initiated_auth_disabled: nil,
         saml_encryption_private_key: nil,
+        allow_gateway_callback: nil,
         method_options: nil
       )
         headers = {}
@@ -729,6 +733,7 @@ module StytchB2B
         request[:alternative_acs_url] = alternative_acs_url unless alternative_acs_url.nil?
         request[:idp_initiated_auth_disabled] = idp_initiated_auth_disabled unless idp_initiated_auth_disabled.nil?
         request[:saml_encryption_private_key] = saml_encryption_private_key unless saml_encryption_private_key.nil?
+        request[:allow_gateway_callback] = allow_gateway_callback unless allow_gateway_callback.nil?
 
         put_request("/v1/b2b/sso/saml/#{organization_id}/connections/#{connection_id}", request, headers)
       end
