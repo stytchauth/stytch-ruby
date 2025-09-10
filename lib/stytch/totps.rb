@@ -20,7 +20,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` of an active user the TOTP registration should be tied to. You may use an external_id here if one is set for the user.
+    #   The `user_id` of an active user the TOTP registration should be tied to. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     # expiration_minutes::
     #   The expiration for the TOTP instance. If the newly created TOTP is not authenticated within this time frame the TOTP will be unusable. Defaults to 1440 (1 day) with a minimum of 5 and a maximum of 1440.
@@ -69,7 +69,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` of an active user the TOTP registration should be tied to. You may use an external_id here if one is set for the user.
+    #   The `user_id` of an active user the TOTP registration should be tied to. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     # totp_code::
     #   The TOTP code to authenticate. The TOTP code should consist of 6 digits.
@@ -96,6 +96,9 @@ module Stytch
     #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
+    # telemetry_id::
+    #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -123,16 +126,20 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
+    # user_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
       user_id:,
       totp_code:,
       session_token: nil,
       session_duration_minutes: nil,
       session_jwt: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      telemetry_id: nil
     )
       headers = {}
       request = {
@@ -143,6 +150,7 @@ module Stytch
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
       post_request('/v1/totps/authenticate', request, headers)
     end
@@ -151,7 +159,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` of an active user the TOTP registration should be tied to. You may use an external_id here if one is set for the user.
+    #   The `user_id` of an active user the TOTP registration should be tied to. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     #
     # == Returns:
@@ -183,7 +191,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` of an active user the TOTP registration should be tied to. You may use an external_id here if one is set for the user.
+    #   The `user_id` of an active user the TOTP registration should be tied to. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     # recovery_code::
     #   The recovery code to authenticate.
@@ -210,6 +218,9 @@ module Stytch
     #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
+    # telemetry_id::
+    #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -237,16 +248,20 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
+    # user_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def recover(
       user_id:,
       recovery_code:,
       session_token: nil,
       session_duration_minutes: nil,
       session_jwt: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      telemetry_id: nil
     )
       headers = {}
       request = {
@@ -257,6 +272,7 @@ module Stytch
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
       post_request('/v1/totps/recover', request, headers)
     end

@@ -24,10 +24,13 @@ module StytchB2B
 
     # This API allows you to check whether the user’s provided password is valid, and to provide feedback to the user on how to increase the strength of their password.
     #
-    # This endpoint adapts to your Project's password strength configuration. If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), your passwords are considered valid if they meet the requirements that you've set with Stytch. You may update your password strength configuration in the [stytch dashboard](https://stytch.com/dashboard/password-strength-config).
+    # This endpoint adapts to your Project's password strength configuration.
+    # If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid if the strength score is >= 3.
+    # If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), your passwords are considered valid if they meet the requirements that you've set with Stytch.
+    # You may update your password strength configuration on the [Passwords Policy page](https://stytch.com/dashboard/password-strength-config) in the Stytch Dashboard.
     #
     # ## Password feedback
-    # The zxcvbn_feedback and luds_feedback objects contains relevant fields for you to relay feedback to users that failed to create a strong enough password.
+    # The `zxcvbn_feedback` and `luds_feedback` objects contains relevant fields for you to relay feedback to users that failed to create a strong enough password.
     #
     # If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the feedback object will contain warning and suggestions for any password that does not meet the [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy) strength requirements. You can return these strings directly to the user to help them craft a strong password.
     #
@@ -35,7 +38,7 @@ module StytchB2B
     #
     # == Parameters:
     # password::
-    #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+    #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
     #   The type of this field is +String+.
     # email_address::
     #   The email address of the Member.
@@ -48,8 +51,8 @@ module StytchB2B
     #   The type of this field is +String+.
     # valid_password::
     #   Returns `true` if the password passes our password validation. We offer two validation options,
-    #   [zxcvbn](https://stytch.com/docs/passwords#strength-requirements) is the default option which offers a high level of sophistication.
-    #   We also offer [LUDS](https://stytch.com/docs/passwords#strength-requirements). If an email address is included in the call we also
+    #   [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy) is the default option which offers a high level of sophistication.
+    #   We also offer [LUDS](https://stytch.com/docs/b2b/guides/passwords/strength-policy). If an email address is included in the call we also
     #   require that the password hasn't been compromised using built-in breach detection powered by [HaveIBeenPwned](https://haveibeenpwned.com/)
     #   The type of this field is +Boolean+.
     # score::
@@ -70,10 +73,10 @@ module StytchB2B
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     # luds_feedback::
-    #   Feedback for how to improve the password's strength using [luds](https://stytch.com/docs/passwords#strength-requirements).
+    #   Feedback for how to improve the password's strength using [luds](https://stytch.com/docs/guides/passwords/strength-policy).
     #   The type of this field is nilable +LudsFeedback+ (+object+).
     # zxcvbn_feedback::
-    #   Feedback for how to improve the password's strength using [zxcvbn](https://stytch.com/docs/passwords#strength-requirements).
+    #   Feedback for how to improve the password's strength using [zxcvbn](https://stytch.com/docs/b2b/guides/passwords/strength-policy).
     #   The type of this field is nilable +ZxcvbnFeedback+ (+object+).
     def strength_check(
       password:,
@@ -88,9 +91,16 @@ module StytchB2B
       post_request('/v1/b2b/passwords/strength_check', request, headers)
     end
 
-    # Adds an existing password to a member's email that doesn't have a password yet. We support migrating members from passwords stored with bcrypt, scrypt, argon2, MD-5, SHA-1, and PBKDF2. This endpoint has a rate limit of 100 requests per second.
     #
-    # The member's email will be marked as verified when you use this endpoint. If you are using **cross-organization passwords**, call this method separately for each `organization_id` associated with the given `email_address` to ensure the email is verified across all of their organizations.
+    # **Warning:** This endpoint marks the Member's email address as verified. Do **not** use this endpoint unless the user has already verified their email address in your application.
+    #
+    # Adds an existing password to a Member's email that doesn't have a password yet.
+    #
+    # We support migrating members from passwords stored with bcrypt, scrypt, argon2, MD-5, SHA-1, and PBKDF2. This endpoint has a rate limit of 100 requests per second.
+    #
+    # The Member's email will be marked as verified when you use this endpoint.
+    #
+    # If you are using **cross-organization passwords**, i.e. allowing an end user to share the same password across all of their Organizations, call this method separately for each `organization_id` associated with the given `email_address` to ensure the password is set across all of their Organizations.
     #
     # == Parameters:
     # email_address::
@@ -103,7 +113,7 @@ module StytchB2B
     #   The password hash used. Currently `bcrypt`, `scrypt`, `argon_2i`, `argon_2id`, `md_5`, `sha_1`, and `pbkdf_2` are supported.
     #   The type of this field is +MigrateRequestHashType+ (string enum).
     # organization_id::
-    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
     #   The type of this field is +String+.
     # md_5_config::
     #   Optional parameters for MD-5 hash types.
@@ -147,13 +157,14 @@ module StytchB2B
     #   authentication factors with the affected SSO connection IDs will be revoked.
     #   The type of this field is nilable +Boolean+.
     # mfa_phone_number::
-    #   (no documentation yet)
+    #   The Member's phone number. A Member may only have one phone number. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX).
     #   The type of this field is nilable +String+.
     # set_phone_number_verified::
-    #   (no documentation yet)
+    #   Whether to set the user's phone number as verified. This is a dangerous field. This flag should only be set if you can attest that
+    #    the user owns the phone number in question.
     #   The type of this field is nilable +Boolean+.
     # external_id::
-    #   If a new member is created, this will set an identifier that can be used in API calls wherever a member_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project. Note that if a member already exists, this field will be ignored.
+    #   If a new member is created, this will set an identifier that can be used in most API calls where a `member_id` is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project. Note that if a member already exists, this field will be ignored.
     #   The type of this field is nilable +String+.
     #
     # == Returns:
@@ -221,9 +232,9 @@ module StytchB2B
 
     # Authenticate a member with their email address and password. This endpoint verifies that the member has a password currently set, and that the entered password is correct.
     #
-    # If you have breach detection during authentication enabled in your [password strength policy](https://stytch.com/docs/b2b/guides/passwords/strength-policies) and the member's credentials have appeared in the HaveIBeenPwned dataset, this endpoint will return a `member_reset_password` error even if the member enters a correct password. We force a password reset in this case to ensure that the member is the legitimate owner of the email address and not a malicious actor abusing the compromised credentials.
+    # If you have breach detection during authentication enabled in your [password strength policy](https://stytch.com/docs/b2b/guides/passwords/strength-policy) and the member's credentials have appeared in the HaveIBeenPwned dataset, this endpoint will return a `member_reset_password` error even if the member enters a correct password. We force a password reset in this case to ensure that the member is the legitimate owner of the email address and not a malicious actor abusing the compromised credentials.
     #
-    # If the is required to complete MFA to log in to the, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
+    # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
     # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
     # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
     #
@@ -231,13 +242,13 @@ module StytchB2B
     #
     # == Parameters:
     # organization_id::
-    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
     #   The type of this field is +String+.
     # email_address::
     #   The email address of the Member.
     #   The type of this field is +String+.
     # password::
-    #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+    #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
     #   The type of this field is +String+.
     # session_token::
     #   A secret token for a given Stytch Session.
@@ -264,7 +275,7 @@ module StytchB2B
     #   Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     # locale::
-    #   If the needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+    #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
     #
     # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
     #
@@ -275,6 +286,9 @@ module StytchB2B
     #   The type of this field is nilable +AuthenticateRequestLocale+ (string enum).
     # intermediate_session_token::
     #   Adds this primary authentication factor to the intermediate session token. If the resulting set of factors satisfies the organization's primary authentication requirements and MFA requirements, the intermediate session token will be consumed and converted to a member session. If not, the same intermediate session token will be returned.
+    #   The type of this field is nilable +String+.
+    # telemetry_id::
+    #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
     #   The type of this field is nilable +String+.
     #
     # == Returns:
@@ -315,6 +329,12 @@ module StytchB2B
     # mfa_required::
     #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
     #   The type of this field is nilable +MfaRequired+ (+object+).
+    # primary_required::
+    #   Information about the primary authentication requirements of the Organization.
+    #   The type of this field is nilable +PrimaryRequired+ (+object+).
+    # member_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
       organization_id:,
       email_address:,
@@ -324,7 +344,8 @@ module StytchB2B
       session_jwt: nil,
       session_custom_claims: nil,
       locale: nil,
-      intermediate_session_token: nil
+      intermediate_session_token: nil,
+      telemetry_id: nil
     )
       headers = {}
       request = {
@@ -338,6 +359,7 @@ module StytchB2B
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
       request[:locale] = locale unless locale.nil?
       request[:intermediate_session_token] = intermediate_session_token unless intermediate_session_token.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
       post_request('/v1/b2b/passwords/authenticate', request, headers)
     end
@@ -374,11 +396,11 @@ module StytchB2B
       # If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid
       # if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), your passwords are
       # considered valid if they meet the requirements that you've set with Stytch.
-      # You may update your password strength configuration in the [stytch dashboard](https://stytch.com/dashboard/password-strength-config).
+      # You may update your password strength configuration on the [Passwords Policy page](https://stytch.com/dashboard/password-strength-config) in the Stytch Dashboard.
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # email_address::
       #   The email address of the Member to start the email reset process for.
@@ -389,7 +411,7 @@ module StytchB2B
       #   If you have not set a default `reset_password_redirect_url`, an error is returned.
       #   The type of this field is nilable +String+.
       # reset_password_expiration_minutes::
-      #   Sets a time limit after which the email link to reset the member's password will no longer be valid.
+      #   Sets a time limit after which the email link to reset the member's password will no longer be valid. The minimum allowed expiration is 5 minutes and the maximum is 10080 minutes (7 days). By default, the expiration is 30 minutes.
       #   The type of this field is nilable +Integer+.
       # code_challenge::
       #   A base64url encoded SHA256 hash of a one time secret used to validate that the request starts and ends on the same device.
@@ -412,7 +434,7 @@ module StytchB2B
       #   Use a custom template for reset password emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Passwords - Reset Password.
       #   The type of this field is nilable +String+.
       # verify_email_template_id::
-      #   Use a custom template for verification emails sent during password reset flows. This template will be used the first time a user sets a password via a
+      #   Use a custom template for verification emails sent during password reset flows. When cross-organization passwords are enabled for your Project, this template will be used the first time a user sets a password via a
       #   password reset flow. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Passwords - Email Verification.
       #   The type of this field is nilable +String+.
       #
@@ -460,7 +482,7 @@ module StytchB2B
         post_request('/v1/b2b/passwords/email/reset/start', request, headers)
       end
 
-      # Reset the's password and authenticate them. This endpoint checks that the password reset token is valid, hasn’t expired, or already been used.
+      # Reset the Member's password and authenticate them. This endpoint checks that the password reset token is valid, hasn’t expired, or already been used.
       #
       # The provided password needs to meet our password strength requirements, which can be checked in advance with the password strength endpoint. If the token and password are accepted, the password is securely stored for future authentication and the user is authenticated.
       #
@@ -477,7 +499,7 @@ module StytchB2B
       #   The password reset token to authenticate.
       #   The type of this field is +String+.
       # password::
-      #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+      #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
       #   The type of this field is +String+.
       # session_token::
       #   Reuse an existing session instead of creating a new one. If you provide a `session_token`, Stytch will update the session.
@@ -511,7 +533,7 @@ module StytchB2B
       #   Total custom claims size cannot exceed four kilobytes.
       #   The type of this field is nilable +object+.
       # locale::
-      #   If the needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+      #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
       #
       # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
@@ -522,6 +544,9 @@ module StytchB2B
       #   The type of this field is nilable +ResetRequestLocale+ (string enum).
       # intermediate_session_token::
       #   Adds this primary authentication factor to the intermediate session token. If the resulting set of factors satisfies the organization's primary authentication requirements and MFA requirements, the intermediate session token will be consumed and converted to a member session. If not, the same intermediate session token will be returned.
+      #   The type of this field is nilable +String+.
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
       #   The type of this field is nilable +String+.
       #
       # == Returns:
@@ -565,6 +590,12 @@ module StytchB2B
       # mfa_required::
       #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
       #   The type of this field is nilable +MfaRequired+ (+object+).
+      # primary_required::
+      #   Information about the primary authentication requirements of the Organization.
+      #   The type of this field is nilable +PrimaryRequired+ (+object+).
+      # member_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def reset(
         password_reset_token:,
         password:,
@@ -574,7 +605,8 @@ module StytchB2B
         code_verifier: nil,
         session_custom_claims: nil,
         locale: nil,
-        intermediate_session_token: nil
+        intermediate_session_token: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -588,18 +620,21 @@ module StytchB2B
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:locale] = locale unless locale.nil?
         request[:intermediate_session_token] = intermediate_session_token unless intermediate_session_token.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/b2b/passwords/email/reset', request, headers)
       end
 
       # Require a password be reset by the associated email address. This endpoint is only functional for cross-org password use cases.
       #
+      # If there are is only one active Member using the associated email address in the Project, the password will be deleted.
+      #
       # == Parameters:
       # email_address::
       #   The email address of the Member to start the email reset process for.
       #   The type of this field is +String+.
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is nilable +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -607,6 +642,9 @@ module StytchB2B
       #
       # == Returns:
       # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
@@ -647,16 +685,16 @@ module StytchB2B
         @connection = connection
       end
 
-      # Reset the's password using their existing session. The endpoint will error if the session does not contain an authentication factor that has been issued within the last 5 minutes. Either `session_token` or `session_jwt` should be provided.
+      # Reset the Member's password using their existing session. The endpoint will error if the session does not contain an authentication factor that has been issued within the last 5 minutes. Either `session_token` or `session_jwt` should be provided.
       #
       # Note that a successful password reset via an existing session will revoke all active sessions for the `member_id`, except for the one used during the reset flow.
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # password::
-      #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+      #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
       #   The type of this field is +String+.
       # session_token::
       #   A secret token for a given Stytch Session.
@@ -690,6 +728,9 @@ module StytchB2B
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
       #   The type of this field is nilable +ResetRequestLocale+ (string enum).
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -726,6 +767,9 @@ module StytchB2B
       # mfa_required::
       #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
       #   The type of this field is nilable +MfaRequired+ (+object+).
+      # member_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def reset(
         organization_id:,
         password:,
@@ -733,7 +777,8 @@ module StytchB2B
         session_jwt: nil,
         session_duration_minutes: nil,
         session_custom_claims: nil,
-        locale: nil
+        locale: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -745,6 +790,7 @@ module StytchB2B
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:locale] = locale unless locale.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/b2b/passwords/session/reset', request, headers)
       end
@@ -757,13 +803,13 @@ module StytchB2B
         @connection = connection
       end
 
-      # Reset the’s password using their existing password.
+      # Reset the member's password using their existing password.
       #
       # This endpoint adapts to your Project's password strength configuration.
       # If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid
       # if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), your passwords are
       # considered valid if they meet the requirements that you've set with Stytch.
-      # You may update your password strength configuration in the [stytch dashboard](https://stytch.com/dashboard/password-strength-config).
+      # You may update your password strength configuration on the [Passwords Policy page](https://stytch.com/dashboard/password-strength-config) in the Stytch Dashboard.
       #
       # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
       # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
@@ -784,7 +830,7 @@ module StytchB2B
       #   The Member's elected new password.
       #   The type of this field is +String+.
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # session_token::
       #   A secret token for a given Stytch Session.
@@ -811,7 +857,7 @@ module StytchB2B
       #   Total custom claims size cannot exceed four kilobytes.
       #   The type of this field is nilable +object+.
       # locale::
-      #   If the needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+      #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
       #
       # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
@@ -820,6 +866,9 @@ module StytchB2B
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
       #   The type of this field is nilable +ResetRequestLocale+ (string enum).
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -856,6 +905,12 @@ module StytchB2B
       # mfa_required::
       #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
       #   The type of this field is nilable +MfaRequired+ (+object+).
+      # primary_required::
+      #   Information about the primary authentication requirements of the Organization.
+      #   The type of this field is nilable +PrimaryRequired+ (+object+).
+      # member_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def reset(
         email_address:,
         existing_password:,
@@ -865,7 +920,8 @@ module StytchB2B
         session_duration_minutes: nil,
         session_jwt: nil,
         session_custom_claims: nil,
-        locale: nil
+        locale: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -879,6 +935,7 @@ module StytchB2B
         request[:session_jwt] = session_jwt unless session_jwt.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:locale] = locale unless locale.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/b2b/passwords/existing_password/reset', request, headers)
       end
@@ -896,7 +953,7 @@ module StytchB2B
 
       # Authenticate an email/password combination in the discovery flow. This authenticate flow is only valid for cross-org passwords use cases, and is not tied to a specific organization.
       #
-      # If you have breach detection during authentication enabled in your [password strength policy](https://stytch.com/docs/b2b/guides/passwords/strength-policies) and the member's credentials have appeared in the HaveIBeenPwned dataset, this endpoint will return a `member_reset_password` error even if the member enters a correct password. We force a password reset in this case to ensure that the member is the legitimate owner of the email address and not a malicious actor abusing the compromised credentials.
+      # If you have breach detection during authentication enabled in your [password strength policy](https://stytch.com/docs/b2b/guides/passwords/strength-policy) and the member's credentials have appeared in the HaveIBeenPwned dataset, this endpoint will return a `member_reset_password` error even if the member enters a correct password. We force a password reset in this case to ensure that the member is the legitimate owner of the email address and not a malicious actor abusing the compromised credentials.
       #
       # If successful, this endpoint will create a new intermediate session and return a list of discovered organizations that can be session exchanged into.
       #
@@ -905,7 +962,7 @@ module StytchB2B
       #   The email address of the Member.
       #   The type of this field is +String+.
       # password::
-      #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+      #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
       #   The type of this field is +String+.
       #
       # == Returns:
@@ -962,7 +1019,7 @@ module StytchB2B
         # If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid
         # if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), your passwords are
         # considered valid if they meet the requirements that you've set with Stytch.
-        # You may update your password strength configuration in the [stytch dashboard](https://stytch.com/dashboard/password-strength-config).
+        # You may update your password strength configuration on the [Passwords Policy page](https://stytch.com/dashboard/password-strength-config) in the Stytch Dashboard.
         #
         # == Parameters:
         # email_address::
@@ -982,7 +1039,7 @@ module StytchB2B
         #   Use a custom template for reset password emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Passwords - Reset Password.
         #   The type of this field is nilable +String+.
         # reset_password_expiration_minutes::
-        #   Sets a time limit after which the email link to reset the member's password will no longer be valid.
+        #   Sets a time limit after which the email link to reset the member's password will no longer be valid. The minimum allowed expiration is 5 minutes and the maximum is 10080 minutes (7 days). By default, the expiration is 30 minutes.
         #   The type of this field is nilable +Integer+.
         # pkce_code_challenge::
         #   (no documentation yet)
@@ -996,7 +1053,7 @@ module StytchB2B
         #
         #   The type of this field is nilable +String+.
         # verify_email_template_id::
-        #   Use a custom template for verification emails sent during password reset flows. This template will be used the first time a user sets a password via a
+        #   Use a custom template for verification emails sent during password reset flows. When cross-organization passwords are enabled for your Project, this template will be used the first time a user sets a password via a
         #   password reset flow. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Passwords - Email Verification.
         #   The type of this field is nilable +String+.
         #
@@ -1044,7 +1101,7 @@ module StytchB2B
         #   The password reset token to authenticate.
         #   The type of this field is +String+.
         # password::
-        #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+        #   The password to authenticate, reset, or set for the first time. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
         #   The type of this field is +String+.
         # pkce_code_verifier::
         #   (no documentation yet)

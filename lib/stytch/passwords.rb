@@ -34,7 +34,7 @@ module Stytch
     #   The email address of the end user.
     #   The type of this field is +String+.
     # password::
-    #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+    #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
     #   The type of this field is +String+.
     # session_duration_minutes::
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
@@ -61,6 +61,9 @@ module Stytch
     # name::
     #   The name of the user. Each field in the name object is optional.
     #   The type of this field is nilable +Name+ (+object+).
+    # telemetry_id::
+    #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -88,9 +91,12 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
+    # user_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def create(
       email:,
       password:,
@@ -98,7 +104,8 @@ module Stytch
       session_custom_claims: nil,
       trusted_metadata: nil,
       untrusted_metadata: nil,
-      name: nil
+      name: nil,
+      telemetry_id: nil
     )
       headers = {}
       request = {
@@ -110,13 +117,14 @@ module Stytch
       request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
       request[:untrusted_metadata] = untrusted_metadata unless untrusted_metadata.nil?
       request[:name] = name unless name.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
       post_request('/v1/passwords', request, headers)
     end
 
     # Authenticate a user with their email address and password. This endpoint verifies that the user has a password currently set, and that the entered password is correct. There are two instances where the endpoint will return a `reset_password` error even if they enter their previous password:
     #
-    # **One:** The user’s credentials appeared in the HaveIBeenPwned dataset. We force a password reset to ensure that the user is the legitimate owner of the email address, and not a malicious actor abusing the compromised credentials.
+    # **One:** The user's credentials appeared in the HaveIBeenPwned dataset. We force a password reset to ensure that the user is the legitimate owner of the email address, and not a malicious actor abusing the compromised credentials.
     #
     # **Two:** A user that has previously authenticated with email/password uses a passwordless authentication method tied to the same email address (e.g. Magic Links, Google OAuth) for the first time. Any subsequent email/password authentication attempt will result in this error. We force a password reset in this instance in order to safely deduplicate the account by email address, without introducing the risk of a pre-hijack account takeover attack.
     #
@@ -127,7 +135,7 @@ module Stytch
     #   The email address of the end user.
     #   The type of this field is +String+.
     # password::
-    #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+    #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
     #   The type of this field is +String+.
     # session_token::
     #   The `session_token` associated with a User's existing Session.
@@ -151,6 +159,9 @@ module Stytch
     #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
+    # telemetry_id::
+    #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -175,16 +186,20 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
+    # user_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
       email:,
       password:,
       session_token: nil,
       session_duration_minutes: nil,
       session_jwt: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      telemetry_id: nil
     )
       headers = {}
       request = {
@@ -195,13 +210,14 @@ module Stytch
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
       post_request('/v1/passwords/authenticate', request, headers)
     end
 
     # This API allows you to check whether or not the user’s provided password is valid, and to provide feedback to the user on how to increase the strength of their password.
     #
-    # This endpoint adapts to your Project's password strength configuration. If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), your passwords are considered valid if they meet the requirements that you've set with Stytch. You may update your password strength configuration in the [stytch dashboard](https://stytch.com/dashboard/password-strength-config).
+    # This endpoint adapts to your Project's password strength configuration. If you're using [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy), the default, your passwords are considered valid if the strength score is >= 3. If you're using [LUDS](https://stytch.com/docs/guides/passwords/strength-policy), your passwords are considered valid if they meet the requirements that you've set with Stytch. You may update your password strength configuration in the [Stytch Dashboard](https://stytch.com/dashboard/password-strength-config).
     #
     #
     # ### Password feedback
@@ -214,7 +230,7 @@ module Stytch
     #
     # == Parameters:
     # password::
-    #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+    #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
     #   The type of this field is +String+.
     # email::
     #   The email address of the end user.
@@ -226,7 +242,7 @@ module Stytch
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
     #   The type of this field is +String+.
     # valid_password::
-    #   Returns `true` if the password passes our password validation. We offer two validation options, [zxcvbn](https://stytch.com/docs/passwords#strength-requirements) is the default option which offers a high level of sophistication. We also offer [LUDS](https://stytch.com/docs/passwords#strength-requirements). If an email address is included in the call we also require that the password hasn't been compromised using built-in breach detection powered by [HaveIBeenPwned](https://haveibeenpwned.com/).
+    #   Returns `true` if the password passes our password validation. We offer two validation options, [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy) is the default option which offers a high level of sophistication. We also offer [LUDS](https://stytch.com/docs/guides/passwords/strength-policy). If an email address is included in the call we also require that the password hasn't been compromised using built-in breach detection powered by [HaveIBeenPwned](https://haveibeenpwned.com/).
     #   The type of this field is +Boolean+.
     # score::
     #   The score of the password determined by [zxcvbn](https://github.com/dropbox/zxcvbn). Values will be between 1 and 4, a 3 or greater is required to pass validation.
@@ -293,9 +309,9 @@ module Stytch
     #   The `untrusted_metadata` field contains an arbitrary JSON object of application-specific data. Untrusted metadata can be edited by end users directly via the SDK, and **cannot be used to store critical information.** See the [Metadata](https://stytch.com/docs/api/metadata) reference for complete field behavior details.
     #   The type of this field is nilable +object+.
     # set_email_verified::
-    #   Whether to set the user's email as verified. This is a dangerous field. Incorrect use may lead to users getting erroneously
-    #                 deduplicated into one user object. This flag should only be set if you can attest that the user owns the email address in question.
-    #                 Access to this field is restricted. To enable it, please send us a note at support@stytch.com.
+    #   Whether to set the user's email as verified. This is a dangerous field, incorrect use may lead to users getting erroneously
+    #                 deduplicated into one User object. This flag should only be set if you can attest that the user owns the email address in question.
+    #
     #   The type of this field is nilable +Boolean+.
     # name::
     #   The name of the user. Each field in the name object is optional.
@@ -304,12 +320,16 @@ module Stytch
     #   The phone number of the user. The phone number should be in E.164 format (i.e. +1XXXXXXXXXX).
     #   The type of this field is nilable +String+.
     # set_phone_number_verified::
-    #   Whether to set the user's phone number as verified. This is a dangerous field. This flag should only be set if you can attest that
-    #    the user owns the phone number in question. Access to this field is restricted. To enable it, please send us a note at support@stytch.com.
+    #   Whether to set the user's phone number as verified. This is a dangerous field, this flag should only be set if you can attest that
+    #    the user owns the phone number in question.
     #   The type of this field is nilable +Boolean+.
     # external_id::
-    #   If a new user is created, this will set an identifier that can be used in API calls wherever a user_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters. External IDs must be unique within an organization, but may be reused across different organizations in the same project. Note that if a user already exists, this field will be ignored.
+    #   If a new user is created, this will set an identifier that can be used in API calls wherever a user_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters.
     #   The type of this field is nilable +String+.
+    # roles::
+    #   Roles to explicitly assign to this User.
+    #    See the [RBAC guide](https://stytch.com/docs/guides/rbac/role-assignment) for more information about role assignment.
+    #   The type of this field is nilable list of +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -346,7 +366,8 @@ module Stytch
       name: nil,
       phone_number: nil,
       set_phone_number_verified: nil,
-      external_id: nil
+      external_id: nil,
+      roles: nil
     )
       headers = {}
       request = {
@@ -366,6 +387,7 @@ module Stytch
       request[:phone_number] = phone_number unless phone_number.nil?
       request[:set_phone_number_verified] = set_phone_number_verified unless set_phone_number_verified.nil?
       request[:external_id] = external_id unless external_id.nil?
+      request[:roles] = roles unless roles.nil?
 
       post_request('/v1/passwords/migrate', request, headers)
     end
@@ -398,12 +420,12 @@ module Stytch
       #   A base64url encoded SHA256 hash of a one time secret used to validate that the request starts and ends on the same device.
       #   The type of this field is nilable +String+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # login_redirect_url::
       #   The URL Stytch redirects to after the OAuth flow is completed for a user that already exists. This URL should be a route in your application which will run `oauth.authenticate` (see below) and finish the login.
       #
-      #   The URL must be configured as a Login URL in the [Redirect URL page](https://stytch.com/docs/dashboard/redirect-urls). If the field is not specified, the default Login URL will be used.
+      #   The URL must be configured as a Login URL in the [Redirect URL page](https://stytch.com/dashboard/redirect-urls). If the field is not specified, the default Login URL will be used.
       #   The type of this field is nilable +String+.
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
@@ -457,7 +479,7 @@ module Stytch
         post_request('/v1/passwords/email/reset/start', request, headers)
       end
 
-      # Reset the user’s password and authenticate them. This endpoint checks that the magic link `token` is valid, hasn’t expired, or already been used – and can optionally require additional security settings, such as the IP address and user agent matching the initial reset request.
+      # Reset the user's password and authenticate them. This endpoint checks that the magic link `token` is valid, hasn't expired, or already been used – and can optionally require additional security settings, such as the IP address and user agent matching the initial reset request.
       #
       # The provided password needs to meet our password strength requirements, which can be checked in advance with the password strength endpoint. If the token and password are accepted, the password is securely stored for future authentication and the user is authenticated.
       #
@@ -472,7 +494,7 @@ module Stytch
       #       See examples and read more about redirect URLs [here](https://stytch.com/docs/workspace-management/redirect-urls).
       #   The type of this field is +String+.
       # password::
-      #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+      #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
       #   The type of this field is +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
@@ -500,11 +522,14 @@ module Stytch
       #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
       #   The type of this field is nilable +object+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # options::
       #   Specify optional security settings.
       #   The type of this field is nilable +Options+ (+object+).
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -529,9 +554,12 @@ module Stytch
       # session::
       #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
       #
-      #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+      #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
       #
       #   The type of this field is nilable +Session+ (+object+).
+      # user_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def reset(
         token:,
         password:,
@@ -541,7 +569,8 @@ module Stytch
         code_verifier: nil,
         session_custom_claims: nil,
         attributes: nil,
-        options: nil
+        options: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -555,6 +584,7 @@ module Stytch
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:attributes] = attributes unless attributes.nil?
         request[:options] = options unless options.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/passwords/email/reset', request, headers)
       end
@@ -567,7 +597,7 @@ module Stytch
         @connection = connection
       end
 
-      # Reset the User’s password using their existing password.
+      # Reset the User's password using their existing password.
       #
       # Note that a successful password reset via an existing password will revoke all active sessions for the `user_id`.
       #
@@ -603,6 +633,9 @@ module Stytch
       #
       #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
       #   The type of this field is nilable +object+.
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -627,9 +660,12 @@ module Stytch
       # session::
       #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
       #
-      #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+      #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
       #
       #   The type of this field is nilable +Session+ (+object+).
+      # user_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def reset(
         email:,
         existing_password:,
@@ -637,7 +673,8 @@ module Stytch
         session_token: nil,
         session_duration_minutes: nil,
         session_jwt: nil,
-        session_custom_claims: nil
+        session_custom_claims: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -649,6 +686,7 @@ module Stytch
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
         request[:session_jwt] = session_jwt unless session_jwt.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/passwords/existing_password/reset', request, headers)
       end
@@ -667,7 +705,7 @@ module Stytch
       #
       # == Parameters:
       # password::
-      #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characers, etc.
+      #   The password for the user. Any UTF8 character is allowed, e.g. spaces, emojis, non-English characters, etc.
       #   The type of this field is +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
@@ -691,6 +729,9 @@ module Stytch
       #
       #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
       #   The type of this field is nilable +object+.
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -715,15 +756,19 @@ module Stytch
       # session::
       #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
       #
-      #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+      #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
       #
       #   The type of this field is nilable +Session+ (+object+).
+      # user_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def reset(
         password:,
         session_token: nil,
         session_jwt: nil,
         session_duration_minutes: nil,
-        session_custom_claims: nil
+        session_custom_claims: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -733,6 +778,7 @@ module Stytch
         request[:session_jwt] = session_jwt unless session_jwt.nil?
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/passwords/session/reset', request, headers)
       end

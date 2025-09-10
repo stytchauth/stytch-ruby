@@ -31,7 +31,7 @@ module Stytch
     #   The code to authenticate.
     #   The type of this field is +String+.
     # attributes::
-    #   Provided attributes help with fraud detection.
+    #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
     #   The type of this field is nilable +Attributes+ (+object+).
     # options::
     #   Specify optional security settings.
@@ -58,6 +58,9 @@ module Stytch
     #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
+    # telemetry_id::
+    #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -88,9 +91,12 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
+    # user_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
       method_id:,
       code:,
@@ -99,7 +105,8 @@ module Stytch
       session_token: nil,
       session_duration_minutes: nil,
       session_jwt: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      telemetry_id: nil
     )
       headers = {}
       request = {
@@ -112,6 +119,7 @@ module Stytch
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
       post_request('/v1/otps/authenticate', request, headers)
     end
@@ -130,7 +138,7 @@ module Stytch
       # ### Cost to send SMS OTP
       # Before configuring SMS or WhatsApp OTPs, please review how Stytch [bills the costs of international OTPs](https://stytch.com/pricing) and understand how to protect your app against [toll fraud](https://stytch.com/docs/guides/passcodes/toll-fraud/overview).
       #
-      # __Note:__ SMS to phone numbers outside of the US and Canada is disabled by default for customers who did not use SMS prior to October 2023. If you're interested in sending international SMS, please reach out to [support@stytch.com](mailto:support@stytch.com?subject=Enable%20international%20SMS).
+      # __Note:__ SMS to phone numbers outside of the US and Canada is disabled by default for customers who did not use SMS prior to October 2023. If you're interested in sending international SMS, please add those countries to your Project's allowlist via the [Dashboard](https://stytch.com/dashboard/country-code-allowlists) or [Programmatic Workspace Actions](https://stytch.com/docs/workspace-management/pwa/set-allowed-country-codes), and [add credit card details](https://stytch.com/dashboard/settings/billing) to your account.
       #
       # Even when international SMS is enabled, we do not support sending SMS to countries on our [Unsupported countries list](https://stytch.com/docs/guides/passcodes/unsupported-countries).
       #
@@ -150,7 +158,7 @@ module Stytch
       #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
@@ -161,7 +169,7 @@ module Stytch
       #
       #   The type of this field is nilable +SendRequestLocale+ (string enum).
       # user_id::
-      #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
+      #   The unique ID of a specific User. You may use an `external_id` here if one is set for the user.
       #   The type of this field is nilable +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
@@ -212,7 +220,7 @@ module Stytch
       # ### Cost to send SMS OTP
       # Before configuring SMS or WhatsApp OTPs, please review how Stytch [bills the costs of international OTPs](https://stytch.com/pricing) and understand how to protect your app against [toll fraud](https://stytch.com/docs/guides/passcodes/toll-fraud/overview).
       #
-      # __Note:__ SMS to phone numbers outside of the US and Canada is disabled by default for customers who did not use SMS prior to October 2023. If you're interested in sending international SMS, please reach out to [support@stytch.com](mailto:support@stytch.com?subject=Enable%20international%20SMS).
+      # __Note:__ SMS to phone numbers outside of the US and Canada is disabled by default for customers who did not use SMS prior to October 2023. If you're interested in sending international SMS, please add those countries to your Project's allowlist via the [Dashboard](https://stytch.com/dashboard/country-code-allowlists) or [Programmatic Workspace Actions](https://stytch.com/docs/workspace-management/pwa/set-allowed-country-codes), and [add credit card details](https://stytch.com/dashboard/settings/billing) to your account.
       #
       # Even when international SMS is enabled, we do not support sending SMS to countries on our [Unsupported countries list](https://stytch.com/docs/guides/passcodes/unsupported-countries).
       #
@@ -228,7 +236,7 @@ module Stytch
       #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # create_user_as_pending::
       #   Flag for whether or not to save a user as pending vs active in Stytch. Defaults to false.
@@ -313,7 +321,7 @@ module Stytch
       #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
@@ -324,7 +332,7 @@ module Stytch
       #
       #   The type of this field is nilable +SendRequestLocale+ (string enum).
       # user_id::
-      #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
+      #   The unique ID of a specific User. You may use an `external_id` here if one is set for the user.
       #   The type of this field is nilable +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
@@ -387,7 +395,7 @@ module Stytch
       #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # create_user_as_pending::
       #   Flag for whether or not to save a user as pending vs active in Stytch. Defaults to false.
@@ -465,7 +473,7 @@ module Stytch
       #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # locale::
       #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
@@ -476,7 +484,7 @@ module Stytch
       #
       #   The type of this field is nilable +SendRequestLocale+ (string enum).
       # user_id::
-      #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
+      #   The unique ID of a specific User. You may use an `external_id` here if one is set for the user.
       #   The type of this field is nilable +String+.
       # session_token::
       #   The `session_token` associated with a User's existing Session.
@@ -546,7 +554,7 @@ module Stytch
       #   Set the expiration for the one-time passcode, in minutes. The minimum expiration is 1 minute and the maximum is 10 minutes. The default expiration is 2 minutes.
       #   The type of this field is nilable +Integer+.
       # attributes::
-      #   Provided attributes help with fraud detection.
+      #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
       #   The type of this field is nilable +Attributes+ (+object+).
       # create_user_as_pending::
       #   Flag for whether or not to save a user as pending vs active in Stytch. Defaults to false.

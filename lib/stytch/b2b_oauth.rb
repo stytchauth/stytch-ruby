@@ -19,9 +19,9 @@ module StytchB2B
       @discovery = StytchB2B::OAuth::Discovery.new(@connection)
     end
 
-    # Authenticate a given a `token`. This endpoint verifies that the member completed the flow by verifying that the token is valid and hasn't expired.  Provide the `session_duration_minutes` parameter to set the lifetime of the session. If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration.
+    # Authenticate a Member given a `token`. This endpoint verifies that the member completed the OAuth flow by verifying that the token is valid and hasn't expired.  Provide the `session_duration_minutes` parameter to set the lifetime of the session. If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration.
     #
-    # If the Member is required to complete MFA to log in to the, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
+    # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
     # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms) to complete the MFA step and acquire a full member session.
     # The `intermediate_session_token` can also be used with the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to join a different Organization or create a new one.
     # The `session_duration_minutes` and `session_custom_claims` parameters will be ignored.
@@ -31,7 +31,7 @@ module StytchB2B
     # If the Member is logging in via an OAuth provider that does not fully verify the email, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
     # The `primary_required` field details the authentication flow the Member must perform in order to [complete a step-up authentication](https://stytch.com/docs/b2b/guides/oauth/auth-flows) into the organization. The `intermediate_session_token` must be passed into that authentication flow.
     #
-    # We’re actively accepting requests for new OAuth providers! Please [email us](mailto:support@stytch.com) or [post in our community](https://stytch.com/docs/b2b/resources) if you are looking for an OAuth provider that is not currently supported.
+    # We're actively accepting requests for new OAuth providers! Please [email us](mailto:support@stytch.com) or [post in our community](https://stytch.com/docs/b2b/resources) if you are looking for an OAuth provider that is not currently supported.
     #
     # == Parameters:
     # oauth_token::
@@ -65,7 +65,7 @@ module StytchB2B
     #   A base64url encoded one time secret used to validate that the request starts and ends on the same device.
     #   The type of this field is nilable +String+.
     # locale::
-    #   If the needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+    #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
     #
     # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
     #
@@ -76,6 +76,9 @@ module StytchB2B
     #   The type of this field is nilable +AuthenticateRequestLocale+ (string enum).
     # intermediate_session_token::
     #   Adds this primary authentication factor to the intermediate session token. If the resulting set of factors satisfies the organization's primary authentication requirements and MFA requirements, the intermediate session token will be consumed and converted to a member session. If not, the same intermediate session token will be returned.
+    #   The type of this field is nilable +String+.
+    # telemetry_id::
+    #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
     #   The type of this field is nilable +String+.
     #
     # == Returns:
@@ -133,6 +136,9 @@ module StytchB2B
     # primary_required::
     #   Information about the primary authentication requirements of the Organization.
     #   The type of this field is nilable +PrimaryRequired+ (+object+).
+    # member_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
       oauth_token:,
       session_token: nil,
@@ -141,7 +147,8 @@ module StytchB2B
       session_custom_claims: nil,
       pkce_code_verifier: nil,
       locale: nil,
-      intermediate_session_token: nil
+      intermediate_session_token: nil,
+      telemetry_id: nil
     )
       headers = {}
       request = {
@@ -154,6 +161,7 @@ module StytchB2B
       request[:pkce_code_verifier] = pkce_code_verifier unless pkce_code_verifier.nil?
       request[:locale] = locale unless locale.nil?
       request[:intermediate_session_token] = intermediate_session_token unless intermediate_session_token.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
       post_request('/v1/b2b/oauth/authenticate', request, headers)
     end
@@ -165,7 +173,7 @@ module StytchB2B
         @connection = connection
       end
 
-      # Authenticates the Discovery token and exchanges it for an Intermediate
+      # Authenticates the Discovery OAuth token and exchanges it for an Intermediate
       # Session Token. Intermediate Session Tokens can be used for various Discovery login flows and are valid for 10 minutes.
       #
       # == Parameters:

@@ -20,10 +20,10 @@ module StytchB2B
       @discovery = StytchB2B::MagicLinks::Discovery.new(@connection)
     end
 
-    # Authenticate a with a Magic Link. This endpoint requires a Magic Link token that is not expired or previously used. If the Member’s status is `pending` or `invited`, they will be updated to `active`.
+    # Authenticate a Member with a Magic Link. This endpoint requires a Magic Link token that is not expired or previously used. If the Member's status is `pending` or `invited`, they will be updated to `active`.
     # Provide the `session_duration_minutes` parameter to set the lifetime of the session. If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration.
     #
-    # If the Member is required to complete MFA to log in to the, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
+    # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
     # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp),
     # or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete the MFA step and acquire a full member session.
     # The `intermediate_session_token` can also be used with the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to join a different Organization or create a new one.
@@ -67,7 +67,7 @@ module StytchB2B
     #   Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     # locale::
-    #   If the needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
+    #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
     #
     # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
     #
@@ -78,6 +78,9 @@ module StytchB2B
     #   The type of this field is nilable +AuthenticateRequestLocale+ (string enum).
     # intermediate_session_token::
     #   Adds this primary authentication factor to the intermediate session token. If the resulting set of factors satisfies the organization's primary authentication requirements and MFA requirements, the intermediate session token will be consumed and converted to a member session. If not, the same intermediate session token will be returned.
+    #   The type of this field is nilable +String+.
+    # telemetry_id::
+    #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
     #   The type of this field is nilable +String+.
     #
     # == Returns:
@@ -124,6 +127,12 @@ module StytchB2B
     # mfa_required::
     #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
     #   The type of this field is nilable +MfaRequired+ (+object+).
+    # primary_required::
+    #   (no documentation yet)
+    #   The type of this field is nilable +PrimaryRequired+ (+object+).
+    # member_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
       magic_links_token:,
       pkce_code_verifier: nil,
@@ -132,7 +141,8 @@ module StytchB2B
       session_duration_minutes: nil,
       session_custom_claims: nil,
       locale: nil,
-      intermediate_session_token: nil
+      intermediate_session_token: nil,
+      telemetry_id: nil
     )
       headers = {}
       request = {
@@ -145,6 +155,7 @@ module StytchB2B
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
       request[:locale] = locale unless locale.nil?
       request[:intermediate_session_token] = intermediate_session_token unless intermediate_session_token.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
       post_request('/v1/b2b/magic_links/authenticate', request, headers)
     end
@@ -184,7 +195,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # email_address::
       #   The email address of the Member.
@@ -274,7 +285,7 @@ module StytchB2B
         post_request('/v1/b2b/magic_links/email/login_or_signup', request, headers)
       end
 
-      # Send an invite email to a new to join an. The Member will be created with an `invited` status until they successfully authenticate. Sending invites to `pending` Members will update their status to `invited`. Sending invites to already `active` Members will return an error.
+      # Send an invite email to a new Member to join an Organization. The Member will be created with an `invited` status until they successfully authenticate. Sending invites to `pending` Members will update their status to `invited`. Sending invites to already `active` Members will return an error.
       #
       # The magic link invite will be valid for 1 week.
       #
@@ -284,7 +295,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # email_address::
       #   The email address of the Member.

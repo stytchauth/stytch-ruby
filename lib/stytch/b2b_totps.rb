@@ -16,13 +16,15 @@ module StytchB2B
       @connection = connection
     end
 
-    # Create a new TOTP instance for a. The Member can use the authenticator application of their choice to scan the QR code or enter the secret.
+    # Create a new TOTP instance for a Member. The Member can use the authenticator application of their choice to scan the QR code or enter the secret.
     #
-    # Passing an intermediate session token, session token, or session JWT is not required, but if passed must match the Member ID passed.
+    # If the Member already has an active MFA factor, then passing an intermediate session token, session token, or session JWT with the existing MFA factor on it is required to prevent bypassing MFA.
+    #
+    # Otherwise, passing an intermediate session token, session token, or session JWT is not required, but if passed must match the `member_id` passed.
     #
     # == Parameters:
     # organization_id::
-    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
     #   The type of this field is +String+.
     # member_id::
     #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -94,7 +96,7 @@ module StytchB2B
     #
     # == Parameters:
     # organization_id::
-    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
     #   The type of this field is +String+.
     # member_id::
     #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -140,6 +142,9 @@ module StytchB2B
     # set_default_mfa::
     #   If passed will set the authenticated method to the default MFA method. Completing an MFA authentication flow for the first time for a Member will implicitly set the method to the default MFA method. This option can be used to update the default MFA method if multiple are being used.
     #   The type of this field is nilable +Boolean+.
+    # telemetry_id::
+    #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -167,6 +172,9 @@ module StytchB2B
     # member_session::
     #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
     #   The type of this field is nilable +MemberSession+ (+object+).
+    # member_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
       organization_id:,
       member_id:,
@@ -177,7 +185,8 @@ module StytchB2B
       session_duration_minutes: nil,
       session_custom_claims: nil,
       set_mfa_enrollment: nil,
-      set_default_mfa: nil
+      set_default_mfa: nil,
+      telemetry_id: nil
     )
       headers = {}
       request = {
@@ -192,15 +201,16 @@ module StytchB2B
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
       request[:set_mfa_enrollment] = set_mfa_enrollment unless set_mfa_enrollment.nil?
       request[:set_default_mfa] = set_default_mfa unless set_default_mfa.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
       post_request('/v1/b2b/totp/authenticate', request, headers)
     end
 
-    # Migrate an existing TOTP instance for a. Recovery codes are not required and will be minted for the Member if not provided.
+    # Migrate an existing TOTP instance for a Member. Recovery codes are not required and will be minted for the Member if not provided.
     #
     # == Parameters:
     # organization_id::
-    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
     #   The type of this field is +String+.
     # member_id::
     #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.

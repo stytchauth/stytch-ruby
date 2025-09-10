@@ -19,7 +19,21 @@ RSpec.describe Stytch::Client do
 
     project_id = ENV['STYTCH_PROJECT_ID']
     secret = ENV['STYTCH_SECRET']
+    existing_token = ENV['STYTCH_EXISTING_TOKEN']
+    client_id = ENV['STYTCH_CLIENT_ID']
     b2c_client = Stytch::Client.new(project_id: project_id, secret: secret)
+
+    # B2C client with custom domain
+    custom_domain = ENV['STYTCH_CUSTOM_DOMAIN'] # e.g., 'https://api.custom-domain.com'
+    b2c_client = if custom_domain
+                   Stytch::Client.new(
+                     project_id: project_id,
+                     secret: secret,
+                     url_prefix: custom_domain
+                   )
+                 else
+                   Stytch::Client.new(project_id: project_id, secret: secret)
+                 end
 
     crypto_auth_start = b2c_client.crypto_wallets.authenticate_start(
       crypto_wallet_type: 'ethereum',
@@ -214,5 +228,60 @@ RSpec.describe Stytch::Client do
       user_id: users_create['user_id']
     )
     expect(users_delete['status_code']).to eq(200)
+
+    idp_introspect_access_token_local = b2c_client.idp.introspect_access_token_local(
+      access_token: 'invalid_jwt_token'
+    )
+    # The method returns nil for invalid tokens, which is expected behavior
+    expect(idp_introspect_access_token_local).to be_nil
+
+    # Valid token with custom domain
+    now = Time.now
+    kid = 'jwk-test-00000000-0000-0000-0000-000000000000'
+    headers = { kid: kid }
+
+    decoded_claims = {
+      'sub' => 'user-123',
+      'scope' => 'read write',
+      'aud' => [project_id],
+      'exp' => now.to_i + 3600, # 1 hour from now
+      'iat' => now.to_i,
+      'nbf' => now.to_i,
+      'iss' => custom_domain || "stytch.com/#{project_id}",
+      'https://stytch.com/organization' => {
+        'organization_id' => 'org-123',
+        'slug' => 'test-org'
+      },
+      'custom_field' => 'custom_value'
+    }
+
+    # Create RSA key for signing
+    rsa_key = OpenSSL::PKey::RSA.new(2048)
+    jwk = JWT::JWK.new(rsa_key, kid)
+    access_token = JWT.encode(decoded_claims, rsa_key, 'RS256', headers)
+
+    # Mock the JWKS loader to return our test key
+    allow(b2c_client.idp).to receive(:get_jwks).and_return({ 'keys' => [jwk.export] })
+
+    idp_introspect_access_token_local = b2c_client.idp.introspect_access_token_local(
+      access_token: access_token
+    )
+    # The method should return the decoded claims since it's a valid token
+    expect(idp_introspect_access_token_local).not_to be_nil
+    expect(idp_introspect_access_token_local['subject']).to eq('user-123')
+    expect(idp_introspect_access_token_local['scope']).to eq('read write')
+
+    # Test with network - debug the real token
+    if existing_token && client_id
+      idp_introspect_token_network = b2c_client.idp.introspect_token_network(
+        token: existing_token,
+        client_id: client_id
+      )
+      puts "Network introspection result: #{idp_introspect_token_network.inspect}"
+
+      # Local introspection should work if we can get the JWKS
+      # Network introspection will return nil because the token isn't registered
+      expect(idp_introspect_token_network).to be_nil # Expected to be nil for unregistered token
+    end
   end
 end

@@ -26,13 +26,13 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to. You may use an external_id here if one is set for the user.
+    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     # domain::
     #   The domain for Passkeys or WebAuthn. Defaults to `window.location.hostname`.
     #   The type of this field is +String+.
     # user_agent::
-    #   The user agent of the User.
+    #   The user agent of the client.
     #   The type of this field is nilable +String+.
     # authenticator_type::
     #   The requested authenticator type of the Passkey or WebAuthn device. The two valid values are platform and cross-platform. If no value passed, we assume both values are allowed.
@@ -50,6 +50,9 @@ module Stytch
     # override_display_name::
     #   (no documentation yet)
     #   The type of this field is nilable +String+.
+    # use_base64_url_encoding::
+    #   (no documentation yet)
+    #   The type of this field is nilable +Boolean+.
     #
     # == Returns:
     # An object with the following fields:
@@ -73,7 +76,8 @@ module Stytch
       return_passkey_credential_options: nil,
       override_id: nil,
       override_name: nil,
-      override_display_name: nil
+      override_display_name: nil,
+      use_base64_url_encoding: nil
     )
       headers = {}
       request = {
@@ -86,6 +90,7 @@ module Stytch
       request[:override_id] = override_id unless override_id.nil?
       request[:override_name] = override_name unless override_name.nil?
       request[:override_display_name] = override_display_name unless override_display_name.nil?
+      request[:use_base64_url_encoding] = use_base64_url_encoding unless use_base64_url_encoding.nil?
 
       post_request('/v1/webauthn/register/start', request, headers)
     end
@@ -96,7 +101,7 @@ module Stytch
     #
     # == Parameters:
     # user_id::
-    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to. You may use an external_id here if one is set for the user.
+    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
     # public_key_credential::
     #   The response of the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential).
@@ -123,6 +128,9 @@ module Stytch
     #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
+    # telemetry_id::
+    #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -150,16 +158,20 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
+    # user_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def register(
       user_id:,
       public_key_credential:,
       session_token: nil,
       session_duration_minutes: nil,
       session_jwt: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      telemetry_id: nil
     )
       headers = {}
       request = {
@@ -170,6 +182,7 @@ module Stytch
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
       post_request('/v1/webauthn/register', request, headers)
     end
@@ -187,7 +200,7 @@ module Stytch
     #   The domain for Passkeys or WebAuthn. Defaults to `window.location.hostname`.
     #   The type of this field is +String+.
     # user_id::
-    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to. You may use an external_id here if one is set for the user.
+    #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to. You may use an `external_id` here if one is set for the user.
     #   The type of this field is nilable +String+.
     # return_passkey_credential_options::
     #   If true, the `public_key_credential_creation_options` returned will be optimized for Passkeys with `userVerification` set to `"preferred"`.
@@ -253,6 +266,9 @@ module Stytch
     #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
+    # telemetry_id::
+    #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -280,15 +296,19 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
+    # user_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
       public_key_credential:,
       session_token: nil,
       session_duration_minutes: nil,
       session_jwt: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      telemetry_id: nil
     )
       headers = {}
       request = {
@@ -298,6 +318,7 @@ module Stytch
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
       post_request('/v1/webauthn/authenticate', request, headers)
     end

@@ -27,7 +27,7 @@ module StytchB2B
         @connection = connection
       end
 
-      # Send a One-Time Passcode (OTP) to a's phone number.
+      # Send a One-Time Passcode (OTP) to a Member's phone number.
       #
       # If the Member already has a phone number, the `mfa_phone_number` field is not needed; the endpoint will send an OTP to the number associated with the Member.
       # If the Member does not have a phone number, the endpoint will send an OTP to the `mfa_phone_number` provided and link the `mfa_phone_number` with the Member.
@@ -38,18 +38,20 @@ module StytchB2B
       #
       # If a Member has a phone number and is enrolled in MFA, then after a successful primary authentication event (e.g. [email magic link](https://stytch.com/docs/b2b/api/authenticate-magic-link) or [SSO](https://stytch.com/docs/b2b/api/sso-authenticate) login is complete), an SMS OTP will automatically be sent to their phone number. In that case, this endpoint should only be used for subsequent authentication events, such as prompting a Member for an OTP again after a period of inactivity.
       #
-      # Passing an intermediate session token, session token, or session JWT is not required, but if passed must match the Member ID passed.
+      # If the Member already has an active MFA factor, then passing an intermediate session token, session token, or session JWT with the existing MFA factor on it is required to prevent bypassing MFA.
+      #
+      # Otherwise, passing an intermediate session token, session token, or session JWT is not required, but if passed must match the `member_id` passed.
       #
       # ### Cost to send SMS OTP
       # Before configuring SMS or WhatsApp OTPs, please review how Stytch [bills the costs of international OTPs](https://stytch.com/pricing) and understand how to protect your app against [toll fraud](https://stytch.com/docs/guides/passcodes/toll-fraud/overview).
       #
       # Even when international SMS is enabled, we do not support sending SMS to countries on our [Unsupported countries list](https://stytch.com/docs/guides/passcodes/unsupported-countries).
       #
-      # __Note:__ SMS to phone numbers outside of the US and Canada is disabled by default for customers who did not use SMS prior to October 2023. If you're interested in sending international SMS, please reach out to [support@stytch.com](mailto:support@stytch.com?subject=Enable%20international%20SMS).
+      # __Note:__ SMS to phone numbers outside of the US and Canada is disabled by default for customers who did not use SMS prior to October 2023. If you're interested in sending international SMS, please add those countries to your Project's allowlist via the [Dashboard](https://stytch.com/dashboard/country-code-allowlists) or [Programmatic Workspace Actions](https://stytch.com/docs/workspace-management/pwa/set-allowed-country-codes), and [add credit card details](https://stytch.com/dashboard/settings/billing) to your account.
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -128,7 +130,7 @@ module StytchB2B
       # such as [email magic link authenticate](https://stytch.com/docs/b2b/api/authenticate-magic-link),
       # or upon successful calls to discovery authenticate methods, such as [email magic link discovery authenticate](https://stytch.com/docs/b2b/api/authenticate-discovery-magic-link).
       #
-      # If the's MFA policy is `REQUIRED_FOR_ALL`, a successful OTP authentication will change the's `mfa_enrolled` status to `true` if it is not already `true`.
+      # If the Organization's MFA policy is `REQUIRED_FOR_ALL`, a successful OTP authentication will change the Member's `mfa_enrolled` status to `true` if it is not already `true`.
       # If the Organization's MFA policy is `OPTIONAL`, the Member's MFA enrollment can be toggled by passing in a value for the `set_mfa_enrollment` field.
       # The Member's MFA enrollment can also be toggled through the [Update Member](https://stytch.com/docs/b2b/api/update-member) endpoint.
       #
@@ -136,7 +138,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # member_id::
       #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -182,6 +184,9 @@ module StytchB2B
       # set_default_mfa::
       #   (no documentation yet)
       #   The type of this field is nilable +Boolean+.
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -209,6 +214,9 @@ module StytchB2B
       # member_session::
       #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
       #   The type of this field is nilable +MemberSession+ (+object+).
+      # member_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def authenticate(
         organization_id:,
         member_id:,
@@ -219,7 +227,8 @@ module StytchB2B
         session_duration_minutes: nil,
         session_custom_claims: nil,
         set_mfa_enrollment: nil,
-        set_default_mfa: nil
+        set_default_mfa: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -234,6 +243,7 @@ module StytchB2B
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:set_mfa_enrollment] = set_mfa_enrollment unless set_mfa_enrollment.nil?
         request[:set_default_mfa] = set_default_mfa unless set_default_mfa.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/b2b/otps/sms/authenticate', request, headers)
       end
@@ -255,7 +265,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # email_address::
       #   The email address of the Member.
@@ -324,11 +334,11 @@ module StytchB2B
         post_request('/v1/b2b/otps/email/login_or_signup', request, headers)
       end
 
-      # Authenticate a with a one-time passcode (OTP). This endpoint requires an OTP that is not expired or previously used.
-      # OTPs have a default expiry of 10 minutes. If the Member’s status is `pending` or `invited`, they will be updated to `active`.
+      # Authenticate a Member with a one-time passcode (OTP). This endpoint requires an OTP that is not expired or previously used.
+      # OTPs have a default expiry of 10 minutes. If the Member's status is `pending` or `invited`, they will be updated to `active`.
       # Provide the `session_duration_minutes` parameter to set the lifetime of the session. If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration.
       #
-      # If the Member is required to complete MFA to log in to the, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
+      # If the Member is required to complete MFA to log in to the Organization, the returned value of `member_authenticated` will be `false`, and an `intermediate_session_token` will be returned.
       # The `intermediate_session_token` can be passed into the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp),
       # or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete the MFA step and acquire a full member session.
       # The `intermediate_session_token` can also be used with the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to join a different Organization or create a new one.
@@ -338,7 +348,7 @@ module StytchB2B
       #
       # == Parameters:
       # organization_id::
-      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+      #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
       # email_address::
       #   The email address of the Member.
@@ -381,6 +391,9 @@ module StytchB2B
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
       #
       #   The type of this field is nilable +AuthenticateRequestLocale+ (string enum).
+      # telemetry_id::
+      #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -405,9 +418,6 @@ module StytchB2B
       # session_jwt::
       #   The JSON Web Token (JWT) for a given Stytch Session.
       #   The type of this field is +String+.
-      # member_session::
-      #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
-      #   The type of this field is +MemberSession+ (+object+).
       # organization::
       #   The [Organization object](https://stytch.com/docs/b2b/api/organization-object).
       #   The type of this field is +Organization+ (+object+).
@@ -420,9 +430,18 @@ module StytchB2B
       # status_code::
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
+      # member_session::
+      #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
+      #   The type of this field is nilable +MemberSession+ (+object+).
       # mfa_required::
       #   Information about the MFA requirements of the Organization and the Member's options for fulfilling MFA.
       #   The type of this field is nilable +MfaRequired+ (+object+).
+      # primary_required::
+      #   (no documentation yet)
+      #   The type of this field is nilable +PrimaryRequired+ (+object+).
+      # member_device::
+      #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+      #   The type of this field is nilable +DeviceInfo+ (+object+).
       def authenticate(
         organization_id:,
         email_address:,
@@ -432,7 +451,8 @@ module StytchB2B
         intermediate_session_token: nil,
         session_duration_minutes: nil,
         session_custom_claims: nil,
-        locale: nil
+        locale: nil,
+        telemetry_id: nil
       )
         headers = {}
         request = {
@@ -446,6 +466,7 @@ module StytchB2B
         request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:locale] = locale unless locale.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
         post_request('/v1/b2b/otps/email/authenticate', request, headers)
       end

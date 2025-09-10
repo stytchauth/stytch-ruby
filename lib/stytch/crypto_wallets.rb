@@ -31,7 +31,7 @@ module Stytch
     #   The crypto wallet address to authenticate.
     #   The type of this field is +String+.
     # user_id::
-    #   The unique ID of a specific User. You may use an external_id here if one is set for the user.
+    #   The unique ID of a specific User. You may use an `external_id` here if one is set for the user.
     #   The type of this field is nilable +String+.
     # session_token::
     #   The `session_token` associated with a User's existing Session.
@@ -115,6 +115,9 @@ module Stytch
     #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
+    # telemetry_id::
+    #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -139,12 +142,15 @@ module Stytch
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
     #
-    #   See [GET sessions](https://stytch.com/docs/api/session-get) for complete response fields.
+    #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
     #
     #   The type of this field is nilable +Session+ (+object+).
     # siwe_params::
     #   The parameters of the Sign In With Ethereum (SIWE) message that was signed.
     #   The type of this field is nilable +SIWEParamsResponse+ (+object+).
+    # user_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
       crypto_wallet_type:,
       crypto_wallet_address:,
@@ -152,7 +158,8 @@ module Stytch
       session_token: nil,
       session_duration_minutes: nil,
       session_jwt: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      telemetry_id: nil
     )
       headers = {}
       request = {
@@ -164,6 +171,7 @@ module Stytch
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
       post_request('/v1/crypto_wallets/authenticate', request, headers)
     end

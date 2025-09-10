@@ -11,13 +11,14 @@ require_relative 'request_helper'
 module Stytch
   class Fraud
     include Stytch::RequestHelper
-    attr_reader :fingerprint, :rules
+    attr_reader :fingerprint, :rules, :verdict_reasons
 
     def initialize(connection)
       @connection = connection
 
       @fingerprint = Stytch::Fraud::Fingerprint.new(@connection)
       @rules = Stytch::Fraud::Rules.new(@connection)
+      @verdict_reasons = Stytch::Fraud::VerdictReasons.new(@connection)
     end
 
     class Fingerprint
@@ -27,14 +28,17 @@ module Stytch
         @connection = connection
       end
 
-      # Lookup the associated fingerprint for the `telemetry_id` returned from the `GetTelemetryID` function. Learn more about the different fingerprint types and verdicts in our [DFP guide](https://stytch.com/docs/fraud/guides/device-fingerprinting/overview).
+      # Lookup the associated fingerprint for the `telemetry_id` returned from the `GetTelemetryID()` function.
+      # Learn more about the different fingerprint types and verdicts in our [DFP guide](https://stytch.com/docs/fraud/guides/device-fingerprinting/overview).
       #
-      # Make a decision based on the returned `verdict`:
+      # You can make a decision based on the recommended `verdict` in the response:
       # * `ALLOW` - This is a known valid device grouping or device profile that is part of the default `ALLOW` listed set of known devices by Stytch. This grouping is made up of  verified device profiles that match the characteristics of known/authentic traffic origins.
       # * `BLOCK` - This is a known bad or malicious device profile that is undesirable and should be blocked from completing the privileged action in question.
       # * `CHALLENGE` - This is an unknown or potentially malicious device that should be put through increased friction such as 2FA or other forms of extended user verification before allowing the privileged action to proceed.
       #
-      # If the `telemetry_id` is not found, we will return a 404 `telemetry_id_not_found` [error](https://stytch.com/docs/fraud/api/errors/404#telemetry_id_not_found). We recommend treating 404 errors as a `BLOCK`, since it could be a sign of an attacker trying to bypass DFP protections by generating fake telemetry IDs.
+      # If the `telemetry_id` is expired or not found, this endpoint returns a 404 `telemetry_id_not_found` [error](https://stytch.com/docs/fraud/api/errors/404#telemetry_id_not_found).
+      # We recommend treating 404 errors as a `BLOCK`, since it could be a sign of an attacker trying to bypass DFP protections.
+      # See [Attacker-controlled telemetry IDs](https://stytch.com/docs/fraud/guides/device-fingerprinting/integration-steps/test-your-integration#attacker-controlled-telemetry-ids) for more information.
       #
       # == Parameters:
       # telemetry_id::
@@ -250,6 +254,83 @@ module Stytch
         request[:limit] = limit unless limit.nil?
 
         post_request('/v1/rules/list', request, headers)
+      end
+    end
+
+    class VerdictReasons
+      include Stytch::RequestHelper
+
+      def initialize(connection)
+        @connection = connection
+      end
+
+      # Use this endpoint to override the action returned for a specific verdict reason during a fingerprint lookup. For example, Stytch Device Fingerprinting returns a `CHALLENGE` verdict action by default for the verdict reason `VIRTUAL_MACHINE`. You can use this endpoint to override that reason to return an `ALLOW` verdict instead if you expect many legitimate users to be using a browser that runs in a virtual machine.
+      #
+      # == Parameters:
+      # verdict_reason::
+      #   The verdict reason that you wish to override. For a list of possible reasons to override, see [Warning Flags (Verdict Reasons)](https://stytch.com/docs/docs/fraud/guides/device-fingerprinting/reference/warning-flags-verdict-reasons). You may not override the `RULE_MATCH` reason.
+      #   The type of this field is +String+.
+      # override_action::
+      #   The action that you want to be returned for the specified verdict reason. The override action must be one of `ALLOW`, `BLOCK`, or `CHALLENGE`.
+      #   The type of this field is +OverrideRequestAction+ (string enum).
+      # override_description::
+      #   An optional description for the verdict reason override.
+      #   The type of this field is nilable +String+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # verdict_reason_action::
+      #   Information about the verdict reason override that was just set.
+      #   The type of this field is +VerdictReasonAction+ (+object+).
+      # status_code::
+      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+      #   The type of this field is +Integer+.
+      def override(
+        verdict_reason:,
+        override_action:,
+        override_description: nil
+      )
+        headers = {}
+        request = {
+          verdict_reason: verdict_reason,
+          override_action: override_action
+        }
+        request[:override_description] = override_description unless override_description.nil?
+
+        post_request('/v1/verdict_reasons/override', request, headers)
+      end
+
+      # Get the list of verdict reasons returned by the Stytch Device Fingerprinting product along with their default actions and any overrides you may have defined. This is not an exhaustive list of verdict reasons, but it contains all verdict reasons that you may set an override on.
+      #
+      # For a full list of possible verdict reasons, see [Warning Flags (Verdict Reasons)](https://stytch.com/docs/docs/fraud/guides/device-fingerprinting/reference/warning-flags-verdict-reasons).
+      #
+      # == Parameters:
+      # overrides_only::
+      #   Whether to return only verdict reasons that have overrides set. Defaults to false.
+      #   The type of this field is nilable +Boolean+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # verdict_reason_actions::
+      #   Information about verdict reasons and any overrides that were set on them.
+      #   The type of this field is list of +VerdictReasonAction+ (+object+).
+      # status_code::
+      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+      #   The type of this field is +Integer+.
+      def list(
+        overrides_only: nil
+      )
+        headers = {}
+        request = {}
+        request[:overrides_only] = overrides_only unless overrides_only.nil?
+
+        post_request('/v1/verdict_reasons/list', request, headers)
       end
     end
   end

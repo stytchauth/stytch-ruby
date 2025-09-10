@@ -16,11 +16,11 @@ module StytchB2B
       @connection = connection
     end
 
-    # Allows a to complete an MFA flow by consuming a recovery code. This consumes the recovery code and returns a session token that can be used to authenticate the Member.
+    # Allows a Member to complete an MFA flow by consuming a recovery code. This consumes the recovery code and returns a session token that can be used to authenticate the Member.
     #
     # == Parameters:
     # organization_id::
-    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
     #   The type of this field is +String+.
     # member_id::
     #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -55,6 +55,9 @@ module StytchB2B
     #   delete a key, supply a null value. Custom claims made with reserved claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) will be ignored.
     #   Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
+    # telemetry_id::
+    #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
+    #   The type of this field is nilable +String+.
     #
     # == Returns:
     # An object with the following fields:
@@ -85,6 +88,9 @@ module StytchB2B
     # member_session::
     #   The [Session object](https://stytch.com/docs/b2b/api/session-object).
     #   The type of this field is nilable +MemberSession+ (+object+).
+    # member_device::
+    #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
+    #   The type of this field is nilable +DeviceInfo+ (+object+).
     def recover(
       organization_id:,
       member_id:,
@@ -93,7 +99,8 @@ module StytchB2B
       session_token: nil,
       session_jwt: nil,
       session_duration_minutes: nil,
-      session_custom_claims: nil
+      session_custom_claims: nil,
+      telemetry_id: nil
     )
       headers = {}
       request = {
@@ -106,15 +113,16 @@ module StytchB2B
       request[:session_jwt] = session_jwt unless session_jwt.nil?
       request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
       request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
       post_request('/v1/b2b/recovery_codes/recover', request, headers)
     end
 
-    # Returns a's full set of active recovery codes.
+    # Returns a Member's full set of active recovery codes.
     #
     # == Parameters:
     # organization_id::
-    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
     #   The type of this field is +String+.
     # member_id::
     #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
@@ -150,11 +158,11 @@ module StytchB2B
       get_request(request, headers)
     end
 
-    # Rotate a's recovery codes. This invalidates all existing recovery codes and generates a new set of recovery codes.
+    # Rotate a Member's recovery codes. This invalidates all existing recovery codes and generates a new set of recovery codes.
     #
     # == Parameters:
     # organization_id::
-    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug here as a convenience.
+    #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
     #   The type of this field is +String+.
     # member_id::
     #   Globally unique UUID that identifies a specific Member. The `member_id` is critical to perform operations on a Member, so be sure to preserve this value. You may use an external_id here if one is set for the member.
