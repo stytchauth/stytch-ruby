@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'uri'
+
 module Stytch
   module RequestHelper
     def get_request(path, headers)
@@ -36,9 +38,9 @@ module Stytch
       request = path
       params.compact.each_with_index do |p, i|
         request += if i.zero?
-                     "?#{p[0]}=#{p[1]}"
+                     "?#{URI.encode_www_form_component(p[0])}=#{URI.encode_www_form_component(p[1])}"
                    else
-                     "&#{p[0]}=#{p[1]}"
+                     "&#{URI.encode_www_form_component(p[0])}=#{URI.encode_www_form_component(p[1])}"
                    end
       end
       request
