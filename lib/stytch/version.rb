@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Stytch
-  VERSION = '10.31.0'
+  VERSION = '10.32.0'
 end
