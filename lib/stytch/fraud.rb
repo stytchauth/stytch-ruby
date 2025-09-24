@@ -77,6 +77,9 @@ module Stytch
       # properties::
       #   Additional information about the user's browser and network.
       #   The type of this field is nilable +Properties+ (+object+).
+      # raw_signals::
+      #   The raw device attributes, such as screen size, that were collected by the Device Fingerprinting product to generate the fingerprints and verdict. You must be specifically enabled for the raw signals feature to see this field. You can find documentation for the specific fields in the [guides](https://stytch.com/docs/fraud/guides/device-fingerprinting/reference/raw-signals).
+      #   The type of this field is nilable +object+.
       def lookup(
         telemetry_id:,
         external_metadata: nil
