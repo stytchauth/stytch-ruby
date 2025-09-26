@@ -1522,10 +1522,12 @@ module StytchB2B
       # - Must not be in use by another member (retired emails count as used until they are [unlinked](https://stytch.com/docs/b2b/api/unlink-retired-member-email))
       # - Must not be updating for another member (i.e. two members cannot attempt to update to the same email at once)
       #
-      # The member will receive an Email Magic Link that expires in 5 minutes. If they do not verify their new email address in that timeframe, the email
+      # The member will receive an Email Magic Link (or Email OTP Code, if `EMAIL_OTP` is specified as the delivery method) that expires in 5 minutes. If they do not verify their new email address in that timeframe, the email
       # will be freed up for other members to use.
       #
-      # The Magic Link will redirect to your `login_redirect_url` (or the configured default if one isn't provided), and you should invoke the [Authenticate Magic Link](https://stytch.com/docs/b2b/api/authenticate-magic-link) endpoint as normal to complete the flow.
+      # If using Email Magic Links, the magic link will redirect to your `login_redirect_url` (or the configured default if one isn't provided), and you should invoke the [Authenticate Magic Link](https://stytch.com/docs/b2b/api/authenticate-magic-link) endpoint as normal to complete the flow.
+      #
+      # If using Email OTP Codes, you should invoke the [Authenticate Email OTP Code](https://stytch.com/docs/b2b/api/authenticate-email-otp) endpoint as normal to complete the flow. Make sure to pass the new email address to the endpoint.
       #
       # == Parameters:
       # organization_id::
@@ -1554,6 +1556,9 @@ module StytchB2B
       #   Use a custom template for login emails. By default, it will use your default email template. The template must be from Stytch's
       # built-in customizations or a custom HTML email for Magic Links - Login.
       #   The type of this field is nilable +String+.
+      # delivery_method::
+      #   The method that should be used to verify a member's new email address. The options are `EMAIL_MAGIC_LINK` or `EMAIL_OTP`. This field is optional, if no value is provided, `EMAIL_MAGIC_LINK` will be used.
+      #   The type of this field is nilable +StartEmailUpdateRequestDeliveryMethod+ (string enum).
       #
       # == Returns:
       # An object with the following fields:
@@ -1582,6 +1587,7 @@ module StytchB2B
         login_redirect_url: nil,
         locale: nil,
         login_template_id: nil,
+        delivery_method: nil,
         method_options: nil
       )
         headers = {}
@@ -1592,6 +1598,7 @@ module StytchB2B
         request[:login_redirect_url] = login_redirect_url unless login_redirect_url.nil?
         request[:locale] = locale unless locale.nil?
         request[:login_template_id] = login_template_id unless login_template_id.nil?
+        request[:delivery_method] = delivery_method unless delivery_method.nil?
 
         post_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/start_email_update", request, headers)
       end
