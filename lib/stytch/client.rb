@@ -12,6 +12,7 @@ require_relative 'debug'
 require_relative 'fraud'
 require_relative 'idp'
 require_relative 'impersonation'
+require_relative 'jwks_cache'
 require_relative 'm2m'
 require_relative 'magic_links'
 require_relative 'oauth'
@@ -41,6 +42,8 @@ module Stytch
 
       create_connection(&block)
 
+      @jwks_cache = Stytch::JWKSCache.new(@connection, @project_id, jwks)
+
       rbac = Stytch::RBAC.new(@connection)
       @policy_cache = Stytch::PolicyCache.new(rbac_client: rbac)
 
@@ -48,16 +51,16 @@ module Stytch
       @crypto_wallets = Stytch::CryptoWallets.new(@connection)
       @debug = Stytch::Debug.new(@connection)
       @fraud = Stytch::Fraud.new(@fraud_connection)
-      @idp = Stytch::IDP.new(@connection, @project_id, @policy_cache, jwks)
+      @idp = Stytch::IDP.new(@connection, @project_id, @jwks_cache, @policy_cache)
       @impersonation = Stytch::Impersonation.new(@connection)
-      @m2m = Stytch::M2M.new(@connection, @project_id, @is_b2b_client, jwks)
+      @m2m = Stytch::M2M.new(@connection, @project_id, @is_b2b_client, @jwks_cache)
       @magic_links = Stytch::MagicLinks.new(@connection)
       @oauth = Stytch::OAuth.new(@connection)
       @otps = Stytch::OTPs.new(@connection)
       @passwords = Stytch::Passwords.new(@connection)
       @project = Stytch::Project.new(@connection)
       @rbac = Stytch::RBAC.new(@connection)
-      @sessions = Stytch::Sessions.new(@connection, @project_id, @policy_cache, jwks)
+      @sessions = Stytch::Sessions.new(@connection, @project_id, @jwks_cache, @policy_cache)
       @totps = Stytch::TOTPs.new(@connection)
       @users = Stytch::Users.new(@connection)
       @webauthn = Stytch::WebAuthn.new(@connection)

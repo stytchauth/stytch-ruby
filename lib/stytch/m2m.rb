@@ -13,31 +13,13 @@ module Stytch
     include Stytch::RequestHelper
     attr_reader :clients
 
-    def initialize(connection, project_id, is_b2b_client, jwks)
+    def initialize(connection, project_id, is_b2b_client, jwks_cache)
       @connection = connection
 
       @clients = Stytch::M2M::Clients.new(@connection)
       @project_id = project_id
-      @cache_last_update = 0
+      @jwks_cache = jwks_cache
       @is_b2b_client = is_b2b_client
-
-      # If jwks are provided during initialization, use them directly
-      if jwks
-        @cached_keys = { keys: jwks }
-        @cache_last_update = Time.now.to_i
-      end
-
-      @jwks_loader = lambda do |options|
-        @cached_keys = nil if options[:invalidate] && @cache_last_update < Time.now.to_i - 300
-        @cached_keys ||= begin
-          @cache_last_update = Time.now.to_i
-          keys = []
-          get_jwks(project_id: @project_id)['keys'].each do |r|
-            keys << r
-          end
-          { keys: keys }
-        end
-      end
     end
 
     # MANUAL(M2M::get_jwks)(SERVICE_METHOD)
@@ -197,7 +179,7 @@ module Stytch
 
       begin
         decoded_token = JWT.decode jwt, nil, true,
-                                   { jwks: @jwks_loader, iss: valid_issuers, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'], nbf_leeway: clock_tolerance_seconds }
+                                   { jwks: @jwks_cache.loader, iss: valid_issuers, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'], nbf_leeway: clock_tolerance_seconds }
         decoded_token[0]
       rescue JWT::InvalidIssuerError
         raise JWTInvalidIssuerError

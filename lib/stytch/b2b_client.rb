@@ -23,6 +23,7 @@ require_relative 'b2b_totps'
 require_relative 'connected_apps'
 require_relative 'debug'
 require_relative 'fraud'
+require_relative 'jwks_cache'
 require_relative 'm2m'
 require_relative 'project'
 require_relative 'rbac_local'
@@ -43,6 +44,8 @@ module StytchB2B
 
       create_connection(&block)
 
+      @jwks_cache = Stytch::JWKSCache.new(@connection, @project_id, jwks)
+
       rbac = StytchB2B::RBAC.new(@connection)
       @policy_cache = Stytch::PolicyCache.new(rbac_client: rbac)
 
@@ -50,9 +53,9 @@ module StytchB2B
       @debug = Stytch::Debug.new(@connection)
       @discovery = StytchB2B::Discovery.new(@connection)
       @fraud = Stytch::Fraud.new(@fraud_connection)
-      @idp = StytchB2B::IDP.new(@connection, @project_id, @policy_cache, jwks)
+      @idp = StytchB2B::IDP.new(@connection, @project_id, @jwks_cache, @policy_cache)
       @impersonation = StytchB2B::Impersonation.new(@connection)
-      @m2m = Stytch::M2M.new(@connection, @project_id, @is_b2b_client, jwks)
+      @m2m = Stytch::M2M.new(@connection, @project_id, @is_b2b_client, @jwks_cache)
       @magic_links = StytchB2B::MagicLinks.new(@connection)
       @oauth = StytchB2B::OAuth.new(@connection)
       @otps = StytchB2B::OTPs.new(@connection)
@@ -63,7 +66,7 @@ module StytchB2B
       @recovery_codes = StytchB2B::RecoveryCodes.new(@connection)
       @scim = StytchB2B::SCIM.new(@connection)
       @sso = StytchB2B::SSO.new(@connection)
-      @sessions = StytchB2B::Sessions.new(@connection, @project_id, @policy_cache, jwks)
+      @sessions = StytchB2B::Sessions.new(@connection, @project_id, @jwks_cache, @policy_cache)
       @totps = StytchB2B::TOTPs.new(@connection)
     end
 
