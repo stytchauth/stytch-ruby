@@ -16,7 +16,7 @@ RSpec.describe Stytch::Sessions do
     # Use the TestConnection class with default api_host
     connection = TestConnection.new
     policy_cache = Stytch::PolicyCache.new(rbac_client: Stytch::RBAC.new(connection))
-    sessions = Stytch::Sessions.new(connection, project_id, policy_cache)
+    sessions = Stytch::Sessions.new(connection, project_id, policy_cache, nil)
 
     kid = 'jwk-test-00000000-0000-0000-0000-000000000000'
     headers = { kid: kid }
@@ -70,7 +70,7 @@ RSpec.describe Stytch::Sessions do
     # Use the TestConnection class with custom api_host
     connection = TestConnection.new(custom_api_host)
     policy_cache = Stytch::PolicyCache.new(rbac_client: Stytch::RBAC.new(connection))
-    sessions = Stytch::Sessions.new(connection, project_id, policy_cache)
+    sessions = Stytch::Sessions.new(connection, project_id, policy_cache, nil)
 
     kid = 'jwk-test-00000000-0000-0000-0000-000000000000'
     headers = { kid: kid }
@@ -123,7 +123,7 @@ RSpec.describe Stytch::Sessions do
     # Use the TestConnection class with default api_host
     connection = TestConnection.new
     policy_cache = Stytch::PolicyCache.new(rbac_client: Stytch::RBAC.new(connection))
-    sessions = Stytch::Sessions.new(connection, project_id, policy_cache)
+    sessions = Stytch::Sessions.new(connection, project_id, policy_cache, nil)
 
     now = Time.utc(2022, 5, 3, 18, 51, 41)
     claims = jwt_claims(project_id, now)
@@ -139,7 +139,7 @@ RSpec.describe Stytch::Sessions do
     # Use the TestConnection class with default api_host
     connection = TestConnection.new
     policy_cache = Stytch::PolicyCache.new(rbac_client: Stytch::RBAC.new(connection))
-    sessions = Stytch::Sessions.new(connection, project_id, policy_cache)
+    sessions = Stytch::Sessions.new(connection, project_id, policy_cache, nil)
 
     now = Time.utc(2022, 5, 3, 18, 51, 41)
     claims = jwt_claims(project_id, now)

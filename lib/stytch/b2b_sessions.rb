@@ -34,12 +34,19 @@ module StytchB2B
 
     include Stytch::RequestHelper
 
-    def initialize(connection, project_id, policy_cache)
+    def initialize(connection, project_id, policy_cache, jwks)
       @connection = connection
 
       @policy_cache = policy_cache
       @project_id = project_id
       @cache_last_update = 0
+
+      # If jwks are provided during initialization, use them directly
+      if jwks
+        @cached_keys = { keys: jwks }
+        @cache_last_update = Time.now.to_i
+      end
+
       @jwks_loader = lambda do |options|
         @cached_keys = nil if options[:invalidate] && @cache_last_update < Time.now.to_i - 300
         @cached_keys ||= begin

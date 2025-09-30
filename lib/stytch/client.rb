@@ -31,7 +31,7 @@ module Stytch
 
     attr_reader :connected_app, :crypto_wallets, :debug, :fraud, :idp, :impersonation, :m2m, :magic_links, :oauth, :otps, :passwords, :project, :rbac, :sessions, :totps, :users, :webauthn
 
-    def initialize(project_id:, secret:, env: nil, fraud_env: nil, timeout: nil, &block)
+    def initialize(project_id:, secret:, env: nil, fraud_env: nil, timeout: nil, jwks: nil, &block)
       @api_host = api_host(env, project_id)
       @fraud_api_host = fraud_api_host(fraud_env)
       @project_id = project_id
@@ -48,16 +48,16 @@ module Stytch
       @crypto_wallets = Stytch::CryptoWallets.new(@connection)
       @debug = Stytch::Debug.new(@connection)
       @fraud = Stytch::Fraud.new(@fraud_connection)
-      @idp = Stytch::IDP.new(@connection, @project_id, @policy_cache)
+      @idp = Stytch::IDP.new(@connection, @project_id, @policy_cache, jwks)
       @impersonation = Stytch::Impersonation.new(@connection)
-      @m2m = Stytch::M2M.new(@connection, @project_id, @is_b2b_client)
+      @m2m = Stytch::M2M.new(@connection, @project_id, @is_b2b_client, jwks)
       @magic_links = Stytch::MagicLinks.new(@connection)
       @oauth = Stytch::OAuth.new(@connection)
       @otps = Stytch::OTPs.new(@connection)
       @passwords = Stytch::Passwords.new(@connection)
       @project = Stytch::Project.new(@connection)
       @rbac = Stytch::RBAC.new(@connection)
-      @sessions = Stytch::Sessions.new(@connection, @project_id, @policy_cache)
+      @sessions = Stytch::Sessions.new(@connection, @project_id, @policy_cache, jwks)
       @totps = Stytch::TOTPs.new(@connection)
       @users = Stytch::Users.new(@connection)
       @webauthn = Stytch::WebAuthn.new(@connection)

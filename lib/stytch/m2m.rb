@@ -13,13 +13,20 @@ module Stytch
     include Stytch::RequestHelper
     attr_reader :clients
 
-    def initialize(connection, project_id, is_b2b_client)
+    def initialize(connection, project_id, is_b2b_client, jwks)
       @connection = connection
 
       @clients = Stytch::M2M::Clients.new(@connection)
       @project_id = project_id
       @cache_last_update = 0
       @is_b2b_client = is_b2b_client
+
+      # If jwks are provided during initialization, use them directly
+      if jwks
+        @cached_keys = { keys: jwks }
+        @cache_last_update = Time.now.to_i
+      end
+
       @jwks_loader = lambda do |options|
         @cached_keys = nil if options[:invalidate] && @cache_last_update < Time.now.to_i - 300
         @cached_keys ||= begin

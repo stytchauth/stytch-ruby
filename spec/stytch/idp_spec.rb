@@ -4,7 +4,7 @@ RSpec.describe Stytch::IDP do
   let(:mock_connection) { instance_double('connection') }
   let(:mock_policy_cache) { instance_double('policy_cache') }
   let(:project_id) { 'project-test-00000000-0000-0000-0000-000000000000' }
-  let(:idp) { described_class.new(mock_connection, project_id, mock_policy_cache) }
+  let(:idp) { described_class.new(mock_connection, project_id, mock_policy_cache, nil) }
 
   before do
     allow(mock_connection).to receive(:url_prefix).and_return('https://test.stytch.com')
