@@ -15,23 +15,12 @@ module Stytch
   class Sessions
     include Stytch::RequestHelper
 
-    def initialize(connection, project_id, policy_cache)
+    def initialize(connection, project_id, jwks_cache, policy_cache)
       @connection = connection
 
       @policy_cache = policy_cache
       @project_id = project_id
-      @cache_last_update = 0
-      @jwks_loader = lambda do |options|
-        @cached_keys = nil if options[:invalidate] && @cache_last_update < Time.now.to_i - 300
-        @cached_keys ||= begin
-          @cache_last_update = Time.now.to_i
-          keys = []
-          get_jwks(project_id: @project_id)['keys'].each do |r|
-            keys << r
-          end
-          { keys: keys }
-        end
-      end
+      @jwks_cache = jwks_cache
     end
 
     # List all active Sessions for a given `user_id`. All timestamps are formatted according to the RFC 3339 standard and are expressed in UTC, e.g. `2021-12-29T12:33:09Z`.
@@ -514,7 +503,7 @@ module Stytch
 
       begin
         decoded_token = JWT.decode session_jwt, nil, true,
-                                   { jwks: @jwks_loader, iss: valid_issuers, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'], nbf_leeway: clock_tolerance_seconds }
+                                   { jwks: @jwks_cache.loader, iss: valid_issuers, verify_iss: true, aud: @project_id, verify_aud: true, algorithms: ['RS256'], nbf_leeway: clock_tolerance_seconds }
 
         session = decoded_token[0]
         iat_time = Time.at(session['iat']).to_datetime

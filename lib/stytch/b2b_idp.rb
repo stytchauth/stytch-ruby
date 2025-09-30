@@ -16,24 +16,13 @@ module StytchB2B
     include Stytch::RequestHelper
     attr_reader :oauth
 
-    def initialize(connection, project_id, policy_cache)
+    def initialize(connection, project_id, jwks_cache, policy_cache)
       @connection = connection
 
       @oauth = StytchB2B::IDP::OAuth.new(@connection)
       @policy_cache = policy_cache
       @project_id = project_id
-      @cache_last_update = 0
-      @jwks_loader = lambda do |options|
-        @cached_keys = nil if options[:invalidate] && @cache_last_update < Time.now.to_i - 300
-        @cached_keys ||= begin
-          @cache_last_update = Time.now.to_i
-          keys = []
-          get_jwks(project_id: @project_id)['keys'].each do |r|
-            keys << r
-          end
-          { keys: keys }
-        end
-      end
+      @jwks_cache = jwks_cache
     end
 
     # MANUAL(IDP::introspect_token_network)(SERVICE_METHOD)
@@ -199,7 +188,7 @@ module StytchB2B
           true,
           {
             algorithms: ['RS256'],
-            jwks: @jwks_loader,
+            jwks: @jwks_cache.loader,
             iss: ["stytch.com/#{@project_id}", @connection.url_prefix],
             aud: @project_id
           }

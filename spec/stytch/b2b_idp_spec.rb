@@ -9,7 +9,12 @@ RSpec.describe StytchB2B::IDP do
   let(:connection) { instance_double('connection', url_prefix: 'https://test.stytch.com') }
   let(:project_id) { 'project-test-00000000-0000-0000-0000-000000000000' }
   let(:policy_cache) { instance_double('Stytch::PolicyCache') }
-  let(:idp) { described_class.new(connection, project_id, policy_cache) }
+  let(:jwks_cache) { instance_double('Stytch::JWKSCache') }
+  let(:idp) { described_class.new(connection, project_id, jwks_cache, policy_cache) }
+
+  before do
+    allow(jwks_cache).to receive(:loader).and_return(->(_options) { { 'keys' => [] } })
+  end
 
   describe '#initialize' do
     it 'initializes with connection, project_id, and policy_cache' do
@@ -208,7 +213,9 @@ RSpec.describe StytchB2B::IDP do
 
     it 'correctly decodes JWT with custom domain issuer' do
       custom_domain_connection = instance_double('connection', url_prefix: 'https://api.custom-domain.com')
-      custom_domain_idp = StytchB2B::IDP.new(custom_domain_connection, 'project-123', policy_cache)
+      custom_domain_jwks_cache = instance_double('Stytch::JWKSCache')
+      allow(custom_domain_jwks_cache).to receive(:loader).and_return(->(_options) { { 'keys' => [] } })
+      custom_domain_idp = StytchB2B::IDP.new(custom_domain_connection, 'project-123', custom_domain_jwks_cache, policy_cache)
 
       custom_claims = {
         'sub' => 'user-123',

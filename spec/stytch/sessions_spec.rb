@@ -15,8 +15,9 @@ RSpec.describe Stytch::Sessions do
 
     # Use the TestConnection class with default api_host
     connection = TestConnection.new
+    jwks_cache = Stytch::JWKSCache.new(connection, project_id)
     policy_cache = Stytch::PolicyCache.new(rbac_client: Stytch::RBAC.new(connection))
-    sessions = Stytch::Sessions.new(connection, project_id, policy_cache)
+    sessions = Stytch::Sessions.new(connection, project_id, jwks_cache, policy_cache)
 
     kid = 'jwk-test-00000000-0000-0000-0000-000000000000'
     headers = { kid: kid }
@@ -52,12 +53,12 @@ RSpec.describe Stytch::Sessions do
     jwk = JWT::JWK.new(OpenSSL::PKey::RSA.new(2048), kid)
     token = JWT.encode(claims, jwk.keypair, 'RS256', headers)
 
-    # patch the jwks_loader method so that it uses the JWK we just created
+    # Stub the jwks_cache loader to use the JWK we just created
     # instead of calling the API directly
     patch_jwks_loader = lambda do |_options|
       { 'keys' => [jwk.export] }
     end
-    sessions.instance_variable_set(:@jwks_loader, patch_jwks_loader)
+    allow(jwks_cache).to receive(:loader).and_return(patch_jwks_loader)
     expected = sessions.marshal_jwt_into_session(claims)
 
     expect(sessions.authenticate_jwt_local(token)).to eq(expected)
@@ -69,8 +70,9 @@ RSpec.describe Stytch::Sessions do
 
     # Use the TestConnection class with custom api_host
     connection = TestConnection.new(custom_api_host)
+    jwks_cache = Stytch::JWKSCache.new(connection, project_id)
     policy_cache = Stytch::PolicyCache.new(rbac_client: Stytch::RBAC.new(connection))
-    sessions = Stytch::Sessions.new(connection, project_id, policy_cache)
+    sessions = Stytch::Sessions.new(connection, project_id, jwks_cache, policy_cache)
 
     kid = 'jwk-test-00000000-0000-0000-0000-000000000000'
     headers = { kid: kid }
@@ -106,12 +108,12 @@ RSpec.describe Stytch::Sessions do
     jwk = JWT::JWK.new(OpenSSL::PKey::RSA.new(2048), kid)
     token = JWT.encode(claims, jwk.keypair, 'RS256', headers)
 
-    # patch the jwks_loader method so that it uses the JWK we just created
+    # Stub the jwks_cache loader to use the JWK we just created
     # instead of calling the API directly
     patch_jwks_loader = lambda do |_options|
       { 'keys' => [jwk.export] }
     end
-    sessions.instance_variable_set(:@jwks_loader, patch_jwks_loader)
+    allow(jwks_cache).to receive(:loader).and_return(patch_jwks_loader)
     expected = sessions.marshal_jwt_into_session(claims)
 
     expect(sessions.authenticate_jwt_local(token)).to eq(expected)
@@ -122,8 +124,9 @@ RSpec.describe Stytch::Sessions do
 
     # Use the TestConnection class with default api_host
     connection = TestConnection.new
+    jwks_cache = Stytch::JWKSCache.new(connection, project_id)
     policy_cache = Stytch::PolicyCache.new(rbac_client: Stytch::RBAC.new(connection))
-    sessions = Stytch::Sessions.new(connection, project_id, policy_cache)
+    sessions = Stytch::Sessions.new(connection, project_id, jwks_cache, policy_cache)
 
     now = Time.utc(2022, 5, 3, 18, 51, 41)
     claims = jwt_claims(project_id, now)
@@ -138,8 +141,9 @@ RSpec.describe Stytch::Sessions do
 
     # Use the TestConnection class with default api_host
     connection = TestConnection.new
+    jwks_cache = Stytch::JWKSCache.new(connection, project_id)
     policy_cache = Stytch::PolicyCache.new(rbac_client: Stytch::RBAC.new(connection))
-    sessions = Stytch::Sessions.new(connection, project_id, policy_cache)
+    sessions = Stytch::Sessions.new(connection, project_id, jwks_cache, policy_cache)
 
     now = Time.utc(2022, 5, 3, 18, 51, 41)
     claims = jwt_claims(project_id, now)

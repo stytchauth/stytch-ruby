@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe Stytch::M2M do
-  let(:m2m) { Stytch::M2M.new(nil, '', false) }
+  let(:jwks_cache) { instance_double('Stytch::JWKSCache') }
+  let(:m2m) { Stytch::M2M.new(nil, '', false, jwks_cache) }
 
   it 'handles basic m2m auth' do
     has = ['read:user', 'write:user']
