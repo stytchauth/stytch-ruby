@@ -31,11 +31,12 @@ module Stytch
 
     attr_reader :connected_app, :crypto_wallets, :debug, :fraud, :idp, :impersonation, :m2m, :magic_links, :oauth, :otps, :passwords, :project, :rbac, :sessions, :totps, :users, :webauthn
 
-    def initialize(project_id:, secret:, env: nil, fraud_env: nil, &block)
+    def initialize(project_id:, secret:, env: nil, fraud_env: nil, timeout: nil, &block)
       @api_host = api_host(env, project_id)
       @fraud_api_host = fraud_api_host(fraud_env)
       @project_id = project_id
       @secret = secret
+      @timeout = timeout
       @is_b2b_client = false
 
       create_connection(&block)
@@ -104,7 +105,7 @@ module Stytch
     end
 
     def build_default_connection(builder)
-      builder.options[:timeout] = Stytch::Middleware::NETWORK_TIMEOUT
+      builder.options[:timeout] = Stytch::Middleware.timeout(@timeout)
       builder.headers = Stytch::Middleware::NETWORK_HEADERS
       builder.request :json
       builder.use Stytch::Middleware
