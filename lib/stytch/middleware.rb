@@ -13,6 +13,10 @@ module Stytch
       'Content-Type' => 'application/json'
     }.freeze
 
-    NETWORK_TIMEOUT = 300
+    NETWORK_TIMEOUT = 31
+
+    def self.timeout(custom_timeout = nil)
+      custom_timeout || NETWORK_TIMEOUT
+    end
   end
 end

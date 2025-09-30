@@ -33,11 +33,12 @@ module StytchB2B
 
     attr_reader :connected_app, :debug, :discovery, :fraud, :idp, :impersonation, :m2m, :magic_links, :oauth, :otps, :organizations, :passwords, :project, :rbac, :recovery_codes, :scim, :sso, :sessions, :totps
 
-    def initialize(project_id:, secret:, env: nil, fraud_env: nil, &block)
+    def initialize(project_id:, secret:, env: nil, fraud_env: nil, timeout: nil, &block)
       @api_host = api_host(env, project_id)
       @fraud_api_host = fraud_api_host(fraud_env)
       @project_id = project_id
       @secret = secret
+      @timeout = timeout
       @is_b2b_client = true
 
       create_connection(&block)
@@ -108,7 +109,7 @@ module StytchB2B
     end
 
     def build_default_connection(builder)
-      builder.options[:timeout] = Stytch::Middleware::NETWORK_TIMEOUT
+      builder.options[:timeout] = Stytch::Middleware.timeout(@timeout)
       builder.headers = Stytch::Middleware::NETWORK_HEADERS
       builder.request :json
       builder.use Stytch::Middleware
