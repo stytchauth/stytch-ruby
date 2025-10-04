@@ -11,9 +11,10 @@ module Stytch
 
     CACHE_EXPIRY_SECONDS = 300 # 5 minutes
 
-    def initialize(connection, project_id, jwks = nil)
+    def initialize(connection, project_id, jwks = nil, is_b2b_client: false)
       @connection = connection
       @project_id = project_id
+      @is_b2b_client = is_b2b_client
       @cache_last_update = 0
 
       # If jwks are provided during initialization, use them directly
@@ -38,15 +39,15 @@ module Stytch
       end
     end
 
-    # Fetches JWKS from the Stytch API
+    # Fetches JWKS from the Stytch API using the appropriate endpoint
     def get_jwks(project_id:)
-      request_with_query_params(
-        @connection,
-        '/v1/sessions/jwks/%<project_id>s',
-        {
-          project_id: project_id
-        }
-      )
+      endpoint = if @is_b2b_client
+                   "/v1/b2b/sessions/jwks/#{project_id}"
+                 else
+                   "/v1/sessions/jwks/#{project_id}"
+                 end
+
+      get_request(endpoint, {})
     end
   end
 end

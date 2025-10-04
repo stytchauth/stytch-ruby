@@ -44,7 +44,7 @@ module StytchB2B
 
       create_connection(&block)
 
-      @jwks_cache = Stytch::JWKSCache.new(@connection, @project_id, jwks)
+      @jwks_cache = Stytch::JWKSCache.new(@connection, @project_id, jwks, is_b2b_client: @is_b2b_client)
 
       rbac = StytchB2B::RBAC.new(@connection)
       @policy_cache = Stytch::PolicyCache.new(rbac_client: rbac)
