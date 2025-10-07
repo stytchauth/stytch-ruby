@@ -196,6 +196,9 @@ module StytchB2B
       # organization_slug::
       #   The unique URL slug of the Organization. A minimum of two characters is required. The slug only accepts alphanumeric characters and the following reserved characters: `-` `.` `_` `~`. If the slug is not specified, a default slug will be created based on the email used to initiate the discovery flow. If the email domain is a common email provider such as gmail.com, or if the email is a .edu email, the organization slug will be generated based on the name portion of the email. Otherwise, the organization slug will be generated based on the email domain.
       #   The type of this field is nilable +String+.
+      # organization_external_id::
+      #   An identifier that can be used in API calls wherever a organization_id is expected. This is a string consisting of alphanumeric, `.`, `_`, `-`, or `|` characters with a maximum length of 128 characters. External IDs must be unique within a project, but may be reused across different projects in the same workspace.
+      #   The type of this field is nilable +String+.
       # organization_logo_url::
       #   The image URL of the Organization logo.
       #   The type of this field is nilable +String+.
@@ -364,6 +367,7 @@ module StytchB2B
         session_custom_claims: nil,
         organization_name: nil,
         organization_slug: nil,
+        organization_external_id: nil,
         organization_logo_url: nil,
         trusted_metadata: nil,
         sso_jit_provisioning: nil,
@@ -392,6 +396,7 @@ module StytchB2B
         request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
         request[:organization_name] = organization_name unless organization_name.nil?
         request[:organization_slug] = organization_slug unless organization_slug.nil?
+        request[:organization_external_id] = organization_external_id unless organization_external_id.nil?
         request[:organization_logo_url] = organization_logo_url unless organization_logo_url.nil?
         request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
         request[:sso_jit_provisioning] = sso_jit_provisioning unless sso_jit_provisioning.nil?
