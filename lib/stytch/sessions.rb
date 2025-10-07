@@ -549,7 +549,8 @@ module Stytch
           'expires_at' => expires_at,
           'attributes' => jwt[stytch_claim]['attributes'],
           'authentication_factors' => jwt[stytch_claim]['authentication_factors'],
-          'custom_claims' => custom_claims
+          'custom_claims' => custom_claims,
+          'roles' => jwt[stytch_claim]['roles']
         }
       }
     end
