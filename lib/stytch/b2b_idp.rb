@@ -441,6 +441,9 @@ module StytchB2B
       # code_challenge::
       #   A base64url encoded challenge derived from the code verifier for PKCE flows.
       #   The type of this field is nilable +String+.
+      # resources::
+      #   (no documentation yet)
+      #   The type of this field is nilable list of +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -469,7 +472,8 @@ module StytchB2B
         prompt: nil,
         state: nil,
         nonce: nil,
-        code_challenge: nil
+        code_challenge: nil,
+        resources: nil
       )
         headers = {}
         request = {
@@ -487,6 +491,7 @@ module StytchB2B
         request[:state] = state unless state.nil?
         request[:nonce] = nonce unless nonce.nil?
         request[:code_challenge] = code_challenge unless code_challenge.nil?
+        request[:resources] = resources unless resources.nil?
 
         post_request('/v1/b2b/idp/oauth/authorize', request, headers)
       end

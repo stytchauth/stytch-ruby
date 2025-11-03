@@ -96,7 +96,7 @@ module StytchB2B
     #
     # Adds an existing password to a Member's email that doesn't have a password yet.
     #
-    # We support migrating members from passwords stored with bcrypt, scrypt, argon2, MD-5, SHA-1, and PBKDF2. This endpoint has a rate limit of 100 requests per second.
+    # We support migrating members from passwords stored with bcrypt, scrypt, argon2, MD-5, SHA-1, SHA-512, and PBKDF2. This endpoint has a rate limit of 100 requests per second.
     #
     # The Member's email will be marked as verified when you use this endpoint.
     #
@@ -110,7 +110,7 @@ module StytchB2B
     #   The password hash. For a Scrypt or PBKDF2 hash, the hash needs to be a base64 encoded string.
     #   The type of this field is +String+.
     # hash_type::
-    #   The password hash used. Currently `bcrypt`, `scrypt`, `argon_2i`, `argon_2id`, `md_5`, `sha_1`, and `pbkdf_2` are supported.
+    #   The password hash used. Currently `bcrypt`, `scrypt`, `argon_2i`, `argon_2id`, `md_5`, `sha_1`, `sha_512`, and `pbkdf_2` are supported.
     #   The type of this field is +MigrateRequestHashType+ (string enum).
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
@@ -124,6 +124,9 @@ module StytchB2B
     # sha_1_config::
     #   Optional parameters for SHA-1 hash types.
     #   The type of this field is nilable +SHA1Config+ (+object+).
+    # sha_512_config::
+    #   Optional parameters for SHA-512 hash types.
+    #   The type of this field is nilable +SHA512Config+ (+object+).
     # scrypt_config::
     #   Required parameters if the scrypt is not provided in a **PHC encoded form**.
     #   The type of this field is nilable +ScryptConfig+ (+object+).
@@ -195,6 +198,7 @@ module StytchB2B
       md_5_config: nil,
       argon_2_config: nil,
       sha_1_config: nil,
+      sha_512_config: nil,
       scrypt_config: nil,
       pbkdf_2_config: nil,
       name: nil,
@@ -216,6 +220,7 @@ module StytchB2B
       request[:md_5_config] = md_5_config unless md_5_config.nil?
       request[:argon_2_config] = argon_2_config unless argon_2_config.nil?
       request[:sha_1_config] = sha_1_config unless sha_1_config.nil?
+      request[:sha_512_config] = sha_512_config unless sha_512_config.nil?
       request[:scrypt_config] = scrypt_config unless scrypt_config.nil?
       request[:pbkdf_2_config] = pbkdf_2_config unless pbkdf_2_config.nil?
       request[:name] = name unless name.nil?
