@@ -275,7 +275,7 @@ module Stytch
       post_request('/v1/passwords/strength_check', request, headers)
     end
 
-    # Adds an existing password to a User's email that doesn't have a password yet. We support migrating users from passwords stored with `bcrypt`, `scrypt`, `argon2`, `MD-5`, `SHA-1`, or `PBKDF2`. This endpoint has a rate limit of 100 requests per second.
+    # Adds an existing password to a User's email that doesn't have a password yet. We support migrating users from passwords stored with `bcrypt`, `scrypt`, `argon2`, `MD-5`, `SHA-1`, `SHA-512`, or `PBKDF2`. This endpoint has a rate limit of 100 requests per second.
     #
     # == Parameters:
     # email::
@@ -285,7 +285,7 @@ module Stytch
     #   The password hash. For a Scrypt or PBKDF2 hash, the hash needs to be a base64 encoded string.
     #   The type of this field is +String+.
     # hash_type::
-    #   The password hash used. Currently `bcrypt`, `scrypt`, `argon_2i`, `argon_2id`, `md_5`, `sha_1`, and `pbkdf_2` are supported.
+    #   The password hash used. Currently `bcrypt`, `scrypt`, `argon_2i`, `argon_2id`, `md_5`, `sha_1`, `sha_512`, and `pbkdf_2` are supported.
     #   The type of this field is +MigrateRequestHashType+ (string enum).
     # md_5_config::
     #   Optional parameters for MD-5 hash types.
@@ -296,6 +296,9 @@ module Stytch
     # sha_1_config::
     #   Optional parameters for SHA-1 hash types.
     #   The type of this field is nilable +SHA1Config+ (+object+).
+    # sha_512_config::
+    #   Optional parameters for SHA-512 hash types.
+    #   The type of this field is nilable +SHA512Config+ (+object+).
     # scrypt_config::
     #   Required parameters if the scrypt is not provided in a [PHC encoded form](https://github.com/P-H-C/phc-string-format/blob/master/phc-sf-spec.md#phc-string-format).
     #   The type of this field is nilable +ScryptConfig+ (+object+).
@@ -358,6 +361,7 @@ module Stytch
       md_5_config: nil,
       argon_2_config: nil,
       sha_1_config: nil,
+      sha_512_config: nil,
       scrypt_config: nil,
       pbkdf_2_config: nil,
       trusted_metadata: nil,
@@ -378,6 +382,7 @@ module Stytch
       request[:md_5_config] = md_5_config unless md_5_config.nil?
       request[:argon_2_config] = argon_2_config unless argon_2_config.nil?
       request[:sha_1_config] = sha_1_config unless sha_1_config.nil?
+      request[:sha_512_config] = sha_512_config unless sha_512_config.nil?
       request[:scrypt_config] = scrypt_config unless scrypt_config.nil?
       request[:pbkdf_2_config] = pbkdf_2_config unless pbkdf_2_config.nil?
       request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
