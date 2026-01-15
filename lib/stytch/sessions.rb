@@ -13,6 +13,7 @@ require_relative 'request_helper'
 
 module Stytch
   class Sessions
+
     include Stytch::RequestHelper
 
     def initialize(connection, project_id, jwks_cache, policy_cache)
@@ -24,12 +25,12 @@ module Stytch
     end
 
     # List all active Sessions for a given `user_id`. All timestamps are formatted according to the RFC 3339 standard and are expressed in UTC, e.g. `2021-12-29T12:33:09Z`.
-    #
+    # 
     # == Parameters:
     # user_id::
     #   The `user_id` to get active Sessions for. You may use an `external_id` here if one is set for the user.
     #   The type of this field is +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -42,20 +43,20 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def get(
-      user_id:
+      user_id: 
     )
       headers = {}
       query_params = {
         user_id: user_id
       }
-      request = request_with_query_params('/v1/sessions', query_params)
+      request = request_with_query_params("/v1/sessions", query_params)
       get_request(request, headers)
     end
 
     # Authenticate a session token or session JWT and retrieve associated session data. If `session_duration_minutes` is included, update the lifetime of the session to be that many minutes from now. All timestamps are formatted according to the RFC 3339 standard and are expressed in UTC, e.g. `2021-12-29T12:33:09Z`. This endpoint requires exactly one `session_jwt` or `session_token` as part of the request. If both are included, you will receive a `too_many_session_arguments` error.
-    #
+    # 
     # You may provide a JWT that needs to be refreshed and is expired according to its `exp` claim. A new JWT will be returned if both the signature and the underlying Session are still valid. See our [How to use Stytch Session JWTs](https://stytch.com/docs/guides/sessions/using-jwts) guide for more information.
-    #
+    # 
     # == Parameters:
     # session_token::
     #   The session token to authenticate.
@@ -68,17 +69,17 @@ module Stytch
     #   The type of this field is nilable +String+.
     # session_custom_claims::
     #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
-    #
+    # 
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     # authorization_check::
     #   If an `authorization_check` object is passed in, this endpoint will also check if the User is
     #   authorized to perform the given action on the given Resource. A User is authorized if they are assigned a Role with adequate permissions.
-    #
+    # 
     #   If the User is not authorized to perform the specified action on the specified Resource, a 403 error will be thrown.
     #   Otherwise, the response will contain a list of Roles that satisfied the authorization check.
     #   The type of this field is nilable +AuthorizationCheck+ (+object+).
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -86,9 +87,9 @@ module Stytch
     #   The type of this field is +String+.
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
-    #
+    # 
     #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
-    #
+    #   
     #   The type of this field is +Session+ (+object+).
     # session_token::
     #   A secret token for a given Stytch Session.
@@ -114,18 +115,19 @@ module Stytch
       authorization_check: nil
     )
       headers = {}
-      request = {}
-      request[:session_token] = session_token unless session_token.nil?
-      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
-      request[:session_jwt] = session_jwt unless session_jwt.nil?
-      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
-      request[:authorization_check] = authorization_check unless authorization_check.nil?
+      request = {
+      }
+      request[:session_token] = session_token if session_token != nil
+      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
+      request[:session_jwt] = session_jwt if session_jwt != nil
+      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
+      request[:authorization_check] = authorization_check if authorization_check != nil
 
-      post_request('/v1/sessions/authenticate', request, headers)
+      post_request("/v1/sessions/authenticate", request, headers)
     end
 
     # Revoke a Session, immediately invalidating all of its session tokens. You can revoke a session in three ways: using its ID, or using one of its session tokens, or one of its JWTs. This endpoint requires exactly one of those to be included in the request. It will return an error if multiple are present.
-    #
+    # 
     # == Parameters:
     # session_id::
     #   The `session_id` to revoke.
@@ -136,7 +138,7 @@ module Stytch
     # session_jwt::
     #   A JWT for the session to revoke.
     #   The type of this field is nilable +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -151,16 +153,17 @@ module Stytch
       session_jwt: nil
     )
       headers = {}
-      request = {}
-      request[:session_id] = session_id unless session_id.nil?
-      request[:session_token] = session_token unless session_token.nil?
-      request[:session_jwt] = session_jwt unless session_jwt.nil?
+      request = {
+      }
+      request[:session_id] = session_id if session_id != nil
+      request[:session_token] = session_token if session_token != nil
+      request[:session_jwt] = session_jwt if session_jwt != nil
 
-      post_request('/v1/sessions/revoke', request, headers)
+      post_request("/v1/sessions/revoke", request, headers)
     end
 
     # Migrate a session from an external OIDC compliant endpoint. Stytch will call the external UserInfo endpoint defined in your Stytch Project settings in the [Dashboard](https://stytch.com/dashboard), and then perform a lookup using the `session_token`. If the response contains a valid email address, Stytch will attempt to match that email address with an existing User and create a Stytch Session. You will need to create the user before using this endpoint.
-    #
+    # 
     # == Parameters:
     # session_token::
     #   The authorization token Stytch will pass in to the external userinfo endpoint.
@@ -169,22 +172,22 @@ module Stytch
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
     #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-    #
+    # 
     #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-    #
+    # 
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-    #
+    # 
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will not be created.
     #   The type of this field is nilable +Integer+.
     # session_custom_claims::
     #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
-    #
+    # 
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     # telemetry_id::
     #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
     #   The type of this field is nilable +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -207,15 +210,15 @@ module Stytch
     #   The type of this field is +Integer+.
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
-    #
+    # 
     #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
-    #
+    #   
     #   The type of this field is nilable +Session+ (+object+).
     # user_device::
     #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
     #   The type of this field is nilable +DeviceInfo+ (+object+).
     def migrate(
-      session_token:,
+      session_token: ,
       session_duration_minutes: nil,
       session_custom_claims: nil,
       telemetry_id: nil
@@ -224,20 +227,20 @@ module Stytch
       request = {
         session_token: session_token
       }
-      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
-      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
-      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
+      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
+      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
+      request[:telemetry_id] = telemetry_id if telemetry_id != nil
 
-      post_request('/v1/sessions/migrate', request, headers)
+      post_request("/v1/sessions/migrate", request, headers)
     end
 
-    # Use this endpoint to exchange a Connected Apps Access Token back into a Stytch Session for the underlying User.
+    # Use this endpoint to exchange a Connected Apps Access Token back into a Stytch Session for the underlying User. 
     # This session can be used with the Stytch SDKs and APIs.
-    #
+    # 
     # The Session returned will be the same Session that was active in your application (the authorizing party) during the initial authorization flow.
-    #
+    # 
     # The Access Token must contain the `full_access` scope (only available to First Party clients) and must not be more than 5 minutes old. Access Tokens may only be exchanged a single time.
-    #
+    # 
     # == Parameters:
     # access_token::
     #   The access token to exchange for a Stytch Session. Must be granted the `full_access` scope.
@@ -246,22 +249,22 @@ module Stytch
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
     #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-    #
+    # 
     #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-    #
+    # 
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-    #
+    # 
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will not be created.
     #   The type of this field is nilable +Integer+.
     # session_custom_claims::
     #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
-    #
+    # 
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     # telemetry_id::
     #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
     #   The type of this field is nilable +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -284,15 +287,15 @@ module Stytch
     #   The type of this field is +Integer+.
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
-    #
+    # 
     #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
-    #
+    #   
     #   The type of this field is nilable +Session+ (+object+).
     # user_device::
     #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
     #   The type of this field is nilable +DeviceInfo+ (+object+).
     def exchange_access_token(
-      access_token:,
+      access_token: ,
       session_duration_minutes: nil,
       session_custom_claims: nil,
       telemetry_id: nil
@@ -301,30 +304,30 @@ module Stytch
       request = {
         access_token: access_token
       }
-      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
-      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
-      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
+      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
+      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
+      request[:telemetry_id] = telemetry_id if telemetry_id != nil
 
-      post_request('/v1/sessions/exchange_access_token', request, headers)
+      post_request("/v1/sessions/exchange_access_token", request, headers)
     end
 
     # Get the JSON Web Key Set (JWKS) for a project.
-    #
+    # 
     # Within the JWKS, the JSON Web Keys are rotated every ~6 months. Upon rotation, new JWTs will be signed using the new key, and both keys will be returned by this endpoint for a period of 1 month.
-    #
+    # 
     # JWTs have a set lifetime of 5 minutes, so there will be a 5 minute period where some JWTs will be signed by the old keys, and some JWTs will be signed by the new keys. The correct key to use for validation is determined by matching the `kid` value of the JWT and key.
-    #
+    # 
     # If you're using one of our [backend SDKs](https://stytch.com/docs/b2b/sdks), the JSON Web Key (JWK) rotation will be handled for you.
-    #
+    # 
     # If you're using your own JWT validation library, many have built-in support for JWK rotation, and you'll just need to supply this API endpoint. If not, your application should decide which JWK to use for validation by inspecting the `kid` value.
-    #
+    # 
     # See our [How to use Stytch Session JWTs](https://stytch.com/docs/guides/sessions/using-jwts) guide for more information.
-    #
+    # 
     # == Parameters:
     # project_id::
     #   The `project_id` to get the JWKS for.
     #   The type of this field is +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # keys::
@@ -337,16 +340,17 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def get_jwks(
-      project_id:
+      project_id: 
     )
       headers = {}
-      query_params = {}
+      query_params = {
+      }
       request = request_with_query_params("/v1/sessions/jwks/#{project_id}", query_params)
       get_request(request, headers)
     end
 
     # Exchange an auth token issued by a trusted identity provider for a Stytch session. You must first register a Trusted Auth Token profile in the Stytch dashboard [here](https://stytch.com/dashboard/trusted-auth-tokens). If a session token or session JWT is provided, it will add the trusted auth token as an authentication factor to the existing session.
-    #
+    # 
     # == Parameters:
     # profile_id::
     #   The ID of the trusted auth token profile to use for attestation.
@@ -358,16 +362,16 @@ module Stytch
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
     #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-    #
+    # 
     #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-    #
+    # 
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-    #
+    # 
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will not be created.
     #   The type of this field is nilable +Integer+.
     # session_custom_claims::
     #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
-    #
+    # 
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     # session_token::
@@ -379,7 +383,7 @@ module Stytch
     # telemetry_id::
     #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
     #   The type of this field is nilable +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -402,16 +406,16 @@ module Stytch
     #   The type of this field is +Integer+.
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
-    #
+    # 
     #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
-    #
+    #   
     #   The type of this field is nilable +Session+ (+object+).
     # user_device::
     #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
     #   The type of this field is nilable +DeviceInfo+ (+object+).
     def attest(
-      profile_id:,
-      token:,
+      profile_id: ,
+      token: ,
       session_duration_minutes: nil,
       session_custom_claims: nil,
       session_token: nil,
@@ -423,14 +427,15 @@ module Stytch
         profile_id: profile_id,
         token: token
       }
-      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
-      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
-      request[:session_token] = session_token unless session_token.nil?
-      request[:session_jwt] = session_jwt unless session_jwt.nil?
-      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
+      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
+      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
+      request[:session_token] = session_token if session_token != nil
+      request[:session_jwt] = session_jwt if session_jwt != nil
+      request[:telemetry_id] = telemetry_id if telemetry_id != nil
 
-      post_request('/v1/sessions/attest', request, headers)
+      post_request("/v1/sessions/attest", request, headers)
     end
+
 
     # MANUAL(Sessions::authenticate_jwt)(SERVICE_METHOD)
     # ADDIMPORT: require 'jwt'
@@ -555,5 +560,7 @@ module Stytch
       }
     end
     # ENDMANUAL(Sessions::authenticate_jwt)
+
+
   end
 end
