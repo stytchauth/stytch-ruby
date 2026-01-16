@@ -602,6 +602,13 @@ module Stytch
       delete_request("/v1/users/oauth/#{oauth_user_registration_id}", headers)
     end
 
+    def delete_external_id(
+      user_id:
+    )
+      headers = {}
+      delete_request("/v1/users/#{user_id}/external_id", headers)
+    end
+
     # User Get Connected Apps retrieves a list of Connected Apps with which the User has successfully completed an
     # authorization flow.
     # If the User revokes a Connected App's access (e.g. via the Revoke Connected App endpoint) then the Connected App will

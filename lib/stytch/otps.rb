@@ -17,7 +17,7 @@ module Stytch
       @connection = connection
 
       @sms = Stytch::OTPs::Sms.new(@connection)
-      @whatsapp = Stytch::OTPs::Whatsapp.new(@connection)
+      @whatsapp = Stytch::OTPs::WhatsApp.new(@connection)
       @email = Stytch::OTPs::Email.new(@connection)
     end
 
@@ -291,7 +291,7 @@ module Stytch
       end
     end
 
-    class Whatsapp
+    class WhatsApp
       include Stytch::RequestHelper
 
       def initialize(connection)

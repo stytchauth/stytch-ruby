@@ -206,6 +206,9 @@ module Stytch
     #   If true, the `public_key_credential_creation_options` returned will be optimized for Passkeys with `userVerification` set to `"preferred"`.
     #
     #   The type of this field is nilable +Boolean+.
+    # use_base64_url_encoding::
+    #   (no documentation yet)
+    #   The type of this field is nilable +Boolean+.
     #
     # == Returns:
     # An object with the following fields:
@@ -224,7 +227,8 @@ module Stytch
     def authenticate_start(
       domain:,
       user_id: nil,
-      return_passkey_credential_options: nil
+      return_passkey_credential_options: nil,
+      use_base64_url_encoding: nil
     )
       headers = {}
       request = {
@@ -232,6 +236,7 @@ module Stytch
       }
       request[:user_id] = user_id unless user_id.nil?
       request[:return_passkey_credential_options] = return_passkey_credential_options unless return_passkey_credential_options.nil?
+      request[:use_base64_url_encoding] = use_base64_url_encoding unless use_base64_url_encoding.nil?
 
       post_request('/v1/webauthn/authenticate/start', request, headers)
     end

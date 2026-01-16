@@ -86,6 +86,25 @@ module StytchB2B
       end
     end
 
+    class DeleteExternalIdRequestOptions
+      # Optional authorization object.
+      # Pass in an active Stytch Member session token or session JWT and the request
+      # will be run using that member's permissions.
+      attr_accessor :authorization
+
+      def initialize(
+        authorization: nil
+      )
+        @authorization = authorization
+      end
+
+      def to_headers
+        headers = {}
+        headers.merge!(@authorization.to_headers) if authorization
+        headers
+      end
+    end
+
     include Stytch::RequestHelper
     attr_reader :members
 
@@ -746,6 +765,15 @@ module StytchB2B
       get_request(request, headers)
     end
 
+    def delete_external_id(
+      organization_id:,
+      method_options: nil
+    )
+      headers = {}
+      headers = headers.merge(method_options.to_headers) unless method_options.nil?
+      delete_request("/v1/b2b/organizations/#{organization_id}/external_id", headers)
+    end
+
     class Members
       class UpdateRequestOptions
         # Optional authorization object.
@@ -919,6 +947,25 @@ module StytchB2B
       end
 
       class GetConnectedAppsRequestOptions
+        # Optional authorization object.
+        # Pass in an active Stytch Member session token or session JWT and the request
+        # will be run using that member's permissions.
+        attr_accessor :authorization
+
+        def initialize(
+          authorization: nil
+        )
+          @authorization = authorization
+        end
+
+        def to_headers
+          headers = {}
+          headers.merge!(@authorization.to_headers) if authorization
+          headers
+        end
+      end
+
+      class DeleteExternalIdRequestOptions
         # Optional authorization object.
         # Pass in an active Stytch Member session token or session JWT and the request
         # will be run using that member's permissions.
@@ -1641,6 +1688,16 @@ module StytchB2B
         query_params = {}
         request = request_with_query_params("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/connected_apps", query_params)
         get_request(request, headers)
+      end
+
+      def delete_external_id(
+        organization_id:,
+        member_id:,
+        method_options: nil
+      )
+        headers = {}
+        headers = headers.merge(method_options.to_headers) unless method_options.nil?
+        delete_request("/v1/b2b/organizations/#{organization_id}/members/#{member_id}/external_id", headers)
       end
 
       # Creates a Member. An `organization_id` and `email_address` are required.
