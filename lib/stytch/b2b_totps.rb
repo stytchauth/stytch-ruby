@@ -10,18 +10,20 @@ require_relative 'request_helper'
 
 module StytchB2B
   class TOTPs
+
     include Stytch::RequestHelper
 
     def initialize(connection)
       @connection = connection
+
     end
 
-    # Create a new TOTP instance for a Member. The Member can use the authenticator application of their choice to scan the QR code or enter the secret.
-    #
-    # If the Member already has an active MFA factor, then passing an intermediate session token, session token, or session JWT with the existing MFA factor on it is required to prevent bypassing MFA.
-    #
+    # Create a new TOTP instance for a Member. The Member can use the authenticator application of their choice to scan the QR code or enter the secret. 
+    # 
+    # If the Member already has an active MFA factor, then passing an intermediate session token, session token, or session JWT with the existing MFA factor on it is required to prevent bypassing MFA.  
+    # 
     # Otherwise, passing an intermediate session token, session token, or session JWT is not required, but if passed must match the `member_id` passed.
-    #
+    # 
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
@@ -41,7 +43,7 @@ module StytchB2B
     # session_jwt::
     #   The JSON Web Token (JWT) for a given Stytch Session.
     #   The type of this field is nilable +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -72,8 +74,8 @@ module StytchB2B
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def create(
-      organization_id:,
-      member_id:,
+      organization_id: ,
+      member_id: ,
       expiration_minutes: nil,
       intermediate_session_token: nil,
       session_token: nil,
@@ -84,16 +86,16 @@ module StytchB2B
         organization_id: organization_id,
         member_id: member_id
       }
-      request[:expiration_minutes] = expiration_minutes unless expiration_minutes.nil?
-      request[:intermediate_session_token] = intermediate_session_token unless intermediate_session_token.nil?
-      request[:session_token] = session_token unless session_token.nil?
-      request[:session_jwt] = session_jwt unless session_jwt.nil?
+      request[:expiration_minutes] = expiration_minutes if expiration_minutes != nil
+      request[:intermediate_session_token] = intermediate_session_token if intermediate_session_token != nil
+      request[:session_token] = session_token if session_token != nil
+      request[:session_jwt] = session_jwt if session_jwt != nil
 
-      post_request('/v1/b2b/totp', request, headers)
+      post_request("/v1/b2b/totp", request, headers)
     end
 
     # Authenticate a Member provided TOTP.
-    #
+    # 
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
@@ -117,11 +119,11 @@ module StytchB2B
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
     #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-    #
+    # 
     #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-    #
+    # 
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-    #
+    # 
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
     #   to use the Stytch session product, you can ignore the session fields in the response.
     #   The type of this field is nilable +Integer+.
@@ -133,11 +135,11 @@ module StytchB2B
     #   The type of this field is nilable +object+.
     # set_mfa_enrollment::
     #   Optionally sets the Member’s MFA enrollment status upon a successful authentication. If the Organization’s MFA policy is `REQUIRED_FOR_ALL`, this field will be ignored. If this field is not passed in, the Member’s `mfa_enrolled` boolean will not be affected. The options are:
-    #
+    #  
     #   `enroll` – sets the Member's `mfa_enrolled` boolean to `true`. The Member will be required to complete an MFA step upon subsequent logins to the Organization.
-    #
+    #  
     #   `unenroll` –  sets the Member's `mfa_enrolled` boolean to `false`. The Member will no longer be required to complete MFA steps when logging in to the Organization.
-    #
+    #   
     #   The type of this field is nilable +String+.
     # set_default_mfa::
     #   If passed will set the authenticated method to the default MFA method. Completing an MFA authentication flow for the first time for a Member will implicitly set the method to the default MFA method. This option can be used to update the default MFA method if multiple are being used.
@@ -145,7 +147,7 @@ module StytchB2B
     # telemetry_id::
     #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
     #   The type of this field is nilable +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -176,9 +178,9 @@ module StytchB2B
     #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
     #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
-      organization_id:,
-      member_id:,
-      code:,
+      organization_id: ,
+      member_id: ,
+      code: ,
       intermediate_session_token: nil,
       session_token: nil,
       session_jwt: nil,
@@ -194,20 +196,20 @@ module StytchB2B
         member_id: member_id,
         code: code
       }
-      request[:intermediate_session_token] = intermediate_session_token unless intermediate_session_token.nil?
-      request[:session_token] = session_token unless session_token.nil?
-      request[:session_jwt] = session_jwt unless session_jwt.nil?
-      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
-      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
-      request[:set_mfa_enrollment] = set_mfa_enrollment unless set_mfa_enrollment.nil?
-      request[:set_default_mfa] = set_default_mfa unless set_default_mfa.nil?
-      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
+      request[:intermediate_session_token] = intermediate_session_token if intermediate_session_token != nil
+      request[:session_token] = session_token if session_token != nil
+      request[:session_jwt] = session_jwt if session_jwt != nil
+      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
+      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
+      request[:set_mfa_enrollment] = set_mfa_enrollment if set_mfa_enrollment != nil
+      request[:set_default_mfa] = set_default_mfa if set_default_mfa != nil
+      request[:telemetry_id] = telemetry_id if telemetry_id != nil
 
-      post_request('/v1/b2b/totp/authenticate', request, headers)
+      post_request("/v1/b2b/totp/authenticate", request, headers)
     end
 
     # Migrate an existing TOTP instance for a Member. Recovery codes are not required and will be minted for the Member if not provided.
-    #
+    # 
     # == Parameters:
     # organization_id::
     #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
@@ -221,7 +223,7 @@ module StytchB2B
     # recovery_codes::
     #   An existing set of recovery codes to be imported into Stytch to be used to authenticate in place of the secondary MFA method.
     #   The type of this field is list of +String+.
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -246,10 +248,10 @@ module StytchB2B
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def migrate(
-      organization_id:,
-      member_id:,
-      secret:,
-      recovery_codes:
+      organization_id: ,
+      member_id: ,
+      secret: ,
+      recovery_codes: 
     )
       headers = {}
       request = {
@@ -259,7 +261,10 @@ module StytchB2B
         recovery_codes: recovery_codes
       }
 
-      post_request('/v1/b2b/totp/migrate', request, headers)
+      post_request("/v1/b2b/totp/migrate", request, headers)
     end
+
+
+
   end
 end
