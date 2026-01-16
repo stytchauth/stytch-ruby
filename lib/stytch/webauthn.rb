@@ -10,22 +10,20 @@ require_relative 'request_helper'
 
 module Stytch
   class WebAuthn
-
     include Stytch::RequestHelper
 
     def initialize(connection)
       @connection = connection
-
     end
 
-    # Initiate the process of creating a new Passkey or WebAuthn registration. 
-    # 
+    # Initiate the process of creating a new Passkey or WebAuthn registration.
+    #
     # To optimize for Passkeys, set the `return_passkey_credential_options` field to `true`.
-    # 
-    # After calling this endpoint, the browser will need to call [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) with the data from [public_key_credential_creation_options](https://w3c.github.io/webauthn/#dictionary-makecredentialoptions) passed to the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) request via the public key argument. We recommend using the `create()` wrapper provided by the webauthn-json library. 
-    # 
+    #
+    # After calling this endpoint, the browser will need to call [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) with the data from [public_key_credential_creation_options](https://w3c.github.io/webauthn/#dictionary-makecredentialoptions) passed to the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) request via the public key argument. We recommend using the `create()` wrapper provided by the webauthn-json library.
+    #
     # If you are not using the [webauthn-json](https://github.com/github/webauthn-json) library, the `public_key_credential_creation_options` will need to be converted to a suitable public key by unmarshalling the JSON, base64 decoding the user ID field, and converting user ID and the challenge fields into an array buffer.
-    # 
+    #
     # == Parameters:
     # user_id::
     #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to. You may use an `external_id` here if one is set for the user.
@@ -41,7 +39,7 @@ module Stytch
     #   The type of this field is nilable +String+.
     # return_passkey_credential_options::
     #   If true, the `public_key_credential_creation_options` returned will be optimized for Passkeys with `residentKey` set to `"required"` and `userVerification` set to `"preferred"`.
-    #       
+    #
     #   The type of this field is nilable +Boolean+.
     # override_id::
     #   (no documentation yet)
@@ -55,7 +53,7 @@ module Stytch
     # use_base64_url_encoding::
     #   (no documentation yet)
     #   The type of this field is nilable +Boolean+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -71,8 +69,8 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def register_start(
-      user_id: ,
-      domain: ,
+      user_id:,
+      domain:,
       user_agent: nil,
       authenticator_type: nil,
       return_passkey_credential_options: nil,
@@ -86,21 +84,21 @@ module Stytch
         user_id: user_id,
         domain: domain
       }
-      request[:user_agent] = user_agent if user_agent != nil
-      request[:authenticator_type] = authenticator_type if authenticator_type != nil
-      request[:return_passkey_credential_options] = return_passkey_credential_options if return_passkey_credential_options != nil
-      request[:override_id] = override_id if override_id != nil
-      request[:override_name] = override_name if override_name != nil
-      request[:override_display_name] = override_display_name if override_display_name != nil
-      request[:use_base64_url_encoding] = use_base64_url_encoding if use_base64_url_encoding != nil
+      request[:user_agent] = user_agent unless user_agent.nil?
+      request[:authenticator_type] = authenticator_type unless authenticator_type.nil?
+      request[:return_passkey_credential_options] = return_passkey_credential_options unless return_passkey_credential_options.nil?
+      request[:override_id] = override_id unless override_id.nil?
+      request[:override_name] = override_name unless override_name.nil?
+      request[:override_display_name] = override_display_name unless override_display_name.nil?
+      request[:use_base64_url_encoding] = use_base64_url_encoding unless use_base64_url_encoding.nil?
 
-      post_request("/v1/webauthn/register/start", request, headers)
+      post_request('/v1/webauthn/register/start', request, headers)
     end
 
-    # Complete the creation of a WebAuthn registration by passing the response from the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) request to this endpoint as the `public_key_credential` parameter. 
-    # 
+    # Complete the creation of a WebAuthn registration by passing the response from the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) request to this endpoint as the `public_key_credential` parameter.
+    #
     # If the [webauthn-json](https://github.com/github/webauthn-json) library's `create()` method was used, the response can be passed directly to the [register endpoint](https://stytch.com/docs/api/webauthn-register). If not, some fields (the client data and the attestation object) from the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential) response will need to be converted from array buffers to strings and marshalled into JSON.
-    # 
+    #
     # == Parameters:
     # user_id::
     #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to. You may use an `external_id` here if one is set for the user.
@@ -115,11 +113,11 @@ module Stytch
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
     #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-    # 
+    #
     #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-    # 
+    #
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-    # 
+    #
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will not be created.
     #   The type of this field is nilable +Integer+.
     # session_jwt::
@@ -127,13 +125,13 @@ module Stytch
     #   The type of this field is nilable +String+.
     # session_custom_claims::
     #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
-    # 
+    #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     # telemetry_id::
     #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
     #   The type of this field is nilable +String+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -159,16 +157,16 @@ module Stytch
     #   The type of this field is +Integer+.
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
-    # 
+    #
     #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
-    #   
+    #
     #   The type of this field is nilable +Session+ (+object+).
     # user_device::
     #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
     #   The type of this field is nilable +DeviceInfo+ (+object+).
     def register(
-      user_id: ,
-      public_key_credential: ,
+      user_id:,
+      public_key_credential:,
       session_token: nil,
       session_duration_minutes: nil,
       session_jwt: nil,
@@ -180,23 +178,23 @@ module Stytch
         user_id: user_id,
         public_key_credential: public_key_credential
       }
-      request[:session_token] = session_token if session_token != nil
-      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
-      request[:session_jwt] = session_jwt if session_jwt != nil
-      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
-      request[:telemetry_id] = telemetry_id if telemetry_id != nil
+      request[:session_token] = session_token unless session_token.nil?
+      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+      request[:session_jwt] = session_jwt unless session_jwt.nil?
+      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
-      post_request("/v1/webauthn/register", request, headers)
+      post_request('/v1/webauthn/register', request, headers)
     end
 
-    # Initiate the authentication of a Passkey or WebAuthn registration. 
-    # 
+    # Initiate the authentication of a Passkey or WebAuthn registration.
+    #
     # To optimize for Passkeys, set the `return_passkey_credential_options` field to `true`.
-    # 
-    # After calling this endpoint, the browser will need to call [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) with the data from `public_key_credential_request_options` passed to the [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) request via the public key argument. We recommend using the `get()` wrapper provided by the webauthn-json library. 
-    # 
+    #
+    # After calling this endpoint, the browser will need to call [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) with the data from `public_key_credential_request_options` passed to the [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) request via the public key argument. We recommend using the `get()` wrapper provided by the webauthn-json library.
+    #
     # If you are not using the [webauthn-json](https://github.com/github/webauthn-json) library, `the public_key_credential_request_options` will need to be converted to a suitable public key by unmarshalling the JSON and converting some the fields to array buffers.
-    # 
+    #
     # == Parameters:
     # domain::
     #   The domain for Passkeys or WebAuthn. Defaults to `window.location.hostname`.
@@ -206,12 +204,12 @@ module Stytch
     #   The type of this field is nilable +String+.
     # return_passkey_credential_options::
     #   If true, the `public_key_credential_creation_options` returned will be optimized for Passkeys with `userVerification` set to `"preferred"`.
-    #       
+    #
     #   The type of this field is nilable +Boolean+.
     # use_base64_url_encoding::
     #   (no documentation yet)
     #   The type of this field is nilable +Boolean+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -227,7 +225,7 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def authenticate_start(
-      domain: ,
+      domain:,
       user_id: nil,
       return_passkey_credential_options: nil,
       use_base64_url_encoding: nil
@@ -236,17 +234,17 @@ module Stytch
       request = {
         domain: domain
       }
-      request[:user_id] = user_id if user_id != nil
-      request[:return_passkey_credential_options] = return_passkey_credential_options if return_passkey_credential_options != nil
-      request[:use_base64_url_encoding] = use_base64_url_encoding if use_base64_url_encoding != nil
+      request[:user_id] = user_id unless user_id.nil?
+      request[:return_passkey_credential_options] = return_passkey_credential_options unless return_passkey_credential_options.nil?
+      request[:use_base64_url_encoding] = use_base64_url_encoding unless use_base64_url_encoding.nil?
 
-      post_request("/v1/webauthn/authenticate/start", request, headers)
+      post_request('/v1/webauthn/authenticate/start', request, headers)
     end
 
-    # Complete the authentication of a Passkey or WebAuthn registration by passing the response from the [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) request to the authenticate endpoint. 
-    # 
+    # Complete the authentication of a Passkey or WebAuthn registration by passing the response from the [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) request to the authenticate endpoint.
+    #
     # If the [webauthn-json](https://github.com/github/webauthn-json) library's `get()` method was used, the response can be passed directly to the [authenticate endpoint](https://stytch.com/docs/api/webauthn-authenticate). If not some fields from the [navigator.credentials.get()](https://www.w3.org/TR/webauthn-2/#sctn-getAssertion) response will need to be converted from array buffers to strings and marshalled into JSON.
-    # 
+    #
     # == Parameters:
     # public_key_credential::
     #   The response of the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential).
@@ -258,11 +256,11 @@ module Stytch
     #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
     #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
     #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-    # 
+    #
     #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-    # 
+    #
     #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-    # 
+    #
     #   If the `session_duration_minutes` parameter is not specified, a Stytch session will not be created.
     #   The type of this field is nilable +Integer+.
     # session_jwt::
@@ -270,13 +268,13 @@ module Stytch
     #   The type of this field is nilable +String+.
     # session_custom_claims::
     #   Add a custom claims map to the Session being authenticated. Claims are only created if a Session is initialized by providing a value in `session_duration_minutes`. Claims will be included on the Session object and in the JWT. To update a key in an existing Session, supply a new value. To delete a key, supply a null value.
-    # 
+    #
     #   Custom claims made with reserved claims ("iss", "sub", "aud", "exp", "nbf", "iat", "jti") will be ignored. Total custom claims size cannot exceed four kilobytes.
     #   The type of this field is nilable +object+.
     # telemetry_id::
     #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the User. Your workspace must be enabled for Device Fingerprinting to use this feature.
     #   The type of this field is nilable +String+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -302,15 +300,15 @@ module Stytch
     #   The type of this field is +Integer+.
     # session::
     #   If you initiate a Session, by including `session_duration_minutes` in your authenticate call, you'll receive a full Session object in the response.
-    # 
+    #
     #   See [Session object](https://stytch.com/docs/api/session-object) for complete response fields.
-    #   
+    #
     #   The type of this field is nilable +Session+ (+object+).
     # user_device::
     #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `user_device` response field will contain information about the user's device attributes.
     #   The type of this field is nilable +DeviceInfo+ (+object+).
     def authenticate(
-      public_key_credential: ,
+      public_key_credential:,
       session_token: nil,
       session_duration_minutes: nil,
       session_jwt: nil,
@@ -321,17 +319,17 @@ module Stytch
       request = {
         public_key_credential: public_key_credential
       }
-      request[:session_token] = session_token if session_token != nil
-      request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
-      request[:session_jwt] = session_jwt if session_jwt != nil
-      request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
-      request[:telemetry_id] = telemetry_id if telemetry_id != nil
+      request[:session_token] = session_token unless session_token.nil?
+      request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+      request[:session_jwt] = session_jwt unless session_jwt.nil?
+      request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+      request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
-      post_request("/v1/webauthn/authenticate", request, headers)
+      post_request('/v1/webauthn/authenticate', request, headers)
     end
 
     # Updates a Passkey or WebAuthn registration.
-    # 
+    #
     # == Parameters:
     # webauthn_registration_id::
     #   Globally unique UUID that identifies a Passkey or WebAuthn registration in the Stytch API. The `webauthn_registration_id` is used when you need to operate on a specific User's WebAuthn registration.
@@ -339,7 +337,7 @@ module Stytch
     # name::
     #   The `name` of the WebAuthn registration or Passkey.
     #   The type of this field is +String+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -352,8 +350,8 @@ module Stytch
     #   A Passkey or WebAuthn registration.
     #   The type of this field is nilable +WebAuthnRegistration+ (+object+).
     def update(
-      webauthn_registration_id: ,
-      name: 
+      webauthn_registration_id:,
+      name:
     )
       headers = {}
       request = {
@@ -364,7 +362,7 @@ module Stytch
     end
 
     # List the public key credentials of the WebAuthn Registrations or Passkeys registered to a specific User.
-    # 
+    #
     # == Parameters:
     # user_id::
     #   The `user_id` of an active user the Passkey or WebAuthn registration should be tied to.
@@ -372,7 +370,7 @@ module Stytch
     # domain::
     #   The domain for Passkeys or WebAuthn. Defaults to `window.location.hostname`.
     #   The type of this field is +String+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # credentials::
@@ -385,17 +383,13 @@ module Stytch
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
     #   The type of this field is +Integer+.
     def list_credentials(
-      user_id: ,
-      domain: 
+      user_id:,
+      domain:
     )
       headers = {}
-      query_params = {
-      }
+      query_params = {}
       request = request_with_query_params("/v1/webauthn/credentials/#{user_id}/#{domain}", query_params)
       get_request(request, headers)
     end
-
-
-
   end
 end
