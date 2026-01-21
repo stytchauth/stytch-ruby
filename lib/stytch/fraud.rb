@@ -11,7 +11,7 @@ require_relative 'request_helper'
 module Stytch
   class Fraud
     include Stytch::RequestHelper
-    attr_reader :fingerprint, :rules, :verdict_reasons
+    attr_reader :fingerprint, :rules, :verdict_reasons, :email
 
     def initialize(connection)
       @connection = connection
@@ -19,6 +19,7 @@ module Stytch
       @fingerprint = Stytch::Fraud::Fingerprint.new(@connection)
       @rules = Stytch::Fraud::Rules.new(@connection)
       @verdict_reasons = Stytch::Fraud::VerdictReasons.new(@connection)
+      @email = Stytch::Fraud::Email.new(@connection)
     end
 
     class Fingerprint
@@ -334,6 +335,60 @@ module Stytch
         request[:overrides_only] = overrides_only unless overrides_only.nil?
 
         post_request('/v1/verdict_reasons/list', request, headers)
+      end
+    end
+
+    class Email
+      include Stytch::RequestHelper
+
+      def initialize(connection)
+        @connection = connection
+      end
+
+      # Get risk information for a specific email address.
+      # The response will contain a recommended action (`ALLOW`, `BLOCK`, or `CHALLENGE`) and a more granular `risk_score`.
+      # You can also check the `address_information` and `domain_information` fields for more information about the email address and email domain.
+      #
+      # This feature is in beta. Reach out to us [here](mailto:fraud-team@stytch.com?subject=Email_Intelligence_Early_Access) if you'd like to request early access.
+      #
+      # == Parameters:
+      # email_address::
+      #   The email address to check.
+      #   The type of this field is +String+.
+      #
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # address_information::
+      #   Information about the email address.
+      #   The type of this field is +AddressInformation+ (+object+).
+      # domain_information::
+      #   Information about the email domain.
+      #   The type of this field is +DomainInformation+ (+object+).
+      # action::
+      #   The suggested action based on the attributes of the email address. The available actions are:
+      #   * `ALLOW` - This email is most likely safe to send to and not fraudulent.
+      #   * `BLOCK` - This email is invalid or exhibits signs of fraud. We recommend blocking the end user.
+      #   * `CHALLENGE` - This email has some potentially fraudulent attributes. We recommend increased friction such as 2FA or other forms of extended user verification before allowing the privileged action to proceed.
+      #
+      #   The type of this field is +RiskResponseAction+ (string enum).
+      # risk_score::
+      #   A score from 0 to 100 indicating how risky the email is. 100 is the most risky.
+      #   The type of this field is +Integer+.
+      # status_code::
+      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+      #   The type of this field is +Integer+.
+      def risk(
+        email_address:
+      )
+        headers = {}
+        request = {
+          email_address: email_address
+        }
+
+        post_request('/v1/email/risk', request, headers)
       end
     end
   end
