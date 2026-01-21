@@ -10,24 +10,22 @@ require_relative 'request_helper'
 
 module StytchB2B
   class Impersonation
-
     include Stytch::RequestHelper
 
     def initialize(connection)
       @connection = connection
-
     end
 
-    # Authenticate an impersonation token to impersonate a Member. This endpoint requires an impersonation token that is not expired or previously used. 
+    # Authenticate an impersonation token to impersonate a Member. This endpoint requires an impersonation token that is not expired or previously used.
     # A Stytch session will be created for the impersonated member with a 60 minute duration. Impersonated sessions cannot be extended.
-    # 
+    #
     # Prior to this step, you can generate an impersonation token by visiting the Stytch Dashboard, viewing a member, and clicking the `Impersonate Member` button.
-    # 
+    #
     # == Parameters:
     # impersonation_token::
     #   The Member Impersonation token to authenticate. Expires in 5 minutes by default.
     #   The type of this field is +String+.
-    # 
+    #
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -67,17 +65,14 @@ module StytchB2B
     #   MFA will not be required when authenticating impersonation tokens.
     #   The type of this field is nilable +MfaRequired+ (+object+).
     def authenticate(
-      impersonation_token: 
+      impersonation_token:
     )
       headers = {}
       request = {
         impersonation_token: impersonation_token
       }
 
-      post_request("/v1/b2b/impersonation/authenticate", request, headers)
+      post_request('/v1/b2b/impersonation/authenticate', request, headers)
     end
-
-
-
   end
 end

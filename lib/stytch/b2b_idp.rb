@@ -13,7 +13,6 @@ require_relative 'request_helper'
 
 module StytchB2B
   class IDP
-
     include Stytch::RequestHelper
     attr_reader :oauth
 
@@ -25,7 +24,6 @@ module StytchB2B
       @project_id = project_id
       @jwks_cache = jwks_cache
     end
-
 
     # MANUAL(IDP::introspect_token_network)(SERVICE_METHOD)
     # ADDIMPORT: require 'jwt'
@@ -275,37 +273,34 @@ module StytchB2B
 
     # ENDMANUAL(IDP::introspect_token_network)
 
-
     class OAuth
-
       include Stytch::RequestHelper
 
       def initialize(connection)
         @connection = connection
-
       end
 
       # Initiates a request for authorization of a Connected App to access a Member's account.
-      # 
+      #
       # Call this endpoint using the query parameters from an OAuth Authorization request.
       # This endpoint validates various fields (`scope`, `client_id`, `redirect_uri`, `prompt`, etc...) are correct and returns
       # relevant information for rendering an OAuth Consent Screen.
-      # 
+      #
       # This endpoint returns:
       # - A public representation of the Connected App requesting authorization
       # - Whether _explicit_ consent must be granted before proceeding with the authorization
       # - A list of scopes the Member has the ability to grant the Connected App
-      # 
+      #
       # Use this response to prompt the Member for consent (if necessary) before calling the [Submit OAuth Authorization](https://stytch.com/docs/b2b/api/connected-apps-oauth-authorize) endpoint.
-      # 
+      #
       # Exactly one of the following must be provided to identify the Member granting authorization:
       # - `organization_id` + `member_id`
       # - `session_token`
       # - `session_jwt`
-      # 
+      #
       # If a `session_token` or `session_jwt` is passed, the OAuth Authorization will be linked to the Member's session for tracking purposes.
       # One of these fields must be used if the Connected App intends to complete the [Exchange Access Token](https://stytch.com/docs/b2b/api/connected-app-access-token-exchange) flow.
-      # 
+      #
       # == Parameters:
       # client_id::
       #   The ID of the Connected App client.
@@ -334,7 +329,7 @@ module StytchB2B
       # prompt::
       #   Space separated list that specifies how the Authorization Server should prompt the user for reauthentication and consent. Only `consent` is supported today.
       #   The type of this field is nilable +String+.
-      # 
+      #
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -362,10 +357,10 @@ module StytchB2B
       #   (no documentation yet)
       #   The type of this field is +Integer+.
       def authorize_start(
-        client_id: ,
-        redirect_uri: ,
-        response_type: ,
-        scopes: ,
+        client_id:,
+        redirect_uri:,
+        response_type:,
+        scopes:,
         organization_id: nil,
         member_id: nil,
         session_token: nil,
@@ -379,33 +374,33 @@ module StytchB2B
           response_type: response_type,
           scopes: scopes
         }
-        request[:organization_id] = organization_id if organization_id != nil
-        request[:member_id] = member_id if member_id != nil
-        request[:session_token] = session_token if session_token != nil
-        request[:session_jwt] = session_jwt if session_jwt != nil
-        request[:prompt] = prompt if prompt != nil
+        request[:organization_id] = organization_id unless organization_id.nil?
+        request[:member_id] = member_id unless member_id.nil?
+        request[:session_token] = session_token unless session_token.nil?
+        request[:session_jwt] = session_jwt unless session_jwt.nil?
+        request[:prompt] = prompt unless prompt.nil?
 
-        post_request("/v1/b2b/idp/oauth/authorize/start", request, headers)
+        post_request('/v1/b2b/idp/oauth/authorize/start', request, headers)
       end
 
       # Completes a request for authorization of a Connected App to access a Member's account.
-      # 
+      #
       # Call this endpoint using the query parameters from an OAuth Authorization request, after previously validating those parameters using the
       # [Preflight Check](https://stytch.com/docs/b2b/api/connected-apps-oauth-authorize-start) API.
       # Note that this endpoint takes in a few additional parameters the preflight check does not- `state`, `nonce`, and `code_challenge`.
-      # 
+      #
       # If the authorization was successful, the `redirect_uri` will contain a valid `authorization_code` embedded as a query parameter.
       # If the authorization was unsuccessful, the `redirect_uri` will contain an OAuth2.1 `error_code`.
       # In both cases, redirect the Member to the location for the response to be consumed by the Connected App.
-      # 
+      #
       # Exactly one of the following must be provided to identify the Member granting authorization:
       # - `organization_id` + `member_id`
       # - `session_token`
       # - `session_jwt`
-      # 
+      #
       # If a `session_token` or `session_jwt` is passed, the OAuth Authorization will be linked to the Member's session for tracking purposes.
       # One of these fields must be used if the Connected App intends to complete the [Exchange Access Token](https://stytch.com/docs/b2b/api/connected-app-access-token-exchange) flow.
-      # 
+      #
       # == Parameters:
       # consent_granted::
       #   Indicates whether the user granted the requested scopes.
@@ -449,7 +444,7 @@ module StytchB2B
       # resources::
       #   (no documentation yet)
       #   The type of this field is nilable list of +String+.
-      # 
+      #
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -465,11 +460,11 @@ module StytchB2B
       #   A one-time use code that can be exchanged for tokens.
       #   The type of this field is nilable +String+.
       def authorize(
-        consent_granted: ,
-        scopes: ,
-        client_id: ,
-        redirect_uri: ,
-        response_type: ,
+        consent_granted:,
+        scopes:,
+        client_id:,
+        redirect_uri:,
+        response_type:,
         organization_id: nil,
         member_id: nil,
         session_token: nil,
@@ -488,21 +483,18 @@ module StytchB2B
           redirect_uri: redirect_uri,
           response_type: response_type
         }
-        request[:organization_id] = organization_id if organization_id != nil
-        request[:member_id] = member_id if member_id != nil
-        request[:session_token] = session_token if session_token != nil
-        request[:session_jwt] = session_jwt if session_jwt != nil
-        request[:prompt] = prompt if prompt != nil
-        request[:state] = state if state != nil
-        request[:nonce] = nonce if nonce != nil
-        request[:code_challenge] = code_challenge if code_challenge != nil
-        request[:resources] = resources if resources != nil
+        request[:organization_id] = organization_id unless organization_id.nil?
+        request[:member_id] = member_id unless member_id.nil?
+        request[:session_token] = session_token unless session_token.nil?
+        request[:session_jwt] = session_jwt unless session_jwt.nil?
+        request[:prompt] = prompt unless prompt.nil?
+        request[:state] = state unless state.nil?
+        request[:nonce] = nonce unless nonce.nil?
+        request[:code_challenge] = code_challenge unless code_challenge.nil?
+        request[:resources] = resources unless resources.nil?
 
-        post_request("/v1/b2b/idp/oauth/authorize", request, headers)
+        post_request('/v1/b2b/idp/oauth/authorize', request, headers)
       end
-
-
-
     end
   end
 end
