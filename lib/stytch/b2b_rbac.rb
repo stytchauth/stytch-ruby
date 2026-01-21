@@ -10,6 +10,7 @@ require_relative 'request_helper'
 
 module StytchB2B
   class RBAC
+
     include Stytch::RequestHelper
     attr_reader :organizations
 
@@ -20,16 +21,16 @@ module StytchB2B
     end
 
     # Get the active RBAC Policy for your current Stytch Project. An RBAC Policy is the canonical document that stores all defined Resources and Roles within your RBAC permissioning model.
-    #
+    # 
     # When using the backend SDKs, the RBAC Policy will be cached to allow for local evaluations, eliminating the need for an extra request to Stytch. The policy will be refreshed if an authorization check is requested and the RBAC policy was last updated more than 5 minutes ago.
-    #
+    # 
     # Resources and Roles can be created and managed within the [RBAC page](https://stytch.com/dashboard/rbac) in the Dashboard.
     # Additionally, [Role assignment](https://stytch.com/docs/b2b/guides/rbac/role-assignment) can be programmatically managed through certain Stytch API endpoints.
-    #
+    # 
     # Check out the [RBAC overview](https://stytch.com/docs/b2b/guides/rbac/overview) to learn more about Stytch's RBAC permissioning model.
-    #
+    # 
     # == Parameters:
-    #
+    # 
     # == Returns:
     # An object with the following fields:
     # request_id::
@@ -41,35 +42,41 @@ module StytchB2B
     # policy::
     #   The RBAC Policy document that contains all defined Roles and Resources – which are managed in the [Dashboard](https://stytch.com/dashboard/rbac). Read more about these entities and how they work in our [RBAC overview](https://stytch.com/docs/b2b/guides/rbac/overview).
     #   The type of this field is nilable +Policy+ (+object+).
-    def policy
+    def policy(
+    )
       headers = {}
-      query_params = {}
-      request = request_with_query_params('/v1/b2b/rbac/policy', query_params)
+      query_params = {
+      }
+      request = request_with_query_params("/v1/b2b/rbac/policy", query_params)
       get_request(request, headers)
     end
 
+
+
     class Organizations
+
       include Stytch::RequestHelper
 
       def initialize(connection)
         @connection = connection
+
       end
 
       # Get the active RBAC Policy for a specific Organization within your Stytch Project. An Organization RBAC Policy contains the roles that have been defined specifically for that organization, allowing for organization-specific permissioning models.
-      #
+      # 
       # This endpoint returns the organization-scoped roles that supplement the project-level RBAC policy. Organization policies allow you to define custom roles that are specific to individual organizations within your project.
-      #
+      # 
       # When using the backend SDKs, the RBAC Policy will be cached to allow for local evaluations, eliminating the need for an extra request to Stytch. The policy will be refreshed if an authorization check is requested and the RBAC policy was last updated more than 5 minutes ago.
-      #
+      # 
       # Organization-specific roles can be created and managed through this API endpoint, providing fine-grained control over permissions at the organization level.
-      #
+      # 
       # Check out the [RBAC overview](https://stytch.com/docs/b2b/guides/rbac/overview) to learn more about Stytch's RBAC permissioning model and organization-scoped policies.
-      #
+      # 
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
       #   The type of this field is +String+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -82,32 +89,33 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def get_org_policy(
-        organization_id:
+        organization_id: 
       )
         headers = {}
-        query_params = {}
+        query_params = {
+        }
         request = request_with_query_params("/v1/b2b/rbac/organizations/#{organization_id}", query_params)
         get_request(request, headers)
       end
 
       # Set the RBAC Policy for a specific Organization within your Stytch Project. An Organization RBAC Policy allows you to define roles that are specific to that organization, providing fine-grained control over permissions at the organization level.
-      #
+      # 
       # This endpoint allows you to create, update, or replace the organization-scoped roles for a given organization. Organization policies supplement the project-level RBAC policy with additional roles that are only applicable within the context of that specific organization.
-      #
+      # 
       # The organization policy consists of roles, where each role defines:
       # - A unique `role_id` to identify the role
       # - A human-readable `description` of the role's purpose
       # - A set of `permissions` that specify which actions can be performed on which resources
-      #
+      # 
       # When you set an organization policy, it will replace any existing organization-specific roles for that organization. The project-level RBAC policy remains unchanged.
-      #
+      # 
       # Organization-specific roles are useful for scenarios where different organizations within your project require different permission structures, such as:
       # - Multi-tenant applications with varying access levels per tenant
       # - Organizations with custom approval workflows
       # - Different organizational hierarchies requiring unique role definitions
-      #
+      # 
       # Check out the [RBAC overview](https://stytch.com/docs/b2b/guides/rbac/overview) to learn more about Stytch's RBAC permissioning model and organization-scoped policies.
-      #
+      # 
       # == Parameters:
       # organization_id::
       #   Globally unique UUID that identifies a specific Organization. The `organization_id` is critical to perform operations on an Organization, so be sure to preserve this value. You may also use the organization_slug or organization_external_id here as a convenience.
@@ -115,7 +123,7 @@ module StytchB2B
       # org_policy::
       #   The organization-specific RBAC Policy that contains roles defined for this organization. Organization policies supplement the project-level RBAC policy with additional roles that are specific to the organization.
       #   The type of this field is +OrgPolicy+ (+object+).
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -128,8 +136,8 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def set_org_policy(
-        organization_id:,
-        org_policy:
+        organization_id: ,
+        org_policy: 
       )
         headers = {}
         request = {
@@ -138,6 +146,9 @@ module StytchB2B
 
         put_request("/v1/b2b/rbac/organizations/#{organization_id}", request, headers)
       end
+
+
+
     end
   end
 end

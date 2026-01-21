@@ -10,8 +10,9 @@ require_relative 'request_helper'
 
 module Stytch
   class Fraud
+
     include Stytch::RequestHelper
-    attr_reader :fingerprint, :rules, :verdict_reasons
+    attr_reader :fingerprint, :rules, :verdict_reasons, :email
 
     def initialize(connection)
       @connection = connection
@@ -19,27 +20,32 @@ module Stytch
       @fingerprint = Stytch::Fraud::Fingerprint.new(@connection)
       @rules = Stytch::Fraud::Rules.new(@connection)
       @verdict_reasons = Stytch::Fraud::VerdictReasons.new(@connection)
+      @email = Stytch::Fraud::Email.new(@connection)
     end
 
+
+
     class Fingerprint
+
       include Stytch::RequestHelper
 
       def initialize(connection)
         @connection = connection
+
       end
 
       # Lookup the associated fingerprint for the `telemetry_id` returned from the `GetTelemetryID()` function.
       # Learn more about the different fingerprint types and verdicts in our [DFP guide](https://stytch.com/docs/fraud/guides/device-fingerprinting/overview).
-      #
+      # 
       # You can make a decision based on the recommended `verdict` in the response:
       # * `ALLOW` - This is a known valid device grouping or device profile that is part of the default `ALLOW` listed set of known devices by Stytch. This grouping is made up of  verified device profiles that match the characteristics of known/authentic traffic origins.
       # * `BLOCK` - This is a known bad or malicious device profile that is undesirable and should be blocked from completing the privileged action in question.
       # * `CHALLENGE` - This is an unknown or potentially malicious device that should be put through increased friction such as 2FA or other forms of extended user verification before allowing the privileged action to proceed.
-      #
+      # 
       # If the `telemetry_id` is expired or not found, this endpoint returns a 404 `telemetry_id_not_found` [error](https://stytch.com/docs/fraud/api/errors/404#telemetry_id_not_found).
       # We recommend treating 404 errors as a `BLOCK`, since it could be a sign of an attacker trying to bypass DFP protections.
       # See [Attacker-controlled telemetry IDs](https://stytch.com/docs/fraud/guides/device-fingerprinting/integration-steps/test-your-integration#attacker-controlled-telemetry-ids) for more information.
-      #
+      # 
       # == Parameters:
       # telemetry_id::
       #   The telemetry ID associated with the fingerprint getting looked up.
@@ -47,7 +53,7 @@ module Stytch
       # external_metadata::
       #   External identifiers that you wish to associate with the given telemetry ID. You will be able to search for fingerprint results by these identifiers in the DFP analytics dashboard. External metadata fields may not exceed 65 characters. They may only contain alphanumerics and the characters `_` `-` `+` `.` or `@`.
       #   The type of this field is nilable +Metadata+ (+object+).
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -81,36 +87,40 @@ module Stytch
       #   The raw device attributes, such as screen size, that were collected by the Device Fingerprinting product to generate the fingerprints and verdict. You must be specifically enabled for the raw signals feature to see this field. You can find documentation for the specific fields in the [guides](https://stytch.com/docs/fraud/guides/device-fingerprinting/reference/raw-signals).
       #   The type of this field is nilable +object+.
       def lookup(
-        telemetry_id:,
+        telemetry_id: ,
         external_metadata: nil
       )
         headers = {}
         request = {
           telemetry_id: telemetry_id
         }
-        request[:external_metadata] = external_metadata unless external_metadata.nil?
+        request[:external_metadata] = external_metadata if external_metadata != nil
 
-        post_request('/v1/fingerprint/lookup', request, headers)
+        post_request("/v1/fingerprint/lookup", request, headers)
       end
-    end
 
+
+
+    end
     class Rules
+
       include Stytch::RequestHelper
 
       def initialize(connection)
         @connection = connection
+
       end
 
       # Set a rule for a particular `visitor_id`, `browser_id`, `visitor_fingerprint`, `browser_fingerprint`, `hardware_fingerprint`, `network_fingerprint`, `cidr_block`, `asn`, or `country_code`. This is helpful in cases where you want to allow or block a specific user or fingerprint. You should be careful when setting rules for `browser_fingerprint`, `hardware_fingerprint`, or `network_fingerprint` as they can be shared across multiple users, and you could affect more users than intended.
-      #
+      # 
       # You may not set an `ALLOW` rule for a `country_code`.
-      #
+      # 
       # Rules are applied in the order specified above. For example, if an end user has an `ALLOW` rule set for their `visitor_id` but a `BLOCK` rule set for their `hardware_fingerprint`, they will receive an `ALLOW` verdict because the `visitor_id` rule takes precedence.
-      #
+      # 
       # If there are conflicts between multiple `cidr_block` rules (for example, if the `ip_address` of the end user overlaps with multiple CIDR blocks that have rules set), the conflicts are resolved as follows:
       # - The smallest block size takes precedence. For example, if an `ip_address` overlaps with a `cidr_block` rule of `ALLOW` for a block with a prefix of `/32` and a `cidr_block` rule of `BLOCK` with a prefix of `/24`, the rule match verdict will be `ALLOW`.
       # - Among equivalent size blocks, `BLOCK` takes precedence over `CHALLENGE`, which takes precedence over `ALLOW`. For example, if an `ip_address` overlaps with two `cidr_block` rules with blocks of the same size that return `CHALLENGE` and `ALLOW`, the rule match verdict will be `CHALLENGE`.
-      #
+      # 
       # == Parameters:
       # action::
       #   The action that should be returned by a fingerprint lookup for that identifier with a `RULE_MATCH` reason. The following values are valid: `ALLOW`, `BLOCK`, `CHALLENGE`, or `NONE`. For country codes, `ALLOW` actions are not allowed. If a `NONE` action is specified, it will clear the stored rule.
@@ -148,7 +158,7 @@ module Stytch
       # asn::
       #   The ASN we want to set a rule for. The ASN must be the string representation of an integer between 0 and 4294967295, inclusive. Only one identifier can be specified in the request.
       #   The type of this field is nilable +String+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -191,7 +201,7 @@ module Stytch
       #   The ASN that a rule was set for.
       #   The type of this field is nilable +String+.
       def set(
-        action:,
+        action: ,
         visitor_id: nil,
         browser_id: nil,
         visitor_fingerprint: nil,
@@ -208,23 +218,23 @@ module Stytch
         request = {
           action: action
         }
-        request[:visitor_id] = visitor_id unless visitor_id.nil?
-        request[:browser_id] = browser_id unless browser_id.nil?
-        request[:visitor_fingerprint] = visitor_fingerprint unless visitor_fingerprint.nil?
-        request[:browser_fingerprint] = browser_fingerprint unless browser_fingerprint.nil?
-        request[:hardware_fingerprint] = hardware_fingerprint unless hardware_fingerprint.nil?
-        request[:network_fingerprint] = network_fingerprint unless network_fingerprint.nil?
-        request[:expires_in_minutes] = expires_in_minutes unless expires_in_minutes.nil?
-        request[:description] = description unless description.nil?
-        request[:cidr_block] = cidr_block unless cidr_block.nil?
-        request[:country_code] = country_code unless country_code.nil?
-        request[:asn] = asn unless asn.nil?
+        request[:visitor_id] = visitor_id if visitor_id != nil
+        request[:browser_id] = browser_id if browser_id != nil
+        request[:visitor_fingerprint] = visitor_fingerprint if visitor_fingerprint != nil
+        request[:browser_fingerprint] = browser_fingerprint if browser_fingerprint != nil
+        request[:hardware_fingerprint] = hardware_fingerprint if hardware_fingerprint != nil
+        request[:network_fingerprint] = network_fingerprint if network_fingerprint != nil
+        request[:expires_in_minutes] = expires_in_minutes if expires_in_minutes != nil
+        request[:description] = description if description != nil
+        request[:cidr_block] = cidr_block if cidr_block != nil
+        request[:country_code] = country_code if country_code != nil
+        request[:asn] = asn if asn != nil
 
-        post_request('/v1/rules/set', request, headers)
+        post_request("/v1/rules/set", request, headers)
       end
 
       # Get all rules that have been set for your project.
-      #
+      # 
       # == Parameters:
       # cursor::
       #   The `cursor` field allows you to paginate through your results. Each result array is limited to 100 results. If your query returns more than 100 results, you will need to paginate the responses using the `cursor`. If you receive a response that includes a non-null `next_cursor`, repeat the request with the `next_cursor` value set to the `cursor` field to retrieve the next page of results. Continue to make requests until the `next_cursor` in the response is null.
@@ -232,7 +242,7 @@ module Stytch
       # limit::
       #   The number of results to return per page. The default limit is 10. A maximum of 100 results can be returned by a single get request. If the total size of your result set is greater than one page size, you must paginate the response. See the `cursor` field.
       #   The type of this field is nilable +Integer+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -252,23 +262,28 @@ module Stytch
         limit: nil
       )
         headers = {}
-        request = {}
-        request[:cursor] = cursor unless cursor.nil?
-        request[:limit] = limit unless limit.nil?
+        request = {
+        }
+        request[:cursor] = cursor if cursor != nil
+        request[:limit] = limit if limit != nil
 
-        post_request('/v1/rules/list', request, headers)
+        post_request("/v1/rules/list", request, headers)
       end
-    end
 
+
+
+    end
     class VerdictReasons
+
       include Stytch::RequestHelper
 
       def initialize(connection)
         @connection = connection
+
       end
 
       # Use this endpoint to override the action returned for a specific verdict reason during a fingerprint lookup. For example, Stytch Device Fingerprinting returns a `CHALLENGE` verdict action by default for the verdict reason `VIRTUAL_MACHINE`. You can use this endpoint to override that reason to return an `ALLOW` verdict instead if you expect many legitimate users to be using a browser that runs in a virtual machine.
-      #
+      # 
       # == Parameters:
       # verdict_reason::
       #   The verdict reason that you wish to override. For a list of possible reasons to override, see [Warning Flags (Verdict Reasons)](https://stytch.com/docs/docs/fraud/guides/device-fingerprinting/reference/warning-flags-verdict-reasons). You may not override the `RULE_MATCH` reason.
@@ -279,7 +294,7 @@ module Stytch
       # override_description::
       #   An optional description for the verdict reason override.
       #   The type of this field is nilable +String+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -292,8 +307,8 @@ module Stytch
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def override(
-        verdict_reason:,
-        override_action:,
+        verdict_reason: ,
+        override_action: ,
         override_description: nil
       )
         headers = {}
@@ -301,20 +316,20 @@ module Stytch
           verdict_reason: verdict_reason,
           override_action: override_action
         }
-        request[:override_description] = override_description unless override_description.nil?
+        request[:override_description] = override_description if override_description != nil
 
-        post_request('/v1/verdict_reasons/override', request, headers)
+        post_request("/v1/verdict_reasons/override", request, headers)
       end
 
       # Get the list of verdict reasons returned by the Stytch Device Fingerprinting product along with their default actions and any overrides you may have defined. This is not an exhaustive list of verdict reasons, but it contains all verdict reasons that you may set an override on.
-      #
+      # 
       # For a full list of possible verdict reasons, see [Warning Flags (Verdict Reasons)](https://stytch.com/docs/docs/fraud/guides/device-fingerprinting/reference/warning-flags-verdict-reasons).
-      #
+      # 
       # == Parameters:
       # overrides_only::
       #   Whether to return only verdict reasons that have overrides set. Defaults to false.
       #   The type of this field is nilable +Boolean+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -330,11 +345,73 @@ module Stytch
         overrides_only: nil
       )
         headers = {}
-        request = {}
-        request[:overrides_only] = overrides_only unless overrides_only.nil?
+        request = {
+        }
+        request[:overrides_only] = overrides_only if overrides_only != nil
 
-        post_request('/v1/verdict_reasons/list', request, headers)
+        post_request("/v1/verdict_reasons/list", request, headers)
       end
+
+
+
+    end
+    class Email
+
+      include Stytch::RequestHelper
+
+      def initialize(connection)
+        @connection = connection
+
+      end
+
+      # Get risk information for a specific email address.
+      # The response will contain a recommended action (`ALLOW`, `BLOCK`, or `CHALLENGE`) and a more granular `risk_score`.
+      # You can also check the `address_information` and `domain_information` fields for more information about the email address and email domain.
+      # 
+      # This feature is in beta. Reach out to us [here](mailto:fraud-team@stytch.com?subject=Email_Intelligence_Early_Access) if you'd like to request early access.
+      # 
+      # == Parameters:
+      # email_address::
+      #   The email address to check.
+      #   The type of this field is +String+.
+      # 
+      # == Returns:
+      # An object with the following fields:
+      # request_id::
+      #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
+      #   The type of this field is +String+.
+      # address_information::
+      #   Information about the email address.
+      #   The type of this field is +AddressInformation+ (+object+).
+      # domain_information::
+      #   Information about the email domain.
+      #   The type of this field is +DomainInformation+ (+object+).
+      # action::
+      #   The suggested action based on the attributes of the email address. The available actions are:
+      #   * `ALLOW` - This email is most likely safe to send to and not fraudulent.
+      #   * `BLOCK` - This email is invalid or exhibits signs of fraud. We recommend blocking the end user.
+      #   * `CHALLENGE` - This email has some potentially fraudulent attributes. We recommend increased friction such as 2FA or other forms of extended user verification before allowing the privileged action to proceed.
+      #   
+      #   The type of this field is +RiskResponseAction+ (string enum).
+      # risk_score::
+      #   A score from 0 to 100 indicating how risky the email is. 100 is the most risky.
+      #   The type of this field is +Integer+.
+      # status_code::
+      #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
+      #   The type of this field is +Integer+.
+      def risk(
+        email_address: 
+      )
+        headers = {}
+        request = {
+          email_address: email_address
+        }
+
+        post_request("/v1/email/risk", request, headers)
+      end
+
+
+
     end
   end
 end
