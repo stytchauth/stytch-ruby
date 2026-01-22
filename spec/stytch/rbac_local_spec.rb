@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe Stytch::PolicyCache do
-  let(:mock_rbac_client) { instance_double('rbac_client') }
+  let(:mock_organizations) { instance_double('Organizations') }
+  let(:mock_rbac_client) { instance_double('rbac_client', organizations: mock_organizations) }
+
   let(:policy_cache) { described_class.new(rbac_client: mock_rbac_client) }
 
   let(:sample_policy) do
@@ -33,8 +35,34 @@ RSpec.describe Stytch::PolicyCache do
     }
   end
 
+  let(:sample_org_policy) do
+    {
+      'roles' => [
+        {
+          'role_id' => 'resident',
+          'permissions' => [
+            {
+              'resource_id' => 'fridge',
+              'actions' => ['*'],
+            }
+          ]
+        },
+        {
+          'role_id' => 'shopper',
+          'permissions' => [
+            {
+              'resource_id' => 'fridge',
+              'actions' => ['stock'],
+            }
+          ]
+        }
+      ]
+    }
+  end
+
   before do
     allow(mock_rbac_client).to receive(:policy).and_return({ 'policy' => sample_policy })
+    allow(mock_organizations).to receive(:get_org_policy).and_return('org_policy' => sample_org_policy)
   end
 
   describe '#initialize' do
@@ -42,6 +70,7 @@ RSpec.describe Stytch::PolicyCache do
       expect(policy_cache.instance_variable_get(:@rbac_client)).to eq(mock_rbac_client)
       expect(policy_cache.instance_variable_get(:@policy_last_update)).to eq(0)
       expect(policy_cache.instance_variable_get(:@cached_policy)).to be_nil
+      expect(policy_cache.instance_variable_get(:@cached_org_policies)).to eq({})
     end
   end
 
@@ -50,6 +79,16 @@ RSpec.describe Stytch::PolicyCache do
       policy_cache.reload_policy
       expect(policy_cache.instance_variable_get(:@cached_policy)).to eq(sample_policy)
       expect(policy_cache.instance_variable_get(:@policy_last_update)).to be > 0
+    end
+  end
+
+  describe '#reload_org_policy' do
+    it 'reloads org policy from rbac_client' do
+      policy_cache.reload_org_policy(organization_id: 'org-123')
+
+      cache = policy_cache.instance_variable_get(:@cached_org_policies)
+      cached_org_policy = cache['org-123'].instance_variable_get(:@org_policy)
+      expect(cached_org_policy).to eq(sample_org_policy)
     end
   end
 
@@ -93,6 +132,67 @@ RSpec.describe Stytch::PolicyCache do
       it 'reloads policy' do
         result = policy_cache.get_policy(invalidate: true)
         expect(result).to eq(sample_policy)
+      end
+    end
+  end
+
+  describe '#get_org_policy' do
+    before(:all) do
+      @org_id = 'org-123'
+    end
+
+    context 'when cache is empty' do
+      it 'reloads org policy' do
+        result = policy_cache.get_org_policy(organization_id: @org_id)
+        expect(result).to eq(sample_org_policy)
+      end
+    end
+
+    context 'when cache is stale' do
+      before do
+        cached_org_policy = Stytch::CachedOrgPolicy.new(org_policy: sample_org_policy)
+        # Clear the Org policy roles so we can ensure it gets properly refreshed.
+        cached_org_policy.instance_variable_set(:@org_policy, { 'roles' => [] })
+        cached_org_policy.instance_variable_set(:@last_update, Time.now.to_i - 400)
+
+        policy_cache.instance_variable_set(:@cached_org_policies, {
+          @org_id.to_s => cached_org_policy
+        })
+      end
+
+      it 'reloads policy' do
+        result = policy_cache.get_org_policy(organization_id: @org_id)
+        expect(result).to eq(sample_org_policy)
+      end
+    end
+
+    context 'when cache is fresh' do
+      before do
+        cached_org_policy = Stytch::CachedOrgPolicy.new(org_policy: { 'org_policy' => 'policy' })
+        cached_org_policy.instance_variable_set(:@last_update, Time.now.to_i - 100)
+        policy_cache.instance_variable_set(:@cached_org_policies, {
+          @org_id.to_s => cached_org_policy
+        })
+      end
+
+      it 'returns cached policy' do
+        result = policy_cache.get_org_policy(organization_id: @org_id)
+        expect(result).to eq('policy')
+      end
+    end
+
+    context 'when invalidate is true' do
+      before do
+        cached_org_policy = Stytch::CachedOrgPolicy.new(org_policy: { 'org_policy' => 'policy' })
+        cached_org_policy.instance_variable_set(:@last_update, Time.now.to_i - 100)
+        policy_cache.instance_variable_set(:@cached_org_policies, {
+          @org_id.to_s => cached_org_policy
+        })
+      end
+
+      it 'reloads policy' do
+        result = policy_cache.get_org_policy(organization_id: @org_id, invalidate: true)
+        expect(result).to eq(sample_org_policy)
       end
     end
   end
@@ -147,10 +247,10 @@ RSpec.describe Stytch::PolicyCache do
     it 'succeeds for specific action when user has matching role and permission' do
       expect do
         policy_cache.perform_authorization_check(
-          subject_roles: ['user'],
+          subject_roles: ['shopper'],
           authorization_check: {
-            'action' => 'read',
-            'resource_id' => 'users',
+            'action' => 'stock',
+            'resource_id' => 'fridge',
             'organization_id' => 'org-123'
           },
           subject_org_id: 'org-123'
@@ -175,7 +275,7 @@ RSpec.describe Stytch::PolicyCache do
     it 'succeeds if any role has permission when user has multiple roles' do
       expect do
         policy_cache.perform_authorization_check(
-          subject_roles: %w[guest user],
+          subject_roles: %w[guest user resident],
           authorization_check: {
             'action' => 'write',
             'resource_id' => 'posts',
