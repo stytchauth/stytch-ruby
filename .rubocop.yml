@@ -19,4 +19,6 @@ Style/StringConcatenation: { Enabled: false }
 
 RSpec/DescribedClass: { Enabled: false }
 RSpec/ExampleLength: { Enabled: false }
+RSpec/InstanceVariable: { Enabled: false }
 RSpec/MultipleExpectations: { Enabled: false }
+RSpec/MultipleMemoizedHelpers: { Enabled: false }

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable RSpec/MultipleMemoizedHelpers
-
 require 'spec_helper'
 require 'jwt'
 
@@ -271,5 +269,3 @@ RSpec.describe StytchB2B::IDP do
     end
   end
 end
-
-# rubocop:enable RSpec/MultipleMemoizedHelpers

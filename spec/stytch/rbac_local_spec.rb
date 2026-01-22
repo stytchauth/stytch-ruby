@@ -136,7 +136,6 @@ RSpec.describe Stytch::PolicyCache do
     end
   end
 
-  # rubocop:disable RSpec/MultipleMemoizedHelpers
   describe '#get_org_policy' do
     let(:org_id) { 'org-123' }
 
@@ -195,9 +194,7 @@ RSpec.describe Stytch::PolicyCache do
       end
     end
   end
-  # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-  # rubocop:disable RSpec/MultipleMemoizedHelpers
   describe '#perform_authorization_check' do
     let(:authorization_check) do
       {
@@ -287,9 +284,7 @@ RSpec.describe Stytch::PolicyCache do
       end.not_to raise_error
     end
   end
-  # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-  # rubocop:disable RSpec/MultipleMemoizedHelpers
   describe '#perform_consumer_authorization_check' do
     let(:authorization_check) do
       {
@@ -355,5 +350,4 @@ RSpec.describe Stytch::PolicyCache do
       end.not_to raise_error
     end
   end
-  # rubocop:enable RSpec/MultipleMemoizedHelpers
 end
