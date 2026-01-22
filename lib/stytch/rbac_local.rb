@@ -9,6 +9,10 @@ module Stytch
       @rbac_client = rbac_client
       @policy_last_update = 0
       @cached_policy = nil
+      @cached_org_policies = {}
+      # TTL, in seconds, before a cached policy is considered stale
+      # and should be refreshed. Amounts to 5 minutes.
+      @cache_ttl = 300
     end
 
     def reload_policy
@@ -16,9 +20,25 @@ module Stytch
       @policy_last_update = Time.now.to_i
     end
 
+    def reload_org_policy(organization_id:)
+      @cached_org_policies[organization_id] = CachedOrgPolicy.new(
+        org_policy: @rbac_client.organizations.get_org_policy(organization_id: organization_id)
+      )
+    end
+
     def get_policy(invalidate: false)
-      reload_policy if invalidate || @cached_policy.nil? || @policy_last_update < Time.now.to_i - 300
+      reload_policy if invalidate || @cached_policy.nil? || @policy_last_update < Time.now.to_i - @cache_ttl
       @cached_policy
+    end
+
+    def get_org_policy(organization_id:, invalidate: false)
+      is_missing = @cached_org_policies[organization_id].nil?
+      is_stale = !is_missing && @cached_org_policies[organization_id].last_update < Time.now.to_i - @cache_ttl
+      reload_org_policy(organization_id: organization_id) if invalidate || is_missing || is_stale
+
+      return { 'roles' => [] } if @cached_org_policies[organization_id].nil?
+
+      @cached_org_policies[organization_id].org_policy
     end
 
     # Performs an authorization check against the project's policy and a set of roles. If the
@@ -34,19 +54,18 @@ module Stytch
       raise Stytch::TenancyError.new(subject_org_id, authorization_check['organization_id']) if subject_org_id != authorization_check['organization_id']
 
       policy = get_policy
+      org_policy = get_org_policy(organization_id: subject_org_id)
+      all_roles = policy['roles'].concat(org_policy['roles'])
 
-      for role in policy['roles']
+      return if all_roles.any? do |role|
         next unless subject_roles.include?(role['role_id'])
 
-        for permission in role['permissions']
+        role['permissions'].any? do |permission|
           actions = permission['actions']
           resource = permission['resource_id']
           has_matching_action = actions.include?('*') || actions.include?(authorization_check['action'])
           has_matching_resource = resource == authorization_check['resource_id']
-          if has_matching_action && has_matching_resource
-            # All good
-            return
-          end
+          has_matching_action && has_matching_resource
         end
       end
 
@@ -64,17 +83,15 @@ module Stytch
       policy = get_policy
 
       # For consumer authorization, we check roles without tenancy validation
-      for role in policy['roles']
+      return if policy['roles'].any? do |role|
         next unless subject_roles.include?(role['role_id'])
 
-        for permission in role['permissions']
+        role['permissions'].any? do |permission|
           actions = permission['actions']
           resource = permission['resource_id']
           has_matching_action = actions.include?('*') || actions.include?(authorization_check['action'])
           has_matching_resource = resource == authorization_check['resource_id']
-          if has_matching_action && has_matching_resource
-            return # Permission granted
-          end
+          has_matching_action && has_matching_resource
         end
       end
 
@@ -98,24 +115,31 @@ module Stytch
       resource_id = authorization_check['resource_id']
 
       # Check if any of the token scopes grant permission for this action/resource
-      for scope_obj in policy['scopes']
+      return if policy['scopes'].any? do |scope_obj|
         scope_name = scope_obj['scope']
         next unless token_scopes.include?(scope_name)
 
         # Check if this scope grants permission for the requested action/resource
-        for permission in scope_obj['permissions']
+        scope_obj['permissions'].any? do |permission|
           actions = permission['actions']
           resource = permission['resource_id']
           has_matching_action = actions.include?('*') || actions.include?(action)
           has_matching_resource = resource == resource_id
-          if has_matching_action && has_matching_resource
-            return # Permission granted
-          end
+          has_matching_action && has_matching_resource
         end
       end
 
       # If we get here, we didn't find a matching permission
       raise Stytch::PermissionError, authorization_check
     end
+  end
+
+  class CachedOrgPolicy
+    def initialize(org_policy:)
+      @org_policy = org_policy['org_policy']
+      @last_update = Time.now.to_i
+    end
+
+    attr_reader :org_policy, :last_update
   end
 end
