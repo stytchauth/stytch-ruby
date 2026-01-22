@@ -115,19 +115,17 @@ module Stytch
       resource_id = authorization_check['resource_id']
 
       # Check if any of the token scopes grant permission for this action/resource
-      policy['scopes'].each do |scope_obj|
+      return if policy['scopes'].any? do |scope_obj|
         scope_name = scope_obj['scope']
         next unless token_scopes.include?(scope_name)
 
         # Check if this scope grants permission for the requested action/resource
-        scope_obj['permissions'].each do |permission|
+        scope_obj['permissions'].any? do |permission|
           actions = permission['actions']
           resource = permission['resource_id']
           has_matching_action = actions.include?('*') || actions.include?(action)
           has_matching_resource = resource == resource_id
-          if has_matching_action && has_matching_resource
-            return # Permission granted
-          end
+          has_matching_action && has_matching_resource
         end
       end
 

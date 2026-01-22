@@ -136,14 +136,13 @@ RSpec.describe Stytch::PolicyCache do
     end
   end
 
+  # rubocop:disable RSpec/MultipleMemoizedHelpers
   describe '#get_org_policy' do
-    before(:all) do
-      @org_id = 'org-123'
-    end
+    let(:org_id) { 'org-123' }
 
     context 'when cache is empty' do
       it 'reloads org policy' do
-        result = policy_cache.get_org_policy(organization_id: @org_id)
+        result = policy_cache.get_org_policy(organization_id: org_id)
         expect(result).to eq(sample_org_policy)
       end
     end
@@ -156,12 +155,12 @@ RSpec.describe Stytch::PolicyCache do
         cached_org_policy.instance_variable_set(:@last_update, Time.now.to_i - 400)
 
         policy_cache.instance_variable_set(:@cached_org_policies, {
-                                             @org_id.to_s => cached_org_policy
+                                             org_id.to_s => cached_org_policy
                                            })
       end
 
       it 'reloads policy' do
-        result = policy_cache.get_org_policy(organization_id: @org_id)
+        result = policy_cache.get_org_policy(organization_id: org_id)
         expect(result).to eq(sample_org_policy)
       end
     end
@@ -171,12 +170,12 @@ RSpec.describe Stytch::PolicyCache do
         cached_org_policy = Stytch::CachedOrgPolicy.new(org_policy: { 'org_policy' => 'policy' })
         cached_org_policy.instance_variable_set(:@last_update, Time.now.to_i - 100)
         policy_cache.instance_variable_set(:@cached_org_policies, {
-                                             @org_id.to_s => cached_org_policy
+                                             org_id.to_s => cached_org_policy
                                            })
       end
 
       it 'returns cached policy' do
-        result = policy_cache.get_org_policy(organization_id: @org_id)
+        result = policy_cache.get_org_policy(organization_id: org_id)
         expect(result).to eq('policy')
       end
     end
@@ -186,17 +185,19 @@ RSpec.describe Stytch::PolicyCache do
         cached_org_policy = Stytch::CachedOrgPolicy.new(org_policy: { 'org_policy' => 'policy' })
         cached_org_policy.instance_variable_set(:@last_update, Time.now.to_i - 100)
         policy_cache.instance_variable_set(:@cached_org_policies, {
-                                             @org_id.to_s => cached_org_policy
+                                             org_id.to_s => cached_org_policy
                                            })
       end
 
       it 'reloads policy' do
-        result = policy_cache.get_org_policy(organization_id: @org_id, invalidate: true)
+        result = policy_cache.get_org_policy(organization_id: org_id, invalidate: true)
         expect(result).to eq(sample_org_policy)
       end
     end
   end
+  # rubocop:enable RSpec/MultipleMemoizedHelpers
 
+  # rubocop:disable RSpec/MultipleMemoizedHelpers
   describe '#perform_authorization_check' do
     let(:authorization_check) do
       {
@@ -286,7 +287,9 @@ RSpec.describe Stytch::PolicyCache do
       end.not_to raise_error
     end
   end
+  # rubocop:enable RSpec/MultipleMemoizedHelpers
 
+  # rubocop:disable RSpec/MultipleMemoizedHelpers
   describe '#perform_consumer_authorization_check' do
     let(:authorization_check) do
       {
@@ -352,4 +355,5 @@ RSpec.describe Stytch::PolicyCache do
       end.not_to raise_error
     end
   end
+  # rubocop:enable RSpec/MultipleMemoizedHelpers
 end
