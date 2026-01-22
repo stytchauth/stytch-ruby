@@ -43,7 +43,7 @@ RSpec.describe Stytch::PolicyCache do
           'permissions' => [
             {
               'resource_id' => 'fridge',
-              'actions' => ['*'],
+              'actions' => ['*']
             }
           ]
         },
@@ -52,7 +52,7 @@ RSpec.describe Stytch::PolicyCache do
           'permissions' => [
             {
               'resource_id' => 'fridge',
-              'actions' => ['stock'],
+              'actions' => ['stock']
             }
           ]
         }
@@ -156,8 +156,8 @@ RSpec.describe Stytch::PolicyCache do
         cached_org_policy.instance_variable_set(:@last_update, Time.now.to_i - 400)
 
         policy_cache.instance_variable_set(:@cached_org_policies, {
-          @org_id.to_s => cached_org_policy
-        })
+                                             @org_id.to_s => cached_org_policy
+                                           })
       end
 
       it 'reloads policy' do
@@ -171,8 +171,8 @@ RSpec.describe Stytch::PolicyCache do
         cached_org_policy = Stytch::CachedOrgPolicy.new(org_policy: { 'org_policy' => 'policy' })
         cached_org_policy.instance_variable_set(:@last_update, Time.now.to_i - 100)
         policy_cache.instance_variable_set(:@cached_org_policies, {
-          @org_id.to_s => cached_org_policy
-        })
+                                             @org_id.to_s => cached_org_policy
+                                           })
       end
 
       it 'returns cached policy' do
@@ -186,8 +186,8 @@ RSpec.describe Stytch::PolicyCache do
         cached_org_policy = Stytch::CachedOrgPolicy.new(org_policy: { 'org_policy' => 'policy' })
         cached_org_policy.instance_variable_set(:@last_update, Time.now.to_i - 100)
         policy_cache.instance_variable_set(:@cached_org_policies, {
-          @org_id.to_s => cached_org_policy
-        })
+                                             @org_id.to_s => cached_org_policy
+                                           })
       end
 
       it 'reloads policy' do
