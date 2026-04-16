@@ -10,6 +10,7 @@ require_relative 'request_helper'
 
 module Stytch
   class ConnectedApp
+
     include Stytch::RequestHelper
     attr_reader :clients
 
@@ -19,7 +20,10 @@ module Stytch
       @clients = Stytch::ConnectedApp::Clients.new(@connection)
     end
 
+
+
     class Clients
+
       include Stytch::RequestHelper
       attr_reader :secrets
 
@@ -30,12 +34,12 @@ module Stytch
       end
 
       # Retrieve details of a specific Connected App by `client_id`.
-      #
+      # 
       # == Parameters:
       # client_id::
       #   The ID of the Connected App client.
       #   The type of this field is +String+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -48,16 +52,17 @@ module Stytch
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def get(
-        client_id:
+        client_id: 
       )
         headers = {}
-        query_params = {}
+        query_params = {
+        }
         request = request_with_query_params("/v1/connected_apps/clients/#{client_id}", query_params)
         get_request(request, headers)
       end
 
       # Updates mutable fields of a Connected App. Cannot update Client Type, Client ID, or Secrets.
-      #
+      # 
       # == Parameters:
       # client_id::
       #   The ID of the client.
@@ -92,7 +97,7 @@ module Stytch
       # bypass_consent_for_offline_access::
       #   Valid for first party clients only. If true, the client does not need to request explicit user consent for the `offline_access` scope.
       #   The type of this field is nilable +Boolean+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -105,7 +110,7 @@ module Stytch
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def update(
-        client_id:,
+        client_id: ,
         client_name: nil,
         client_description: nil,
         redirect_urls: nil,
@@ -118,28 +123,29 @@ module Stytch
         bypass_consent_for_offline_access: nil
       )
         headers = {}
-        request = {}
-        request[:client_name] = client_name unless client_name.nil?
-        request[:client_description] = client_description unless client_description.nil?
-        request[:redirect_urls] = redirect_urls unless redirect_urls.nil?
-        request[:full_access_allowed] = full_access_allowed unless full_access_allowed.nil?
-        request[:access_token_expiry_minutes] = access_token_expiry_minutes unless access_token_expiry_minutes.nil?
-        request[:access_token_custom_audience] = access_token_custom_audience unless access_token_custom_audience.nil?
-        request[:access_token_template_content] = access_token_template_content unless access_token_template_content.nil?
-        request[:post_logout_redirect_urls] = post_logout_redirect_urls unless post_logout_redirect_urls.nil?
-        request[:logo_url] = logo_url unless logo_url.nil?
-        request[:bypass_consent_for_offline_access] = bypass_consent_for_offline_access unless bypass_consent_for_offline_access.nil?
+        request = {
+        }
+        request[:client_name] = client_name if client_name != nil
+        request[:client_description] = client_description if client_description != nil
+        request[:redirect_urls] = redirect_urls if redirect_urls != nil
+        request[:full_access_allowed] = full_access_allowed if full_access_allowed != nil
+        request[:access_token_expiry_minutes] = access_token_expiry_minutes if access_token_expiry_minutes != nil
+        request[:access_token_custom_audience] = access_token_custom_audience if access_token_custom_audience != nil
+        request[:access_token_template_content] = access_token_template_content if access_token_template_content != nil
+        request[:post_logout_redirect_urls] = post_logout_redirect_urls if post_logout_redirect_urls != nil
+        request[:logo_url] = logo_url if logo_url != nil
+        request[:bypass_consent_for_offline_access] = bypass_consent_for_offline_access if bypass_consent_for_offline_access != nil
 
         put_request("/v1/connected_apps/clients/#{client_id}", request, headers)
       end
 
       # Deletes a Connected App.
-      #
+      # 
       # == Parameters:
       # client_id::
       #   The ID of the client.
       #   The type of this field is +String+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -152,14 +158,14 @@ module Stytch
       #   (no documentation yet)
       #   The type of this field is +Integer+.
       def delete(
-        client_id:
+        client_id: 
       )
         headers = {}
         delete_request("/v1/connected_apps/clients/#{client_id}", headers)
       end
 
       # Search for Connected Apps. Supports cursor-based pagination. Specific filters coming soon.
-      #
+      # 
       # == Parameters:
       # cursor::
       #   The `cursor` field allows you to paginate through your results. Each result array is limited to 1000 results. If your query returns more than 1000 results, you will need to paginate the responses using the `cursor`. If you receive a response that includes a non-null `next_cursor` in the `results_metadata` object, repeat the search call with the `next_cursor` value set to the `cursor` field to retrieve the next page of results. Continue to make search calls until the `next_cursor` in the response is null.
@@ -167,7 +173,7 @@ module Stytch
       # limit::
       #   The number of search results to return per page. The default limit is 100. A maximum of 1000 results can be returned by a single search request. If the total size of your result set is greater than one page size, you must paginate the response. See the `cursor` field.
       #   The type of this field is nilable +Integer+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -187,17 +193,18 @@ module Stytch
         limit: nil
       )
         headers = {}
-        request = {}
-        request[:cursor] = cursor unless cursor.nil?
-        request[:limit] = limit unless limit.nil?
+        request = {
+        }
+        request[:cursor] = cursor if cursor != nil
+        request[:limit] = limit if limit != nil
 
-        post_request('/v1/connected_apps/clients/search', request, headers)
+        post_request("/v1/connected_apps/clients/search", request, headers)
       end
 
       # Creates a new Connected App. If the Connected App `client_type` is `first_party` or `third_party` a `client_secret` is returned.
-      #
+      # 
       # **Important:** This is the only time you will be able to view the generated `client_secret` in the API response. Stytch stores a hash of the `client_secret` and cannot recover the value if lost. Be sure to persist the `client_secret` in a secure location. If the `client_secret` is lost, you will need to trigger a secret rotation flow to receive another one.
-      #
+      # 
       # == Parameters:
       # client_type::
       #   The type of Connected App. Supported values are `first_party`, `first_party_public`, `third_party`, and `third_party_public`.
@@ -232,7 +239,7 @@ module Stytch
       # bypass_consent_for_offline_access::
       #   Valid for first party clients only. If true, the client does not need to request explicit user consent for the `offline_access` scope.
       #   The type of this field is nilable +Boolean+.
-      #
+      # 
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -245,7 +252,7 @@ module Stytch
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       def create(
-        client_type:,
+        client_type: ,
         client_name: nil,
         client_description: nil,
         redirect_urls: nil,
@@ -261,37 +268,41 @@ module Stytch
         request = {
           client_type: client_type
         }
-        request[:client_name] = client_name unless client_name.nil?
-        request[:client_description] = client_description unless client_description.nil?
-        request[:redirect_urls] = redirect_urls unless redirect_urls.nil?
-        request[:full_access_allowed] = full_access_allowed unless full_access_allowed.nil?
-        request[:access_token_expiry_minutes] = access_token_expiry_minutes unless access_token_expiry_minutes.nil?
-        request[:access_token_custom_audience] = access_token_custom_audience unless access_token_custom_audience.nil?
-        request[:access_token_template_content] = access_token_template_content unless access_token_template_content.nil?
-        request[:post_logout_redirect_urls] = post_logout_redirect_urls unless post_logout_redirect_urls.nil?
-        request[:logo_url] = logo_url unless logo_url.nil?
-        request[:bypass_consent_for_offline_access] = bypass_consent_for_offline_access unless bypass_consent_for_offline_access.nil?
+        request[:client_name] = client_name if client_name != nil
+        request[:client_description] = client_description if client_description != nil
+        request[:redirect_urls] = redirect_urls if redirect_urls != nil
+        request[:full_access_allowed] = full_access_allowed if full_access_allowed != nil
+        request[:access_token_expiry_minutes] = access_token_expiry_minutes if access_token_expiry_minutes != nil
+        request[:access_token_custom_audience] = access_token_custom_audience if access_token_custom_audience != nil
+        request[:access_token_template_content] = access_token_template_content if access_token_template_content != nil
+        request[:post_logout_redirect_urls] = post_logout_redirect_urls if post_logout_redirect_urls != nil
+        request[:logo_url] = logo_url if logo_url != nil
+        request[:bypass_consent_for_offline_access] = bypass_consent_for_offline_access if bypass_consent_for_offline_access != nil
 
-        post_request('/v1/connected_apps/clients', request, headers)
+        post_request("/v1/connected_apps/clients", request, headers)
       end
 
+
+
       class Secrets
+
         include Stytch::RequestHelper
 
         def initialize(connection)
           @connection = connection
+
         end
 
         # Initiate the rotation of a Connected App client secret. After this endpoint is called, both the client's `client_secret` and `next_client_secret` will be valid. To complete the secret rotation flow, update all usages of `client_secret` to `next_client_secret` and call the Rotate Secret Endpoint to complete the flow.
         # Secret rotation can be cancelled using the Cancel Secret Rotation endpoint.
-        #
+        # 
         # **Important:** This is the only time you will be able to view the generated `next_client_secret` in the API response. Stytch stores a hash of the `next_client_secret` and cannot recover the value if lost. Be sure to persist the `next_client_secret` in a secure location. If the `next_client_secret` is lost, you will need to trigger a secret rotation flow to receive another one.
-        #
+        # 
         # == Parameters:
         # client_id::
         #   The ID of the client.
         #   The type of this field is +String+.
-        #
+        # 
         # == Returns:
         # An object with the following fields:
         # request_id::
@@ -304,21 +315,22 @@ module Stytch
         #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
         #   The type of this field is +Integer+.
         def rotate_start(
-          client_id:
+          client_id: 
         )
           headers = {}
-          request = {}
+          request = {
+          }
 
           post_request("/v1/connected_apps/clients/#{client_id}/secrets/rotate/start", request, headers)
         end
 
         # Cancel the rotation of a Connected App client secret started with the Start Secret Rotation Endpoint. After this endpoint is called, the client's `next_client_secret` is discarded and only the original `client_secret` will be valid.
-        #
+        # 
         # == Parameters:
         # client_id::
         #   The ID of the client.
         #   The type of this field is +String+.
-        #
+        # 
         # == Returns:
         # An object with the following fields:
         # request_id::
@@ -331,22 +343,23 @@ module Stytch
         #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
         #   The type of this field is +Integer+.
         def rotate_cancel(
-          client_id:
+          client_id: 
         )
           headers = {}
-          request = {}
+          request = {
+          }
 
           post_request("/v1/connected_apps/clients/#{client_id}/secrets/rotate/cancel", request, headers)
         end
 
         # Complete the rotation of a Connected App client secret started with the Rotate Secret Start Endpoint.
         # After this endpoint is called, the client's `next_client_secret` becomes its `client_secret` and the previous `client_secret` will no longer be valid.
-        #
+        # 
         # == Parameters:
         # client_id::
         #   The ID of the client.
         #   The type of this field is +String+.
-        #
+        # 
         # == Returns:
         # An object with the following fields:
         # request_id::
@@ -359,13 +372,17 @@ module Stytch
         #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
         #   The type of this field is +Integer+.
         def rotate(
-          client_id:
+          client_id: 
         )
           headers = {}
-          request = {}
+          request = {
+          }
 
           post_request("/v1/connected_apps/clients/#{client_id}/secrets/rotate", request, headers)
         end
+
+
+
       end
     end
   end
