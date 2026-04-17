@@ -10,24 +10,17 @@ require_relative 'request_helper'
 
 module Stytch
   class Debug
-
     include Stytch::RequestHelper
 
     def initialize(connection)
       @connection = connection
-
     end
 
-    def whoami(
-    )
+    def whoami
       headers = {}
-      query_params = {
-      }
-      request = request_with_query_params("/v1/debug/whoami", query_params)
+      query_params = {}
+      request = request_with_query_params('/v1/debug/whoami', query_params)
       get_request(request, headers)
     end
-
-
-
   end
 end

@@ -10,7 +10,6 @@ require_relative 'request_helper'
 
 module StytchB2B
   class Discovery
-
     include Stytch::RequestHelper
     attr_reader :intermediate_sessions, :organizations
 
@@ -21,33 +20,29 @@ module StytchB2B
       @organizations = StytchB2B::Discovery::Organizations.new(@connection)
     end
 
-
-
     class IntermediateSessions
-
       include Stytch::RequestHelper
 
       def initialize(connection)
         @connection = connection
-
       end
 
       # Exchange an Intermediate Session for a fully realized [Member Session](https://stytch.com/docs/b2b/api/session-object) for the [Organization](https://stytch.com/docs/b2b/api/organization-object) that the user wishes to log into.
-      # 
+      #
       # This endpoint can be used to accept invites and JIT Provision into a new Organization on the basis of the user's email domain or OAuth tenant.
-      # 
+      #
       # If the user **has** already satisfied the authentication requirements of the Organization they are trying to exchange into and logged in with a method that verifies their email address, this API will return `member_authenticated: true` and a `session_token` and `session_jwt`.
-      # 
+      #
       # If the user **has not** satisfied the primary or secondary authentication requirements of the Organization they are attempting to exchange into or is JIT Provisioning but did not log in via a method that provides email verification, this API will return `member_authenticated: false` and an `intermediate_session_token`.
-      # 
+      #
       # If `primary_required` is returned, prompt the user to fulfill the Organization's auth requirements using the options returned in `primary_required.allowed_auth_methods`.
-      # 
+      #
       # If `primary_required` is null and `mfa_required` is set, check `mfa_required.member_options` to determine if the Member has SMS OTP or TOTP set up for MFA and prompt accordingly. If the Member has SMS OTP, check `mfa_required.secondary_auth_initiated` to see if the OTP has already been sent.
-      # 
+      #
       # Include the `intermediate_session_token` returned above when calling the `authenticate()` method that the user needed to perform. Once the user has completed the authentication requirements they were missing, they will be granted a full `session_token` and `session_jwt` to indicate they have successfully logged into the Organization.
-      # 
+      #
       # The `intermediate_session_token` can also be used with the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to create a new Organization instead of joining an existing one.
-      # 
+      #
       # == Parameters:
       # intermediate_session_token::
       #   The Intermediate Session Token. This token does not necessarily belong to a specific instance of a Member, but represents a bag of factors that may be converted to a member session. The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp), or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete an MFA flow and log in to the Organization. The token has a default expiry of 10 minutes. It can also be used with the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) to join a specific Organization that allows the factors represented by the intermediate session token; or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to create a new Organization and Member. Intermediate Session Tokens have a default expiry of 10 minutes.
@@ -59,11 +54,11 @@ module StytchB2B
       #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
       #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
       #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-      # 
+      #
       #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-      # 
+      #
       #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-      # 
+      #
       #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
       #   to use the Stytch session product, you can ignore the session fields in the response.
       #   The type of this field is nilable +Integer+.
@@ -75,18 +70,18 @@ module StytchB2B
       #   The type of this field is nilable +object+.
       # locale::
       #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
-      # 
+      #
       # Parameter is an [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
-      # 
+      #
       # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
-      # 
+      #
       # Request support for additional languages [here](https://docs.google.com/forms/d/e/1FAIpQLScZSpAu_m2AmLXRT3F3kap-s_mcV6UTBitYn6CdyWP0-o7YjQ/viewform?usp=sf_link")!
-      # 
+      #
       #   The type of this field is nilable +ExchangeRequestLocale+ (string enum).
       # telemetry_id::
       #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
       #   The type of this field is nilable +String+.
-      # 
+      #
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -129,8 +124,8 @@ module StytchB2B
       #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
       #   The type of this field is nilable +DeviceInfo+ (+object+).
       def exchange(
-        intermediate_session_token: ,
-        organization_id: ,
+        intermediate_session_token:,
+        organization_id:,
         session_duration_minutes: nil,
         session_custom_claims: nil,
         locale: nil,
@@ -141,42 +136,38 @@ module StytchB2B
           intermediate_session_token: intermediate_session_token,
           organization_id: organization_id
         }
-        request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
-        request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
-        request[:locale] = locale if locale != nil
-        request[:telemetry_id] = telemetry_id if telemetry_id != nil
+        request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+        request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+        request[:locale] = locale unless locale.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
-        post_request("/v1/b2b/discovery/intermediate_sessions/exchange", request, headers)
+        post_request('/v1/b2b/discovery/intermediate_sessions/exchange', request, headers)
       end
-
-
-
     end
-    class Organizations
 
+    class Organizations
       include Stytch::RequestHelper
 
       def initialize(connection)
         @connection = connection
-
       end
 
       # This endpoint allows you to exchange the `intermediate_session_token` returned when the user successfully completes a Discovery authentication flow to create a new
       # [Organization](https://stytch.com/docs/b2b/api/organization-object) and [Member](https://stytch.com/docs/b2b/api/member-object) and log the user in. If the user wants to log into an existing Organization, use the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) instead.
-      # 
+      #
       # Stytch **requires that users verify their email address** prior to creating a new Organization in order to prevent Account Takeover (ATO) attacks and phishing.
-      # 
+      #
       # If the user authenticated using a method that **does not** provide real-time email verification (returning password auth, Github/Slack/Hubspot OAuth) this API will return `member_authenticated: false` and an `intermediate_session_token` to indicate that the user must perform additional authentication via one of the options listed in `primary_required.allowed_auth_methods` to finish logging in.
-      # 
+      #
       # If you specified an `mfa_policy: REQUIRED_FOR_ALL` in the request, this API will return `member_authenticated: false`, an `intermediate_session_token`, and `mfa_required` in order to indicate that you must prompt the user to enroll in MFA.
-      # 
+      #
       # Include the `intermediate_session_token` when calling the `authenticate()` method that the user needed to perform to verify their email or enroll in MFA. Once the user has completed the authentication requirements they were missing, they will be granted a full `session_token` and `session_jwt` and be successfully logged in.
-      # 
+      #
       # If the user logged in with a method that **does** provide real-time email verification (Email Magic Links, Email OTP, Google/Microsoft OAuth, initial email verification when creating a new password) this API will return `member_authenticated: true` and a `session_jwt` and `session_token` to indicate that the user has successfully logged in.
-      # 
-      # The Member created by this endpoint will automatically be granted the `stytch_admin` Role. See the 
+      #
+      # The Member created by this endpoint will automatically be granted the `stytch_admin` Role. See the
       # [RBAC guide](https://stytch.com/docs/b2b/guides/rbac/stytch-default) for more details on this Role.
-      # 
+      #
       # == Parameters:
       # intermediate_session_token::
       #   The Intermediate Session Token. This token does not necessarily belong to a specific instance of a Member, but represents a bag of factors that may be converted to a member session. The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp), or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete an MFA flow and log in to the Organization. The token has a default expiry of 10 minutes. It can also be used with the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) to join a specific Organization that allows the factors represented by the intermediate session token; or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to create a new Organization and Member. Intermediate Session Tokens have a default expiry of 10 minutes.
@@ -185,11 +176,11 @@ module StytchB2B
       #   Set the session lifetime to be this many minutes from now. This will start a new session if one doesn't already exist,
       #   returning both an opaque `session_token` and `session_jwt` for this session. Remember that the `session_jwt` will have a fixed lifetime of
       #   five minutes regardless of the underlying session duration, and will need to be refreshed over time.
-      # 
+      #
       #   This value must be a minimum of 5 and a maximum of 527040 minutes (366 days).
-      # 
+      #
       #   If a `session_token` or `session_jwt` is provided then a successful authentication will continue to extend the session this many minutes.
-      # 
+      #
       #   If the `session_duration_minutes` parameter is not specified, a Stytch session will be created with a 60 minute duration. If you don't want
       #   to use the Stytch session product, you can ignore the session fields in the response.
       #   The type of this field is nilable +Integer+.
@@ -216,58 +207,58 @@ module StytchB2B
       #   The type of this field is nilable +object+.
       # sso_jit_provisioning::
       #   The authentication setting that controls the JIT provisioning of Members when authenticating via SSO. The accepted values are:
-      #  
+      #
       #   `ALL_ALLOWED` – the default setting, new Members will be automatically provisioned upon successful authentication via any of the Organization's `sso_active_connections`.
-      #  
+      #
       #   `RESTRICTED` – only new Members with SSO logins that comply with `sso_jit_provisioning_allowed_connections` can be provisioned upon authentication.
-      #  
+      #
       #   `NOT_ALLOWED` – disable JIT provisioning via SSO.
-      #   
+      #
       #   The type of this field is nilable +String+.
       # email_allowed_domains::
       #   An array of email domains that allow invites or JIT provisioning for new Members. This list is enforced when either `email_invites` or `email_jit_provisioning` is set to `RESTRICTED`.
-      #    
-      #    
+      #
+      #
       #     Common domains such as `gmail.com` are not allowed. See the [common email domains resource](https://stytch.com/docs/b2b/api/common-email-domains) for the full list.
       #   The type of this field is nilable list of +String+.
       # email_jit_provisioning::
       #   The authentication setting that controls how a new Member can be provisioned by authenticating via Email Magic Link or OAuth. The accepted values are:
-      #  
+      #
       #   `RESTRICTED` – only new Members with verified emails that comply with `email_allowed_domains` can be provisioned upon authentication via Email Magic Link or OAuth.
-      #  
+      #
       #   `NOT_ALLOWED` – the default setting, disables JIT provisioning via Email Magic Link and OAuth.
-      #   
+      #
       #   The type of this field is nilable +String+.
       # email_invites::
       #   The authentication setting that controls how a new Member can be invited to an organization by email. The accepted values are:
-      #  
+      #
       #   `ALL_ALLOWED` – any new Member can be invited to join via email.
-      #  
+      #
       #   `RESTRICTED` – only new Members with verified emails that comply with `email_allowed_domains` can be invited via email.
-      #  
+      #
       #   `NOT_ALLOWED` – disable email invites.
-      #   
+      #
       #   The type of this field is nilable +String+.
       # auth_methods::
       #   The setting that controls which authentication methods can be used by Members of an Organization. The accepted values are:
-      #  
+      #
       #   `ALL_ALLOWED` – the default setting which allows all authentication methods to be used.
-      #  
+      #
       #   `RESTRICTED` – only methods that comply with `allowed_auth_methods` can be used for authentication. This setting does not apply to Members with `is_breakglass` set to `true`.
-      #   
+      #
       #   The type of this field is nilable +String+.
       # allowed_auth_methods::
       #   An array of allowed authentication methods. This list is enforced when `auth_methods` is set to `RESTRICTED`.
       #   The list's accepted values are: `sso`, `magic_link`, `email_otp`, `password`, `google_oauth`, `microsoft_oauth`, `slack_oauth`, `github_oauth`, and `hubspot_oauth`.
-      #   
+      #
       #   The type of this field is nilable list of +String+.
       # mfa_policy::
       #   The setting that controls the MFA policy for all Members in the Organization. The accepted values are:
-      #  
+      #
       #   `REQUIRED_FOR_ALL` – All Members within the Organization will be required to complete MFA every time they wish to log in. However, any active Session that existed prior to this setting change will remain valid.
-      #  
+      #
       #   `OPTIONAL` – The default value. The Organization does not require MFA by default for all Members. Members will be required to complete MFA only if their `mfa_enrolled` status is set to true.
-      #   
+      #
       #   The type of this field is nilable +String+.
       # rbac_email_implicit_role_assignments::
       #   Implicit role assignments based off of email domains.
@@ -277,50 +268,50 @@ module StytchB2B
       #   The type of this field is nilable list of +EmailImplicitRoleAssignment+ (+object+).
       # mfa_methods::
       #   The setting that controls which MFA methods can be used by Members of an Organization. The accepted values are:
-      #  
+      #
       #   `ALL_ALLOWED` – the default setting which allows all authentication methods to be used.
-      #  
+      #
       #   `RESTRICTED` – only methods that comply with `allowed_mfa_methods` can be used for authentication. This setting does not apply to Members with `is_breakglass` set to `true`.
-      #   
+      #
       #   The type of this field is nilable +String+.
       # allowed_mfa_methods::
       #   An array of allowed MFA authentication methods. This list is enforced when `mfa_methods` is set to `RESTRICTED`.
       #   The list's accepted values are: `sms_otp` and `totp`.
-      #   
+      #
       #   The type of this field is nilable list of +String+.
       # oauth_tenant_jit_provisioning::
       #   The authentication setting that controls how a new Member can JIT provision into an organization by tenant. The accepted values are:
-      #  
+      #
       #   `RESTRICTED` – only new Members with tenants in `allowed_oauth_tenants` can JIT provision via tenant.
-      #  
+      #
       #   `NOT_ALLOWED` – the default setting, disables JIT provisioning by OAuth Tenant.
-      #   
+      #
       #   The type of this field is nilable +String+.
       # allowed_oauth_tenants::
       #   A map of allowed OAuth tenants. If this field is not passed in, the Organization will not allow JIT provisioning by OAuth Tenant. Allowed keys are "slack", "hubspot", and "github".
       #   The type of this field is nilable +object+.
       # first_party_connected_apps_allowed_type::
       #   The authentication setting that sets the Organization's policy towards first party Connected Apps. The accepted values are:
-      #  
+      #
       #   `ALL_ALLOWED` – the default setting, any first party Connected App in the Project is permitted for use by Members.
-      #  
+      #
       #   `RESTRICTED` – only first party Connected Apps with IDs in `allowed_first_party_connected_apps` can be used by Members.
-      #  
+      #
       #   `NOT_ALLOWED` – no first party Connected Apps are permitted.
-      #   
+      #
       #   The type of this field is nilable +CreateRequestFirstPartyConnectedAppsAllowedType+ (string enum).
       # allowed_first_party_connected_apps::
       #   An array of first party Connected App IDs that are allowed for the Organization. Only used when the Organization's `first_party_connected_apps_allowed_type` is `RESTRICTED`.
       #   The type of this field is nilable list of +String+.
       # third_party_connected_apps_allowed_type::
       #   The authentication setting that sets the Organization's policy towards third party Connected Apps. The accepted values are:
-      #  
+      #
       #   `ALL_ALLOWED` – the default setting, any third party Connected App in the Project is permitted for use by Members.
-      #  
+      #
       #   `RESTRICTED` – only third party Connected Apps with IDs in `allowed_first_party_connected_apps` can be used by Members.
-      #  
+      #
       #   `NOT_ALLOWED` – no third party Connected Apps are permitted.
-      #   
+      #
       #   The type of this field is nilable +CreateRequestThirdPartyConnectedAppsAllowedType+ (string enum).
       # allowed_third_party_connected_apps::
       #   An array of third party Connected App IDs that are allowed for the Organization. Only used when the Organization's `third_party_connected_apps_allowed_type` is `RESTRICTED`.
@@ -328,7 +319,7 @@ module StytchB2B
       # telemetry_id::
       #   If the `telemetry_id` is passed, as part of this request, Stytch will call the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) and store the associated fingerprints and IPGEO information for the Member. Your workspace must be enabled for Device Fingerprinting to use this feature.
       #   The type of this field is nilable +String+.
-      # 
+      #
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -371,7 +362,7 @@ module StytchB2B
       #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
       #   The type of this field is nilable +DeviceInfo+ (+object+).
       def create(
-        intermediate_session_token: ,
+        intermediate_session_token:,
         session_duration_minutes: nil,
         session_custom_claims: nil,
         organization_name: nil,
@@ -401,48 +392,48 @@ module StytchB2B
         request = {
           intermediate_session_token: intermediate_session_token
         }
-        request[:session_duration_minutes] = session_duration_minutes if session_duration_minutes != nil
-        request[:session_custom_claims] = session_custom_claims if session_custom_claims != nil
-        request[:organization_name] = organization_name if organization_name != nil
-        request[:organization_slug] = organization_slug if organization_slug != nil
-        request[:organization_external_id] = organization_external_id if organization_external_id != nil
-        request[:organization_logo_url] = organization_logo_url if organization_logo_url != nil
-        request[:trusted_metadata] = trusted_metadata if trusted_metadata != nil
-        request[:sso_jit_provisioning] = sso_jit_provisioning if sso_jit_provisioning != nil
-        request[:email_allowed_domains] = email_allowed_domains if email_allowed_domains != nil
-        request[:email_jit_provisioning] = email_jit_provisioning if email_jit_provisioning != nil
-        request[:email_invites] = email_invites if email_invites != nil
-        request[:auth_methods] = auth_methods if auth_methods != nil
-        request[:allowed_auth_methods] = allowed_auth_methods if allowed_auth_methods != nil
-        request[:mfa_policy] = mfa_policy if mfa_policy != nil
-        request[:rbac_email_implicit_role_assignments] = rbac_email_implicit_role_assignments if rbac_email_implicit_role_assignments != nil
-        request[:mfa_methods] = mfa_methods if mfa_methods != nil
-        request[:allowed_mfa_methods] = allowed_mfa_methods if allowed_mfa_methods != nil
-        request[:oauth_tenant_jit_provisioning] = oauth_tenant_jit_provisioning if oauth_tenant_jit_provisioning != nil
-        request[:allowed_oauth_tenants] = allowed_oauth_tenants if allowed_oauth_tenants != nil
-        request[:first_party_connected_apps_allowed_type] = first_party_connected_apps_allowed_type if first_party_connected_apps_allowed_type != nil
-        request[:allowed_first_party_connected_apps] = allowed_first_party_connected_apps if allowed_first_party_connected_apps != nil
-        request[:third_party_connected_apps_allowed_type] = third_party_connected_apps_allowed_type if third_party_connected_apps_allowed_type != nil
-        request[:allowed_third_party_connected_apps] = allowed_third_party_connected_apps if allowed_third_party_connected_apps != nil
-        request[:telemetry_id] = telemetry_id if telemetry_id != nil
+        request[:session_duration_minutes] = session_duration_minutes unless session_duration_minutes.nil?
+        request[:session_custom_claims] = session_custom_claims unless session_custom_claims.nil?
+        request[:organization_name] = organization_name unless organization_name.nil?
+        request[:organization_slug] = organization_slug unless organization_slug.nil?
+        request[:organization_external_id] = organization_external_id unless organization_external_id.nil?
+        request[:organization_logo_url] = organization_logo_url unless organization_logo_url.nil?
+        request[:trusted_metadata] = trusted_metadata unless trusted_metadata.nil?
+        request[:sso_jit_provisioning] = sso_jit_provisioning unless sso_jit_provisioning.nil?
+        request[:email_allowed_domains] = email_allowed_domains unless email_allowed_domains.nil?
+        request[:email_jit_provisioning] = email_jit_provisioning unless email_jit_provisioning.nil?
+        request[:email_invites] = email_invites unless email_invites.nil?
+        request[:auth_methods] = auth_methods unless auth_methods.nil?
+        request[:allowed_auth_methods] = allowed_auth_methods unless allowed_auth_methods.nil?
+        request[:mfa_policy] = mfa_policy unless mfa_policy.nil?
+        request[:rbac_email_implicit_role_assignments] = rbac_email_implicit_role_assignments unless rbac_email_implicit_role_assignments.nil?
+        request[:mfa_methods] = mfa_methods unless mfa_methods.nil?
+        request[:allowed_mfa_methods] = allowed_mfa_methods unless allowed_mfa_methods.nil?
+        request[:oauth_tenant_jit_provisioning] = oauth_tenant_jit_provisioning unless oauth_tenant_jit_provisioning.nil?
+        request[:allowed_oauth_tenants] = allowed_oauth_tenants unless allowed_oauth_tenants.nil?
+        request[:first_party_connected_apps_allowed_type] = first_party_connected_apps_allowed_type unless first_party_connected_apps_allowed_type.nil?
+        request[:allowed_first_party_connected_apps] = allowed_first_party_connected_apps unless allowed_first_party_connected_apps.nil?
+        request[:third_party_connected_apps_allowed_type] = third_party_connected_apps_allowed_type unless third_party_connected_apps_allowed_type.nil?
+        request[:allowed_third_party_connected_apps] = allowed_third_party_connected_apps unless allowed_third_party_connected_apps.nil?
+        request[:telemetry_id] = telemetry_id unless telemetry_id.nil?
 
-        post_request("/v1/b2b/discovery/organizations/create", request, headers)
+        post_request('/v1/b2b/discovery/organizations/create', request, headers)
       end
 
       # List all possible organization relationships connected to a [Member Session](https://stytch.com/docs/b2b/api/session-object) or Intermediate Session.
-      # 
+      #
       # When a Member Session is passed in, relationships with a type of `active_member`, `pending_member`, or `invited_member`
       # will be returned, and any membership can be assumed by calling the [Exchange Session](https://stytch.com/docs/b2b/api/exchange-session) endpoint.
-      # 
-      # When an Intermediate Session is passed in, all relationship types - `active_member`, `pending_member`, `invited_member`, 
-      # `eligible_to_join_by_email_domain`, and `eligible_to_join_by_oauth_tenant` - will be returned, 
-      # and any membership can be assumed by calling the [Exchange Intermediate Session](https://stytch.com/docs/b2b/api/exchange-intermediate-session) endpoint. 
-      # 
+      #
+      # When an Intermediate Session is passed in, all relationship types - `active_member`, `pending_member`, `invited_member`,
+      # `eligible_to_join_by_email_domain`, and `eligible_to_join_by_oauth_tenant` - will be returned,
+      # and any membership can be assumed by calling the [Exchange Intermediate Session](https://stytch.com/docs/b2b/api/exchange-intermediate-session) endpoint.
+      #
       # This endpoint requires either an `intermediate_session_token`, `session_jwt` or `session_token` be included in the request.
       # It will return an error if multiple are present.
-      # 
+      #
       # This operation does not consume the Intermediate Session or Session Token passed in.
-      # 
+      #
       # == Parameters:
       # intermediate_session_token::
       #   The Intermediate Session Token. This token does not necessarily belong to a specific instance of a Member, but represents a bag of factors that may be converted to a member session. The token can be used with the [OTP SMS Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-otp-sms), [TOTP Authenticate endpoint](https://stytch.com/docs/b2b/api/authenticate-totp), or [Recovery Codes Recover endpoint](https://stytch.com/docs/b2b/api/recovery-codes-recover) to complete an MFA flow and log in to the Organization. The token has a default expiry of 10 minutes. It can also be used with the [Exchange Intermediate Session endpoint](https://stytch.com/docs/b2b/api/exchange-intermediate-session) to join a specific Organization that allows the factors represented by the intermediate session token; or the [Create Organization via Discovery endpoint](https://stytch.com/docs/b2b/api/create-organization-via-discovery) to create a new Organization and Member. Intermediate Session Tokens have a default expiry of 10 minutes.
@@ -453,7 +444,7 @@ module StytchB2B
       # session_jwt::
       #   The JSON Web Token (JWT) for a given Stytch Session.
       #   The type of this field is nilable +String+.
-      # 
+      #
       # == Returns:
       # An object with the following fields:
       # request_id::
@@ -464,16 +455,16 @@ module StytchB2B
       #   The type of this field is +String+.
       # discovered_organizations::
       #   An array of `discovered_organization` objects tied to the `intermediate_session_token`, `session_token`, or `session_jwt`. See the [Discovered Organization Object](https://stytch.com/docs/b2b/api/discovered-organization-object) for complete details.
-      # 
+      #
       #   Note that Organizations will only appear here under any of the following conditions:
       #   1. The end user is already a Member of the Organization.
       #   2. The end user is invited to the Organization.
       #   3. The end user can join the Organization because:
-      # 
+      #
       #       a) The Organization allows JIT provisioning.
-      # 
+      #
       #       b) The Organizations' allowed domains list contains the Member's email domain.
-      # 
+      #
       #       c) The Organization has at least one other Member with a verified email address with the same domain as the end user (to prevent phishing attacks).
       #   The type of this field is list of +DiscoveredOrganization+ (+object+).
       # status_code::
@@ -488,17 +479,13 @@ module StytchB2B
         session_jwt: nil
       )
         headers = {}
-        request = {
-        }
-        request[:intermediate_session_token] = intermediate_session_token if intermediate_session_token != nil
-        request[:session_token] = session_token if session_token != nil
-        request[:session_jwt] = session_jwt if session_jwt != nil
+        request = {}
+        request[:intermediate_session_token] = intermediate_session_token unless intermediate_session_token.nil?
+        request[:session_token] = session_token unless session_token.nil?
+        request[:session_jwt] = session_jwt unless session_jwt.nil?
 
-        post_request("/v1/b2b/discovery/organizations", request, headers)
+        post_request('/v1/b2b/discovery/organizations', request, headers)
       end
-
-
-
     end
   end
 end
