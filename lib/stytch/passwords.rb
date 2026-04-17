@@ -242,7 +242,7 @@ module Stytch
     #   Globally unique UUID that is returned with every API call. This value is important to log for debugging purposes; we may ask for this value to help identify a specific API call when helping you debug an issue.
     #   The type of this field is +String+.
     # valid_password::
-    #   Returns `true` if the password passes our password validation. We offer two validation options, [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy) is the default option which offers a high level of sophistication. We also offer [LUDS](https://stytch.com/docs/guides/passwords/strength-policy). If an email address is included in the call we also require that the password hasn't been compromised using built-in breach detection powered by [HaveIBeenPwned](https://haveibeenpwned.com/).
+    #   Returns `true` if the password passes our password validation. We offer two validation options, [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy) is the default option which offers a high level of sophistication. We also offer [LUDS](https://stytch.com/docs/guides/passwords/strength-policy) which is less sophisticated but easier to understand. If an email address is included in the call we also require that the password hasn't been compromised using built-in breach detection powered by [HaveIBeenPwned](https://haveibeenpwned.com/).
     #   The type of this field is +Boolean+.
     # score::
     #   The score of the password determined by [zxcvbn](https://github.com/dropbox/zxcvbn). Values will be between 1 and 4, a 3 or greater is required to pass validation.
@@ -254,7 +254,7 @@ module Stytch
     #   The strength policy type enforced, either `zxcvbn` or `luds`.
     #   The type of this field is +String+.
     # breach_detection_on_create::
-    #   Will return `true` if breach detection will be evaluated. By default this option is enabled. This option can be disabled by contacting [support@stytch.com](mailto:support@stytch.com?subject=Password%20strength%20configuration). If this value is `false` then `breached_password` will always be `false` as well.
+    #   Will return `true` if breach detection will be evaluated. By default this option is enabled. This option can be disabled in the [dashboard](https://stytch.com/dashboard/password-strength-config#breach-detection). If this value is `false` then `breached_password` will always be `false` as well.
     #   The type of this field is +Boolean+.
     # status_code::
     #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
@@ -411,11 +411,9 @@ module Stytch
       #   The email of the User that requested the password reset.
       #   The type of this field is +String+.
       # reset_password_redirect_url::
-      #   The url that the user clicks from the password reset email to finish the reset password flow.
-      #   This should be a url that your app receives and parses before showing your app's reset password page.
-      #   After the user submits a new password to your app, it should send an API request to complete the password reset process.
-      #   If this value is not passed, the default reset password redirect URL that you set in your Dashboard is used.
-      #   If you have not set a default reset password redirect URL, an error is returned.
+      #   The URL that the User is redirected to from the reset password magic link. This URL should display your application's reset password page.
+      #   Before rendering the reset page, extract the `token` from the query parameters. On the reset page, collect the new password and complete the flow by calling the corresponding Password Reset by Email endpoint.
+      #   If this parameter is not specified, the default Reset Password redirect URL configured in the Dashboard will be used. If you have not set a default Reset Password redirect URL, an error is returned.
       #   The type of this field is nilable +String+.
       # reset_password_expiration_minutes::
       #   Set the expiration for the password reset, in minutes. By default, it expires in 30 minutes.
@@ -433,7 +431,7 @@ module Stytch
       #       After Users are redirected to the login redirect URL, your application should retrieve the `token` value from the URL parameters and call the [Magic Link Authenticate endpoint](https://stytch.com/docs/api/authenticate-magic-link) to log the User in without requiring a password reset. If this value is not provided, your project's default login redirect URL will be used. If you have not set a default login redirect URL, an error will be returned.
       #   The type of this field is nilable +String+.
       # locale::
-      #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+      #   Used to determine which language to use when sending the user this delivery method. Parameter is an [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
       # Currently supported languages are English (`"en"`), Spanish (`"es"`), French (`"fr"`) and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
       #
@@ -442,7 +440,7 @@ module Stytch
       #   The type of this field is nilable +ResetStartRequestLocale+ (string enum).
       # reset_password_template_id::
       #   Use a custom template for password reset emails. By default, it will use your default email template.
-      #   The template must be a template using our built-in customizations or a custom HTML email for Passwords - Password reset.
+      #   Templates can be added in the [Stytch dashboard](https://stytch.com/dashboard/templates) using our built-in customization options or custom HTML templates with type “Passwords - Password reset”.
       #   The type of this field is nilable +String+.
       #
       # == Returns:

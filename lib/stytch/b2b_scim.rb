@@ -206,7 +206,7 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       # connection::
-      #   The `SAML Connection` object affected by this API call. See the [SAML Connection Object](https://stytch.com/docs/b2b/api/saml-connection-object) for complete response field details.
+      #   The [SCIM Connection Object](https://stytch.com/docs/b2b/api/scim-connection-object).
       #   The type of this field is nilable +SCIMConnection+ (+object+).
       #
       # == Method Options:
@@ -282,7 +282,7 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       # connection::
-      #   The `SCIM Connection` object affected by this API call. See the [SCIM Connection Object](https://stytch.com/docs/b2b/api/scim-connection-object) for complete response field details.
+      #   The [SCIM Connection Object](https://stytch.com/docs/b2b/api/scim-connection-object).
       #   The type of this field is nilable +SCIMConnectionWithNextToken+ (+object+).
       #
       # == Method Options:
@@ -318,7 +318,7 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       # connection::
-      #   The `SCIM Connection` object affected by this API call. See the [SCIM Connection Object](https://stytch.com/docs/b2b/api/scim-connection-object) for complete response field details.
+      #   The [SCIM Connection Object](https://stytch.com/docs/b2b/api/scim-connection-object).
       #   The type of this field is nilable +SCIMConnection+ (+object+).
       #
       # == Method Options:
@@ -354,7 +354,7 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       # connection::
-      #   The `SCIM Connection` object affected by this API call. See the [SCIM Connection Object](https://stytch.com/docs/b2b/api/scim-connection-object) for complete response field details.
+      #   The [SCIM Connection Object](https://stytch.com/docs/b2b/api/scim-connection-object).
       #   The type of this field is nilable +SCIMConnection+ (+object+).
       #
       # == Method Options:
@@ -440,7 +440,7 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       # connection::
-      #   The `SCIM Connection` object affected by this API call. See the [SCIM Connection Object](https://stytch.com/docs/b2b/api/scim-connection-object) for complete response field details.
+      #   The [SCIM Connection Object](https://stytch.com/docs/b2b/api/scim-connection-object).
       #   The type of this field is nilable +SCIMConnectionWithToken+ (+object+).
       #
       # == Method Options:
@@ -476,7 +476,7 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       # connection::
-      #   A [SCIM Connection](https://stytch.com/docs/b2b/api/scim-connection-object) connection belonging to the organization (currently limited to one).
+      #   The [SCIM Connection Object](https://stytch.com/docs/b2b/api/scim-connection-object).
       #   The type of this field is nilable +SCIMConnection+ (+object+).
       #
       # == Method Options:

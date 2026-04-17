@@ -126,12 +126,22 @@ module Stytch
       post_request('/v1/magic_links/authenticate', request, headers)
     end
 
-    # Create an Embeddable Magic Link token for a User. Access to this endpoint is restricted. To enable it, please send us a note at support@stytch.com.
+    # Create an Embeddable Magic Link token for a User.
     #
-    # ### Next steps
-    # Send the returned `token` value to the end user in a link which directs to your application. When the end user follows your link, collect the token, and call [Authenticate Magic Link](https://stytch.com/docs/api/authenticate-magic-link) to complete authentication.
+    # ### Important usage notes
     #
-    # **Note:** Authenticating an Embeddable Magic Link token will **not** result in any of the Stytch User's factors (email address or phone number) being marked as verified, as Stytch cannot confirm where the user received the token.
+    # Carefully review the following notes before using Embeddable Magic Links:
+    #
+    # * Embeddable Magic Link tokens are **sensitive values**. You should handle and store them securely.
+    # * Authenticating an Embeddable Magic Link token will not mark any of a user's delivery factors (email address or phone number) as verified, since we cannot confirm how the token was sent to the user.
+    # * Embeddable Magic Links are only available in our Consumer API, and not our B2B API.
+    #
+    # When sending Embeddable Magic Links via email:
+    #
+    # * Deliverability is paramount. Carefully test your email copy to ensure it reaches your users' inboxes. Small changes can result in your emails being sent to spam.
+    # * In some cases, email security bots may follow links within incoming emails before your users open them. This consumes the Embeddable Magic Link token, preventing the user from logging in when they later click the link. Our Email Magic Links product automatically prevents this (details [here](https://stytch.com/docs/consumer-auth/authentication/magic-links/redirect-routing)). However, when sending your own emails containing Embeddable Magic Links, you'll be responsible for detecting and stopping bot traffic using tools like CAPTCHA or [Device Fingerprinting](https://stytch.com/docs/fraud-risk/device-fingerprinting/overview).
+    #
+    # We also recommend checking out our [Trusted Auth Tokens](https://stytch.com/docs/consumer-auth/authentication/trusted-auth-tokens/overview) product, which is available in both our Consumer and B2B APIs and can be a better fit for some use cases.
     #
     # == Parameters:
     # user_id::
@@ -193,7 +203,7 @@ module Stytch
       #   The email address of the User to send the Magic Link to.
       #   The type of this field is +String+.
       # login_template_id::
-      #   Use a custom template for login emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic links - Login.
+      #   Use a custom template for login emails. By default, it will use your default email template. Templates can be added in the [Stytch dashboard](https://stytch.com/dashboard/templates) using our built-in customization options or custom HTML templates with type “Magic links - Login”.
       #   The type of this field is nilable +String+.
       # attributes::
       #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
@@ -223,7 +233,7 @@ module Stytch
       #   The `session_jwt` of the user to associate the email with.
       #   The type of this field is nilable +String+.
       # locale::
-      #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+      #   Used to determine which language to use when sending the user this delivery method. Parameter is an [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
       # Currently supported languages are English (`"en"`), Spanish (`"es"`), French (`"fr"`) and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
       #
@@ -231,7 +241,7 @@ module Stytch
       #
       #   The type of this field is nilable +SendRequestLocale+ (string enum).
       # signup_template_id::
-      #   Use a custom template for sign-up emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic links - Sign-up.
+      #   Use a custom template for sign-up emails. By default, it will use your default email template. Templates can be added in the [Stytch dashboard](https://stytch.com/dashboard/templates) using our built-in customization options or custom HTML templates with type “Magic links - Sign-up”.
       #   The type of this field is nilable +String+.
       #
       # == Returns:
@@ -305,10 +315,10 @@ module Stytch
       #   Set the expiration for the sign-up email magic link, in minutes. By default, it expires in 1 week. The minimum expiration is 5 minutes and the maximum is 7 days (10080 mins).
       #   The type of this field is nilable +Integer+.
       # login_template_id::
-      #   Use a custom template for login emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic links - Login.
+      #   Use a custom template for login emails. By default, it will use your default email template. Templates can be added in the [Stytch dashboard](https://stytch.com/dashboard/templates) using our built-in customization options or custom HTML templates with type “Magic links - Login”.
       #   The type of this field is nilable +String+.
       # signup_template_id::
-      #   Use a custom template for sign-up emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic links - Sign-up.
+      #   Use a custom template for sign-up emails. By default, it will use your default email template. Templates can be added in the [Stytch dashboard](https://stytch.com/dashboard/templates) using our built-in customization options or custom HTML templates with type “Magic links - Sign-up”.
       #   The type of this field is nilable +String+.
       # attributes::
       #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
@@ -324,7 +334,7 @@ module Stytch
       #   A base64url encoded SHA256 hash of a one time secret used to validate that the request starts and ends on the same device.
       #   The type of this field is nilable +String+.
       # locale::
-      #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+      #   Used to determine which language to use when sending the user this delivery method. Parameter is an [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
       # Currently supported languages are English (`"en"`), Spanish (`"es"`), French (`"fr"`) and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
       #
@@ -390,7 +400,7 @@ module Stytch
       #   The email address of the User to send the invite Magic Link to.
       #   The type of this field is +String+.
       # invite_template_id::
-      #   Use a custom template for invite emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Magic links - Invite.
+      #   Use a custom template for invite emails. By default, it will use your default email template. Templates can be added in the [Stytch dashboard](https://stytch.com/dashboard/templates) using our built-in customization options or custom HTML templates with type “Magic links - Invite”.
       #   The type of this field is nilable +String+.
       # attributes::
       #   Provided attributes to help with fraud detection. These values are pulled and passed into Stytch endpoints by your application.
@@ -405,7 +415,7 @@ module Stytch
       #   Set the expiration for the email magic link, in minutes. By default, it expires in 1 hour. The minimum expiration is 5 minutes and the maximum is 7 days (10080 mins).
       #   The type of this field is nilable +Integer+.
       # locale::
-      #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+      #   Used to determine which language to use when sending the user this delivery method. Parameter is an [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
       # Currently supported languages are English (`"en"`), Spanish (`"es"`), French (`"fr"`) and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
       #

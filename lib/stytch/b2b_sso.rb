@@ -178,7 +178,7 @@ module StytchB2B
     # locale::
     #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
     #
-    # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+    # Parameter is an [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
     #
     # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
     #
@@ -335,7 +335,7 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       # connection::
-      #   The `OIDC Connection` object affected by this API call. See the [OIDC Connection Object](https://stytch.com/docs/b2b/api/oidc-connection-object) for complete response field details.
+      #   The [OIDC Connection Object](https://stytch.com/docs/b2b/api/oidc-connection-object).
       #   The type of this field is nilable +OIDCConnection+ (+object+).
       #
       # == Method Options:
@@ -426,7 +426,7 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       # connection::
-      #   The `OIDC Connection` object affected by this API call. See the [OIDC Connection Object](https://stytch.com/docs/b2b/api/oidc-connection-object) for complete response field details.
+      #   The [OIDC Connection Object](https://stytch.com/docs/b2b/api/oidc-connection-object).
       #   The type of this field is nilable +OIDCConnection+ (+object+).
       # warning::
       #   If it is not possible to resolve the well-known metadata document from the OIDC issuer, this field will explain what went wrong if the request is successful otherwise. In other words, even if the overall request succeeds, there could be relevant warnings related to the connection update.
@@ -595,7 +595,7 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       # connection::
-      #   The `SAML Connection` object affected by this API call. See the [SAML Connection Object](https://stytch.com/docs/b2b/api/saml-connection-object) for complete response field details.
+      #   The [SAML Connection Object](https://stytch.com/docs/b2b/api/saml-connection-object)
       #   The type of this field is nilable +SAMLConnection+ (+object+).
       #
       # == Method Options:
@@ -691,7 +691,7 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       # connection::
-      #   The `SAML Connection` object affected by this API call. See the [SAML Connection Object](https://stytch.com/docs/b2b/api/saml-connection-object) for complete response field details.
+      #   The [SAML Connection Object](https://stytch.com/docs/b2b/api/saml-connection-object)
       #   The type of this field is nilable +SAMLConnection+ (+object+).
       #
       # == Method Options:
@@ -766,7 +766,7 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       # connection::
-      #   The `SAML Connection` object affected by this API call. See the [SAML Connection Object](https://stytch.com/docs/b2b/api/saml-connection-object) for complete response field details.
+      #   The [SAML Connection Object](https://stytch.com/docs/b2b/api/saml-connection-object)
       #   The type of this field is nilable +SAMLConnection+ (+object+).
       #
       # == Method Options:
@@ -941,7 +941,7 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       # connection::
-      #   The `External Connection` object affected by this API call. See the [External Connection Object](https://stytch.com/docs/b2b/api/external-connection-object) for complete response field details.
+      #   The [External Connection Object](https://stytch.com/docs/b2b/api/external-connection-object).
       #   The type of this field is nilable +Connection+ (+object+).
       #
       # == Method Options:
@@ -1001,7 +1001,7 @@ module StytchB2B
       #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
       #   The type of this field is +Integer+.
       # connection::
-      #   The `External Connection` object affected by this API call. See the [External Connection Object](https://stytch.com/docs/b2b/api/external-connection-object) for complete response field details.
+      #   The [External Connection Object](https://stytch.com/docs/b2b/api/external-connection-object).
       #   The type of this field is nilable +Connection+ (+object+).
       #
       # == Method Options:

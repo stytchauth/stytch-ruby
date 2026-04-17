@@ -52,7 +52,8 @@ module StytchB2B
     # valid_password::
     #   Returns `true` if the password passes our password validation. We offer two validation options,
     #   [zxcvbn](https://stytch.com/docs/guides/passwords/strength-policy) is the default option which offers a high level of sophistication.
-    #   We also offer [LUDS](https://stytch.com/docs/b2b/guides/passwords/strength-policy). If an email address is included in the call we also
+    #   We also offer [LUDS](https://stytch.com/docs/b2b/guides/passwords/strength-policy) which is less sophisticated
+    #   but easier to understand. If an email address is included in the call we also
     #   require that the password hasn't been compromised using built-in breach detection powered by [HaveIBeenPwned](https://haveibeenpwned.com/)
     #   The type of this field is +Boolean+.
     # score::
@@ -66,7 +67,7 @@ module StytchB2B
     #   The type of this field is +String+.
     # breach_detection_on_create::
     #   Will return `true` if breach detection will be evaluated. By default this option is enabled.
-    #   This option can be disabled by contacting [support@stytch.com](mailto:support@stytch.com?subject=Password%20strength%20configuration).
+    #   This option can be disabled in the [dashboard](https://stytch.com/dashboard/password-strength-config#breach-detection).
     #   If this value is false then `breached_password` will always be `false` as well.
     #   The type of this field is +Boolean+.
     # status_code::
@@ -282,7 +283,7 @@ module StytchB2B
     # locale::
     #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
     #
-    # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+    # Parameter is an [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
     #
     # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
     #
@@ -411,9 +412,9 @@ module StytchB2B
       #   The email address of the Member to start the email reset process for.
       #   The type of this field is +String+.
       # reset_password_redirect_url::
-      #   The URL that the Member clicks from the reset password link. This URL should be an endpoint in the backend server that verifies the request by querying
-      #   Stytch's authenticate endpoint and finishes the reset password flow. If this value is not passed, the default `reset_password_redirect_url` that you set in your Dashboard is used.
-      #   If you have not set a default `reset_password_redirect_url`, an error is returned.
+      #   The URL that the Member is redirected to from the reset password magic link. This URL should display your application's reset password page.
+      #   Before rendering the reset page, extract the `token` from the query parameters. On the reset page, collect the new password and complete the flow by calling the corresponding Password Reset by Email endpoint.
+      #   If this parameter is not specified, the default Reset Password redirect URL configured in the Dashboard will be used. If you have not set a default Reset Password redirect URL, an error is returned.
       #   The type of this field is nilable +String+.
       # reset_password_expiration_minutes::
       #   Sets a time limit after which the email link to reset the member's password will no longer be valid. The minimum allowed expiration is 5 minutes and the maximum is 10080 minutes (7 days). By default, the expiration is 30 minutes.
@@ -427,7 +428,7 @@ module StytchB2B
       #       After Members are redirected to the login redirect URL, your application should retrieve the `token` value from the URL parameters and call the [Magic Link Authenticate endpoint](https://stytch.com/docs/api/authenticate-magic-link) to log the Member in without requiring a password reset. If this value is not provided, your project's default login redirect URL will be used. If you have not set a default login redirect URL, an error will be returned.
       #   The type of this field is nilable +String+.
       # locale::
-      #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+      #   Used to determine which language to use when sending the user this delivery method. Parameter is an [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
       # Currently supported languages are English (`"en"`), Spanish (`"es"`), French (`"fr"`) and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
       #
@@ -435,11 +436,11 @@ module StytchB2B
       #
       #   The type of this field is nilable +ResetStartRequestLocale+ (string enum).
       # reset_password_template_id::
-      #   Use a custom template for reset password emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Passwords - Reset Password.
+      #   Use a custom template for reset password emails. By default, it will use your default email template. Templates can be added in the [Stytch dashboard](https://stytch.com/dashboard/templates) using our built-in customization options or custom HTML templates with type “Passwords - Reset Password”.
       #   The type of this field is nilable +String+.
       # verify_email_template_id::
       #   Use a custom template for verification emails sent during password reset flows. When cross-organization passwords are enabled for your Project, this template will be used the first time a user sets a password via a
-      #   password reset flow. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Passwords - Email Verification.
+      #   password reset flow. By default, it will use your default email template. Templates can be added in the [Stytch dashboard](https://stytch.com/dashboard/templates) using our built-in customization options or custom HTML templates with type “Passwords - Email Verification”.
       #   The type of this field is nilable +String+.
       #
       # == Returns:
@@ -539,7 +540,7 @@ module StytchB2B
       # locale::
       #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
       #
-      # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+      # Parameter is an [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
       # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
       #
@@ -725,7 +726,7 @@ module StytchB2B
       #   Total custom claims size cannot exceed four kilobytes.
       #   The type of this field is nilable +object+.
       # locale::
-      #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+      #   Used to determine which language to use when sending the user this delivery method. Parameter is an [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
       # Currently supported languages are English (`"en"`), Spanish (`"es"`), French (`"fr"`) and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
       #
@@ -863,7 +864,7 @@ module StytchB2B
       # locale::
       #   If the Member needs to complete an MFA step, and the Member has a phone number, this endpoint will pre-emptively send a one-time passcode (OTP) to the Member's phone number. The locale argument will be used to determine which language to use when sending the passcode.
       #
-      # Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+      # Parameter is an [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
       #
       # Currently supported languages are English (`"en"`), Spanish (`"es"`), and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
       #
@@ -1030,9 +1031,9 @@ module StytchB2B
         #   The email address of the Member to start the email reset process for.
         #   The type of this field is +String+.
         # reset_password_redirect_url::
-        #   The URL that the Member clicks from the reset password link. This URL should be an endpoint in the backend server that verifies the request by querying
-        #   Stytch's authenticate endpoint and finishes the reset password flow. If this value is not passed, the default `reset_password_redirect_url` that you set in your Dashboard is used.
-        #   If you have not set a default `reset_password_redirect_url`, an error is returned.
+        #   The URL that the Member is redirected to from the reset password magic link. This URL should display your application's reset password page.
+        #   Before rendering the reset page, extract the `token` from the query parameters. On the reset page, collect the new password and complete the flow by calling the corresponding Password Reset by Email endpoint.
+        #   If this parameter is not specified, the default Reset Password redirect URL configured in the Dashboard will be used. If you have not set a default Reset Password redirect URL, an error is returned.
         #   The type of this field is nilable +String+.
         # discovery_redirect_url::
         #   The URL that the end user clicks from the discovery Magic Link. This URL should be an endpoint in the backend server that
@@ -1040,7 +1041,7 @@ module StytchB2B
         #   discovery redirect URL that you set in your Dashboard is used. If you have not set a default discovery redirect URL, an error is returned.
         #   The type of this field is nilable +String+.
         # reset_password_template_id::
-        #   Use a custom template for reset password emails. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Passwords - Reset Password.
+        #   Use a custom template for reset password emails. By default, it will use your default email template. Templates can be added in the [Stytch dashboard](https://stytch.com/dashboard/templates) using our built-in customization options or custom HTML templates with type “Passwords - Reset Password”.
         #   The type of this field is nilable +String+.
         # reset_password_expiration_minutes::
         #   Sets a time limit after which the email link to reset the member's password will no longer be valid. The minimum allowed expiration is 5 minutes and the maximum is 10080 minutes (7 days). By default, the expiration is 30 minutes.
@@ -1049,7 +1050,7 @@ module StytchB2B
         #   (no documentation yet)
         #   The type of this field is nilable +String+.
         # locale::
-        #   Used to determine which language to use when sending the user this delivery method. Parameter is a [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
+        #   Used to determine which language to use when sending the user this delivery method. Parameter is an [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/), e.g. `"en"`.
         #
         # Currently supported languages are English (`"en"`), Spanish (`"es"`), French (`"fr"`) and Brazilian Portuguese (`"pt-br"`); if no value is provided, the copy defaults to English.
         #
@@ -1058,7 +1059,7 @@ module StytchB2B
         #   The type of this field is nilable +String+.
         # verify_email_template_id::
         #   Use a custom template for verification emails sent during password reset flows. When cross-organization passwords are enabled for your Project, this template will be used the first time a user sets a password via a
-        #   password reset flow. By default, it will use your default email template. The template must be a template using our built-in customizations or a custom HTML email for Passwords - Email Verification.
+        #   password reset flow. By default, it will use your default email template. Templates can be added in the [Stytch dashboard](https://stytch.com/dashboard/templates) using our built-in customization options or custom HTML templates with type “Passwords - Email Verification”.
         #   The type of this field is nilable +String+.
         #
         # == Returns:
