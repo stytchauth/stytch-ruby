@@ -64,6 +64,9 @@ module StytchB2B
     # mfa_required::
     #   MFA will not be required when authenticating impersonation tokens.
     #   The type of this field is nilable +MfaRequired+ (+object+).
+    # intermediate_session_token_expires_at::
+    #   (no documentation yet)
+    #   The type of this field is nilable +String+.
     def authenticate(
       impersonation_token:
     )

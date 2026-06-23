@@ -123,6 +123,9 @@ module StytchB2B
       # member_device::
       #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
       #   The type of this field is nilable +DeviceInfo+ (+object+).
+      # intermediate_session_token_expires_at::
+      #   (no documentation yet)
+      #   The type of this field is nilable +String+.
       def exchange(
         intermediate_session_token:,
         organization_id:,
@@ -361,6 +364,9 @@ module StytchB2B
       # member_device::
       #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
       #   The type of this field is nilable +DeviceInfo+ (+object+).
+      # intermediate_session_token_expires_at::
+      #   (no documentation yet)
+      #   The type of this field is nilable +String+.
       def create(
         intermediate_session_token:,
         session_duration_minutes: nil,

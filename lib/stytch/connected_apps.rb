@@ -92,6 +92,9 @@ module Stytch
       # bypass_consent_for_offline_access::
       #   Valid for first party clients only. If true, the client does not need to request explicit user consent for the `offline_access` scope.
       #   The type of this field is nilable +Boolean+.
+      # id_token_template_content::
+      #   (no documentation yet)
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -115,7 +118,8 @@ module Stytch
         access_token_template_content: nil,
         post_logout_redirect_urls: nil,
         logo_url: nil,
-        bypass_consent_for_offline_access: nil
+        bypass_consent_for_offline_access: nil,
+        id_token_template_content: nil
       )
         headers = {}
         request = {}
@@ -129,6 +133,7 @@ module Stytch
         request[:post_logout_redirect_urls] = post_logout_redirect_urls unless post_logout_redirect_urls.nil?
         request[:logo_url] = logo_url unless logo_url.nil?
         request[:bypass_consent_for_offline_access] = bypass_consent_for_offline_access unless bypass_consent_for_offline_access.nil?
+        request[:id_token_template_content] = id_token_template_content unless id_token_template_content.nil?
 
         put_request("/v1/connected_apps/clients/#{client_id}", request, headers)
       end
@@ -232,6 +237,9 @@ module Stytch
       # bypass_consent_for_offline_access::
       #   Valid for first party clients only. If true, the client does not need to request explicit user consent for the `offline_access` scope.
       #   The type of this field is nilable +Boolean+.
+      # id_token_template_content::
+      #   (no documentation yet)
+      #   The type of this field is nilable +String+.
       #
       # == Returns:
       # An object with the following fields:
@@ -255,7 +263,8 @@ module Stytch
         access_token_template_content: nil,
         post_logout_redirect_urls: nil,
         logo_url: nil,
-        bypass_consent_for_offline_access: nil
+        bypass_consent_for_offline_access: nil,
+        id_token_template_content: nil
       )
         headers = {}
         request = {
@@ -271,6 +280,7 @@ module Stytch
         request[:post_logout_redirect_urls] = post_logout_redirect_urls unless post_logout_redirect_urls.nil?
         request[:logo_url] = logo_url unless logo_url.nil?
         request[:bypass_consent_for_offline_access] = bypass_consent_for_offline_access unless bypass_consent_for_offline_access.nil?
+        request[:id_token_template_content] = id_token_template_content unless id_token_template_content.nil?
 
         post_request('/v1/connected_apps/clients', request, headers)
       end
