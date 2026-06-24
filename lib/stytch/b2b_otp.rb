@@ -442,6 +442,9 @@ module StytchB2B
       # member_device::
       #   If a valid `telemetry_id` was passed in the request and the [Fingerprint Lookup API](https://stytch.com/docs/fraud/api/fingerprint-lookup) returned results, the `member_device` response field will contain information about the member's device attributes.
       #   The type of this field is nilable +DeviceInfo+ (+object+).
+      # intermediate_session_token_expires_at::
+      #   (no documentation yet)
+      #   The type of this field is nilable +String+.
       def authenticate(
         organization_id:,
         email_address:,
@@ -562,6 +565,9 @@ module StytchB2B
         # status_code::
         #   The HTTP status code of the response. Stytch follows standard HTTP response status code patterns, e.g. 2XX values equate to success, 3XX values are redirects, 4XX are client errors, and 5XX are server errors.
         #   The type of this field is +Integer+.
+        # intermediate_session_token_expires_at::
+        #   (no documentation yet)
+        #   The type of this field is nilable +String+.
         def authenticate(
           email_address:,
           code:
