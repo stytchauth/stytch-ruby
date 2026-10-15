@@ -496,7 +496,7 @@ module Stytch
       clock_tolerance_seconds = 0 if clock_tolerance_seconds.nil?
 
       default_issuer = 'stytch.com/' + @project_id
-      base_url_issuer = @connection.url_prefix
+      base_url_issuer = @connection.url_prefix.to_s.chomp('/')
       valid_issuers = [default_issuer, base_url_issuer]
 
       begin

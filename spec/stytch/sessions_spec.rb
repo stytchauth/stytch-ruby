@@ -119,6 +119,41 @@ RSpec.describe Stytch::Sessions do
     expect(sessions.authenticate_jwt_local(token)).to eq(expected)
   end
 
+  it 'correctly decodes a JWT with custom issuer when url_prefix is a URI with a trailing slash' do
+    project_id = 'project-test-00000000-0000-0000-0000-000000000000'
+    custom_issuer = 'https://login.example.com'
+
+    # Faraday exposes url_prefix as a URI with a trailing slash
+    connection = TestConnection.new(URI.parse("#{custom_issuer}/"))
+    jwks_cache = Stytch::JWKSCache.new(connection, project_id)
+    policy_cache = Stytch::PolicyCache.new(rbac_client: Stytch::RBAC.new(connection))
+    sessions = Stytch::Sessions.new(connection, project_id, jwks_cache, policy_cache)
+
+    kid = 'jwk-test-00000000-0000-0000-0000-000000000000'
+    now = Time.now
+    claims = {
+      'https://stytch.com/session' => {
+        'started_at' => format_timestamp(now),
+        'last_accessed_at' => format_timestamp(now),
+        'expires_at' => (now + 3600).to_datetime.iso8601,
+        'attributes' => { 'user_agent' => '', 'ip_address' => '' },
+        'authentication_factors' => [],
+        'id' => 'session-live-e26a0ccb-0dc0-4edb-a4bb-e70210f43555'
+      },
+      'sub' => 'user-live-fde03dd1-fff7-4b3c-9b31-ead3fbc224de',
+      'iat' => now.to_i,
+      'nbf' => now.to_i,
+      'exp' => now.to_i + 5 * 60,
+      'iss' => custom_issuer,
+      'aud' => [project_id]
+    }
+    jwk = JWT::JWK.new(OpenSSL::PKey::RSA.new(2048), kid)
+    token = JWT.encode(claims, jwk.keypair, 'RS256', { kid: kid })
+    allow(jwks_cache).to receive(:loader).and_return(->(_options) { { 'keys' => [jwk.export] } })
+
+    expect(sessions.authenticate_jwt_local(token)).to eq(sessions.marshal_jwt_into_session(claims))
+  end
+
   it 'marshals JWT into session (new format)' do
     project_id = 'project-test-00000000-0000-0000-0000-000000000000'
 
