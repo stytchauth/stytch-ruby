@@ -178,7 +178,7 @@ module Stytch
           {
             algorithms: ['RS256'],
             jwks: @jwks_cache.loader,
-            iss: ["stytch.com/#{@project_id}", @connection.url_prefix],
+            iss: ["stytch.com/#{@project_id}", @connection.url_prefix.to_s.chomp('/')],
             aud: @project_id
           }
         )[0]
